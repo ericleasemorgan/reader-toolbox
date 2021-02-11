@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+# harvest.sh - given the short name of a study carrel, cache it locally
+
+# Eric Lease Morgan <emorgan@nd.edu>
+# (c) University of Notre Dame; distributed under a GNU Public License
+
+# August 2, 2020 - first documentation
+
+
+# Usage: rdr checkout <carrel>
+# Summary: Download a study carrel from the public library
+# Help: Use this to acquire the good work other people
+
+set -e
+
+# configure
+HOME=$( rdr env )
+LIBRARY="$HOME/library"
+TMP="$HOME/tmp"
+URL='http://library.distantreader.org/carrels'
+ZIP='study-carrel.zip'
+
+# sanity check
+if [[ -z $1 ]]; then
+	rdr help checkout
+	exit
+fi
+
+# initialize
+CARREL=$1
+
+mkdir -p $TMP
+wget -O $TMP/$CARREL.zip $URL/$CARREL/$ZIP
+rm -rf $LIBRARY/$CARREL
+mkdir -p $LIBRARY/$CARREL
+#ROOT=$( unzip -Z ./tmp/$CARREL.zip | sed -n 3p | tr -s ' ' | cut -d ' ' -f9 )
+unzip -u $TMP/$CARREL.zip -d $TMP
+mv  $TMP/$CARREL $LIBRARY
+#rm -rf $TMP/$ROOT
+exit

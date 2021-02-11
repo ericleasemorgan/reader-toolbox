@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+# index - given a carrel, create a full text index
+
+# Eric Lease Morgan <emorgan@nd.edu>
+# (c) University of Notre Dame; distributed under a GNU Public License
+
+# January 31, 2021 - first cut; cool!
+
+
+# Usage: rdr index <carrel>
+# Summary: Create a full text index for searching
+# Help:   Use this command to updated your carrel's database to
+#   support full text indexing
+# 
+
+set -e
+
+# configure
+HOME=$( rdr env )
+LIBRARY="$HOME/library"
+DB='etc/reader.db'
+TMP="$HOME/tmp"
+TRANSACTION="$TMP/transaction.sql"
+
+# configure full text table
+DROPFULLTEXT='DROP TABLE IF EXISTS fulltext;'
+CREATEFULLTEXT='CREATE TABLE fulltext ( id TEXT, fulltext TEXT );'
+TEMPLATE="INSERT INTO fulltext ( id, fulltext ) VALUES ( '##ID##', '##FULLTEXT##' );"
+
+# configure index table
+DROPINDX='DROP TABLE IF EXISTS indx;'
+CREATEINDX='CREATE VIRTUAL TABLE indx USING FTS5( id, author, title, date, summary, keyword, words, sentence, flesch, cache, txt, fulltext );'
+INDEX='INSERT INTO indx SELECT b.id, b.author, b.title, b.date, b.summary, group_concat( LOWER( w.keyword ), "; " ), b.words, b.sentence, b.flesch, b.id || b.extension, b.id || ".txt", f.fulltext FROM bib AS b, fulltext AS f, wrd AS w WHERE b.id IS f.id AND b.id IS w.id GROUP BY w.id;';
+
+# sanity check
+if [[ -z $1 ]]; then
+	rdr help index
+	exit
+fi
+
+# get input
+SHORTNAME=$1
+
+# initialize
+CARREL="$LIBRARY/$SHORTNAME"
+DB="$CARREL/etc/reader.db"
+TXT="$CARREL/txt"
+
+# create a full text table
+echo "Step #1 of 4: creating table to contain full text" >&2
+echo $DROPFULLTEXT   | sqlite3 $DB 
+echo $CREATEFULLTEXT | sqlite3 $DB 
+
+# initialize and fill a transaction
+echo "Step #2 of 4: reading full text; please be patient..." >&2
+echo "BEGIN TRANSACTION;" > $TRANSACTION
+find "$TXT" -name "*.txt" | while read FILE; do
+
+	# get the key (id)
+	ID=$( basename "$FILE" '.txt' )
+	ID=$( echo $ID | sed "s/'/''/g" )
+	
+	# get the full text and normalize/escape it; removing slashes (/) is probably okay
+	FULLTEXT=$( cat "$FILE" )
+	FULLTEXT=$( echo $FULLTEXT | tr '\r' ' ' | tr '\n' ' ' )
+	FULLTEXT=$( echo $FULLTEXT | sed "s/[[:punct:]]/ /g" )
+	FULLTEXT=$( echo $FULLTEXT | sed "s/ +/ /g" )
+	#FULLTEXT=$( echo $FULLTEXT | tr '\'  ' ' | tr '/'  ' ')
+	#FULLTEXT=$( echo $FULLTEXT | sed "s/'/''/g" )
+	
+	# update the transaction
+	echo $TEMPLATE | sed "s/##ID##/$ID/" | sed "s/##FULLTEXT##/$FULLTEXT/" >> $TRANSACTION
+	
+done
+
+# close the transaction and update the database
+echo "Step #3 of 4: writing full text to database" >&2
+echo "END TRANSACTION;" >> $TRANSACTION
+cat $TRANSACTION | sqlite3 $DB
+
+echo "Step #4 of 4: indexing" >&2
+echo $DROPINDX   | sqlite3 $DB
+echo $CREATEINDX | sqlite3 $DB
+echo $INDEX      | sqlite3 $DB
+
+# done
+echo "Done. Happy searching!" >&2
+exit

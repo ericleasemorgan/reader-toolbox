@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+# search - given a carrel and a query, do a full text search
+
+# Eric Lease Morgan <emorgan@nd.edu>
+# (c) University of Notre Dame; distributed under a GNU Public License
+
+# January 31, 2021 - first cut; cool!
+
+
+# Usage: rdr search <carrel> <lines|columns|tabs|csv> <query>
+# Summary: Given a query, do a full text search against a carrel
+# Help: Enter a query
+
+set -e
+
+# configure
+HOME=$( rdr env )
+LIBRARY="$HOME/library"
+DB='etc/reader.db'
+TEMPLATE="##MODE##\nSELECT id, author, title, date, summary, keyword, words, sentence, flesch, '##CACHE##' || cache AS cache, '##TXT##' || txt AS txt FROM indx WHERE indx MATCH '##QUERY##' ORDER BY RANK;"
+
+# sanity check
+if [[ -z $1 || -z $2 ]]; then
+	rdr help search
+	exit
+fi
+
+# get input
+CARREL=$1
+MODE=$2
+QUERY=$3
+
+# initialize
+DB="$LIBRARY/$CARREL/etc/reader.db"
+TXT="$LIBRARY/$CARREL/txt/"
+TXT="$LIBRARY/$CARREL/txt/"
+CACHE="$LIBRARY/$CARREL/cache/"
+
+if [[ $MODE == 'tabs' ]]; then
+	MODE='.mode tabs'
+elif [[ $MODE == 'columns' ]]; then
+	MODE=".mode columns"
+elif [[ $MODE == 'csv' ]]; then
+	MODE=".headers on\n.mode csv"
+elif [[ $MODE == 'lines' ]]; then
+	MODE='.mode lines'
+else
+	rdr help search 
+	exit
+fi
+
+# do the work and done
+echo -e $TEMPLATE | sed "s/##MODE##/$MODE/" | sed "s|##CACHE##|$CACHE|" | sed "s|##TXT##|$TXT|" | sed "s/##QUERY##/$QUERY/" | sqlite3 $DB
+exit

@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+
+# txt2graphml.py - given the path to a text file, a normalizer, and the size of window, output a graphml file
+
+# Eric Lease Morgan <emorgan@nd.edu>
+# January 4, 2021 - first cut; because of /dev/stdout, will probably break under Windows
+
+# Usage: rdr txt2graph <file> <lemma|lower> <number>
+# Summary: Given a plain text file, output a graphml file suitable for visualization
+# Help: Use this command to see how words are related to other words in file
+
+pass
+
+
+# configure
+MODEL = 'en_core_web_sm'
+
+# require
+import networkx as nx
+import os
+import spacy
+import sys
+import textacy
+
+# get input
+if len( sys.argv ) != 4 : sys.exit( "Usage: " + sys.argv[ 0 ] + " <file> <lemma|lower> <window>" )
+file      = sys.argv[ 1 ]
+normalize = sys.argv[ 2 ]
+window    = int( sys.argv[ 3 ] )
+
+# get the text to process
+text = open( file ).read()
+
+# create model and then then use it against the text
+size = ( os.stat( file ).st_size ) + 1
+nlp  = spacy.load( MODEL, max_length=size, disable=( 'tagger', 'parser', 'ner', 'textcat' ) )
+doc  = nlp( text )
+
+# create a graph; the magic happens here
+G = textacy.spacier.doc_extensions.to_semantic_network(
+	doc,
+	normalize=normalize, 
+	nodes='words', 
+	edge_weighting='cooc_freq', 
+	window_width=window )
+
+# output the graph and done
+nx.write_graphml( G, '/dev/stdout' )
+exit()

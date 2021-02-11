@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# list-remote-inventory.sh - return a list of items available for harvesting from a remote collection
+
+# Eric Lease Morgan <emorgan@nd.edu>
+# (c) University of Notre Dame; distributed under a GNU Public License
+
+# August 7, 2020 - first cut
+
+
+# Usage: rdr list <remote|local>
+# Summary: List remotely or locally available study carrels
+# Help: Use this command to see what study carrels are available to you.
+
+set -e
+
+# configure
+REMOTE='https://library.distantreader.org/catalog/catalog.tsv'
+LOCAL='library'
+
+# sanity check
+if [[ -z $1 ]]; then
+	rdr help list
+	exit
+fi
+
+# get input
+ARG=$1
+
+# branch accordingly; remote inventory
+if [[ $ARG == 'remote' ]]; then
+
+	# beautify, sort of
+	echo
+
+	# process each item in the inventory
+	wget -q -O - $REMOTE | sort | while read RECORD; do
+
+		# parse and output
+		CARREL=$( echo $RECORD | cut -d' ' -f1 )
+		printf "$CARREL   "
+
+	done
+
+	# additional beautification and done
+	echo
+	echo
+
+# local inventory
+elif [[ $ARG == 'local' ]]; then
+
+	HOME=`rdr env`
+	LIBRARY="$HOME/$LOCAL"
+
+	# beautify, sort of
+	echo
+
+	# process each item in the library; a bit of overkill
+	ls $LIBRARY | sort | while read CARREL; do 	printf "$CARREL   "; done
+
+	# additional beautification and done
+	echo
+	echo
+
+# invalid input
+else
+	rdr help list
+fi
+
+exit

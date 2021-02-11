@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# browse.sh - given the name of a carrel, read the HTML report
+
+# Eric Lease Morgan <emorgan@nd.edu>
+# (c) University of Notre Dame; distributed under a GNU Public License
+
+# December 23, 2020 - first cut; at the cabin
+
+# Usage: rdr read <local|remote> <carrel>
+# Summary: Read the narrative report of a study carrel
+# Help: Use this command to read the narrative report of a study carrel
+
+set -e
+
+# configure
+HOME=`rdr env`
+REMOTE='https://library.distantreader.org/carrels'
+
+if [[ -z $1 && -z $2 ]]; then
+	rdr help read
+	exit
+fi
+
+# get input
+LOCATION=$1
+CARREL=$2
+
+# branch accordingly; local library
+if [[ $LOCATION == 'local' ]]; then
+
+	HTML="$HOME/library/$CARREL/index.htm"
+	lynx $HTML
+
+# remote library
+elif [[ $LOCATION == 'remote' ]]; then
+
+	HTML="$REMOTE/$CARREL/index.htm"
+	lynx $HTML
+	
+# error
+else
+
+	rdr help read
+	
+fi
+
+exit
+

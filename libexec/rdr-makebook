@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# makebook - given a carrel's name, concatenate all of its txt files to a single file
+
+# Eric Lease Morgan <emorgan@nd.edu>
+# (c) University of Notre Dame; distributed under a GNU Public License
+
+# February 6, 2021 - first cuyt
+
+
+# Usage: rdr make-book <carrel>
+# Summary: Output a concatenation of all text file in a carrel -- a book
+# Help: Use this to create something printable
+
+set -e
+
+# configure
+HOME=$( rdr env )
+LIBRARY="$HOME/library"
+TXT="txt"
+ZIP='study-carrel.zip'
+
+# sanity check
+if [[ -z $1 ]]; then
+	rdr help makebook
+	exit
+fi
+
+# initialize
+CARREL=$1
+
+# do the work and done
+find "$LIBRARY/$CARREL/$TXT" -name "*.txt" | sort | while read FILE; do cat $FILE; echo -e "\f" ; done
+exit

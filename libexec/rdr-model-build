@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# txt2vec.sh - given a study carrel, create a set of vectors for MALLET	
+
+# Eric Lease Morgan <emorgan@nd.edu>
+# (c) University of Notre Dame; distributed under a GNU Public License
+
+# August 4, 2020 - first cut for the Reader Toolbox
+
+
+# Usage: rdr model-build <carrel>
+# Summary: Set up a carrel for topic modeling with MALLET
+# Help: Start here with topic modeling
+
+set -e
+
+# pre-configure
+HOME=`rdr env`
+
+# configure
+MALLETHOME="$HOME/mallet"
+MODELDIR="$HOME/tmp/mallet"
+LIBRARY="$HOME/library"
+VECTORS='model.vec'
+CORPUS='txt'
+STOPWORDS='etc/stopwords.txt'
+
+# sanity check
+if [[ -z $1 ]]; then
+	rdr help model-build
+	exit
+fi
+
+# get input
+CARREL=$1
+
+# initialize
+CORPUS="$LIBRARY/$CARREL/$CORPUS"
+VECTORS="$MODELDIR/$VECTORS"
+STOPWORDS="$LIBRARY/$CARREL/$STOPWORDS"
+
+# make sane
+mkdir -p $MODELDIR
+
+# do the work
+$MALLETHOME/bin/mallet import-dir \
+	--input $CORPUS \
+	--output $VECTORS \
+	--keep-sequence TRUE \
+    --stoplist-file	$STOPWORDS
+    
+# done
+exit
