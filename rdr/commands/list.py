@@ -8,7 +8,7 @@ from rdr import *
 def list( location ) :
 
 	"""
-    Output a list of study carrels where the value of LOCATION is either 'local' or 'remote'. Consider piping the results through your pager, such a less. For example:
+    Output a list of study carrels where LOCATION is either 'local' or 'remote'. Consider piping the results through your pager, such a less. For example:
 
       rdr list local | less
 

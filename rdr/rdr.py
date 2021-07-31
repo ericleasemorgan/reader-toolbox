@@ -7,13 +7,14 @@
 
 # require
 from rdr import *
-import rdr.commands.config    as config
-import rdr.commands.list      as list
-import rdr.commands.datasette as datasette
-import rdr.commands.harvest   as harvest
-import rdr.commands.cluster   as cluster
-import rdr.commands.features  as features
-import rdr.commands.ngrams    as ngrams
+import rdr.commands.config      as config
+import rdr.commands.list        as list
+import rdr.commands.datasette   as datasette
+import rdr.commands.harvest     as harvest
+import rdr.commands.cluster     as cluster
+import rdr.commands.features    as features
+import rdr.commands.ngrams      as ngrams
+import rdr.commands.concordance as concordance
 
 # initialize 
 @click.group()
@@ -27,6 +28,8 @@ rdr.add_command( harvest.harvest )
 rdr.add_command( cluster.cluster )
 rdr.add_command( features.features )
 rdr.add_command( ngrams.ngrams )
+rdr.add_command( ngrams.ngrams )
+rdr.add_command( concordance.concordance )
 
 # do the work
 if __name__ == '__main__' : rdr()
