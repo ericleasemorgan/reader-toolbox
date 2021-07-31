@@ -13,7 +13,7 @@ import rdr.commands.concordance as concordance
 import rdr.commands.config      as config
 import rdr.commands.datasette   as datasette
 import rdr.commands.features    as features
-import rdr.commands.harvest     as harvest
+import rdr.commands.download    as download
 import rdr.commands.list        as list
 import rdr.commands.ngrams      as ngrams
 import rdr.commands.read        as read
@@ -29,7 +29,7 @@ rdr.add_command( concordance.concordance )
 rdr.add_command( config.config )
 rdr.add_command( datasette.datasette )
 rdr.add_command( features.features )
-rdr.add_command( harvest.harvest )
+rdr.add_command( download.download )
 rdr.add_command( list.list )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( ngrams.ngrams )

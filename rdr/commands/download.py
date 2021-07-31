@@ -9,7 +9,7 @@ from rdr import *
 # harvest
 @click.command()
 @click.argument( 'carrel' )
-def harvest( carrel ) :
+def download( carrel ) :
 
 	"""Download and install a study carrel from the remote library where CARREL is the name of a study carrel"""
 			
