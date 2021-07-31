@@ -15,6 +15,7 @@ import rdr.commands.cluster     as cluster
 import rdr.commands.features    as features
 import rdr.commands.ngrams      as ngrams
 import rdr.commands.concordance as concordance
+import rdr.commands.read        as read
 
 # initialize 
 @click.group()
@@ -30,6 +31,7 @@ rdr.add_command( features.features )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( concordance.concordance )
+rdr.add_command( read.read )
 
 # do the work
 if __name__ == '__main__' : rdr()

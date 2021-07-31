@@ -1,16 +1,17 @@
 
 # require
 from rdr import *
-
 import nltk
 
-# list
-@click.command()
-@click.argument( 'carrel' )
-@click.argument( 'n' )
+# initialize
+@click.command( options_metavar='<options>' )
+@click.argument( 'carrel', metavar='<carrel>' )
+@click.argument( 'n', metavar='<n>' )
+
+# ngrams
 def ngrams( carrel, n ) :
 
-	"""Given a CARREL, output ngrams of size N"""
+	"""Given a <carrel>, output ngrams of size <n>"""
 
 	file   = LOCALLIBRARY + '/' + carrel + '/' + ETC + '/' + CORPUS
 	ngrams = list( nltk.ngrams( open( file ).read().split(), int( n ) ) )
