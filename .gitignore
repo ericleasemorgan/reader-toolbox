@@ -1,1 +1,3 @@
 .DS_Store
+rdr.egg-info
+__pycache__
