@@ -23,14 +23,15 @@ def __carrel2doc( carrel ) :
 	else :
 	
 		# warn
-		click.echo( 'Reading and formatting data for future use. This may take many minutes. Please be patient...\n', err=True )
+		click.echo( 'Reading and formatting data for future use. This may take many minutes. Please be patient...', err=True )
 
 		# create a doc
-		file = LIBRARY + '/' + carrel + '/' + CORPUS
-		text = open( file ).read()
-		size = ( os.stat( file ).st_size ) + 1
-		nlp  = spacy.load( MODEL, max_length=size )
-		doc  = nlp( text )
+		file           = LOCALLIBRARY + '/' + carrel + '/' + CORPUS
+		text           = open( file ).read()
+		size           = ( os.stat( file ).st_size ) + 1
+		nlp            = spacy.load( MODEL )
+		nlp.max_length = size
+		doc            = nlp( text )
 
 		# save it for future use
 		textacy.io.spacy.write_spacy_docs( doc, filepath=pickle )
