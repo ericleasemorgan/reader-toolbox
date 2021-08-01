@@ -1,10 +1,21 @@
 
-# configurations/constants
-LOCALLIBRARY  = '/Users/eric/Desktop/library'
+# remote library
 REMOTELIBRARY = 'http://library.distantreader.org'
-MODEL         = 'en_core_web_sm'
+
+# local carrel
+LOCALLIBRARY  = '/Users/eric/Desktop/library'
 ETC           = 'etc'
 CORPUS        = 'reader.txt'
+STOPWORDS     = 'stopwords.txt'
+TXT           = 'txt'
+
+# spacy
+MODEL         = 'en_core_web_sm'
+
+# mallet
+MALLETHOME = "/Users/eric/Desktop/mallet"
+MODELDIR   = MALLETHOME + '/' + 'tmp'
+VECTORS    = 'model.vec'
 
 # requirements
 from mpl_toolkits.mplot3d import Axes3D
