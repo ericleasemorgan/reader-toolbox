@@ -1,7 +1,7 @@
 
 # require
 from rdr import *
-
+ 
 def hangman() :
 
 	# https://inventwithpython.com/invent4thed/chapter8.html
@@ -145,7 +145,7 @@ def play( game ) :
 
 	"""Play a game"""
 
-	if game == 'hangman' : hangman()
+	if   game == 'hangman' : hangman()
 	else : 
 		click.echo( f"Error: Unknown value for GAME: { game }" )
 		os.system( 'rdr play --help' )		
