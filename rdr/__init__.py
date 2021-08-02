@@ -1,9 +1,12 @@
 
-# remote library
-REMOTELIBRARY = 'http://library.distantreader.org'
+# name of application and basename of configuration file
+APPLICATION   = 'rdr'
+CONFIGURATION = '.rdrrc'
+
+REMOTELIBRARY = 'foo'
+LOCALLIBRARY  = 'bar'
 
 # local carrel
-LOCALLIBRARY  = '/Users/eric/Desktop/library'
 ETC           = 'etc'
 CORPUS        = 'reader.txt'
 STOPWORDS     = 'stopwords.txt'
@@ -32,5 +35,6 @@ import requests
 import spacy
 import sys
 import textacy
+import pathlib
 
 
