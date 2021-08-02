@@ -10,7 +10,7 @@ from rdr import *
 import rdr.commands.browse       as browse
 import rdr.commands.cluster      as cluster
 import rdr.commands.concordance  as concordance
-import rdr.commands.configure    as configure
+import rdr.commands.set          as set
 import rdr.commands.datasette    as datasette
 import rdr.commands.features     as features
 import rdr.commands.download     as download
@@ -30,7 +30,7 @@ def rdr() : pass
 rdr.add_command( browse.browse )
 rdr.add_command( cluster.cluster )
 rdr.add_command( concordance.concordance )
-rdr.add_command( configure.configure )
+rdr.add_command( set.set )
 rdr.add_command( datasette.datasette )
 rdr.add_command( features.features )
 rdr.add_command( download.download )

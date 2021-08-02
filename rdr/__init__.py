@@ -1,7 +1,7 @@
 
 # name of application and basename of configuration file
-APPLICATION   = 'rdr'
-CONFIGURATION = '.rdrrc'
+APPLICATIONDIRECTORY = 'rdr'
+CONFIGURATIONFILE    = '.rdrrc'
 
 REMOTELIBRARY = 'foo'
 LOCALLIBRARY  = 'bar'
@@ -21,6 +21,7 @@ MODELDIR   = MALLETHOME + '/' + 'tmp'
 VECTORS    = 'model.vec'
 
 # requirements
+from configparser import ConfigParser
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.cluster.hierarchy import ward, dendrogram
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -31,10 +32,10 @@ from zipfile  import ZipFile
 import click
 import matplotlib.pyplot as plt
 import os
+import pathlib
 import requests
 import spacy
 import sys
 import textacy
-import pathlib
 
 

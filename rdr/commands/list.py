@@ -1,7 +1,6 @@
 
 # require
 from rdr import *
-from configparser import ConfigParser
 
 # list
 @click.command()
@@ -13,13 +12,15 @@ def list( location ) :
 	# configure
 	TSV = '/catalog/catalog.tsv'
 	
-	# get locations of local and remote libraries
-	directory      = pathlib.Path( click.get_app_dir( APPLICATION ) )
-	file           = directory / CONFIGURATION
-	configurations = ConfigParser()
-	configurations.read( str( file ) )
-	remoteLibrary  = configurations[ 'REMOTE' ][ 'remotelibrary' ] 
-	localLibrary   = configurations[ 'LOCAL' ][ 'locallibrary' ] 
+	# initialize
+	applicationDirectory = pathlib.Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
+	configurationFile    = applicationDirectory / CONFIGURATIONFILE
+	configurations       = ConfigParser()
+	
+	# read configurations
+	configurations.read( str( configurationFile ) )
+	remoteLibrary  = configurations[ 'REMOTELIBRARY' ][ 'remotelibrary' ] 
+	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
 
 	# local
 	if location == 'local' :
