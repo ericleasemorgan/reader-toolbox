@@ -16,8 +16,17 @@ def cluster( carrel, type ) :
 	STOPWORDS = 'english'
 	EXTENSION = '.txt'
 
+	# initialize
+	applicationDirectory = pathlib.Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
+	configurationFile    = applicationDirectory / CONFIGURATIONFILE
+	configurations       = ConfigParser()
+	
+	# read configurations
+	configurations.read( str( configurationFile ) )
+	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
+
 	# initialize & compute
-	directory  = LOCALLIBRARY + '/' + carrel + "/txt"
+	directory  = localLibrary + '/' + carrel + "/txt"
 	filenames  = [ os.path.join( directory, filename ) for filename in os.listdir( directory ) ]
 	vectorizer = TfidfVectorizer( input='filename', max_df=MAXIMUM, min_df=MINIMUM, stop_words=STOPWORDS )
 	matrix     = vectorizer.fit_transform( filenames ).toarray()

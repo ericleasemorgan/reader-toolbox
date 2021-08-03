@@ -11,7 +11,16 @@ def __carrel2doc( carrel ) :
 	CORPUS  = 'etc/reader.txt'
 
 	# initialize
-	pickle = LOCALLIBRARY + '/' + carrel + '/' + PICKLE
+	applicationDirectory = pathlib.Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
+	configurationFile    = applicationDirectory / CONFIGURATIONFILE
+	configurations       = ConfigParser()
+	
+	# read configurations
+	configurations.read( str( configurationFile ) )
+	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
+
+	# initialize
+	pickle = localLibrary + '/' + carrel + '/' + PICKLE
 
 	# check to see if we've previously been here
 	if os.path.exists( pickle ) :
@@ -23,10 +32,10 @@ def __carrel2doc( carrel ) :
 	else :
 	
 		# warn
-		click.echo( 'Reading and formatting data for future use. This may take many minutes. Please be patient...', err=True )
+		click.echo( 'Reading and formatting data model for future use. This may take many minutes. Please be patient...', err=True )
 
 		# create a doc
-		file           = LOCALLIBRARY + '/' + carrel + '/' + CORPUS
+		file           = localLibrary + '/' + carrel + '/' + CORPUS
 		text           = open( file ).read()
 		size           = ( os.stat( file ).st_size ) + 1
 		nlp            = spacy.load( MODEL )
