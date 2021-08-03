@@ -2,7 +2,6 @@
 # require
 from rdr import *
 
-
 # given a carrel, return a spacy doc
 def __carrel2doc( carrel ) :
 
@@ -47,7 +46,6 @@ def __carrel2doc( carrel ) :
 
 	# done
 	return doc
-
 
 # features
 @click.command()
