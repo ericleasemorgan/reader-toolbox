@@ -31,11 +31,11 @@ from tempfile import TemporaryFile
 from zipfile  import ZipFile
 import click
 import matplotlib.pyplot as plt
+import networkx as nx
 import os
 import pathlib
 import requests
 import spacy
 import sys
 import textacy
-
 

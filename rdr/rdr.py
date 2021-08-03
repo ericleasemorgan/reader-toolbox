@@ -21,6 +21,7 @@ import rdr.commands.malletBuild  as malletBuild
 import rdr.commands.malletUse    as malletUse
 import rdr.commands.malletReport as malletReport
 import rdr.commands.play         as play
+import rdr.commands.graph         as graph
 
 # initialize 
 @click.group()
@@ -42,6 +43,7 @@ rdr.add_command( malletBuild.malletBuild )
 rdr.add_command( malletUse.malletUse )
 rdr.add_command( malletReport.malletReport )
 rdr.add_command( play.play )
+rdr.add_command( graph.graph )
 
 # do the work
 if __name__ == '__main__' : rdr()
