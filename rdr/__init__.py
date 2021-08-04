@@ -16,7 +16,7 @@ TXT           = 'txt'
 MODEL         = 'en_core_web_sm'
 
 # mallet
-MALLETHOME = "/Users/eric/Desktop/mallet"
+MALLETHOME = "/Users/eric/Desktop/reader-mallet"
 MODELDIR   = MALLETHOME + '/' + 'tmp'
 VECTORS    = 'model.vec'
 
@@ -38,4 +38,4 @@ import requests
 import spacy
 import sys
 import textacy
-
+import nltk

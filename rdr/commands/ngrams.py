@@ -1,7 +1,6 @@
 
 # require
 from rdr import *
-import nltk
 
 # initialize
 @click.command( options_metavar='<options>' )
@@ -21,7 +20,26 @@ def ngrams( carrel, n ) :
 	# read configurations
 	configurations.read( str( configurationFile ) )
 	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
+	localLibrary   = pathlib.Path( localLibrary )
+	file           = localLibrary / carrel / ETC / CORPUS
+	
+	data   = open( str( file ) ).read()
+	tokens = nltk.word_tokenize( data, preserve_line=True )
+	tokens = [ token.lower() for token in tokens if token.isalpha() ]
+	
+	stopwords = open( str( localLibrary/carrel/ETC/'stopwords.txt' ) ).read().split()
+	
+	ngrams = list( nltk.ngrams( tokens, int( n ) ) )
+	mylist = []
+	if int( n ) < 3 :
+		for ngram in ngrams :
 
-	file   = localLibrary + '/' + carrel + '/' + ETC + '/' + CORPUS
-	ngrams = list( nltk.ngrams( open( file ).read().split(), int( n ) ) )
-	for ngram in ngrams : click.echo( "\t".join( list( ngram ) ) )
+			found = False
+			for index, token in enumerate( ngram ) :
+
+				if ngram[ index - 1 ] in stopwords : found = True
+	
+			if not found : mylist.append( ngram )
+	else : mylist = ngrams
+	
+	for ngram in mylist : click.echo( "\t".join( list( ngram ) ) )
