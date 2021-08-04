@@ -1,14 +1,22 @@
 
+# cluster 
+
 # require
 from rdr import *
 
 # config
-@click.command()
-@click.argument( 'carrel' )
-@click.argument( 'type' )
+@click.command( options_metavar='[<options>]' )
+@click.argument( 'carrel', metavar='<carrel>' )
+@click.argument( 'type', metavar='<type>' )
 def cluster( carrel, type ) :
 
-	"""Cluster the given CARREL and visualize the results, where TYPE is either 'cube' or 'dendrogram'"""
+	"""Apply dimension reduction to <carrel> and visualize where <type> is 'cube' or 'dendrogram'
+	
+	This is a useful function to determine how holistic the contents of a study carrel is.
+	
+	Example: rdr cluster homer dendrogram
+	
+	See also: rdr mallet"""
 
 	# configure
 	MAXIMUM   = 0.95

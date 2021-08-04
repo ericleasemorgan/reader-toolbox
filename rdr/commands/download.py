@@ -5,11 +5,17 @@
 from rdr import *
 
 # harvest
-@click.command()
-@click.argument( 'carrel' )
+@click.command( options_metavar='[<options>]' )
+@click.argument( 'carrel', metavar='<carrel>' )
 def download( carrel ) :
 
-	"""Download and install a study carrel from the remote library where CARREL is the name of a study carrel"""
+	"""Download <carrel> from the public library of study carrels
+	
+	A collection of about 3,000 pre-created study carrels is available at http://library.distantreader.org. Given <carrel>, this function will download the remote carrel and cache it in your local library. Use 'rdr list remote' to learn what carrels are available.
+	
+	Example: rdr download author-homer-gutenberg
+	
+	See also: rdr list"""
 			
 	# configure
 	ZIPFILE = 'study-carrel.zip'

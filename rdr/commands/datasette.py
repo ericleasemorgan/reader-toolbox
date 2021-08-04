@@ -4,11 +4,15 @@
 # require
 from rdr import *
 
-@click.command()
-@click.argument( 'carrel' )
+@click.command( options_metavar='[<options>]' )
+@click.argument( 'carrel', metavar='<carrel>' )
 def datasette( carrel ) :
 
-	"""Use Datasette to search & browse the given carrel's database"""
+	"""Use Datasette to query <carrel>'s database
+	
+	Datasette is an browser-based interface to SQLite database files. Each study carrel includes such a file, and it contains information regarding parts-of-speech, named-entities, bibliographics, keywords, etc. Through the use of Datasette and a knowledge of SQL, the underlying database can be queried and results returned in ways not possible by merely browsing the given reports.
+	
+	Example: rdr datasette homer"""
 
 	# configure
 	DATASETTE = 'datasette'
