@@ -1,22 +1,22 @@
 
+# browse - given a carrel, use lynx to navigate its file system
+
 # require
 from rdr import *
 
-# read
 @click.command()
 @click.argument( 'carrel' )
 def browse( carrel ) :
 
 	"""Open a study carrel using Lynx"""
 
-	# initialize
-	applicationDirectory = pathlib.Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
-	configurationFile    = applicationDirectory / CONFIGURATIONFILE
-	configurations       = ConfigParser()
+	# configure
+	LYNX = 'lynx'
 	
-	# read configurations
-	configurations.read( str( configurationFile ) )
-	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
-
-	url = 'file://' + localLibrary + '/' + carrel
-	os.system( 'lynx' + ' ' + url )
+	# require
+	from os import system
+	
+	# initialize, create a URL, and do the work
+	localLibrary = str( configuration( 'localLibrary' ) )
+	url          = 'file://' + localLibrary + '/' + carrel
+	system( LYNX + ' ' + url )

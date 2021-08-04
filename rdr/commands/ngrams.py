@@ -1,4 +1,6 @@
 
+# ngrams - given a study carrel and an integer, output... ngrams
+
 # require
 from rdr import *
 
@@ -12,34 +14,45 @@ def ngrams( carrel, n ) :
 
 	"""Given a <carrel>, output ngrams of size <n>"""
 
+	# require
+	import nltk
+
 	# initialize
-	applicationDirectory = pathlib.Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
-	configurationFile    = applicationDirectory / CONFIGURATIONFILE
-	configurations       = ConfigParser()
-	
-	# read configurations
-	configurations.read( str( configurationFile ) )
-	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
-	localLibrary   = pathlib.Path( localLibrary )
-	file           = localLibrary / carrel / ETC / CORPUS
-	
-	data   = open( str( file ) ).read()
-	tokens = nltk.word_tokenize( data, preserve_line=True )
+	n            = int( n )
+	localLibrary = configuration( 'localLibrary' )
+	stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ) ).read().split()
+
+	# read, tokenize, and normalize the text
+	text   = open( str( localLibrary/carrel/ETC/CORPUS ) ).read()
+	tokens = nltk.word_tokenize( text, preserve_line=True )
 	tokens = [ token.lower() for token in tokens if token.isalpha() ]
 	
-	stopwords = open( str( localLibrary/carrel/ETC/'stopwords.txt' ) ).read().split()
+	# create the set of ngrams
+	ngrams = list( nltk.ngrams( tokens, n ) )
 	
-	ngrams = list( nltk.ngrams( tokens, int( n ) ) )
-	mylist = []
-	if int( n ) < 3 :
+	# remove stopwords from unigrams or bigrams
+	if n < 3 :
+	
+		# initialize
+		results = []
+		
+		# process each ngram
 		for ngram in ngrams :
 
+			# re-initialize
 			found = False
-			for index, token in enumerate( ngram ) :
+			
+			# process each token in the ngram
+			for token in ngram :
 
-				if ngram[ index - 1 ] in stopwords : found = True
+				# check for stopword
+				if token in stopwords : found = True
 	
-			if not found : mylist.append( ngram )
-	else : mylist = ngrams
-	
-	for ngram in mylist : click.echo( "\t".join( list( ngram ) ) )
+			# conditionally update the results
+			if not found : results.append( ngram )
+
+		# done; make it read pretty
+		ngrams = results
+		
+	# output; done
+	for ngram in ngrams : click.echo( "\t".join( list( ngram ) ) )

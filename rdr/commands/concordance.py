@@ -1,10 +1,9 @@
 
+# concordance - given a carrel and a word, output rudimentary keyword-in-context
+
 # require
 from rdr import *
 
-import nltk
-
-# list
 @click.command()
 @click.argument( 'carrel' )
 @click.argument( 'word' )
@@ -12,18 +11,15 @@ def concordance( carrel, word ) :
 
 	"""Given a CARREL and a WORD, implement a key-word-in-context index"""
 
-	# initialize
-	applicationDirectory = pathlib.Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
-	configurationFile    = applicationDirectory / CONFIGURATIONFILE
-	configurations       = ConfigParser()
+	# require
+	from nltk import Text, word_tokenize
+	from os   import get_terminal_size
 
-	# read configurations
-	configurations.read( str( configurationFile ) )
-	remoteLibrary  = configurations[ 'REMOTELIBRARY' ][ 'remotelibrary' ] 
-	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
-
-	file   = localLibrary + '/' + carrel + '/' + ETC + '/' + CORPUS
+	# initialize, read, and normalize; ought to save the Text object for future use
+	localLibrary = configuration( 'localLibrary' )
+	corpus       = localLibrary/carrel/ETC/CORPUS
+	text         = Text( word_tokenize( open( str( corpus ) ).read( ) ) )
 	
-	text = nltk.Text( nltk.word_tokenize( open( file ).read( ) ) )
-	text.concordance( word, width=os.get_terminal_size().columns )
+	# output
+	text.concordance( word, width=get_terminal_size().columns )
 

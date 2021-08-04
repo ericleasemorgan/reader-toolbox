@@ -1,8 +1,9 @@
 
+# datasette - given a carrel, browse its database
+
 # require
 from rdr import *
 
-# datasette
 @click.command()
 @click.argument( 'carrel' )
 def datasette( carrel ) :
@@ -10,11 +11,15 @@ def datasette( carrel ) :
 	"""Use Datasette to search & browse the given carrel's database"""
 
 	# configure
-	DATABASE  = 'reader.db'
-	ETC       = 'etc'
 	DATASETTE = 'datasette'
 		
+	# require
+	from os import system
+	
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+
 	# build the shell command and go
-	database = LOCALLIBRARY + '/' + carrel + '/' + ETC + '/' + DATABASE
-	os.system( DATASETTE + ' ' + database + ' -o' )
+	database = localLibrary/carrel/ETC/DATABASE
+	system( DATASETTE + ' ' + str( database ) + ' -o' )
 

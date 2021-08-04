@@ -1,7 +1,8 @@
 
+# read - open the root of a study carrel in a Web browser
+
 # require
 from rdr import *
-import webbrowser
 
 # read
 @click.command()
@@ -10,14 +11,12 @@ def read( carrel ) :
 
 	"""Open the study carrel in a web browser"""
 		
-	# initialize
-	applicationDirectory = pathlib.Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
-	configurationFile    = applicationDirectory / CONFIGURATIONFILE
-	configurations       = ConfigParser()
+	# require
+	from webbrowser import open
 	
-	# read configurations
-	configurations.read( str( configurationFile ) )
-	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
 
-	url = 'file://' + localLibrary + '/' + carrel + '/index.htm'
-	webbrowser.open( url )
+	# create a URL and do the work
+	url = 'file://' + str( localLibrary/carrel/INDEX )
+	open( url )

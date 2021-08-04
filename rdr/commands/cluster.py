@@ -16,29 +16,30 @@ def cluster( carrel, type ) :
 	STOPWORDS = 'english'
 	EXTENSION = '.txt'
 
+	# require
+	from os                              import path, system, listdir
+	from scipy.cluster.hierarchy         import ward, dendrogram
+	from sklearn.feature_extraction.text import TfidfVectorizer
+	from sklearn.manifold                import MDS
+	from sklearn.metrics.pairwise        import cosine_similarity
+	import matplotlib.pyplot             as     plt
+
 	# initialize
-	applicationDirectory = pathlib.Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
-	configurationFile    = applicationDirectory / CONFIGURATIONFILE
-	configurations       = ConfigParser()
-	
-	# read configurations
-	configurations.read( str( configurationFile ) )
-	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
+	localLibrary = configuration( 'localLibrary' )
+	directory    = localLibrary/carrel/TXT
+	filenames    = [ path.join( directory, filename ) for filename in listdir( directory ) ]
+	vectorizer   = TfidfVectorizer( input='filename', max_df=MAXIMUM, min_df=MINIMUM, stop_words=STOPWORDS )
+	matrix       = vectorizer.fit_transform( filenames ).toarray()
+	distance     = 1 - cosine_similarity( matrix )
+	keys         = [ path.basename( filename ).replace( EXTENSION, '' ) for filename in filenames ] 
 
-	# initialize & compute
-	directory  = localLibrary + '/' + carrel + "/txt"
-	filenames  = [ os.path.join( directory, filename ) for filename in os.listdir( directory ) ]
-	vectorizer = TfidfVectorizer( input='filename', max_df=MAXIMUM, min_df=MINIMUM, stop_words=STOPWORDS )
-	matrix     = vectorizer.fit_transform( filenames ).toarray()
-	distance   = 1 - cosine_similarity( matrix )
-	keys       = [ os.path.basename( filename ).replace( EXTENSION, '' ) for filename in filenames ] 
-
-	# branch according to configuration; visualize
+	# branch according to type; dendrogram
 	if type == 'dendrogram' :
 		linkage_matrix = ward( distance )
 		dendrogram( linkage_matrix, orientation="right", labels=keys )
 		plt.tight_layout() 
 
+	# cube
 	elif type == 'cube' :
 		mds = MDS( n_components=3, dissimilarity="precomputed", random_state=1 )
 		pos = mds.fit_transform( distance )
@@ -50,11 +51,10 @@ def cluster( carrel, type ) :
 	# error
 	else : 
 		click.echo( f"Error: Unknown value for TYPE: { type }" )
-		os.system( 'rdr cluster --help' )		
+		system( 'rdr cluster --help' )		
 
-	# output and done
+	# output
 	plt.show()
-	exit()
 
 
 
