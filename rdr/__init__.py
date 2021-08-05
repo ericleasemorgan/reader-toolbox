@@ -25,7 +25,6 @@ VECTORS    = 'model.vec'
 # require
 import click
 
-
 # read configurations
 def configuration( name ) :
 

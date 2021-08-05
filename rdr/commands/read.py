@@ -5,18 +5,19 @@
 from rdr import *
 
 # read
-@click.command()
-@click.argument( 'carrel' )
+@click.command( options_metavar='<options>' )
+@click.argument( 'carrel', metavar='<carrel>' )
 def read( carrel ) :
 
-	"""Open the study carrel in a web browser"""
+	"""Open <carrel> in your default Web browser
+	
+	Example: rdr read homer
+	"""
 		
 	# require
 	from webbrowser import open
 	
-	# initialize
+	# initialize, create a URL, and do the work
 	localLibrary = configuration( 'localLibrary' )
-
-	# create a URL and do the work
 	url = 'file://' + str( localLibrary/carrel/INDEX )
 	open( url )
