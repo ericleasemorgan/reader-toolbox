@@ -5,9 +5,11 @@
 from rdr import *
 
 @click.command( options_metavar='[<options>]' )
+@click.option('-w', '--width', default=80, help='number of characters in each line of output')
+@click.option('-l', '--lines', default=999, help='number of lines of text to output')
 @click.argument( 'carrel', metavar='<carrel>' )
 @click.argument( 'query', metavar='<query>'  )
-def concordance( carrel, query ) :
+def concordance( carrel, query, width, lines ) :
 
 	"""Output matching lines from <carrel> where <query> is a word or phrase
 	
@@ -20,10 +22,6 @@ def concordance( carrel, query ) :
 	  * rdr concordance homer 'hector was'
 	
 	See also: rdr ngrams"""
-
-	# configure
-	WIDTH = 80
-	LINES = 9999
 	
 	# require
 	from nltk import Text, word_tokenize
@@ -33,9 +31,10 @@ def concordance( carrel, query ) :
 	corpus       = localLibrary/carrel/ETC/CORPUS
 	text         = Text( word_tokenize( open( corpus ).read( ) ) )
 	
+	# split query into a list, conditionally
 	if ' ' in query : query = query.split( ' ' )
 		
 	# do the work and output
-	concordance = text.concordance_list( query, width=WIDTH, lines=LINES )
-	for line in concordance : click.echo( line.line )
+	lines = text.concordance_list( query, width=width, lines=lines )
+	for line in lines : click.echo( line.line )
 	

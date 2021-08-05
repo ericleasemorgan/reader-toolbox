@@ -5,19 +5,44 @@
 from rdr import *
 
 # features
-@click.command()
-@click.argument( 'carrel' )
-@click.argument( 'feature' )
-def grammars( carrel, feature ) :
+@click.command( options_metavar='<options>' )
+@click.option('-e', '--entity', type=click.STRING, help="only applicable to grammar sss; a noun or noun phrase")
+@click.option('-v', '--verb', default='be', help="only applicable to grammar sss; the lemma of a verb, such as 'be', 'have', or 'say'")
+@click.argument( 'carrel', metavar='<carrel>' )
+@click.argument( 'grammar', type=click.Choice( [ 'svo', 'sss', 'nouns', 'quotes' ], case_sensitive=False ) )
+def grammars( carrel, grammar, entity, verb ) :
 
-	"""Given the name of a CARREL, extract FEATURES where they one of 'svo','sss', 'noun-chunks',' quotations'"""
+	"""Extract grammatical sentence fragments from <carrel> where fragments are one of:
+	
+	  \b
+	  * nouns - all the nouns and noun chunks
+	  * quotes - things people say
+	  * svo - fragments in the form of subject-verb-object
+	  * sss - fragments beginning with an entity, are connected with a
+	    verb, and are followed by a phrase; a more advanced version of
+	    svo
+
+	The use of language requires patterns and rules. We call theses things grammars. Unlike the tabulation of ngrams, parts-of-speech, named-entities, etc., the use of grammars enables one to extract complete thoughts. The results of theses functions are tab-delimited lists, and therefore they are amenable to post-processing with utilities such as sort, grep, and less. Use 'rdr pos' to identify interesting values for the sss grammar.
+	
+	Examples:
+	
+	\b
+	  * rdr grammars homer svo
+	  * rdr grammars homer svo | sort | less
+	  * rdr grammars homer svo | sort | less -x18
+	  * rdr grammars -e hector homer sss 
+	  * rdr grammars -e she -v have homer sss 
+	  * rdr grammars homer quotes
+	  * rdr grammars homer nouns
+	  * rdr grammars homer nouns | sort | uniq -c | sort -rn | less
+	"""
 
 	# require
 	from textacy import extract
 	from os      import system
 	
 	# subjects-verbs-objects
-	if feature == 'svo' :
+	if grammar == 'svo' :
 	
 		# initialize and get the features
 		doc      = carrel2doc( carrel )
@@ -35,7 +60,7 @@ def grammars( carrel, feature ) :
 			click.echo( "\t".join( ( subject, verb, object ) ) )
 	
 	# noun chunks
-	elif feature == 'noun-chunks' :
+	elif grammar == 'nouns' :
 
 		# initialize
 		doc      = carrel2doc( carrel )
@@ -51,15 +76,18 @@ def grammars( carrel, feature ) :
 			click.echo( chunk )
 	
 	# semistructured statements
-	elif feature == 'sss' :
+	elif grammar == 'sss' :
 
-		# get additional input
-		entity = sys.argv[ 3 ]
-		cue    = sys.argv[ 4 ]
-	
+		# sanity check
+		if not entity :
+		
+			click.echo( "Error: When specifyig type sss, the -e option is required.", err=True )
+			system( 'rdr grammars --help' )
+			exit()
+			
 		# initialize
 		doc      = carrel2doc( carrel )
-		features = list( extract.semistructured_statements( doc, entity=entity, cue=cue ) )
+		features = list( extract.semistructured_statements( doc, entity=entity, cue=verb ) )
 
 		# process each one
 		for feature in features : 
@@ -73,7 +101,7 @@ def grammars( carrel, feature ) :
 			click.echo( "\t".join( ( entity, cue, fragment ) ) )
 	
 	# direct quotes
-	elif feature == 'quotations' :
+	elif grammar == 'quotations' :
 
 		# initialize
 		doc      = carrel2doc( carrel )
@@ -89,9 +117,3 @@ def grammars( carrel, feature ) :
 
 			# output
 			click.echo( "\t".join( ( speaker, verb, quotation ) ) )
-
-	
-	# error
-	else : 
-		click.echo( f"Error: Unknown value for FEATURE: { feature }" )
-		system( 'rdr features --help' )		
