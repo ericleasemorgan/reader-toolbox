@@ -4,11 +4,23 @@
 # require
 from rdr import *
 
-@click.command()
-@click.argument( 'location' )
+@click.command( options_metavar='<options>' )
+@click.argument( 'location', metavar='<location>' )
 def list( location ) :
 
-	"""List contents of the library at the given LOCATION"""
+	"""List the items in a library where <location> is either 'local' or 'remote'
+	
+	Use this function to learn what items are saved in your local library of study carrels or what items are available in the library of about 3,000 pre-created study carrels at http://library.distantreader.org/. The local option returns a simple list. The remote option returns a tab-delimited list along with some metadata describing each item. In either case, you might want to pipe the results to utilities such as sort, grep, cut, or less in order to make the most of the result.
+	
+	Examples:
+	
+	\b
+	  * rdr list local
+	  * rdr list remote | less -S
+	  * rdr list remote | grep love | less -S -x32
+	  * rdr list remote | grep love | cut -f1 | less
+	  
+	See also: rdr download"""
 	
 	# configure
 	TSV = '/catalog/catalog.tsv'

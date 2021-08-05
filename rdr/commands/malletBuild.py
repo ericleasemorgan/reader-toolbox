@@ -9,20 +9,17 @@ def malletBuild( carrel ) :
 
 	"""Create MALLET vectors file"""
 
-	# initialize
-	applicationDirectory = pathlib.Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
-	configurationFile    = applicationDirectory / CONFIGURATIONFILE
-	configurations       = ConfigParser()
+	# require
+	from os import system
 	
-	# read configurations
-	configurations.read( str( configurationFile ) )
-	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
 
 	# initialize
-	corpus    = localLibrary + '/' + carrel  + '/' + TXT
-	stopwords = localLibrary + '/' + carrel  + '/' + ETC + '/' + STOPWORDS
-	vectors   = MODELDIR     + '/' + VECTORS
+	txt       = localLibrary/carrel/TXT
+	stopwords = localLibrary/carrel/ETC/STOPWORDS
+	vectors   = MODELDIR + '/' + VECTORS
 
-	cmd = MALLETHOME + '/bin/mallet import-dir --input ' + corpus + ' --output ' + vectors + ' --keep-sequence TRUE --stoplist-file ' + stopwords
+	cmd = MALLETHOME + '/bin/mallet import-dir --input ' + str( txt ) + ' --output ' + vectors + ' --keep-sequence TRUE --stoplist-file ' + str( stopwords )
 	click.echo( cmd, err=True )
-	os.system( cmd )
+	system( cmd )
