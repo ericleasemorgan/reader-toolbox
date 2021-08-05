@@ -6,26 +6,36 @@ from rdr import *
 
 @click.command( options_metavar='[<options>]' )
 @click.argument( 'carrel', metavar='<carrel>' )
-@click.argument( 'word', metavar='<word>'  )
-def concordance( carrel, word ) :
+@click.argument( 'query', metavar='<query>'  )
+def concordance( carrel, query ) :
 
-	"""Find <word> in <carrel> and output tokens to the left and right of <word>
+	"""Output matching lines from <carrel> where <query> is a word or phrase
 	
-	Developed in the 12th Century, concordancing is the oldest of text mining tools and the poor man's search engine. Sometimes it is called a keyword-in-context (KWIC) index. Given <word>, this is a quick and easy way to see how it is used in the same breath as other words. Use 'rdr ngrams' to identify possible words of interest.
+	Developed in the 12th Century, concordancing is the oldest of text mining tools and the poor man's search engine. Sometimes it is called a keyword-in-context (KWIC) index. Given <query>, this is a quick and easy way to see how it is used in the same breath as other words. Use 'rdr ngrams' to identify words or phrases of interest.
 	
-	Example: rdr concordance homer war
+	Examples:
+	
+	\b
+	  * rdr concordance homer hector
+	  * rdr concordance homer 'hector was'
 	
 	See also: rdr ngrams"""
 
+	# configure
+	WIDTH = 80
+	LINES = 9999
+	
 	# require
 	from nltk import Text, word_tokenize
-	from os   import get_terminal_size
 
 	# initialize, read, and normalize; ought to save the Text object for future use
 	localLibrary = configuration( 'localLibrary' )
 	corpus       = localLibrary/carrel/ETC/CORPUS
-	text         = Text( word_tokenize( open( str( corpus ) ).read( ) ) )
+	text         = Text( word_tokenize( open( corpus ).read( ) ) )
 	
-	# output
-	text.concordance( word, width=get_terminal_size().columns )
-
+	if ' ' in query : query = query.split( ' ' )
+		
+	# do the work and output
+	concordance = text.concordance_list( query, width=WIDTH, lines=LINES )
+	for line in concordance : click.echo( line.line )
+	
