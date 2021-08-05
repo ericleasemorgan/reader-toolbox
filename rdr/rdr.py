@@ -18,9 +18,7 @@ import rdr.commands.download     as download
 import rdr.commands.grammars     as grammars
 import rdr.commands.graph        as graph
 import rdr.commands.list         as list
-import rdr.commands.malletBuild  as malletBuild
-import rdr.commands.malletReport as malletReport
-import rdr.commands.malletUse    as malletUse
+import rdr.commands.mallet       as mallet
 import rdr.commands.ngrams       as ngrams
 import rdr.commands.play         as play
 import rdr.commands.read         as read
@@ -40,9 +38,7 @@ rdr.add_command( download.download )
 rdr.add_command( grammars.grammars )
 rdr.add_command( graph.graph )
 rdr.add_command( list.list )
-rdr.add_command( malletBuild.malletBuild )
-rdr.add_command( malletReport.malletReport )
-rdr.add_command( malletUse.malletUse )
+rdr.add_command( mallet.mallet )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( play.play )
