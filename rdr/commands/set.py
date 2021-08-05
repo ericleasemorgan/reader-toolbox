@@ -12,29 +12,29 @@ def set() :
 	LOCALLIBRARY  = 'reader-library'
 	REMOTELIBRARY = 'http://library.distantreader.org'
 
+	# require
+	from configparser import ConfigParser
+	from pathlib      import Path
+	
 	# initialize
 	configurations       = ConfigParser()
-	applicationDirectory = pathlib.Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
-	configurationFile    = applicationDirectory / CONFIGURATIONFILE
+	applicationDirectory = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
+	configurationFile    = applicationDirectory/CONFIGURATIONFILE
 
 	# look for configuration file
-	if not configurationFile.exists() : library = pathlib.Path.cwd() / LOCALLIBRARY
-	else :
-	
-		# get the location of the local library
-		configurations.read( str( configurationFile ) )
-		library = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ]
-	
+	if not configurationFile.exists() : localLibrary = Path.cwd()/LOCALLIBRARY
+	else : localLibrary = configuration( 'localLibrary' )
+
 	# get the desired library location
 	click.echo( 'From where do you want to save and read your study carrels? Press enter to accept the default.' )
-	library = input( 'Directory [%s]: ' % library ) or library
-	library = pathlib.Path( library )
+	localLibrary = input( 'Directory [%s]: ' % localLibrary ) or localLibrary
+	localLibrary = Path( localLibrary )
 
 	# try to create the directory and save the configuration
-	try : library.mkdir( exist_ok=True )
+	try : localLibrary.mkdir( exist_ok=True )
 	except FileNotFoundError : click.echo( "Error: file not found. Are you sure you entered a valid path?", err=True )		
 	else :
 		applicationDirectory.mkdir( parents=False, exist_ok=True )
-		configurations[ "LOCALLIBRARY" ]  = { "locallibrary"  : str( library ) }
+		configurations[ "LOCALLIBRARY" ]  = { "locallibrary"  : str( localLibrary ) }
 		configurations[ "REMOTELIBRARY" ] = { "remotelibrary" : REMOTELIBRARY }
 		with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )

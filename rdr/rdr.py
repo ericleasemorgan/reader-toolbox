@@ -12,7 +12,7 @@ import rdr.commands.cluster      as cluster
 import rdr.commands.concordance  as concordance
 import rdr.commands.set          as set
 import rdr.commands.datasette    as datasette
-import rdr.commands.features     as features
+import rdr.commands.grammars     as grammars
 import rdr.commands.download     as download
 import rdr.commands.list         as list
 import rdr.commands.ngrams       as ngrams
@@ -33,7 +33,7 @@ rdr.add_command( cluster.cluster )
 rdr.add_command( concordance.concordance )
 rdr.add_command( set.set )
 rdr.add_command( datasette.datasette )
-rdr.add_command( features.features )
+rdr.add_command( grammars.grammars )
 rdr.add_command( download.download )
 rdr.add_command( list.list )
 rdr.add_command( ngrams.ngrams )

@@ -8,7 +8,7 @@ from rdr import *
 @click.command()
 @click.argument( 'carrel' )
 @click.argument( 'feature' )
-def features( carrel, feature ) :
+def grammars( carrel, feature ) :
 
 	"""Given the name of a CARREL, extract FEATURES where they one of 'svo','sss', 'noun-chunks',' quotations'"""
 
