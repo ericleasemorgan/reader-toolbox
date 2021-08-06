@@ -38,12 +38,14 @@ def configuration( name ) :
 	
 	# read configurations
 	configurations.read( str( configurationFile ) )
-	localLibrary   = configurations[ 'LOCALLIBRARY' ][ 'locallibrary' ] 
-	remoteLibrary  = configurations[ 'REMOTELIBRARY' ][ 'remoteLibrary' ] 
+	localLibrary   = configurations[ 'RDR' ][ 'localLibrary' ] 
+	remoteLibrary  = configurations[ 'RDR' ][ 'remoteLibrary' ] 
+	malletHome     = configurations[ 'RDR' ][ 'malletHome' ] 
 	
 	# done
 	if   name == 'localLibrary'  : return( Path( localLibrary ) )
 	elif name == 'remoteLibrary' : return( remoteLibrary )
+	elif name == 'malletHome'    : return( Path( malletHome ) )
 	else :
 		click.echo( f"Error: Unknown value for configuration name: { name }. Call Eric.", err=True )
 		exit()

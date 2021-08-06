@@ -4,7 +4,7 @@ from rdr import *
 
 # config
 @click.command()
-def home() :
+def get() :
 
 	"""Echo the full path to your local library of study carrels
 	

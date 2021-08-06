@@ -10,7 +10,7 @@
 # require
 from rdr import *
 import rdr.commands.browse       as browse
-import rdr.commands.home         as home
+import rdr.commands.get         as get
 import rdr.commands.cluster      as cluster
 import rdr.commands.concordance  as concordance
 import rdr.commands.datasette    as datasette
@@ -32,7 +32,7 @@ def rdr() : pass
 # update the list of commands
 rdr.add_command( browse.browse )
 rdr.add_command( cluster.cluster )
-rdr.add_command( home.home )
+rdr.add_command( get.get )
 rdr.add_command( concordance.concordance )
 rdr.add_command( datasette.datasette )
 rdr.add_command( download.download )

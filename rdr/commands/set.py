@@ -4,12 +4,12 @@ from rdr import *
 
 # config
 @click.command()
-def set() :
+@click.argument( 'item', type=click.Choice( [ 'local', 'mallet' ], case_sensitive=False ) )
+def set( item) :
 
-	"""Set the current location of your study carrels"""
+	"""Set the location of various items"""
 	
 	# configure
-	LOCALLIBRARY  = 'reader-library'
 	REMOTELIBRARY = 'http://library.distantreader.org'
 
 	# require
@@ -21,20 +21,42 @@ def set() :
 	applicationDirectory = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
 	configurationFile    = applicationDirectory/CONFIGURATIONFILE
 
-	# look for configuration file
-	if not configurationFile.exists() : localLibrary = Path.cwd()/LOCALLIBRARY
-	else : localLibrary = configuration( 'localLibrary' )
+	# create configuration file, conditionally
+	if not configurationFile.exists() :
 
-	# get the desired library location
-	click.echo( 'From where do you want to save and read your study carrels? Press enter to accept the default.' )
-	localLibrary = input( 'Directory [%s]: ' % localLibrary ) or localLibrary
-	localLibrary = Path( localLibrary )
+		# initialize
+		configurations[ "RDR" ] = { "localLibrary"  : '',
+		                            "remotelibrary" : REMOTELIBRARY,
+		                            "malletHome"    : '' }
 
-	# try to create the directory and save the configuration
-	try : localLibrary.mkdir( exist_ok=True )
-	except FileNotFoundError : click.echo( "Error: file not found. Are you sure you entered a valid path?", err=True )		
-	else :
+		# create directory and save the file
 		applicationDirectory.mkdir( parents=False, exist_ok=True )
-		configurations[ "LOCALLIBRARY" ]  = { "locallibrary"  : str( localLibrary ) }
-		configurations[ "REMOTELIBRARY" ] = { "remotelibrary" : REMOTELIBRARY }
 		with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
+		
+	# re-initialize
+	localLibrary  = configuration( 'localLibrary' )
+	remoteLibrary = configuration( 'remoteLibrary' )
+	malletHome    = configuration( 'malletHome' )
+
+	if item == 'local' :
+	
+		# get the desired library location
+		click.echo( 'From where do you want to save and read your study carrels? Press enter to accept the default.' )
+		localLibrary = input( 'Directory [%s]: ' % localLibrary ) or localLibrary
+		localLibrary = Path( localLibrary )
+
+		# try to create the directory and save the configuration
+		try : localLibrary.mkdir( exist_ok=True )
+		except FileNotFoundError : click.echo( "Error: file not found. Are you sure you entered a valid path?", err=True )		
+
+	elif item == 'mallet' :
+	
+		# get the desired library location
+		click.echo( 'What is the full path to your MALLET distribution?' )
+		malletHome = input( 'Directory [%s]: ' % malletHome ) or malletHome
+
+	# update the configuration file
+	configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "remotelibrary" : remoteLibrary, "malletHome" : malletHome }
+	with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
+
+
