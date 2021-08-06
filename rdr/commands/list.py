@@ -5,8 +5,9 @@
 from rdr import *
 
 @click.command( options_metavar='<options>' )
+@click.option('-h', '--human', is_flag=True, help='output in a more human-readable form')
 @click.argument( 'location', metavar='<location>' )
-def list( location ) :
+def list( human, location ) :
 
 	"""List the items in a library where <location> is either 'local' or 'remote'
 	
@@ -17,6 +18,7 @@ def list( location ) :
 	\b
 	  * rdr list local
 	  * rdr list remote | less -S
+	  * rdr list -h remote
 	  * rdr list remote | grep love | less -S -x32
 	  * rdr list remote | grep love | cut -f1 | less
 	  
@@ -42,10 +44,38 @@ def list( location ) :
 		for carrel in carrels : click.echo( carrel )
 	
 	# remote; get, and output
-	elif location == 'remote' : click.echo( get( remoteLibrary + TSV ).text )
+	elif location == 'remote' :
 	
-	# error
-	else : 
-		click.echo( f"Error: Unknown value for location: { location }" )
-		system( 'rdr list --help' )		
+		# create person-amenable output
+		if human :
+		
+			# get the raw data and process each record 
+			records = get( remoteLibrary + TSV ).text 
+			for record in records.split( '\n' ) :
+			
+				# delimit and sanity check
+				fields = record.split( '\t' )
+				if len( fields ) != 7 : break
+			
+				# parse
+				name     = fields[ 0 ]
+				date     = fields[ 1 ]
+				keywords = fields[ 2 ]
+				items    = fields[ 3 ]
+				words    = fields[ 4 ]
+				score    = fields[ 5 ]
+				bytes    = fields[ 6 ]
+			
+				# output; should probably use pager
+				click.echo( f'      name: {name}' )
+				click.echo( f'      date: {date}' )
+				click.echo( f'  keywords: {keywords}' )
+				click.echo( f'     items: {items}' )
+				click.echo( f'     words: {words}' )
+				click.echo( f'     score: {score}' )
+				click.echo( f'     bytes: {bytes}' )
+				click.echo( )
+	
+		# get the raw data and hope the results get piped to utilities like sort, grep, cut, less, etc.
+		else : click.echo( get( remoteLibrary + TSV ).text )
 

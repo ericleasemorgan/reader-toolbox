@@ -23,6 +23,7 @@ import rdr.commands.ngrams       as ngrams
 import rdr.commands.play         as play
 import rdr.commands.read         as read
 import rdr.commands.set          as set
+import rdr.commands.tm           as tm
 
 # initialize 
 @click.group()
@@ -44,6 +45,7 @@ rdr.add_command( ngrams.ngrams )
 rdr.add_command( play.play )
 rdr.add_command( read.read )
 rdr.add_command( set.set )
+rdr.add_command( tm.tm )
 
 # do the work
 if __name__ == '__main__' : rdr()

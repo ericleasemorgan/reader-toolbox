@@ -3,8 +3,7 @@
 APPLICATIONDIRECTORY = 'rdr'
 CONFIGURATIONFILE    = '.rdrrc'
 
-REMOTELIBRARY = 'foo'
-LOCALLIBRARY  = 'bar'
+CARRELS = 'carrels'
 
 # local carrel file system
 ETC       = 'etc'
@@ -13,6 +12,7 @@ CORPUS    = 'reader.txt'
 STOPWORDS = 'stopwords.txt'
 DATABASE  = 'reader.db'
 INDEX     = 'index.htm'
+HTM       = 'htm'
 
 # spacy's default model
 MODEL         = 'en_core_web_sm'
