@@ -76,5 +76,5 @@ def list( human, location ) :
 				click.echo( )
 	
 		# get the raw data and hope the results get piped to utilities like sort, grep, cut, less, etc.
-		else : click.echo( get( remoteLibrary + TSV ).text )
+		else : click.echo( get( REMOTELIBRARY + '/' + TSV ).text  )
 

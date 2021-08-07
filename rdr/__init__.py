@@ -1,3 +1,28 @@
+"""
+a command-line tool for interacting with Distant Reader study carrels
+
+rdr -- shorthand for Reader Toolbox -- is a command-line tool for
+interacting with Distant Reader study carrels.
+
+The Distant Reader (https:/distantreader.org) takes an almost arbitrary
+amount of unstructured data (text) as input, does text mining and
+natural language processing against it, and outputs sets of structured
+data affectionatly called "study carrels".
+
+As you may or may not know, a library study carrel is a little table or
+room assigned to individual students. The students are then authorized
+to collect thing from around the library, bring them to their study
+carrel, organize them in any way they so desire, and persue their
+research. Distant Reader study carrels are a modern-day version of the
+venerable library study carrel.
+
+This tool -- rdr -- enables the student, researcher, or scholar to
+quickly and easily digest the content of carrels to address questions
+from the mundane to the sublime. 
+
+Eric Lease Morgan <emorgan@nd.edu>
+(c) University of Notre Dame; distributed under a GNU Public License
+"""
 
 # configure; name of application and basename of configuration file
 APPLICATIONDIRECTORY = 'rdr'
@@ -18,11 +43,6 @@ HTM       = 'htm'
 
 # spacy's default model
 MODEL         = 'en_core_web_sm'
-
-# mallet
-MALLETHOME = "/Users/eric/Desktop/reader-mallet"
-MODELDIR   = MALLETHOME + '/' + 'tmp'
-VECTORS    = 'model.vec'
 
 # require
 import click
