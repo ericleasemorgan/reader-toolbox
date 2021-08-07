@@ -9,21 +9,20 @@
 
 # require
 from rdr import *
-import rdr.commands.browse       as browse
+import rdr.commands.browse      as browse
+import rdr.commands.cluster     as cluster
+import rdr.commands.concordance as concordance
+import rdr.commands.datasette   as datasette
+import rdr.commands.download    as download
 import rdr.commands.get         as get
-import rdr.commands.cluster      as cluster
-import rdr.commands.concordance  as concordance
-import rdr.commands.datasette    as datasette
-import rdr.commands.download     as download
-import rdr.commands.grammars     as grammars
-import rdr.commands.graph        as graph
-import rdr.commands.list         as list
-import rdr.commands.mallet       as mallet
-import rdr.commands.ngrams       as ngrams
-import rdr.commands.play         as play
-import rdr.commands.read         as read
-import rdr.commands.set          as set
-import rdr.commands.tm           as tm
+import rdr.commands.grammars    as grammars
+import rdr.commands.graph       as graph
+import rdr.commands.list        as list
+import rdr.commands.ngrams      as ngrams
+import rdr.commands.play        as play
+import rdr.commands.read        as read
+import rdr.commands.set         as set
+import rdr.commands.tm          as tm
 
 # initialize 
 @click.group()
@@ -32,14 +31,13 @@ def rdr() : pass
 # update the list of commands
 rdr.add_command( browse.browse )
 rdr.add_command( cluster.cluster )
-rdr.add_command( get.get )
 rdr.add_command( concordance.concordance )
 rdr.add_command( datasette.datasette )
 rdr.add_command( download.download )
+rdr.add_command( get.get )
 rdr.add_command( grammars.grammars )
 rdr.add_command( graph.graph )
 rdr.add_command( list.list )
-rdr.add_command( mallet.mallet )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( play.play )

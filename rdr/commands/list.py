@@ -25,21 +25,20 @@ def list( human, location ) :
 	See also: rdr download"""
 	
 	# configure
-	TSV = '/catalog/catalog.tsv'
+	TSV = 'catalog/catalog.tsv'
 
 	# require
-	from os       import listdir, system
-	from requests import get
-
-	# initialize
-	localLibrary  = configuration( 'localLibrary' )
-	remoteLibrary = configuration( 'remoteLibrary' )
-	
+	from requests  import get
+	import pathlib
+		
 	# branch accordingly; local
 	if location == 'local' :
 		
+		# initialize
+		localLibrary = configuration( 'localLibrary' )
+		
 		# read, sort, and output
-		carrels = listdir( localLibrary )
+		carrels = [ carrel.name for carrel in localLibrary.iterdir() if carrel.is_dir() ]
 		carrels.sort()
 		for carrel in carrels : click.echo( carrel )
 	
@@ -50,7 +49,7 @@ def list( human, location ) :
 		if human :
 		
 			# get the raw data and process each record 
-			records = get( remoteLibrary + TSV ).text 
+			records = get( REMOTELIBRARY + '/' + TSV ).text 
 			for record in records.split( '\n' ) :
 			
 				# delimit and sanity check

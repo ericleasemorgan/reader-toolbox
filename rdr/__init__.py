@@ -3,7 +3,9 @@
 APPLICATIONDIRECTORY = 'rdr'
 CONFIGURATIONFILE    = '.rdrrc'
 
-CARRELS = 'carrels'
+# remote library
+REMOTELIBRARY = 'http://library.distantreader.org'
+CARRELS       = 'carrels'
 
 # local carrel file system
 ETC       = 'etc'
@@ -39,12 +41,10 @@ def configuration( name ) :
 	# read configurations
 	configurations.read( str( configurationFile ) )
 	localLibrary   = configurations[ 'RDR' ][ 'localLibrary' ] 
-	remoteLibrary  = configurations[ 'RDR' ][ 'remoteLibrary' ] 
 	malletHome     = configurations[ 'RDR' ][ 'malletHome' ] 
 	
 	# done
 	if   name == 'localLibrary'  : return( Path( localLibrary ) )
-	elif name == 'remoteLibrary' : return( remoteLibrary )
 	elif name == 'malletHome'    : return( Path( malletHome ) )
 	else :
 		click.echo( f"Error: Unknown value for configuration name: { name }. Call Eric.", err=True )

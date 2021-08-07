@@ -4,7 +4,8 @@ from rdr import *
 
 # config
 @click.command()
-def get() :
+@click.argument( 'item', type=click.Choice( [ 'local', 'mallet' ], case_sensitive=False ) )
+def get( item ) :
 
 	"""Echo the full path to your local library of study carrels
 	
@@ -15,5 +16,8 @@ def get() :
 	\b
 	  * rdr home"""
 	
-	# initialize and do the work
-	click.echo( str( configuration( 'localLibrary' ) ) )
+	# branch accordingly
+	if   item == 'local' : click.echo( str( configuration( 'localLibrary' ) ) )
+	elif item == 'mallet' : click.echo( str( configuration( 'malletHome' ) ) )
+	
+	

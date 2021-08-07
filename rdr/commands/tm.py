@@ -11,30 +11,34 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def tm( carrel, topics, dimensions, iterations ) :
 
-	"""Apply topic modeling to <carrel>"""
+	"""Apply topic modeling against <carrel>
+	
+	Topic modeling is the process of enumerating latent themes from a corpus, and it is yet another way to describe a corpus's aboutness. It is suggested you start out small when it comes to the values for --topics and --demensions. Repeat the modeling process an gradually increase the values."
+	
+	Example: rdr tm homer -t 3 -d 3
+	"""
 
 	# configure
 	HTML       = 'topic-model.htm'
-	MALLETHOME = '/Users/eric/Desktop/reader-mallet'
-	MALLETPATH = '/Users/eric/Desktop/reader-mallet/bin/mallet'
 	RANDOMSEED = 42
 	WORKERS    = 6
+	MALLETBIN  = 'bin/mallet'
 
 	# require
+	from gensim                 import corpora
 	from gensim.models.wrappers import LdaMallet, ldamallet
 	from nltk                   import word_tokenize
 	from os                     import environ
 	from pathlib                import Path
-	import gensim.corpora       as     corpora
 	import pyLDAvis
 	import pyLDAvis.gensim_models
 	import webbrowser
 	
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
+	mallet       = str( configuration( 'malletHome' ) ) + '/' + MALLETBIN
 	stopwords    = open( localLibrary/carrel/ETC/STOPWORDS ).read().split()
 	files        = Path( localLibrary/carrel/TXT ).glob( '*.txt' )
-	#environ.update( { 'MALLET_HOME': MALLETHOME } )
 
 	# create a list of normalized texts
 	texts = []
@@ -50,12 +54,12 @@ def tm( carrel, topics, dimensions, iterations ) :
 	id2word = corpora.Dictionary( texts )
 	corpus  = [ id2word.doc2bow( text ) for text in texts ]
 
-	# use mallet to model the data, and convert it to something gensim can understand
-	model = LdaMallet( MALLETPATH, corpus=corpus, num_topics=topics, id2word=id2word, workers=WORKERS, iterations=iterations, random_seed=RANDOMSEED )
+	# use mallet to model the data and convert it to something gensim can understand
+	model = LdaMallet( mallet, corpus=corpus, num_topics=topics, id2word=id2word, workers=WORKERS, iterations=iterations, random_seed=RANDOMSEED )
 	model = ldamallet.malletmodel2ldamodel( model )
 
 	# create, save, and open the visualization
-	html = str( localLibrary/carrel/HTM/HTML )
+	html          = str( localLibrary/carrel/HTM/HTML )
 	visualization = pyLDAvis.gensim_models.prepare( model, corpus, id2word, sort_topics=True, R=dimensions )
 	pyLDAvis.save_html( visualization, html )
 	webbrowser.open( 'file://' + html )

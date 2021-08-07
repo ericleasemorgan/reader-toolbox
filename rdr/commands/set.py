@@ -5,13 +5,10 @@ from rdr import *
 # config
 @click.command()
 @click.argument( 'item', type=click.Choice( [ 'local', 'mallet' ], case_sensitive=False ) )
-def set( item) :
+def set( item ) :
 
 	"""Set the location of various items"""
 	
-	# configure
-	REMOTELIBRARY = 'http://library.distantreader.org'
-
 	# require
 	from configparser import ConfigParser
 	from pathlib      import Path
@@ -25,9 +22,7 @@ def set( item) :
 	if not configurationFile.exists() :
 
 		# initialize
-		configurations[ "RDR" ] = { "localLibrary"  : '',
-		                            "remotelibrary" : REMOTELIBRARY,
-		                            "malletHome"    : '' }
+		configurations[ "RDR" ] = { "localLibrary"  : '', "malletHome" : '' }
 
 		# create directory and save the file
 		applicationDirectory.mkdir( parents=False, exist_ok=True )
@@ -35,9 +30,9 @@ def set( item) :
 		
 	# re-initialize
 	localLibrary  = configuration( 'localLibrary' )
-	remoteLibrary = configuration( 'remoteLibrary' )
 	malletHome    = configuration( 'malletHome' )
 
+	# branch accordingly, local
 	if item == 'local' :
 	
 		# get the desired library location
@@ -49,6 +44,7 @@ def set( item) :
 		try : localLibrary.mkdir( exist_ok=True )
 		except FileNotFoundError : click.echo( "Error: file not found. Are you sure you entered a valid path?", err=True )		
 
+	# mallet
 	elif item == 'mallet' :
 	
 		# get the desired library location
@@ -56,7 +52,7 @@ def set( item) :
 		malletHome = input( 'Directory [%s]: ' % malletHome ) or malletHome
 
 	# update the configuration file
-	configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "remotelibrary" : remoteLibrary, "malletHome" : malletHome }
+	configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome }
 	with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
 
 

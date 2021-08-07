@@ -28,11 +28,10 @@ def download( carrel ) :
 
 	# initialize
 	localLibrary  = configuration( 'localLibrary' )
-	remoteLibrary = configuration( 'remoteLibrary' )
 
 	# get the remote zip file; needs error checking
 	click.echo( "Getting study carrel... ", err=True, nl=False )
-	response = get( remoteLibrary + '/' + CARRELS + '/' + carrel + '/' + ZIPFILE )
+	response = get( REMOTELIBRARY + '/' + CARRELS + '/' + carrel + '/' + ZIPFILE )
 	
 	# initialize a temporary file and write to it
 	click.echo( "Saving study carrel... ", err=True, nl=False )

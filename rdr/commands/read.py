@@ -30,6 +30,5 @@ def read( carrel, location ) :
 		
 	elif location == 'remote' :
 	
-		remoteLibrary = configuration( 'remoteLibrary' )
-		url = remoteLibrary + '/' + CARRELS + '/' + carrel
+		url = REMOTELIBRARY + '/' + CARRELS + '/' + carrel
 		open( url )
