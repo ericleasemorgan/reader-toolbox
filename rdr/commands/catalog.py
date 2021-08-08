@@ -1,5 +1,5 @@
 
-# list - given a location, output a list of study carrels
+# catalog - given a location, output a list of study carrels
 
 # require
 from rdr import *
@@ -7,7 +7,7 @@ from rdr import *
 @click.command( options_metavar='<options>' )
 @click.option('-h', '--human', is_flag=True, help='output in a more human-readable form')
 @click.argument( 'location', metavar='<location>' )
-def list( human, location ) :
+def catalog( human, location ) :
 
 	"""List the items in a library where <location> is either 'local' or 'remote'
 	
@@ -25,11 +25,12 @@ def list( human, location ) :
 	See also: rdr download"""
 	
 	# configure
-	TSV = 'catalog/catalog.tsv'
+	TSV    = 'catalog/catalog.tsv'
+	RECORD = "      item: ##ITEM##\n      name: ##NAME##\n      date: ##DATE##\n  keywords: ##KEYWORDS##\n     items: ##ITEMS##\n     words: ##WORDS##\n     score: ##SCORE##\n     bytes: ##BYTES##\n\n"
+	HEADER = "\nThe catalog includes ##COUNT## items, and each is listed below:\n\n"
 
 	# require
-	from requests  import get
-	import pathlib
+	from requests import get
 		
 	# branch accordingly; local
 	if location == 'local' :
@@ -42,15 +43,18 @@ def list( human, location ) :
 		carrels.sort()
 		for carrel in carrels : click.echo( carrel )
 	
-	# remote; get, and output
+	# remote
 	elif location == 'remote' :
 	
 		# create person-amenable output
 		if human :
 		
-			# get the raw data and process each record 
+			# create a rudimentary catalog
+			catalog = ''
+			count   = 0
+			
 			records = get( REMOTELIBRARY + '/' + TSV ).text 
-			for record in records.split( '\n' ) :
+			for item, record in enumerate( records.split( '\n' ) ) :
 			
 				# delimit and sanity check
 				fields = record.split( '\t' )
@@ -65,16 +69,26 @@ def list( human, location ) :
 				score    = fields[ 5 ]
 				bytes    = fields[ 6 ]
 			
-				# output; should probably use pager
-				click.echo( f'      name: {name}' )
-				click.echo( f'      date: {date}' )
-				click.echo( f'  keywords: {keywords}' )
-				click.echo( f'     items: {items}' )
-				click.echo( f'     words: {words}' )
-				click.echo( f'     score: {score}' )
-				click.echo( f'     bytes: {bytes}' )
-				click.echo( )
-	
+				# increment
+				count += 1
+				item  += 1
+				
+				# update
+				record   = RECORD.replace( '##ITEM##', str( item ) )
+				record   = record.replace( '##NAME##', name )
+				record   = record.replace( '##DATE##', date )
+				record   = record.replace( '##KEYWORDS##', keywords )
+				record   = record.replace( '##ITEMS##', items )
+				record   = record.replace( '##WORDS##', words )
+				record   = record.replace( '##SCORE##', score )
+				record   = record.replace( '##BYTES##', bytes )
+				catalog += record
+				
+			# add the header and output
+			header  = HEADER.replace( '##COUNT##', str( count ) )
+			catalog = header + catalog
+			click.echo_via_pager( catalog )
+				
 		# get the raw data and hope the results get piped to utilities like sort, grep, cut, less, etc.
 		else : click.echo( get( REMOTELIBRARY + '/' + TSV ).text  )
 
