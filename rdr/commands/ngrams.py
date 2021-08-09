@@ -17,8 +17,9 @@ def ngrams( carrel, n, filter, human ) :
 	"""Given a <carrel>, output ngrams of size <n>"""
 
 	# require
+	from re     import search
 	import nltk
-
+	
 	# initialize
 	n            = int( n )
 	localLibrary = configuration( 'localLibrary' )
@@ -38,9 +39,9 @@ def ngrams( carrel, n, filter, human ) :
 		# initialize and process each ngram
 		filtered = []
 		for ngram in ngrams :
-				
+			
 			# check and update
-			if filter in ngram : filtered.append( ngram )
+			if search( filter, ' '.join( ngram ) ) : filtered.append( ngram )
 		
 		# done
 		ngrams = filtered
