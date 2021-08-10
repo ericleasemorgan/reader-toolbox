@@ -7,7 +7,7 @@ from rdr import *
 # config
 @click.command( options_metavar='[<options>]' )
 @click.argument( 'carrel', metavar='<carrel>' )
-@click.argument( 'type', metavar='<type>' )
+@click.option('-t', '--type', default='dendrogram', type=click.Choice( [ 'cube', 'dendrogram' ] ), help='output in a more human-readable form')
 def cluster( carrel, type ) :
 
 	"""Apply dimension reduction to <carrel> and visualize where <type> is 'cube' or 'dendrogram'

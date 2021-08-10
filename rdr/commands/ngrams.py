@@ -4,24 +4,22 @@
 # require
 from rdr import *
 
-# initialize
-@click.command( options_metavar='<options>' )
-@click.option('-h', '--human', is_flag=True, help='output in a more human-readable form')
-@click.option('-f', '--filter', type=click.STRING, help="limit results to include the given word")
-@click.argument( 'carrel', metavar='<carrel>' )
-@click.argument( 'n', metavar='<n>' )
-
 # ngrams
-def ngrams( carrel, n, filter, human ) :
+@click.command( options_metavar='<options>' )
+@click.option('-f', '--filter', type=click.STRING, help="limit results to include the given word")
+@click.option('-c', '--count', is_flag=True, help='count and tabulate the result')
+@click.option('-s', '--size', default=1, help='output in a more human-readable form')
+@click.argument( 'carrel', metavar='<carrel>' )
+def ngrams( carrel, size, filter, count ) :
 
-	"""Given a <carrel>, output ngrams of size <n>"""
+	"""Output ngrams of the given <size> from <carrel>"""
 
 	# require
 	from re     import search
 	import nltk
 	
 	# initialize
-	n            = int( n )
+	size         = int( size )
 	localLibrary = configuration( 'localLibrary' )
 	stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ) ).read().split()
 
@@ -31,7 +29,7 @@ def ngrams( carrel, n, filter, human ) :
 	tokens = [ token.lower() for token in tokens if token.isalpha() ]
 	
 	# create the set of ngrams
-	ngrams = list( nltk.ngrams( tokens, n ) )
+	ngrams = list( nltk.ngrams( tokens, size ) )
 	
 	# filter, conditionally
 	if filter :
@@ -47,7 +45,7 @@ def ngrams( carrel, n, filter, human ) :
 		ngrams = filtered
 
 	# remove stopwords from unigrams or bigrams
-	if n < 3 :
+	if size < 3 :
 	
 		# initialize
 		results = []
@@ -71,7 +69,7 @@ def ngrams( carrel, n, filter, human ) :
 		ngrams = results
 		
 	# output; human
-	if human :
+	if count :
 	
 		# initialize a dictionary and process each ngram
 		items = {}

@@ -6,8 +6,8 @@ from rdr import *
 
 # read
 @click.command( options_metavar='<options>' )
+@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='output in a more human-readable form')
 @click.argument( 'carrel', metavar='<carrel>' )
-@click.argument( 'location', type=click.Choice( [ 'local', 'remote' ], case_sensitive=False ) )
 def read( carrel, location ) :
 
 	"""Open <carrel> in your default Web browser where the location is one of:

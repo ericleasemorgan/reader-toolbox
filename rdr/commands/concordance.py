@@ -7,8 +7,8 @@ from rdr import *
 @click.command( options_metavar='[<options>]' )
 @click.option('-w', '--width', default=80, help='number of characters in each line of output')
 @click.option('-l', '--lines', default=999, help='number of lines of text to output')
+@click.option('-q', '--query', default='love', help='output in a more human-readable form')
 @click.argument( 'carrel', metavar='<carrel>' )
-@click.argument( 'query', metavar='<query>'  )
 def concordance( carrel, query, width, lines ) :
 
 	"""Output matching lines from <carrel> where <query> is a word or phrase

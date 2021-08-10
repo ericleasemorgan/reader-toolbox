@@ -6,14 +6,14 @@ from rdr import *
 
 @click.command( options_metavar='<options>' )
 @click.option('-t', '--topics', default=7, help="number of topics to generate")
-@click.option('-d', '--dimensions', default=7, help="number of words used to describe topic")
+@click.option('-w', '--words', default=7, help="number of words used to describe topic")
 @click.option('-i', '--iterations', default=2400, help="number of iterations")
 @click.argument( 'carrel', metavar='<carrel>' )
-def tm( carrel, topics, dimensions, iterations ) :
+def tm( carrel, topics, words, iterations ) :
 
 	"""Apply topic modeling against <carrel>
 	
-	Topic modeling is the process of enumerating latent themes from a corpus, and it is yet another way to describe a corpus's aboutness. It is suggested you start out small when it comes to the values for --topics and --demensions. Repeat the modeling process an gradually increase the values."
+	Topic modeling is the process of enumerating latent themes from a corpus, and it is yet another way to describe a corpus's aboutness. It is suggested you start out small when it comes to the values for --topics and --words. Repeat the modeling process an gradually increase the values."
 	
 	Example: rdr tm homer -t 3 -d 3
 	"""
@@ -60,6 +60,6 @@ def tm( carrel, topics, dimensions, iterations ) :
 
 	# create, save, and open the visualization
 	html          = str( localLibrary/carrel/HTM/HTML )
-	visualization = pyLDAvis.gensim_models.prepare( model, corpus, id2word, sort_topics=True, R=dimensions )
+	visualization = pyLDAvis.gensim_models.prepare( model, corpus, id2word, sort_topics=True, R=words )
 	pyLDAvis.save_html( visualization, html )
 	webbrowser.open( 'file://' + html )

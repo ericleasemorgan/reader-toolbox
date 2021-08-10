@@ -6,7 +6,7 @@ from rdr import *
 
 @click.command( options_metavar='<options>' )
 @click.option('-h', '--human', is_flag=True, help='output in a more human-readable form')
-@click.argument( 'location', metavar='<location>' )
+@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='output in a more human-readable form')
 def catalog( human, location ) :
 
 	"""List the items in a library where <location> is either 'local' or 'remote'
