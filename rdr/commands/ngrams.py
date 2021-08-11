@@ -8,23 +8,41 @@ from rdr import *
 @click.command( options_metavar='<options>' )
 @click.option('-f', '--filter', type=click.STRING, help="limit results to include the given word")
 @click.option('-c', '--count', is_flag=True, help='count and tabulate the result')
+@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='where is the library')
 @click.option('-s', '--size', default=1, help='output in a more human-readable form')
 @click.argument( 'carrel', metavar='<carrel>' )
-def ngrams( carrel, size, filter, count ) :
+def ngrams( carrel, size, filter, count, location ) :
 
 	"""Output ngrams of the given <size> from <carrel>"""
 
 	# require
-	from re     import search
+	from re       import search
+	from requests import get
 	import nltk
-	
-	# initialize
-	size         = int( size )
-	localLibrary = configuration( 'localLibrary' )
-	stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ) ).read().split()
 
+	# branch according to location; local
+	if location == 'local' :
+	
+		# read local data
+		localLibrary = configuration( 'localLibrary' )
+		stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ) ).read().split()
+		text         = open( str( localLibrary/carrel/ETC/CORPUS ) ).read()
+	
+	# remote
+	elif location == 'remote' :
+	
+		# read remote data; needs error checking
+		text      = get( '/'.join ( [ REMOTELIBRARY, CARRELS, carrel, ETC, CORPUS ] ) ).text
+		stopwords = get( '/'.join ( [ REMOTELIBRARY, CARRELS, carrel, ETC, STOPWORDS ] ) ).text.split()
+		
+	# error
+	else :
+	
+		# click ought to prevent this, but just in case
+		click.echo( "Error: Unknown value for location: { location }. Call Eric.", err=True )
+		exit()
+			
 	# read, tokenize, and normalize the text
-	text   = open( str( localLibrary/carrel/ETC/CORPUS ) ).read()
 	tokens = nltk.word_tokenize( text, preserve_line=True )
 	tokens = [ token.lower() for token in tokens if token.isalpha() ]
 	
@@ -89,6 +107,9 @@ def ngrams( carrel, size, filter, count ) :
 			record = str( ngram[ 1 ] ) + '\t' + '\t'.join( list( ngram[ 0 ] ) )
 			click.echo( record )
 		
-	# output raw data, and hope sort, uniq, grep, and less are used
+	# power user
 	else :
+	
+		# output raw data, and hope sort, uniq, grep, and less are used
 		for ngram in ngrams : click.echo( "\t".join( list( ngram ) ) )
+
