@@ -40,6 +40,7 @@ STOPWORDS = 'stopwords.txt'
 DATABASE  = 'reader.db'
 INDEX     = 'index.htm'
 HTM       = 'htm'
+MANIFEST  = 'MANIFEST.xml'
 
 # spacy's default model
 MODEL         = 'en_core_web_sm'

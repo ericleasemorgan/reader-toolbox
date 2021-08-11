@@ -5,8 +5,9 @@
 from rdr import *
 
 @click.command( options_metavar='[<options>]' )
+@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='where is the library')
 @click.argument( 'carrel', metavar='<carrel>' )
-def browse( carrel ) :
+def browse( carrel, location ) :
 
 	"""Use a Web browser called Lynx to peruse <carrel>
 	
@@ -21,8 +22,18 @@ def browse( carrel ) :
 	
 	# require
 	from os import system
+	import webbrowser
 	
-	# initialize, create a URL, and do the work
-	localLibrary = str( configuration( 'localLibrary' ) )
-	url          = 'file://' + localLibrary + '/' + carrel
-	system( LYNX + ' ' + url )
+	# local carrel
+	if location == 'local' :
+	
+		# initialize, create a URL, and do the work
+		localLibrary = str( configuration( 'localLibrary' ) )
+		url          = 'file://' + localLibrary + '/' + carrel
+		system( LYNX + ' ' + url )
+
+	# remote carrel
+	elif location == 'remote' :
+	
+		url = '/'.join ( [ REMOTELIBRARY, CARRELS, carrel, MANIFEST ] )
+		webbrowser.open( url )
