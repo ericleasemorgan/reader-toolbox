@@ -76,7 +76,7 @@ def configuration( name ) :
 def carrel2doc( carrel ) :
 
 	# configure
-	PICKLE = 'reader.bin'
+	PICKLE = 'reader.spacy'
 
 	# require
 	from os    import path, stat
@@ -91,7 +91,7 @@ def carrel2doc( carrel ) :
 	if path.exists( pickle ) :
 		
 		# read the pickle file
-		doc = next( textacy.io.spacy.read_spacy_docs( pickle ) )
+		doc = next( textacy.io.spacy.read_spacy_docs( pickle, lang=MODEL ) )
 	
 	# otherwise
 	else :
@@ -113,19 +113,3 @@ def carrel2doc( carrel ) :
 	# done
 	return doc
 
-
-# requirements
-#from mpl_toolkits.mplot3d import Axes3D
-#from sklearn.feature_extraction.text import TfidfVectorizer
-#from sklearn.manifold import MDS
-#from sklearn.metrics.pairwise import cosine_similarity
-#from tempfile import TemporaryFile
-#from zipfile  import ZipFile
-#import matplotlib.pyplot as plt
-#import networkx as nx
-#import os
-#import pathlib
-#import requests
-#import spacy
-#import sys
-#import textacy
