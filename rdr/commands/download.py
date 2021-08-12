@@ -30,18 +30,18 @@ def download( carrel ) :
 	localLibrary  = configuration( 'localLibrary' )
 
 	# get the remote zip file; needs error checking
-	click.echo( "Getting study carrel... ", err=True, nl=False )
+	click.echo( "Getting study carrel... ", err=True )
 	response = get( REMOTELIBRARY + '/' + CARRELS + '/' + carrel + '/' + ZIPFILE )
 	
 	# initialize a temporary file and write to it
-	click.echo( "Saving study carrel... ", err=True, nl=False )
+	click.echo( "Saving study carrel... ", err=True )
 	handle = TemporaryFile()
 	handle.write( response.content )
 	
 	# unzip the temporary file and close it, which also deletes it
-	click.echo( "Unziping study carrel... ", err=True )
+	click.echo( "Unziping study carrel... " )
 	with ZipFile( handle, 'r' ) as zip : zip.extractall( str( localLibrary ) )
 	handle.close()
 
 	# done
-	click.echo( f"Done. Now you might want to 'rdr info { carrel }'", err=True )
+	click.echo( "Done." )

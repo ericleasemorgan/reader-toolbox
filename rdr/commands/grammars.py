@@ -38,10 +38,19 @@ def outputFeatures( features ) :
 	# process each feature
 	for feature in features :
 			
-		# branch accordingly
-		if str( type( feature ) ) == "<class 'spacy.tokens.span.Span'>" : click.echo( feature.text )
-		else : click.echo( "\t".join( ( feature[ 0 ].text, feature[ 1 ].text, feature[ 2 ].text ) ) )
-
+		# branch accordingly; nouns
+		if   str( type( feature ) ) == "<class 'spacy.tokens.span.Span'>"            : click.echo( feature.text )
+		
+		# subject-verb-object; svo
+		elif str( type( feature ) ) == "<class 'textacy.extract.triples.SVOTriple'>" :
+		
+			# parse
+			subjects = [ token.text_with_ws for token in feature.subject ]
+			verbs    = [ token.text_with_ws for token in feature.verb ]
+			objects  = [ token.text_with_ws for token in feature.object ]
+						
+			# output; a bit obtuse
+			click.echo( '\t'.join( [ ''.join( subjects ), ''.join( verbs ), ''.join( objects ) ] ) )
 
 # grammars
 @click.command( options_metavar='<options>' )
