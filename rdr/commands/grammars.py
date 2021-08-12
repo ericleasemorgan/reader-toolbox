@@ -16,18 +16,46 @@ def applyFilter ( query, features ) :
 	for feature in features :
 				
 		# branch according to type; span
-		if str( type( feature ) ) == "<class 'spacy.tokens.span.Span'>" : 
-		
-			# update, conditionally
-			if search( query, feature.text ) : filtered.append( feature )
+		if str( type( feature ) ) == "<class 'spacy.tokens.span.Span'>" : string = feature.text
 
-		# hope for a tuple with three elements
+		# hope for a tuple with three elements; these need to be functions
 		else :
 		
-			# initialize and update, conditionally
-			string = ' '.join( [ feature[ 0 ].text, feature[ 1 ].text, feature[ 2 ].text ] )
-			if ( search( query, string ) ) : filtered.append( feature )
-		
+			if str( type( feature ) ) == "<class 'textacy.extract.triples.SVOTriple'>" :		
+
+				# parse and stringify
+				subject = [ token.text_with_ws for token in feature.subject ]
+				verb    = [ token.text_with_ws for token in feature.verb ]
+				object  = [ token.text_with_ws for token in feature.object ]
+				string  = ( ' '.join( [ ''.join( subject ), ''.join( verb ), ''.join( object ) ] ) )
+
+			elif str( type( feature ) ) == "<class 'textacy.extract.triples.DQTriple'>" :		
+
+				# parse and stringify
+				speaker = [ token.text_with_ws for token in feature.speaker ]
+				cue     = [ token.text_with_ws for token in feature.cue ]
+				content = feature.content.text_with_ws
+				string  = ( ' '.join( [ ''.join( speaker ), ''.join( cue ), content ] ) )
+
+			elif str( type( feature ) ) == "<class 'textacy.extract.triples.SSSTriple'>" :		
+
+				# parse and stringify
+				entity   = [ token.text_with_ws for token in feature.entity ]
+				cue      = [ token.text_with_ws for token in feature.cue ]
+				fragment = [ token.text_with_ws for token in feature.fragment ]
+				string  = ( ' '.join( [ ''.join( entity ), ''.join( cue ), ''.join( fragment ) ] ) )
+
+			# error
+			else :
+			
+				# get the type of feature, output, and quit
+				feature = str( type( feature ) )
+				click.echo( f"Error: Unknown value for type of feature { feature }. Call Eric.", err=True )
+				exit()
+
+		# do the work
+		if ( search( query, string ) ) : filtered.append( feature )
+
 	# done
 	return ( filtered )
 
@@ -39,18 +67,49 @@ def outputFeatures( features ) :
 	for feature in features :
 			
 		# branch accordingly; nouns
-		if   str( type( feature ) ) == "<class 'spacy.tokens.span.Span'>"            : click.echo( feature.text )
+		if str( type( feature ) ) == "<class 'spacy.tokens.span.Span'>" : click.echo( feature.text )
 		
 		# subject-verb-object; svo
 		elif str( type( feature ) ) == "<class 'textacy.extract.triples.SVOTriple'>" :
 		
 			# parse
-			subjects = [ token.text_with_ws for token in feature.subject ]
-			verbs    = [ token.text_with_ws for token in feature.verb ]
-			objects  = [ token.text_with_ws for token in feature.object ]
+			subject = [ token.text_with_ws for token in feature.subject ]
+			verb    = [ token.text_with_ws for token in feature.verb ]
+			object  = [ token.text_with_ws for token in feature.object ]
 						
 			# output; a bit obtuse
-			click.echo( '\t'.join( [ ''.join( subjects ), ''.join( verbs ), ''.join( objects ) ] ) )
+			click.echo( '\t'.join( [ ''.join( subject ), ''.join( verb ), ''.join( object ) ] ) )
+
+		# direct quotes
+		elif str( type( feature ) ) == "<class 'textacy.extract.triples.DQTriple'>" :
+		
+			# parse
+			speaker = [ token.text_with_ws for token in feature.speaker ]
+			cue     = [ token.text_with_ws for token in feature.cue ]
+			content = feature.content.text_with_ws
+			
+			# output; still a bit obtuse
+			click.echo( '\t'.join( [ ''.join( speaker ), ''.join( cue ), content ] ) )
+			
+		# direct quotes
+		elif str( type( feature ) ) == "<class 'textacy.extract.triples.SSSTriple'>" :
+		
+			# parse
+			entity   = [ token.text_with_ws for token in feature.entity ]
+			cue      = [ token.text_with_ws for token in feature.cue ]
+			fragment = [ token.text_with_ws for token in feature.fragment ]
+			
+			# output; a bit obtuse some more
+			click.echo( '\t'.join( [ ''.join( entity ), ''.join( cue ), ''.join( fragment ) ] ) )
+		
+		# error
+		else :
+			
+			# get the type of feature, output, and quit
+			feature = str( type( feature ) )
+			click.echo( f"Error: Unknown value for type of feature { feature }. Call Eric.", err=True )
+			exit()
+
 
 # grammars
 @click.command( options_metavar='<options>' )
