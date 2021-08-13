@@ -16,7 +16,6 @@ import rdr.commands.datasette   as datasette
 import rdr.commands.download    as download
 import rdr.commands.get         as get
 import rdr.commands.grammars    as grammars
-import rdr.commands.graph       as graph
 import rdr.commands.catalog     as catalog
 import rdr.commands.ngrams      as ngrams
 import rdr.commands.play        as play
@@ -36,7 +35,6 @@ rdr.add_command( datasette.datasette )
 rdr.add_command( download.download )
 rdr.add_command( get.get )
 rdr.add_command( grammars.grammars )
-rdr.add_command( graph.graph )
 rdr.add_command( catalog.catalog )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( ngrams.ngrams )
