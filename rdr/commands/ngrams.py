@@ -6,12 +6,12 @@ from rdr import *
 
 # ngrams
 @click.command( options_metavar='<options>' )
-@click.option('-f', '--filter', type=click.STRING, help="limit results to include the given word")
+@click.option('-q', '--query', type=click.STRING, help="limit results to include the given word")
 @click.option('-c', '--count', is_flag=True, help='count and tabulate the result')
 @click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='where is the library')
 @click.option('-s', '--size', default=1, help='output in a more human-readable form')
 @click.argument( 'carrel', metavar='<carrel>' )
-def ngrams( carrel, size, filter, count, location ) :
+def ngrams( carrel, size, query, count, location ) :
 
 	"""Output ngrams of the given <size> from <carrel>"""
 
@@ -50,14 +50,14 @@ def ngrams( carrel, size, filter, count, location ) :
 	ngrams = list( nltk.ngrams( tokens, size ) )
 	
 	# filter, conditionally
-	if filter :
+	if query :
 	
 		# initialize and process each ngram
 		filtered = []
 		for ngram in ngrams :
 			
 			# check and update
-			if search( filter, ' '.join( ngram ) ) : filtered.append( ngram )
+			if search( query, ' '.join( ngram ) ) : filtered.append( ngram )
 		
 		# done
 		ngrams = filtered
