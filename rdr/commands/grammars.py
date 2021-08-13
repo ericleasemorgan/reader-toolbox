@@ -5,6 +5,85 @@
 from rdr import *
 
 
+# handle model not found error
+def modelNotFound() :
+	
+	# notify
+	click.echo( "Error: Langauge model not found.", err=True )
+	click.echo()
+	click.echo( f"This functions requires a spaCy langauge model ({ MODEL}) to be installed. This only has to be done once, and after the model has been installed you can run the command again.", err=True )
+	click.echo()
+	click.echo( 'Do you want to install the model now? [yn] ', err=True, nl=False )
+	
+	# get input
+	c = click.getchar()
+	click.echo()
+	
+	# branch accordingly; yes
+	if c == 'y' :
+
+		# require and do the work
+		from os import system
+		system( 'python -m spacy download ' + MODEL )
+	
+	# no
+	elif c == 'n' : click.echo( "Okay, but installing the model is necessary for this function to work. You'll be asked again next time.", err=True )
+
+	# error
+	else : click.echo( '???' )
+	
+	# done
+	exit()
+
+
+# given a carrel, return a spacy doc
+def carrel2doc( carrel ) :
+
+	# configure
+	PICKLE = 'reader.spacy'
+
+	# require
+	from os        import path, stat
+	from spacy     import load
+	import textacy
+	
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+	pickle       = localLibrary/carrel/ETC/PICKLE
+
+	# check to see if we've previously been here
+	if path.exists( pickle ) :
+		
+		# read the pickle file
+		try            : doc = next( textacy.io.spacy.read_spacy_docs( pickle, lang=MODEL ) )
+		except OSError : modelNotFound()
+			
+	# otherwise
+	else :
+	
+		# warn
+		click.echo( 'Reading and formatting model data for future use. This may take many minutes...', err=True )
+
+		# initialize 
+		file           = localLibrary/carrel/ETC/CORPUS
+		text           = open( str( file ) ).read()
+		size           = ( stat( file ).st_size ) + 1
+		
+		# initialize some more
+		try            : nlp  = load( MODEL )
+		except OSError : modelNotFound()
+		
+		# do the work
+		nlp.max_length = size
+		doc            = nlp( text )
+
+		# save it for future use
+		textacy.io.spacy.write_spacy_docs( doc, filepath=pickle )
+
+	# done
+	return doc
+
+
 # filter
 def applyFilter ( query, features ) :
 

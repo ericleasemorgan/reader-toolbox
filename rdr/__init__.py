@@ -32,18 +32,18 @@ CONFIGURATIONFILE    = '.rdrrc'
 REMOTELIBRARY = 'http://library.distantreader.org'
 CARRELS       = 'carrels'
 
-# local carrel file system
-ETC       = 'etc'
-TXT       = 'txt'
+# file system mappings
 CORPUS    = 'reader.txt'
-STOPWORDS = 'stopwords.txt'
 DATABASE  = 'reader.db'
-INDEX     = 'index.htm'
+ETC       = 'etc'
 HTM       = 'htm'
+INDEX     = 'index.htm'
 MANIFEST  = 'MANIFEST.xml'
+STOPWORDS = 'stopwords.txt'
+TXT       = 'txt'
 
 # spacy's default model
-MODEL         = 'en_core_web_sm'
+MODEL = 'en_core_web_sm'
 
 # require
 import click
@@ -72,44 +72,3 @@ def configuration( name ) :
 		exit()
 		
 		
-# given a carrel, return a spacy doc
-def carrel2doc( carrel ) :
-
-	# configure
-	PICKLE = 'reader.spacy'
-
-	# require
-	from os    import path, stat
-	from spacy import load
-	import textacy
-	
-	# initialize
-	localLibrary = configuration( 'localLibrary' )
-	pickle       = localLibrary/carrel/ETC/PICKLE
-
-	# check to see if we've previously been here
-	if path.exists( pickle ) :
-		
-		# read the pickle file
-		doc = next( textacy.io.spacy.read_spacy_docs( pickle, lang=MODEL ) )
-	
-	# otherwise
-	else :
-	
-		# warn
-		click.echo( 'Reading and formatting model data for future use. This may take many minutes...', err=True )
-
-		# create a doc
-		file           = localLibrary/carrel/ETC/CORPUS
-		text           = open( str( file ) ).read()
-		size           = ( stat( file ).st_size ) + 1
-		nlp            = load( MODEL )
-		nlp.max_length = size
-		doc            = nlp( text )
-
-		# save it for future use
-		textacy.io.spacy.write_spacy_docs( doc, filepath=pickle )
-
-	# done
-	return doc
-
