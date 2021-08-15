@@ -2,7 +2,7 @@
 
 # Distant Reader Toolbox
 
-The Distant Reader Toolbox is a command-line interface for interacting with Distant Reader study carrels.
+A command-line interface for interacting with Distant Reader study carrels
 
 
 ## Installation
@@ -18,8 +18,9 @@ A Web-based system called the [Distant Reader](https:/distantreader.org) takes a
 ## Links
 
    * Download: [https://pypi.org/project/reader-toolbox](https://pypi.org/project/reader-toolbox)
+   * Documentation: [https://reader-toolbox.readthedocs.io](https://reader-toolbox.readthedocs.io)
    * Source code: [https://github.com/ericleasemorgan/reader-toolbox](https://github.com/ericleasemorgan/reader-toolbox)
-   * Bug Tracker: [https://github.com/ericleasemorgan/reader-toolbox/issues](https://github.com/ericleasemorgan/reader-toolbox/issues)
+   * Bug tracker: [https://github.com/ericleasemorgan/reader-toolbox/issues](https://github.com/ericleasemorgan/reader-toolbox/issues)
 
 ---
 Eric Lease Morgan &lt;emorgan@nd.edu&gt;  
