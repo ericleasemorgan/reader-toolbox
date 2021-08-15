@@ -12,7 +12,7 @@ The Distant Reader Toolbox is a command-line interface for interacting with Dist
 
 ## Background
 
-The [Distant Reader](https:/distantreader.org) takes an almost arbitrary amount of unstructured data (text) as input, does text mining and natural language processing against it, and outputs sets of structured data affectionatly called "study carrels". This tool -- run from the command line as 'rdr' -- enables the student, researcher, or scholar to quickly and easily digest the content of study carrels, and ultimately address questions of the content from the mundane to the sublime.
+A Web-based system called the [Distant Reader](https:/distantreader.org) takes an almost arbitrary amount of unstructured data (text) as input, does text mining and natural language processing against it, and outputs sets of structured data affectionatly called "study carrels". This tool -- run from the command line as 'rdr' -- enables the student, researcher, or scholar to quickly and easily use and understand the content of study carrels.
 
 
 ## Links
