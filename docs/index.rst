@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Reader Toolbox
-**************
+Distant Reader Toolbox
+**********************
 
 A command-line tool for interacting with Distant Reader study carrels
 
