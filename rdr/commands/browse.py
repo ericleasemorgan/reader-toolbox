@@ -27,6 +27,9 @@ def browse( carrel, location ) :
 	# local carrel
 	if location == 'local' :
 	
+		# sanity check
+		checkForCarrel( carrel )
+
 		# initialize, create a URL, and do the work
 		localLibrary = str( configuration( 'localLibrary' ) )
 		url          = 'file://' + localLibrary + '/' + carrel

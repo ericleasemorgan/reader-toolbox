@@ -24,9 +24,10 @@ Eric Lease Morgan <emorgan@nd.edu>
 (c) University of Notre Dame; distributed under a GNU Public License
 """
 
-# configure; name of application and basename of configuration file
+# configure; name of application, basename of configuration file, and default basename of local library
 APPLICATIONDIRECTORY = 'rdr'
 CONFIGURATIONFILE    = '.rdrrc'
+READERLIBRARY        = 'reader-library'
 
 # remote library
 REMOTELIBRARY = 'http://library.distantreader.org'
@@ -45,9 +46,22 @@ TXT       = 'txt'
 # spacy's default model
 MODEL = 'en_core_web_sm'
 
+
 # require
 import click
 
+# make sure a study carrel exists
+def checkForCarrel( carrel ) :
+	
+	# initialize and do the work
+	directory = configuration( 'localLibrary' )/carrel
+	if not directory.is_dir() :
+		
+		# error
+		click.echo( f"The carrel, { carrel }, does not seem to be in your local library. Are you sure you entered its name correctly? Try 'rdr catalog' to make sure.", err=True )
+		exit()
+
+	
 # read configurations
 def configuration( name ) :
 
@@ -55,18 +69,26 @@ def configuration( name ) :
 	from configparser import ConfigParser
 	from pathlib      import Path
 
+	# initialize
 	applicationDirectory = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
 	configurationFile    = applicationDirectory / CONFIGURATIONFILE
 	configurations       = ConfigParser()
 	
-	# read configurations
+	# try to read configurations
 	configurations.read( str( configurationFile ) )
-	localLibrary   = configurations[ 'RDR' ][ 'localLibrary' ] 
-	malletHome     = configurations[ 'RDR' ][ 'malletHome' ] 
+	
+	# try to get localLibrary
+	try : localLibrary = configurations[ 'RDR' ][ 'localLibrary' ]
+	except KeyError :
+		click.echo( "Error: Key error. The location of your local study carrels has not been set. Please run 'rdr set local'.", err=True )
+		exit()
+		
+	# try to get MALLET's home
+	malletHome = configurations[ 'RDR' ][ 'malletHome' ] 
 	
 	# done
-	if   name == 'localLibrary'  : return( Path( localLibrary ) )
-	elif name == 'malletHome'    : return( Path( malletHome ) )
+	if   name == 'localLibrary' : return( Path( localLibrary ) )
+	elif name == 'malletHome'   : return( Path( malletHome ) )
 	else :
 		click.echo( f"Error: Unknown value for configuration name: { name }. Call Eric.", err=True )
 		exit()

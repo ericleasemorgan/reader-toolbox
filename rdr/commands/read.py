@@ -24,6 +24,9 @@ def read( carrel, location ) :
 	
 	if location == 'local' :
 	
+		# sanity check
+		checkForCarrel( carrel )
+
 		localLibrary  = configuration( 'localLibrary' )
 		url = 'file://' + str( localLibrary/carrel/INDEX )
 		open( url )

@@ -26,6 +26,9 @@ def concordance( carrel, query, width, lines ) :
 	# require
 	from nltk import Text, word_tokenize
 
+	# sanity check
+	checkForCarrel( carrel )
+
 	# initialize, read, and normalize; ought to save the Text object for future use
 	localLibrary = configuration( 'localLibrary' )
 	corpus       = localLibrary/carrel/ETC/CORPUS

@@ -23,6 +23,9 @@ def ngrams( carrel, size, query, count, location ) :
 	# branch according to location; local
 	if location == 'local' :
 	
+		# sanity check
+		checkForCarrel( carrel )
+		
 		# read local data
 		localLibrary = configuration( 'localLibrary' )
 		stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ) ).read().split()

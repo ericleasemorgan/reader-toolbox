@@ -20,9 +20,9 @@ def set( item ) :
 
 	# create configuration file, conditionally
 	if not configurationFile.exists() :
-
+		
 		# initialize
-		configurations[ "RDR" ] = { "localLibrary"  : '', "malletHome" : '' }
+		configurations[ "RDR" ] = { "localLibrary"  : Path.home()/READERLIBRARY, "malletHome" : '' }
 
 		# create directory and save the file
 		applicationDirectory.mkdir( parents=False, exist_ok=True )
@@ -36,13 +36,13 @@ def set( item ) :
 	if item == 'local' :
 	
 		# get the desired library location
-		click.echo( 'From where do you want to save and read your study carrels? Press enter to accept the default.' )
+		click.echo( 'Where do you want to save your study carrels? Press enter to accept the default.' )
 		localLibrary = input( 'Directory [%s]: ' % localLibrary ) or localLibrary
 		localLibrary = Path( localLibrary )
 
 		# try to create the directory and save the configuration
 		try : localLibrary.mkdir( exist_ok=True )
-		except FileNotFoundError : click.echo( "Error: file not found. Are you sure you entered a valid path?", err=True )		
+		except FileNotFoundError : click.echo( "Error: File not found. Are you sure you entered a valid path?", err=True )		
 
 	# mallet
 	elif item == 'mallet' :

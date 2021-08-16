@@ -34,6 +34,9 @@ def tm( carrel, topics, words, iterations ) :
 	import pyLDAvis.gensim_models
 	import webbrowser
 	
+	# sanity check
+	checkForCarrel( carrel )
+	
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
 	mallet       = str( configuration( 'malletHome' ) ) + '/' + MALLETBIN

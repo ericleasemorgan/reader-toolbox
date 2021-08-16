@@ -220,6 +220,9 @@ def grammars( carrel, grammar, query, noun, lemma ) :
 	from textacy import extract
 	from os      import system
 		
+	# sanity check
+	checkForCarrel( carrel )
+
 	# initialize
 	doc = carrel2doc( carrel )
 

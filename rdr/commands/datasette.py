@@ -20,6 +20,9 @@ def datasette( carrel ) :
 	# require
 	from os import system
 	
+	# sanity check
+	checkForCarrel( carrel )
+
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
 

@@ -32,6 +32,9 @@ def cluster( carrel, type ) :
 	from sklearn.metrics.pairwise        import cosine_similarity
 	import matplotlib.pyplot             as     plt
 
+	# sanity check
+	checkForCarrel( carrel )
+
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
 	directory    = localLibrary/carrel/TXT
