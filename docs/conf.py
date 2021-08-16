@@ -17,8 +17,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'reader-toolbox'
-copyright = '2021, Eric Lease Morgan'
+project = 'Toolbox'
+copyright = '2021, University of Notre Dame'
 author = 'Eric Lease Morgan'
 
 
