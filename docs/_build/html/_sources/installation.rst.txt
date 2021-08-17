@@ -19,3 +19,7 @@ To use the topic modeling tool, you will need to download the venerable system c
 
   [Enter kewl command(s) here.]
 
+For extra credit, you can install a terminal-based Web browser called Lynx, which is a wonderful for browsing locally cached study carrels:  ::
+
+  [Enter additional kewl command for installing Lynx here.]
+
