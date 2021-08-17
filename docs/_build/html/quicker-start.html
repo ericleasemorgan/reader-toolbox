@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; Toolbox  documentation</title>
+    <title>Quicker start &#8212; Toolbox  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -13,7 +13,7 @@
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/language_data.js"></script>
-    <link rel="index" title="Index" href="#" />
+    <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -31,11 +31,40 @@
 
           <div class="body" role="main">
             
+  <div class="section" id="quicker-start">
+<h1>Quicker start<a class="headerlink" href="#quicker-start" title="Permalink to this headline">¶</a></h1>
+<p>This is more terse quickstart:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># output menu</span>
+<span class="n">rdr</span>
 
-<h1 id="index">Index</h1>
+<span class="c1"># configure where your study carrels will go</span>
+<span class="n">rdr</span> <span class="nb">set</span> <span class="n">local</span>
 
-<div class="genindex-jumpbox">
- 
+<span class="c1"># cache a study carrel named homer</span>
+<span class="n">rdr</span> <span class="n">download</span> <span class="n">homer</span>
+
+<span class="c1"># output all the words in homer</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span>
+
+<span class="c1"># see how the word love is used in homer</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+
+<span class="c1"># cache a study carrel named sonnets</span>
+<span class="n">rdr</span> <span class="n">download</span> <span class="n">sonnets</span>
+
+<span class="c1"># output all the words in sonnets</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">sonnets</span>
+
+<span class="c1"># see how the word love is used in sonnets</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">sonnets</span>
+
+<span class="c1"># cache a study carrel named pride</span>
+<span class="n">rdr</span> <span class="n">download</span> <span class="n">pride</span>
+
+<span class="c1"># see how the word love is used on pride</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">pride</span>
+</pre></div>
+</div>
 </div>
 
 
@@ -57,7 +86,6 @@
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quicker-start.html">Quicker start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands in depth</a></li>
 </ul>
@@ -98,6 +126,9 @@
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
+      |
+      <a href="_sources/quicker-start.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
 
     
