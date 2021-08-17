@@ -29,11 +29,40 @@ def concordance( carrel, query, width, lines ) :
 	# sanity check
 	checkForCarrel( carrel )
 
-	# initialize, read, and normalize; ought to save the Text object for future use
+	# initialize and read
 	localLibrary = configuration( 'localLibrary' )
 	corpus       = localLibrary/carrel/ETC/CORPUS
-	text         = Text( word_tokenize( open( corpus ).read( ) ) )
 	
+	# try to create an NLTK Text object; normalize, and ought to save the result for future use
+	try : text = Text( word_tokenize( open( corpus ).read( ) ) )
+	
+	# error
+	except LookupError :
+		
+		# debug and get input
+		click.echo( "Oops! A Python resource called 'punkt' does not seem to be installed. Do you want to install it now? [y/n]", err=True )
+		c = click.getchar()
+		click.echo()
+
+		# branch accordingly; yes
+		if c == 'y' :
+
+			# require and do the work; would be nice to save it in a less out-of-the way location
+			import nltk
+			nltk.download( 'punkt' )
+			
+			# debug
+			click.echo( "Thank you. Please run the concordance command again. If the error persists, then call Eric.", err=True )
+			
+		# no
+		elif c == 'n' : click.echo( "Okay, but installing punkt is necessary for this function to work. You'll be asked again next time.", err=True )
+
+		# error
+		else : click.echo( '???' )
+
+		# done
+		exit()
+				
 	# split query into a list, conditionally
 	if ' ' in query : query = query.split( ' ' )
 		
