@@ -12,6 +12,7 @@ A command-line tool for interacting with Distant Reader study carrels
    :maxdepth: 2
 
    installation
-   quicker-start
    quick-start
+   quicker-start
+   quickest-start
    commands

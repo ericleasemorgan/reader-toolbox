@@ -92,11 +92,11 @@ The -q option can also be a phrase: ::
 Grammars
 --------
 
-When sentences are constructed using well-defined grammars, it is easy to extract sentence fragments matching those grammars. For example, to extract all the sentence fragments whose sentences are in the form of subject-verb-object, enter the following command. In order to use this function, you may need to install a language model, and if you do, then you will be asked to do so: ::
+Many times sentences are written using well-known, well-understood grammars, and it is easy to extract sentence fragments matching those grammars. For example, to extract all the sentence fragments whose sentences are in the form of subject-verb-object, enter the command below. In order to use this function, you may need to install a language model, and if you do, then you will be asked to do so, but you will only have to do it once: ::
 
   rdr grammars homer svo
 
-There are many more grammars availble in the Toolbox.
+There are a few more grammars availble in the Toolbox.
 
 Next steps
 ----------
