@@ -194,9 +194,9 @@ def outputFeatures( features ) :
 @click.command( options_metavar='<options>' )
 @click.option('-q', '--query', type=click.STRING, help="filter results using the given regular expression")
 @click.option('-n', '--noun',  type=click.STRING, help="only applicable to sss; a noun or noun phrase")
-@click.option('-l', '--lemma', default='be',      help="only applicable to sss; the lemma of a verb, such as 'be' (default), 'have', or 'say'")
+@click.option('-l', '--lemma', default='be', help="only applicable to sss; the lemma of a verb, such as 'be' (default), 'have', or 'say'")
+@click.option('-g', '--grammar', default='svo', type=click.Choice( [ 'svo', 'sss', 'nouns', 'quotes' ], case_sensitive=True ), help="only applicable to sss; the lemma of a verb, such as 'be' (default), 'have', or 'say'")
 @click.argument( 'carrel', metavar='<carrel>' )
-@click.argument( 'grammar', type=click.Choice( [ 'svo', 'sss', 'nouns', 'quotes' ], case_sensitive=True ) )
 def grammars( carrel, grammar, query, noun, lemma ) :
 
 	"""Extract grammatical sentence fragments from <carrel> where fragments are one of:
