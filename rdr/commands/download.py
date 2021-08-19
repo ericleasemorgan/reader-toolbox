@@ -40,7 +40,7 @@ def download( carrel ) :
 	
 	# unzip the temporary file and close it, which also deletes it
 	click.echo( "Unziping study carrel... " )
-	with ZipFile( handle, 'r' ) as zip : zip.extractall( str( Path.home()/mallet ) )
+	with ZipFile( handle, 'r' ) as zip : zip.extractall( str( localLibrary ) )
 	handle.close()
 
 	# done
