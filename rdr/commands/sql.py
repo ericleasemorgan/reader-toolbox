@@ -6,7 +6,7 @@ from rdr import *
 
 @click.command( options_metavar='[<options>]' )
 @click.argument( 'carrel', metavar='<carrel>' )
-def datasette( carrel ) :
+def sql( carrel ) :
 
 	"""Use Datasette to query <carrel>'s database
 	

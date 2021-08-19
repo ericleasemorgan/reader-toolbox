@@ -43,12 +43,29 @@ MANIFEST  = 'MANIFEST.xml'
 STOPWORDS = 'stopwords.txt'
 TXT       = 'txt'
 
-# spacy's default model
+# spacy langauge model
 MODEL = 'en_core_web_sm'
+
+# mallet
+MALLETZIP = 'http://library.distantreader.org/apps/mallet.zip'
+MALLETBIN = 'bin/mallet'
 
 
 # require
 import click
+
+
+# make sure the NLTK is sane
+def checkForPunkt() :
+
+	# require
+	import nltk
+		
+	try : nltk.data.find( 'tokenizers/punkt' )
+	except LookupError : 
+		click.echo( "Installing punkt. This ought to only happen once.", err=True )
+		nltk.download( 'punkt', quiet=True )
+
 
 # make sure a study carrel exists
 def checkForCarrel( carrel ) :

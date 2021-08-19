@@ -62,7 +62,9 @@ def carrel2doc( carrel ) :
 	else :
 	
 		# warn
-		click.echo( 'Modeling study carrel data for future use. This may take many minutes, but it will only have to be done once. In the meantime, ask yourself, "Self, what is justice?"', err=True )
+		click.echo( '''Modeling study carrel data for future use. This may take many
+minutes, but it will only have to be done once. In the meantime,
+ask yourself, "Self, what is justice?"''', err=True )
 
 		# initialize 
 		file           = localLibrary/carrel/ETC/CORPUS

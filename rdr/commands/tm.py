@@ -4,9 +4,54 @@
 # require
 from rdr import *
 
+def checkForMallet( mallet ) :
+	
+	# require
+	from configparser import ConfigParser
+	from pathlib      import Path
+	from requests     import get
+	from tempfile     import TemporaryFile
+	from zipfile      import ZipFile
+	
+	# install mallet, conditionally
+	if not Path( mallet ).exists() :
+	
+		click.echo( "MALLET not found. Downoading MALLET... ", err=True )
+		response = get( MALLETZIP )
+
+		# initialize a temporary file and write to it
+		click.echo( "Saving zip file... ", err=True )
+		handle = TemporaryFile()
+		handle.write( response.content )
+
+		# unzip the temporary file and close it, which also deletes it
+		click.echo( "Unziping zip file... " )
+		with ZipFile( handle, 'r' ) as zip : zip.extractall( Path.home() )
+		
+		# initialize
+		click.echo( "Updating configurations... " )
+		configurations          = ConfigParser()
+		applicationDirectory    = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
+		configurationFile       = applicationDirectory/CONFIGURATIONFILE
+		localLibrary            = configuration( 'localLibrary' )
+		malletHome              = Path.home()/'mallet'
+		configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome }
+		with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
+
+		# make mallet executable
+		click.echo( "Making MALLET executable... " )
+		(malletHome/MALLETBIN).chmod( 0x755 )
+		
+
+		# done
+		click.echo('''Done. MALLET has been downloaded to your home directory and configured
+for future use. You can move MALLET to another location but once you do
+so you will need to run 'rdr set -s mallet'.''', err=True )
+
+
 @click.command( options_metavar='<options>' )
 @click.option('-t', '--topics', default=7, help="number of topics to generate")
-@click.option('-w', '--words', default=7, help="number of words used to describe topic")
+@click.option('-w', '--words', default=30, help="number of words used to describe topic")
 @click.option('-i', '--iterations', default=2400, help="number of iterations")
 @click.argument( 'carrel', metavar='<carrel>' )
 def tm( carrel, topics, words, iterations ) :
@@ -22,7 +67,6 @@ def tm( carrel, topics, words, iterations ) :
 	HTML       = 'topic-model.htm'
 	RANDOMSEED = 42
 	WORKERS    = 6
-	MALLETBIN  = 'bin/mallet'
 
 	# require
 	from gensim                 import corpora
@@ -33,10 +77,12 @@ def tm( carrel, topics, words, iterations ) :
 	import pyLDAvis
 	import pyLDAvis.gensim_models
 	import webbrowser
-	
-	# sanity check
+
+	# sanity checks
 	checkForCarrel( carrel )
-	
+	checkForMallet( str( configuration( 'malletHome' ) ) + '/' + MALLETBIN )
+	checkForPunkt()
+
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
 	mallet       = str( configuration( 'malletHome' ) ) + '/' + MALLETBIN

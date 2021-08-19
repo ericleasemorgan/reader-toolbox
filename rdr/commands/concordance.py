@@ -4,19 +4,6 @@
 # require
 from rdr import *
 
-
-# make sure the NLTK is sane
-def checkForPunkt() :
-
-	# require
-	import nltk
-		
-	try : nltk.data.find( 'tokenizers/punkt' )
-	except LookupError : 
-		click.echo( "Installing punkt. This ought to only happen once.", err=True )
-		nltk.download( 'punkt', quiet=True )
-
-
 @click.command( options_metavar='[<options>]' )
 @click.option('-w', '--width', default=80, help='number of characters in each line of output')
 @click.option('-l', '--lines', default=999, help='number of lines of text to output')
