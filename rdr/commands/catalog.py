@@ -9,20 +9,13 @@ from rdr import *
 @click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='output in a more human-readable form')
 def catalog( human, location ) :
 
-	"""List the items in a library where <location> is either 'local' or 'remote'
+	"""List study carrels
 	
-	Use this function to learn what items are saved in your local library of study carrels or what items are available in the library of about 3,000 pre-created study carrels at http://library.distantreader.org/. The local option returns a simple list. The remote option returns a tab-delimited list along with some metadata describing each item. In either case, you might want to pipe the results to utilities such as sort, grep, cut, or less in order to make the most of the result.
+	Use this command to enumerate the study carrels cached locally or remotely available at http:/library.distantreader.org. The remote option, by default, returns a tab-delimited stream very amenable to post processing with utilities such as cut, grep, sort, and less.
 	
-	Examples:
-	
-	\b
-	  * rdr list local
-	  * rdr list remote | less -S
-	  * rdr list -h remote
-	  * rdr list remote | grep love | less -S -x32
-	  * rdr list remote | grep love | cut -f1 | less
-	  
-	See also: rdr download"""
+	Examples: rdr catalog; rdr catalog -l remote; rdr catalog -l remote -h
+
+	See also: rdr download --help"""
 	
 	# configure
 	TSV    = 'catalog/catalog.tsv'

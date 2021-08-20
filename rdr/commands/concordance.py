@@ -11,17 +11,13 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def concordance( carrel, query, width, lines ) :
 
-	"""Output matching lines from <carrel> where <query> is a word or phrase
+	"""A poor man's search engine
 	
-	Developed in the 12th Century, concordancing is the oldest of text mining tools and the poor man's search engine. Sometimes it is called a keyword-in-context (KWIC) index. Given <query>, this is a quick and easy way to see how it is used in the same breath as other words. Use 'rdr ngrams' to identify words or phrases of interest.
+	Given a query, this subcommand will search <carrel> and return a list of results where each result is a set of words to the left of query, the query, and a set of words to the right of query -- a keyword-in-context index. This is useful for answering the question, "What words are used in the same breath as the given word?" The query can be a phrase.
 	
-	Examples:
-	
-	\b
-	  * rdr concordance homer hector
-	  * rdr concordance homer 'hector was'
-	
-	See also: rdr ngrams"""
+	Examples: rdr concordance homer -q hector; rdr concordance homer -q 'hector was'
+
+	See also: rdr ngrams --help"""
 	
 	# require
 	from nltk import Text, word_tokenize

@@ -7,14 +7,13 @@ from rdr import *
 @click.option('-s', '--setting', default='local', type=click.Choice( [ 'local', 'mallet' ] ), help='output the given setting')
 def get( setting ) :
 
-	"""Echo the full path to your local library of study carrels
+	"""Echo the values denoted by the set subcommand
 	
-	This is useful if you want to change directories to your local collection of carrels, and then interact with them directly.
+	This is useful for verifying where you locally cached study carrels are saved as well as where you have saved the MALLET subsystem. 
 	
-	Examples:
+	Example: rdr get
 	
-	\b
-	  * rdr home"""
+	See also: rdr set --help"""
 	
 	# branch accordingly
 	if   setting == 'local' : click.echo( str( configuration( 'localLibrary' ) ) )

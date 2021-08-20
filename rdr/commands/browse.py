@@ -5,17 +5,17 @@
 from rdr import *
 
 @click.command( options_metavar='[<options>]' )
-@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='where is the library')
+@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='the location of the carrel')
 @click.argument( 'carrel', metavar='<carrel>' )
 def browse( carrel, location ) :
 
-	"""Use a Web browser called Lynx to peruse <carrel>
+	"""Peruse <carrel> as a file system
 	
-	Study carrels are sets of HTML files, other plain text files, and a whole lot of tab-delimited files organized into a file system -- a data set. Lynx is very useful tool for inspecting the contents of these file systems from the terminal, especially if you are not accessing the carrel through a Web server.
+	Study carrels are sets of HTML files, other plain text files, a whole lot of tab-delimited files, and an SQLite database file organized in a file system -- a data set. This command uses a two different techniques for browsing the file systems. If the study carrel is saved locally, then it will try to use a terminal-based Web browser call Lynx. If the carrel is remote, then you will be directed to a dynamically generated HTML page.
 	
-	Example: rdr browse homer
+	Examples: rdr browse -l remote homer
 	
-	See also: rdr read"""
+	See also: rdr read --help"""
 
 	# configure
 	LYNX = 'lynx'

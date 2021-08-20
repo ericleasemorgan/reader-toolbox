@@ -10,12 +10,12 @@ from rdr import *
 def download( carrel ) :
 
 	"""Download <carrel> from the public library of study carrels
-	
-	A collection of about 3,000 pre-created study carrels is available at http://library.distantreader.org. Given <carrel>, this function will download the remote carrel and cache it in your local library. Use 'rdr list remote' to learn what carrels are available.
-	
-	Example: rdr download author-homer-gutenberg
-	
-	See also: rdr list"""
+
+	A collection of about 3,000 pre-created study carrels is available at http://library.distantreader.org. Given <carrel>, this function will download the remote carrel and cache it in your local library.
+
+	Example: rdr download homer
+
+	See also: rdr set local"""
 			
 	# configure
 	ZIPFILE = 'study-carrel.zip'

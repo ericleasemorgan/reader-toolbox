@@ -10,13 +10,13 @@ from rdr import *
 @click.option('-t', '--type', default='dendrogram', type=click.Choice( [ 'cube', 'dendrogram' ] ), help='output in a more human-readable form')
 def cluster( carrel, type ) :
 
-	"""Apply dimension reduction to <carrel> and visualize where <type> is 'cube' or 'dendrogram'
+	"""Apply dimension reduction to <carrel> and visualize the result
 	
 	This is a useful function to determine how holistic the contents of a study carrel is.
 	
-	Example: rdr cluster homer dendrogram
+	Example: rdr cluster homer
 	
-	See also: rdr mallet"""
+	See also: rdr tm --help"""
 
 	# configure
 	MAXIMUM   = 0.95
