@@ -140,10 +140,10 @@ def hangman() :
 
 # config
 @click.command()
-@click.argument( 'game' )
+@click.option('-g', '--game', default='hangman', type=click.Choice( [ 'hangman' ] ) )
 def play( game ) :
 
-	"""Play a game"""
+	"""Play the word game called hangman."""
 
 	if   game == 'hangman' : hangman()
 	else : 
