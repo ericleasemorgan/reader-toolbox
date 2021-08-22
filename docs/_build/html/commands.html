@@ -15,7 +15,7 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Quick start" href="quick-start.html" />
+    <link rel="prev" title="Quickest start" href="quickest-start.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -36,13 +36,44 @@
 <h1>Commands in depth<a class="headerlink" href="#commands-in-depth" title="Permalink to this headline">¶</a></h1>
 <p>This section describes each Toolbox command in greater detail. They are listed, more or less, in the order they ought to be executed when wanting to do your analysis.</p>
 <div class="section" id="set">
-<h2>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">set</span></code><a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">set</span></code> subcommand to tell the Toolbox two things: 1) the location of your locally cached study carrels, and 2) the location of an external tool called MALLET.</p>
+<p>By default, the location of your study carrels is set to reader-library in your home directory, but this setting does not take effect until you run <code class="docutils literal notranslate"><span class="pre">set</span></code>. You can move your collection of carrels anywhere you desire. In fact, you might consider having more than one collection. Just tell the Toolbox which cache you want to use.</p>
+<p>When you initially run the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, and if the subsystem called MALLET is not configured, then the Toolbox will download MALLET, save it in your home directory, and automatically update the configuration. Like above, you can move MALLET any where you desire, but you need to tell the Toolbox where it is located. Otherwise, the Toolbox will download an additional copy.</p>
 </div>
 <div class="section" id="get">
-<h2>get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">get</span></code><a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">get</span></code> to echo the values denoting the location of your local cache of study carrels as well as the location of MALLET. More than anything, this command is used for debugging purposes.</p>
+<p>People using Linux or Macintosh computers can run the following command, and the result will change the working directory to the location of the local cache of study carrels:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">$(rdr</span> <span class="pre">get)</span></code></p>
+</div></blockquote>
+<p>This makes it easier to manage your collection of study carrels, and it will also make command line completion easier. There is most likely a similar command for Windows computers. I’ll give $5 to the first person who tells me what the command is. Really. I promise.</p>
 </div>
 <div class="section" id="catalog">
-<h2>catalog<a class="headerlink" href="#catalog" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">catalog</span></code><a class="headerlink" href="#catalog" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">catalog</span></code> subcommand to create lists of study carrels.</p>
+<p>By default (<code class="docutils literal notranslate"><span class="pre">rdr</span> <span class="pre">catalog</span></code>) will output a very simple list of the locally saved carrels. As your collection grows, you will probably use this version of the subcommand more and more.</p>
+<p>When you are just starting out, you will probably want to learn what carrels have been previously created and available for downloading. As of this writing, there are about 3,000 publicly available study carrels. Thus you will use want to use the <code class="docutils literal notranslate"><span class="pre">-l</span></code> option to see what carrels exist:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">rdr</span> <span class="pre">catalog</span> <span class="pre">-l</span> <span class="pre">remote</span></code></p>
+</div></blockquote>
+<p>The remote list of carrels is formatted as a tab-delimited stream of text with seven fields:</p>
+<ol class="arabic simple">
+<li><p>name</p></li>
+<li><p>date created</p></li>
+<li><p>keywords</p></li>
+<li><p>number of items</p></li>
+<li><p>number of words</p></li>
+<li><p>average readability score</p></li>
+<li><p>size of compressed carrel measured in bytes</p></li>
+</ol>
+<p>The student, researcher, or scholar can then use their computer’s operating sytem functionality to parse, sort, filter, etc, the catalog data. Alternatively, one can use the <code class="docutils literal notranslate"><span class="pre">-h</span></code> (human) option. Thus, the catalog data will be formatted and presented in a paged layout. From there a person can navigate and search the list for items of interest. For example, search the result for “love”, “war”, or “justice” and you will be surprised how many carrels have these words as keywords.</p>
+<p>You might also consider outputting the catalog to a file, like this:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">rdr</span> <span class="pre">catalog</span> <span class="pre">-l</span> <span class="pre">remote</span> <span class="pre">&gt;</span> <span class="pre">catalog.tsv</span></code></p>
+</div></blockquote>
+<p>You can then open catalog.tsv in your favorite spreadsheet application where you can search, filter, and sort.</p>
 </div>
 <div class="section" id="read">
 <h2>read<a class="headerlink" href="#read" title="Permalink to this headline">¶</a></h2>
@@ -95,12 +126,13 @@
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quicker-start.html">Quicker start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quicker-start.html">Quicker start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickest-start.html">Quickest start</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Commands in depth</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#set">set</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#get">get</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#catalog">catalog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#set"><code class="docutils literal notranslate"><span class="pre">set</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get"><code class="docutils literal notranslate"><span class="pre">get</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#catalog"><code class="docutils literal notranslate"><span class="pre">catalog</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#read">read</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#browse">browse</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#download">download</a></li>
@@ -119,7 +151,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="quick-start.html" title="previous chapter">Quick start</a></li>
+      <li>Previous: <a href="quickest-start.html" title="previous chapter">Quickest start</a></li>
   </ul></li>
 </ul>
 </div>
