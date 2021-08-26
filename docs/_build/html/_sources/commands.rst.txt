@@ -103,10 +103,10 @@ If you have not configured the Toolbox to denote the location of your local cach
 Unlike traditional libraries, once you check something out of the Reader's library, you do not have to return it. :)
 
 
-ngrams
-------
+``ngrams``
+----------
 
-This is one of the strongest subcommands in the Toolbox. Use it to comprehend the breadth, depth, and scope of a carrel. Begin by simply giving the subcommand the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords: ::
+This is one of the strongest subcommands in the Toolbox. Use it to comprehend the breadth, depth, and scope of a carrel. Begin by simply giving ``ngrams`` the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords: ::
 
   rdr ngrams homer
 
@@ -114,32 +114,105 @@ You can do the same thing but this time, you can use the ``-s`` option to denote
 
   rdr ngrams -s 2 homer
   
-If you specify a size greater than 2, then stop words will not be removed:
+If you specify a size greater than 2, then stop words will not be removed: ::
 
   rdr ngrams -s 3 homer
   
-At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result as a file named bigrams.tsv, and then open bigrams.tsv in your spreadsheet application for filtering and purposes: ::
+At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result to a file named bigrams.tsv, and then open bigrams.tsv in your spreadsheet application for searching and sorting purposes: ::
 
   rdr ngrams -s 2 homer > bigrams.tsv
   
+It is possible to query (filter) the results of the ``ngrams`` subcommand with the ``-q`` option. Queries are expected to be regular expressions so the results of the following command will be a list of all bigrams containing the characters l-o-v-e: ::
 
-concordance
+  rdr ngrams -s 2 -q love homer
+  
+You might enhance the query to return all bigrams beginning with the characters l-o-v-e: ::
+  
+  rdr ngrams -s 2 -q "^love" homer
+
+Or only the bigrams beginning with the word "love": ::
+
+  rdr ngrams -s 2 -q "^love\b" homer
+
+The student, researcher, or scholar will often want to count the occurances of ngrams, and that is what the ``-c`` option is for. For example, to count and tabulate the most frequent unigrams in a carrel you can: ::
+
+  rdr ngrams -c homer
+
+You can probably pipe the results through to an operating system utility called "more" in order to page through the results: ::
+
+  rdr ngrams -c homer | more
+
+Do the same thing but with bigrams: ::
+
+  rdr ngrams -c -s 2 homer | more
+  
+Or list the most frequent bigrams containing the letters l-o-v-e: ::
+
+  rdr ngrams -c -s 2 -q love homer | more
+
+At this point you may want to redirect the output to a file, and then, again, use another application like a database or a word cloud tool (like Wordle) to visualize the result:  ::
+
+  rdr ngrams -c -s 2 -q love homer > love.tsv
+  
+Finally, ``ngrams`` filters results using a stop word list contained in very study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the ``edit`` subcommand is for; the ``edit`` subcommand makes it easy to modify a carrel's stop word list, and consequently make the output of ``ngrams`` more meaningful. See the section on ``edit`` for more detail.
+
+
+``concordance``
+---------------
+
+Developed in the 13th century, concordances are the oldest of text mining tools, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man's search engine. 
+
+Use ``concordance`` to see what words are used in the same breath as a given word. Used without any options, the ``concordance`` tool will query the given carrel for the word "love", and the result will be a number of line where each line contains about 40 characters prior to the word "love", the word "love", and about 40 characters after the word "love": ::
+
+  rdr concordance homer
+  
+You can query (filter) the results with the ``-q`` option, and the query must be a word for phrase, not a regular expression. Thus, the following command is identical to the default: ::
+
+  rdr concordance -q love homer
+
+Alternatively, the query can be a phrase, and it is often interesting to associate a noun with a verb, such as: ::
+
+  rdr concordance -q "war is" homer
+
+Or: ::
+
+  rdr concordance -q "hector had" homer
+
+By default, ``concordance`` will output as many 999 lines. Using the ``-l`` option you can configure the number of lines. For example, to output only 5 lines, try: ::
+
+  rdr concordance -l 5 homer
+  
+You can also configure the size of each line's width -- the number of characters on either side of the query. To see very short snippets, try: ::
+
+  rdr concordance -w 24 homer
+
+It is useful to first exploit the ``ngrams`` command to identify words or phrases of interest, then use the results as input for the ``concordance`` command.
+
+Like many of the other commands, the output of ``concordance`` is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results ``concordance`` to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results: ::
+
+  rdr concordance homer > homer.txt
+  
+Initially, the cloud will be dominated by the value of ``-q``, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.
+
+  
+``grammars``
+------------
+
+
+``cluster``
 -----------
 
-grammars
---------
 
-cluster
+``tm``
+------
+
+
+``sql``
 -------
 
-tm
---
 
-sql
----
-
-play
-----
+``play``
+--------
 
 
 

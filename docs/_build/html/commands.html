@@ -116,8 +116,8 @@ cd $(rdr get)
 <p>Unlike traditional libraries, once you check something out of the Reader’s library, you do not have to return it. :)</p>
 </div>
 <div class="section" id="ngrams">
-<h2>ngrams<a class="headerlink" href="#ngrams" title="Permalink to this headline">¶</a></h2>
-<p>This is one of the strongest subcommands in the Toolbox. Use it to comprehend the breadth, depth, and scope of a carrel. Begin by simply giving the subcommand the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords:</p>
+<h2><code class="docutils literal notranslate"><span class="pre">ngrams</span></code><a class="headerlink" href="#ngrams" title="Permalink to this headline">¶</a></h2>
+<p>This is one of the strongest subcommands in the Toolbox. Use it to comprehend the breadth, depth, and scope of a carrel. Begin by simply giving <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span>
 </pre></div>
 </div>
@@ -126,31 +126,95 @@ cd $(rdr get)
 </pre></div>
 </div>
 <p>If you specify a size greater than 2, then stop words will not be removed:</p>
-<blockquote>
-<div><p>rdr ngrams -s 3 homer</p>
-</div></blockquote>
-<p>At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result as a file named bigrams.tsv, and then open bigrams.tsv in your spreadsheet application for filtering and purposes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">3</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result to a file named bigrams.tsv, and then open bigrams.tsv in your spreadsheet application for searching and sorting purposes:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="n">homer</span> <span class="o">&gt;</span> <span class="n">bigrams</span><span class="o">.</span><span class="n">tsv</span>
 </pre></div>
 </div>
+<p>It is possible to query (filter) the results of the <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> subcommand with the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option. Queries are expected to be regular expressions so the results of the following command will be a list of all bigrams containing the characters l-o-v-e:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>You might enhance the query to return all bigrams beginning with the characters l-o-v-e:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;^love&quot;</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Or only the bigrams beginning with the word “love”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;^love</span><span class="se">\b</span><span class="s2">&quot;</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The student, researcher, or scholar will often want to count the occurances of ngrams, and that is what the <code class="docutils literal notranslate"><span class="pre">-c</span></code> option is for. For example, to count and tabulate the most frequent unigrams in a carrel you can:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>You can probably pipe the results through to an operating system utility called “more” in order to page through the results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>Do the same thing but with bigrams:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>Or list the most frequent bigrams containing the letters l-o-v-e:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>At this point you may want to redirect the output to a file, and then, again, use another application like a database or a word cloud tool (like Wordle) to visualize the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">&gt;</span> <span class="n">love</span><span class="o">.</span><span class="n">tsv</span>
+</pre></div>
+</div>
+<p>Finally, <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> filters results using a stop word list contained in very study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand is for; the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand makes it easy to modify a carrel’s stop word list, and consequently make the output of <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> more meaningful. See the section on <code class="docutils literal notranslate"><span class="pre">edit</span></code> for more detail.</p>
 </div>
 <div class="section" id="concordance">
-<h2>concordance<a class="headerlink" href="#concordance" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">concordance</span></code><a class="headerlink" href="#concordance" title="Permalink to this headline">¶</a></h2>
+<p>Developed in the 13th century, concordances are the oldest of text mining tools, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man’s search engine.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see what words are used in the same breath as a given word. Used without any options, the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> tool will query the given carrel for the word “love”, and the result will be a number of line where each line contains about 40 characters prior to the word “love”, the word “love”, and about 40 characters after the word “love”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>You can query (filter) the results with the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option, and the query must be a word for phrase, not a regular expression. Thus, the following command is identical to the default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Alternatively, the query can be a phrase, and it is often interesting to associate a noun with a verb, such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;war is&quot;</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;hector had&quot;</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">concordance</span></code> will output as many 999 lines. Using the <code class="docutils literal notranslate"><span class="pre">-l</span></code> option you can configure the number of lines. For example, to output only 5 lines, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">l</span> <span class="mi">5</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>You can also configure the size of each line’s width – the number of characters on either side of the query. To see very short snippets, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>It is useful to first exploit the <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> command to identify words or phrases of interest, then use the results as input for the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> command.</p>
+<p>Like many of the other commands, the output of <code class="docutils literal notranslate"><span class="pre">concordance</span></code> is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">&gt;</span> <span class="n">homer</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Initially, the cloud will be dominated by the value of <code class="docutils literal notranslate"><span class="pre">-q</span></code>, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.</p>
 </div>
 <div class="section" id="grammars">
-<h2>grammars<a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">grammars</span></code><a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="cluster">
-<h2>cluster<a class="headerlink" href="#cluster" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">cluster</span></code><a class="headerlink" href="#cluster" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="tm">
-<h2>tm<a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">tm</span></code><a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="sql">
-<h2>sql<a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">sql</span></code><a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="play">
-<h2>play<a class="headerlink" href="#play" title="Permalink to this headline">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">play</span></code><a class="headerlink" href="#play" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -183,13 +247,13 @@ cd $(rdr get)
 <li class="toctree-l2"><a class="reference internal" href="#read"><code class="docutils literal notranslate"><span class="pre">read</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#browse"><code class="docutils literal notranslate"><span class="pre">browse</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#download"><code class="docutils literal notranslate"><span class="pre">download</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ngrams">ngrams</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#concordance">concordance</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#grammars">grammars</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cluster">cluster</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tm">tm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sql">sql</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#play">play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ngrams"><code class="docutils literal notranslate"><span class="pre">ngrams</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#concordance"><code class="docutils literal notranslate"><span class="pre">concordance</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grammars"><code class="docutils literal notranslate"><span class="pre">grammars</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cluster"><code class="docutils literal notranslate"><span class="pre">cluster</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tm"><code class="docutils literal notranslate"><span class="pre">tm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sql"><code class="docutils literal notranslate"><span class="pre">sql</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#play"><code class="docutils literal notranslate"><span class="pre">play</span></code></a></li>
 </ul>
 </li>
 </ul>
