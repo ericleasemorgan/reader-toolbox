@@ -161,8 +161,8 @@ cd $(rdr get)
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
-<p>At this point you may want to redirect the output to a file, and then, again, use another application like a database or a word cloud tool (like Wordle) to visualize the result:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">&gt;</span> <span class="n">love</span><span class="o">.</span><span class="n">tsv</span>
+<p>At this point you may want to redirect the output to a file, and then, again, use another application to do additional analysis. For example, find all bigrams containing the l-o-v-e, redirect the output to a file, and then import the result into a network analysis program (like Gephi) to illustrate relationships:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">&gt;</span> <span class="n">love</span><span class="o">.</span><span class="n">tsv</span>
 </pre></div>
 </div>
 <p>Finally, <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> filters results using a stop word list contained in very study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand is for; the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand makes it easy to modify a carrel’s stop word list, and consequently make the output of <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> more meaningful. See the section on <code class="docutils literal notranslate"><span class="pre">edit</span></code> for more detail.</p>
@@ -203,6 +203,57 @@ cd $(rdr get)
 </div>
 <div class="section" id="grammars">
 <h2><code class="docutils literal notranslate"><span class="pre">grammars</span></code><a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
+<p>Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.</p>
+<p>The Toolbox supports four different grammars. The first is subject-verb-object (svo)  – simple sentences. In order to exploit grammars, a language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be a lengthy process, and the Toolbox will do this work, if it has not already been done. To extract rudimentary, svo-like fragments (the Toolbox default) from a given study carrel, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The result is usually lengthy, and consequently you may want to pipe the results through a pager such as more:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>The default grammar (svo) can be explicitly articulated on the command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">svo</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The other three grammars include:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nouns</span></code> - all nouns and noun chunks</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">quotes</span></code> - things people say</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sss</span></code> - semi-structured sentences; this is the most complicated grammar</p></li>
+</ol>
+<p>To list all the nouns and noun chunks in a carrel, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>To list all the direct quotes in a carrel, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">quotes</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Semi-structured sentences (sss) are the most complicated grammar, and it requires at least one additional option, <code class="docutils literal notranslate"><span class="pre">-n</span></code> where the value is some sort of noun. This grammar includes an optional option, <code class="docutils literal notranslate"><span class="pre">-l</span></code> for the lemma of a verb. By default, the value of <code class="docutils literal notranslate"><span class="pre">-l</span></code> is the lemma “be”. Thus, to list all sentence fragments where the subject of the sentences is “war”, and the predicate is a form of “be”, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">war</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The following command is equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">war</span> <span class="o">-</span><span class="n">l</span> <span class="n">be</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Using the semi-structured grammars is sometimes more accurate than filtering concordances. For example, in Homer’s works, what are horses:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">horses</span> <span class="o">-</span><span class="n">l</span> <span class="n">be</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option, the student, researcher, or scholar can filter the <code class="docutils literal notranslate"><span class="pre">grammars</span></code> output. Like most of the other filters, this one takes regular expressions as arguments. Thus, to filter the <code class="docutils literal notranslate"><span class="pre">svo</span></code> option with the letters l-o-v-e, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">svo</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The same thing can be quite useful when it comes to the <code class="docutils literal notranslate"><span class="pre">noun</span></code> grammar:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>As well as the <code class="docutils literal notranslate"><span class="pre">quotes</span></code> grammar:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">quotes</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="cluster">
 <h2><code class="docutils literal notranslate"><span class="pre">cluster</span></code><a class="headerlink" href="#cluster" title="Permalink to this headline">¶</a></h2>

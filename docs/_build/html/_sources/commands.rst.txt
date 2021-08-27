@@ -150,9 +150,9 @@ Or list the most frequent bigrams containing the letters l-o-v-e: ::
 
   rdr ngrams -c -s 2 -q love homer | more
 
-At this point you may want to redirect the output to a file, and then, again, use another application like a database or a word cloud tool (like Wordle) to visualize the result:  ::
+At this point you may want to redirect the output to a file, and then, again, use another application to do additional analysis. For example, find all bigrams containing the l-o-v-e, redirect the output to a file, and then import the result into a network analysis program (like Gephi) to illustrate relationships: ::
 
-  rdr ngrams -c -s 2 -q love homer > love.tsv
+  rdr ngrams -s 2 -q love homer > love.tsv
   
 Finally, ``ngrams`` filters results using a stop word list contained in very study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the ``edit`` subcommand is for; the ``edit`` subcommand makes it easy to modify a carrel's stop word list, and consequently make the output of ``ngrams`` more meaningful. See the section on ``edit`` for more detail.
 
@@ -197,6 +197,58 @@ Initially, the cloud will be dominated by the value of ``-q``, but you can use y
   
 ``grammars``
 ------------
+
+Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.
+
+The Toolbox supports four different grammars. The first is subject-verb-object (svo)  -- simple sentences. In order to exploit grammars, a language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be a lengthy process, and the Toolbox will do this work, if it has not already been done. To extract rudimentary, svo-like fragments (the Toolbox default) from a given study carrel, enter: ::
+
+  rdr grammars homer
+
+The result is usually lengthy, and consequently you may want to pipe the results through a pager such as more: ::
+
+  rdr grammars homer | more
+  
+The default grammar (svo) can be explicitly articulated on the command line: ::
+
+  rdr grammars -g svo homer
+  
+The other three grammars include:
+
+1. ``nouns`` - all nouns and noun chunks
+2. ``quotes`` - things people say
+3. ``sss`` - semi-structured sentences; this is the most complicated grammar
+
+To list all the nouns and noun chunks in a carrel, enter: ::
+
+  rdr grammars -g nouns homer
+
+To list all the direct quotes in a carrel, enter: ::
+
+  rdr grammars -g quotes homer
+  
+Semi-structured sentences (sss) are the most complicated grammar, and it requires at least one additional option, ``-n`` where the value is some sort of noun. This grammar includes an optional option, ``-l`` for the lemma of a verb. By default, the value of ``-l`` is the lemma "be". Thus, to list all sentence fragments where the subject of the sentences is "war", and the predicate is a form of "be", enter: ::
+
+  rdr grammars -g sss -n war homer
+
+The following command is equivalent: ::
+
+  rdr grammars -g sss -n war -l be homer
+  
+Using the semi-structured grammars is sometimes more accurate than filtering concordances. For example, in Homer's works, what are horses: ::
+
+  rdr grammars -g sss -n horses -l be homer
+
+Using the ``-q`` option, the student, researcher, or scholar can filter the ``grammars`` output. Like most of the other filters, this one takes regular expressions as arguments. Thus, to filter the ``svo`` option with the letters l-o-v-e, try: ::
+
+  rdr grammars -g svo -q love homer
+  
+The same thing can be quite useful when it comes to the ``noun`` grammar: ::
+
+  rdr grammars -g nouns -q love homer
+  
+As well as the ``quotes`` grammar: ::
+
+  rdr grammars -g quotes -q love homer
 
 
 ``cluster``
