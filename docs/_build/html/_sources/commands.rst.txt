@@ -194,17 +194,43 @@ Like many of the other commands, the output of ``concordance`` is designed to be
   
 Initially, the cloud will be dominated by the value of ``-q``, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.
 
-  
+
+``cluster``
+-----------
+
+Use the ``cluster`` subcommand to get an idea of a given carrel's homogeneity. 
+
+The Toolbox supports two types of clustering. The first (and default) is ``dendrogram`` where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example: ::
+
+  rdr cluster homer
+
+The following command is equivalent: ::
+
+  rdr cluster -t dendrogram homer
+
+The second type of clustering (``cube``) reduces the carrel to three dimensions and plots the results: ::
+
+  rdr cluster -t cube homer
+
+If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the ``cluster`` subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The ``cluster`` subcommand is also useful when using the ``tm`` (topic modeling) subcommand, because ``cluster`` will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result will most likely not be very readable.
+
+
+``tm``
+------
+
+
 ``grammars``
 ------------
 
 Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.
 
-The Toolbox supports four different grammars. The first is subject-verb-object (svo)  -- simple sentences. In order to exploit grammars, a language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be a lengthy process, and the Toolbox will do this work, if it has not already been done. To extract rudimentary, svo-like fragments (the Toolbox default) from a given study carrel, enter: ::
+In order to exploit grammars, a specific language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be a time consuming process, and the Toolbox will do this work, if it has not already been done.
+
+The Toolbox supports four different grammars. The first is subject-verb-object (svo) -- rudimentary sentences.  To extract svo-like fragments from a given study carrel, enter: ::
 
   rdr grammars homer
 
-The result is usually lengthy, and consequently you may want to pipe the results through a pager such as more: ::
+The result is usually lengthy, and consequently you may want to pipe the results through to a pager such as more: ::
 
   rdr grammars homer | more
   
@@ -234,11 +260,11 @@ The following command is equivalent: ::
 
   rdr grammars -g sss -n war -l be homer
   
-Using the semi-structured grammars is sometimes more accurate than filtering concordances. For example, in Homer's works, what are horses: ::
+Using the semi-structured grammars is sometimes more accurate than filtering concordances. For example, in Homer's works, one can ask, "What are horses?" ::
 
   rdr grammars -g sss -n horses -l be homer
 
-Using the ``-q`` option, the student, researcher, or scholar can filter the ``grammars`` output. Like most of the other filters, this one takes regular expressions as arguments. Thus, to filter the ``svo`` option with the letters l-o-v-e, try: ::
+Using the ``-q`` option, the student, researcher, or scholar can filter the output of ``grammars``. Like most of the other filters, this one takes a regular expressions as an argument. Thus, to filter the ``svo`` option with the letters l-o-v-e, try: ::
 
   rdr grammars -g svo -q love homer
   
@@ -250,13 +276,15 @@ As well as the ``quotes`` grammar: ::
 
   rdr grammars -g quotes -q love homer
 
+Use the ``-s`` and ``-c`` options to make the output more meaningful. The ``-s`` option sorts the results alphabetically, and by doing so, patterns may emerge. For example: ::
 
-``cluster``
------------
+ rdr grammars -s homer | more
+ 
+Similarly, the ``-c`` option counts and tabulates the results, and this is quite useful for determining what nouns and noun phrases are frequently mentioned in a carrel: ::
 
-
-``tm``
-------
+  rdr grammars -g nouns -c homer | more
+  
+Again, language follows patterns, and these patterns are called grammars. By applying a language model to a given carrel, the student, researcher, or scholar can extract specific grammars. The results are usually more meaningful than simple frequencies of ngrams or the use of a concordance. On the other hand, modeling language is not a trivial computing task. The process can be slow and it is not 100% accurate.  
 
 
 ``sql``

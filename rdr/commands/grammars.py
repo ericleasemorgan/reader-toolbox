@@ -45,7 +45,7 @@ def carrel2doc( carrel ) :
 	# require
 	from os        import path, stat
 	from spacy     import load
-	import textacy
+	import                textacy
 	
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
@@ -86,120 +86,16 @@ ask yourself, "Self, what is justice?"''', err=True )
 	return doc
 
 
-# filter
-def applyFilter ( query, features ) :
-
-	# require
-	from re import search
-	
-	# initialize and process each feature
-	filtered = []
-	for feature in features :
-				
-		# branch according to type; span
-		if str( type( feature ) ) == "<class 'spacy.tokens.span.Span'>" : string = feature.text
-
-		# hope for a tuple with three elements; these need to be functions
-		else :
-		
-			if str( type( feature ) ) == "<class 'textacy.extract.triples.SVOTriple'>" :		
-
-				# parse and stringify
-				subject = [ token.text_with_ws for token in feature.subject ]
-				verb    = [ token.text_with_ws for token in feature.verb ]
-				object  = [ token.text_with_ws for token in feature.object ]
-				string  = ( ' '.join( [ ''.join( subject ), ''.join( verb ), ''.join( object ) ] ) )
-
-			elif str( type( feature ) ) == "<class 'textacy.extract.triples.DQTriple'>" :		
-
-				# parse and stringify
-				speaker = [ token.text_with_ws for token in feature.speaker ]
-				cue     = [ token.text_with_ws for token in feature.cue ]
-				content = feature.content.text_with_ws
-				string  = ( ' '.join( [ ''.join( speaker ), ''.join( cue ), content ] ) )
-
-			elif str( type( feature ) ) == "<class 'textacy.extract.triples.SSSTriple'>" :		
-
-				# parse and stringify
-				entity   = [ token.text_with_ws for token in feature.entity ]
-				cue      = [ token.text_with_ws for token in feature.cue ]
-				fragment = [ token.text_with_ws for token in feature.fragment ]
-				string  = ( ' '.join( [ ''.join( entity ), ''.join( cue ), ''.join( fragment ) ] ) )
-
-			# error
-			else :
-			
-				# get the type of feature, output, and quit
-				feature = str( type( feature ) )
-				click.echo( f"Error: Unknown value for type of feature { feature }. Call Eric.", err=True )
-				exit()
-
-		# do the work
-		if ( search( query, string ) ) : filtered.append( feature )
-
-	# done
-	return ( filtered )
-
-
-# output
-def outputFeatures( features ) :
-
-	# process each feature
-	for feature in features :
-			
-		# branch accordingly; nouns
-		if str( type( feature ) ) == "<class 'spacy.tokens.span.Span'>" : click.echo( feature.text )
-		
-		# subject-verb-object; svo
-		elif str( type( feature ) ) == "<class 'textacy.extract.triples.SVOTriple'>" :
-		
-			# parse
-			subject = [ token.text_with_ws for token in feature.subject ]
-			verb    = [ token.text_with_ws for token in feature.verb ]
-			object  = [ token.text_with_ws for token in feature.object ]
-						
-			# output; a bit obtuse
-			click.echo( '\t'.join( [ ''.join( subject ), ''.join( verb ), ''.join( object ) ] ) )
-
-		# direct quotes
-		elif str( type( feature ) ) == "<class 'textacy.extract.triples.DQTriple'>" :
-		
-			# parse
-			speaker = [ token.text_with_ws for token in feature.speaker ]
-			cue     = [ token.text_with_ws for token in feature.cue ]
-			content = feature.content.text_with_ws
-			
-			# output; still a bit obtuse
-			click.echo( '\t'.join( [ ''.join( speaker ), ''.join( cue ), content ] ) )
-			
-		# direct quotes
-		elif str( type( feature ) ) == "<class 'textacy.extract.triples.SSSTriple'>" :
-		
-			# parse
-			entity   = [ token.text_with_ws for token in feature.entity ]
-			cue      = [ token.text_with_ws for token in feature.cue ]
-			fragment = [ token.text_with_ws for token in feature.fragment ]
-			
-			# output; a bit obtuse some more
-			click.echo( '\t'.join( [ ''.join( entity ), ''.join( cue ), ''.join( fragment ) ] ) )
-		
-		# error
-		else :
-			
-			# get the type of feature, output, and quit
-			feature = str( type( feature ) )
-			click.echo( f"Error: Unknown value for type of feature { feature }. Call Eric.", err=True )
-			exit()
-
-
 # grammars
 @click.command( options_metavar='<options>' )
-@click.option('-q', '--query', type=click.STRING, help="filter results using the given regular expression")
-@click.option('-n', '--noun',  type=click.STRING, help="only applicable to sss; a noun or noun phrase")
-@click.option('-l', '--lemma', default='be', help="only applicable to sss; the lemma of a verb, such as 'be' (default), 'have', or 'say'")
 @click.option('-g', '--grammar', default='svo', type=click.Choice( [ 'svo', 'sss', 'nouns', 'quotes' ], case_sensitive=True ), help="the desired grammatical structure")
+@click.option('-q', '--query',   type=click.STRING, help="filter results using the given regular expression")
+@click.option('-n', '--noun',    type=click.STRING, help="only applicable to sss; a noun or noun phrase")
+@click.option('-l', '--lemma',   default='be', help="only applicable to sss; the lemma of a verb, such as 'be' (default), 'have', or 'say'")
+@click.option('-s', '--sort',    is_flag=True, help='order the results alphabetically')
+@click.option('-c', '--count',   is_flag=True, help='tabulate the items in the result')
 @click.argument( 'carrel', metavar='<carrel>' )
-def grammars( carrel, grammar, query, noun, lemma ) :
+def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 
 	"""Extract sentence fragments from <carrel> where fragments are one of:
 	
@@ -211,30 +107,65 @@ def grammars( carrel, grammar, query, noun, lemma ) :
 	    with an entity, are co-occur with a verb, and are followed
 	    by a phrase
 	
-	This is very useful for the purposes of listing complete ideas from a text.
+	This is very useful for the purposes of listing more complete ideas from a text."""
 	
-	Examples:
-	
-	\b
-	  * rdr grammars homer
-	  * rdr grammars -q horse homer
-	  * rdr grammars -g sss -n hector -l have homer"""
-
 	# require
 	from textacy import extract
 	from os      import system
-		
+	from re      import search
+	
 	# sanity check
 	checkForCarrel( carrel )
 
 	# initialize
 	doc = carrel2doc( carrel )
 
-	# get the features
-	if   grammar == 'svo'    : features = list( extract.subject_verb_object_triples( doc ) )
-	elif grammar == 'quotes' : features = list( extract.direct_quotations( doc ) )
-	elif grammar == 'nouns'  : features = list( extract.noun_chunks( doc ) )
-	elif grammar == 'sss'    :
+	# get the features; svo
+	if grammar == 'svo' :
+	
+		# do the work
+		features = list( extract.subject_verb_object_triples( doc ) )
+		
+		# simplify the result
+		items = []
+		for feature in features :
+		
+			subject = [ token.text_with_ws for token in feature.subject ]
+			verb    = [ token.text_with_ws for token in feature.verb ]
+			object  = [ token.text_with_ws for token in feature.object ]
+			items.append(' \t'.join( [ ''.join( subject ), ''.join( verb ), ''.join( object ) ] ) )
+
+		# done
+		features = items
+		
+	# quotes
+	elif grammar == 'quotes' :
+	
+		# do the work
+		features = list( extract.direct_quotations( doc ) )
+		
+		# simplify the result
+		items = []
+		for feature in features :
+		
+			# parse and stringify
+			speaker = [ token.text_with_ws for token in feature.speaker ]
+			cue     = [ token.text_with_ws for token in feature.cue ]
+			content = feature.content.text_with_ws
+			items.append( '\t'.join( [ ''.join( speaker ), ''.join( cue ), content ] ) )
+
+		# done
+		features = items
+
+	# noun chunks
+	elif grammar == 'nouns' :
+	
+		# do the work and simplify the result
+		features = list( extract.noun_chunks( doc ) )
+		features = [ feature.text for feature in features ]
+		
+	# semi-structured sentences
+	elif grammar == 'sss' :
 
 		# sanity check
 		if not noun :
@@ -245,10 +176,50 @@ def grammars( carrel, grammar, query, noun, lemma ) :
 		# do the work
 		features = list( extract.semistructured_statements( doc, entity=noun, cue=lemma ) )
 
+		# simplify the result
+		items = []
+		for feature in features :
+		
+			entity   = [ token.text_with_ws for token in feature.entity ]
+			cue      = [ token.text_with_ws for token in feature.cue ]
+			fragment = [ token.text_with_ws for token in feature.fragment ]
+			items.append( '\t'.join( [ ''.join( entity ), ''.join( cue ), ''.join( fragment ) ] ) )
+
+		# done
+		features = items
+
 	# filter, conditionally
-	if query : features = applyFilter( query, features )
+	if query : features = [ feature for feature in features if ( search( query, feature ) ) ]
+	
+	# sort, conditionally
+	if sort : features.sort()
+	
+	# count, conditionally
+	if count :
+	
+		# initialize a dictionary and process each feature
+		items = {}
+		for feature in features :
+
+			# update the dictionary
+			if feature in items : items[ feature ] += 1
+			else                : items[ feature ]  = 1
+
+		# sort the dictionary; return the features
+		features = sorted( items.items(), key=lambda x:x[ 1 ], reverse=True )
+		
+		# process each feature, again
+		items = []
+		for feature in features :
+			
+			# create a record and update
+			record = str( feature[ 1 ] ) + '\t' + feature[ 0 ]
+			items.append( record )
+		
+		# done
+		features = items
 	
 	# output
-	outputFeatures( features )
+	for feature in features : click.echo( feature )
 	
 

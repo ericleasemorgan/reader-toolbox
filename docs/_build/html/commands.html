@@ -201,14 +201,35 @@ cd $(rdr get)
 </div>
 <p>Initially, the cloud will be dominated by the value of <code class="docutils literal notranslate"><span class="pre">-q</span></code>, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.</p>
 </div>
+<div class="section" id="cluster">
+<h2><code class="docutils literal notranslate"><span class="pre">cluster</span></code><a class="headerlink" href="#cluster" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand to get an idea of a given carrel’s homogeneity.</p>
+<p>The Toolbox supports two types of clustering. The first (and default) is <code class="docutils literal notranslate"><span class="pre">dendrogram</span></code> where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The following command is equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="o">-</span><span class="n">t</span> <span class="n">dendrogram</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The second type of clustering (<code class="docutils literal notranslate"><span class="pre">cube</span></code>) reduces the carrel to three dimensions and plots the results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="o">-</span><span class="n">t</span> <span class="n">cube</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand is also useful when using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> (topic modeling) subcommand, because <code class="docutils literal notranslate"><span class="pre">cluster</span></code> will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result will most likely not be very readable.</p>
+</div>
+<div class="section" id="tm">
+<h2><code class="docutils literal notranslate"><span class="pre">tm</span></code><a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
+</div>
 <div class="section" id="grammars">
 <h2><code class="docutils literal notranslate"><span class="pre">grammars</span></code><a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
 <p>Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.</p>
-<p>The Toolbox supports four different grammars. The first is subject-verb-object (svo)  – simple sentences. In order to exploit grammars, a language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be a lengthy process, and the Toolbox will do this work, if it has not already been done. To extract rudimentary, svo-like fragments (the Toolbox default) from a given study carrel, enter:</p>
+<p>In order to exploit grammars, a specific language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be a time consuming process, and the Toolbox will do this work, if it has not already been done.</p>
+<p>The Toolbox supports four different grammars. The first is subject-verb-object (svo) – rudimentary sentences.  To extract svo-like fragments from a given study carrel, enter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>The result is usually lengthy, and consequently you may want to pipe the results through a pager such as more:</p>
+<p>The result is usually lengthy, and consequently you may want to pipe the results through to a pager such as more:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
@@ -238,11 +259,11 @@ cd $(rdr get)
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">war</span> <span class="o">-</span><span class="n">l</span> <span class="n">be</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>Using the semi-structured grammars is sometimes more accurate than filtering concordances. For example, in Homer’s works, what are horses:</p>
+<p>Using the semi-structured grammars is sometimes more accurate than filtering concordances. For example, in Homer’s works, one can ask, “What are horses?”</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">horses</span> <span class="o">-</span><span class="n">l</span> <span class="n">be</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>Using the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option, the student, researcher, or scholar can filter the <code class="docutils literal notranslate"><span class="pre">grammars</span></code> output. Like most of the other filters, this one takes regular expressions as arguments. Thus, to filter the <code class="docutils literal notranslate"><span class="pre">svo</span></code> option with the letters l-o-v-e, try:</p>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option, the student, researcher, or scholar can filter the output of <code class="docutils literal notranslate"><span class="pre">grammars</span></code>. Like most of the other filters, this one takes a regular expressions as an argument. Thus, to filter the <code class="docutils literal notranslate"><span class="pre">svo</span></code> option with the letters l-o-v-e, try:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">svo</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
 </pre></div>
 </div>
@@ -254,12 +275,15 @@ cd $(rdr get)
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">quotes</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
 </pre></div>
 </div>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">-s</span></code> and <code class="docutils literal notranslate"><span class="pre">-c</span></code> options to make the output more meaningful. The <code class="docutils literal notranslate"><span class="pre">-s</span></code> option sorts the results alphabetically, and by doing so, patterns may emerge. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">s</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
 </div>
-<div class="section" id="cluster">
-<h2><code class="docutils literal notranslate"><span class="pre">cluster</span></code><a class="headerlink" href="#cluster" title="Permalink to this headline">¶</a></h2>
+<p>Similarly, the <code class="docutils literal notranslate"><span class="pre">-c</span></code> option counts and tabulates the results, and this is quite useful for determining what nouns and noun phrases are frequently mentioned in a carrel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
 </div>
-<div class="section" id="tm">
-<h2><code class="docutils literal notranslate"><span class="pre">tm</span></code><a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
+<p>Again, language follows patterns, and these patterns are called grammars. By applying a language model to a given carrel, the student, researcher, or scholar can extract specific grammars. The results are usually more meaningful than simple frequencies of ngrams or the use of a concordance. On the other hand, modeling language is not a trivial computing task. The process can be slow and it is not 100% accurate.</p>
 </div>
 <div class="section" id="sql">
 <h2><code class="docutils literal notranslate"><span class="pre">sql</span></code><a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h2>
@@ -300,9 +324,9 @@ cd $(rdr get)
 <li class="toctree-l2"><a class="reference internal" href="#download"><code class="docutils literal notranslate"><span class="pre">download</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ngrams"><code class="docutils literal notranslate"><span class="pre">ngrams</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#concordance"><code class="docutils literal notranslate"><span class="pre">concordance</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#grammars"><code class="docutils literal notranslate"><span class="pre">grammars</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cluster"><code class="docutils literal notranslate"><span class="pre">cluster</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tm"><code class="docutils literal notranslate"><span class="pre">tm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grammars"><code class="docutils literal notranslate"><span class="pre">grammars</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sql"><code class="docutils literal notranslate"><span class="pre">sql</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#play"><code class="docutils literal notranslate"><span class="pre">play</span></code></a></li>
 </ul>
