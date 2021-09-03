@@ -53,7 +53,7 @@ cd $(rdr get)
 </div>
 <div class="section" id="catalog">
 <h2><code class="docutils literal notranslate"><span class="pre">catalog</span></code><a class="headerlink" href="#catalog" title="Permalink to this headline">¶</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">catalog</span></code> subcommand to create lists of study carrels.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">catalog</span></code> subcommand to list study carrels.</p>
 <p>By default this subcommand will output a very simple list of the locally saved carrels:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">catalog</span>
 </pre></div>
@@ -98,11 +98,11 @@ cd $(rdr get)
 </div>
 <div class="section" id="browse">
 <h2><code class="docutils literal notranslate"><span class="pre">browse</span></code><a class="headerlink" href="#browse" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">browse</span></code> subcommand is very similar <code class="docutils literal notranslate"><span class="pre">read</span></code> but the view of the study carrel is more akin to perusing a computer’s directory structure. Using the <code class="docutils literal notranslate"><span class="pre">browse</span></code> command against a remote study carrel returns a manifest, a sort of directory listing. For example:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">browse</span></code> subcommand is very similar to <code class="docutils literal notranslate"><span class="pre">read</span></code> but the view of the study carrel is more akin to perusing a computer’s directory structure. Using the <code class="docutils literal notranslate"><span class="pre">browse</span></code> command against a remote study carrel returns a manifest, a sort of directory listing. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">browse</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>Using the <code class="docutils literal notranslate"><span class="pre">browse</span></code> on a carrel in your local collection is facilitated through a terminal-based Web browser called Lynx. Don’t laugh. Lynx is full-fledged browser. It just does not support Javascript. There are many things Lynx can do that Chrome, Safari, or FireFox can not. For example, it can open files with non-standard file extension, such as pos, ent, or wrd.</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">browse</span></code> on a carrel in your local collection is facilitated through a terminal-based Web browser called Lynx. Don’t laugh. Lynx is full-fledged browser. It just does not support Javascript. There are many things Lynx can do that Chrome, Safari, or FireFox can not. For example, it can open files with non-standard file extension, such as pos, ent, or wrd.</p>
 <p>If you do not have Lynx installed, then consider using your computer’s native tools to browse your collection. Remember, 99% of the files in a study carrel are plain text files, and you can open them in your word processor, text editor, spreadsheet, or database program.</p>
 <p>When doing your analysis, it is very important to become familiar with your data. The purposes of <code class="docutils literal notranslate"><span class="pre">read</span></code> and <code class="docutils literal notranslate"><span class="pre">browse</span></code> are complementary, and they go a long way to helping you answer your research questions.</p>
 </div>
@@ -167,10 +167,13 @@ cd $(rdr get)
 </div>
 <p>Finally, <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> filters results using a stop word list contained in very study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand is for; the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand makes it easy to modify a carrel’s stop word list, and consequently make the output of <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> more meaningful. See the section on <code class="docutils literal notranslate"><span class="pre">edit</span></code> for more detail.</p>
 </div>
+<div class="section" id="edit">
+<h2><code class="docutils literal notranslate"><span class="pre">edit</span></code><a class="headerlink" href="#edit" title="Permalink to this headline">¶</a></h2>
+</div>
 <div class="section" id="concordance">
 <h2><code class="docutils literal notranslate"><span class="pre">concordance</span></code><a class="headerlink" href="#concordance" title="Permalink to this headline">¶</a></h2>
 <p>Developed in the 13th century, concordances are the oldest of text mining tools, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man’s search engine.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see what words are used in the same breath as a given word. Used without any options, the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> tool will query the given carrel for the word “love”, and the result will be a number of line where each line contains about 40 characters prior to the word “love”, the word “love”, and about 40 characters after the word “love”:</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see what words are used in the same breath as a given word. Used without any options, the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> tool will query the given carrel for the word “love”, and the result will be a number of lines where each line contains about 40 characters prior to the word “love”, the word “love”, and about 40 characters after the word “love”:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span>
 </pre></div>
 </div>
@@ -195,7 +198,7 @@ cd $(rdr get)
 </pre></div>
 </div>
 <p>It is useful to first exploit the <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> command to identify words or phrases of interest, then use the results as input for the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> command.</p>
-<p>Like many of the other commands, the output of <code class="docutils literal notranslate"><span class="pre">concordance</span></code> is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results:</p>
+<p>Like many of the other commands, the output of <code class="docutils literal notranslate"><span class="pre">concordance</span></code> is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results of <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">&gt;</span> <span class="n">homer</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
 </div>
@@ -220,6 +223,27 @@ cd $(rdr get)
 </div>
 <div class="section" id="tm">
 <h2><code class="docutils literal notranslate"><span class="pre">tm</span></code><a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
+<p>Use this subcommand to do topic modeling.</p>
+<p>Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, “What N things is the carrel about, and how might each N thing be described?” But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare’s works about?</p>
+<p>This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.</p>
+<p>When using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, start with a small number of topics, say seven, which is the default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>If there are many overlapping circles in the results, then consider reducing the number of topics:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span>
+</pre></div>
+</div>
+<p>If you observe words in the output which you deem as useless, then consider using <code class="docutils literal notranslate"><span class="pre">rdr</span> <span class="pre">edit</span></code> to denote those words as stop words. When running <code class="docutils literal notranslate"><span class="pre">tm</span></code> again, those words ought not be in the output.</p>
+<p>The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span> <span class="o">-</span><span class="n">i</span> <span class="mi">4800</span>
+</pre></div>
+</div>
+<p>Knowing the correct value for <code class="docutils literal notranslate"><span class="pre">-i</span></code> is determined by the size of your carrel, the size of your computer, and your patience.</p>
 </div>
 <div class="section" id="grammars">
 <h2><code class="docutils literal notranslate"><span class="pre">grammars</span></code><a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
@@ -263,7 +287,7 @@ cd $(rdr get)
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">horses</span> <span class="o">-</span><span class="n">l</span> <span class="n">be</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>Using the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option, the student, researcher, or scholar can filter the output of <code class="docutils literal notranslate"><span class="pre">grammars</span></code>. Like most of the other filters, this one takes a regular expressions as an argument. Thus, to filter the <code class="docutils literal notranslate"><span class="pre">svo</span></code> option with the letters l-o-v-e, try:</p>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option, the student, researcher, or scholar can filter the output of <code class="docutils literal notranslate"><span class="pre">grammars</span></code>. Like most of the other filters, this one takes a regular expression as an argument. Thus, to filter the <code class="docutils literal notranslate"><span class="pre">svo</span></code> option with the letters l-o-v-e, try:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">svo</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
 </pre></div>
 </div>
@@ -287,9 +311,53 @@ cd $(rdr get)
 </div>
 <div class="section" id="sql">
 <h2><code class="docutils literal notranslate"><span class="pre">sql</span></code><a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h2>
+<p>This subcommand launches a subsystem called “Datasette”, and through its use the student, researcher, or scholar can easily query the given carrel’s underlying SQLite relational database file.</p>
+<p>The underlying database’s structure is defined in each carrel’s <code class="docutils literal notranslate"><span class="pre">etc/reader.sql</span></code> file, and the database is essentially a distillation of all the content found in the <code class="docutils literal notranslate"><span class="pre">adr</span></code>, <code class="docutils literal notranslate"><span class="pre">bib</span></code>, <code class="docutils literal notranslate"><span class="pre">ent</span></code>, <code class="docutils literal notranslate"><span class="pre">pos</span></code>, <code class="docutils literal notranslate"><span class="pre">urls</span></code>, and <code class="docutils literal notranslate"><span class="pre">wrd</span></code> directories of each carrel. Thus, the database includes email addresses, bibliographics, named-entities, parts-of-speech, URLs, and statistically significant keywords extracted from each and every text-based file found in the cache directory.</p>
+<p>Given this database, it is possible to exact all sorts of information through the use of SQL (structured query language). For example, begin to work with the carrel named homer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sql</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Then query the database:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>-- list all identifiers
+SELECT id FROM bib;
+
+-- count &amp; tabulate the keywords
+SELECT COUNT( keyword ) AS c, keyword FROM wrd GROUP BY keyword ORDER BY c DESC;
+
+-- list all items &quot;about&quot; Trojans; notice whence each book comes
+SELECT b.id FROM bib AS b, wrd AS w WHERE w.keyword IS &#39;Trojans&#39; AND b.id IS w.id;
+
+-- list all items &quot;about&quot; Ulysses; again, notice whence each book comes; what does that tell you about the books?
+SELECT b.id FROM bib AS b, wrd AS w WHERE w.keyword IS &#39;Ulysses&#39; AND b.id IS w.id;
+
+-- create a rudimentary bibliography
+SELECT b.id, GROUP_CONCAT( w.keyword, &#39;; &#39; ) AS keywords, b.summary FROM bib AS b, wrd AS w WHERE b.id = w.id GROUP BY b.id ORDER BY b.id;
+
+-- count &amp; tabulate the people
+SELECT COUNT( entity ) AS c, entity FROM ent WHERE type IS &#39;PERSON&#39; GROUP BY entity ORDER BY c DESC;
+
+-- count &amp; tabulate the locations
+SELECT COUNT( entity ) AS c, entity FROM ent WHERE type IS &#39;LOC&#39; GROUP BY entity ORDER BY c DESC;
+
+-- list all the verbs
+-- what do things do, and in any carrel the vast majority of time it is always about being and having
+SELECT COUNT( lemma ) AS c, lemma FROM pos WHERE pos LIKE &#39;V%&#39; GROUP BY lemma ORDER BY c DESC;
+
+-- list all the nouns
+-- what things exist?
+SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE &#39;N%&#39; GROUP BY LOWER( lemma ) ORDER BY c DESC;
+
+-- list all the adjectives
+-- how are things described?
+SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE &#39;J%&#39; GROUP BY LOWER( lemma ) ORDER BY c DESC;
+</pre></div>
+</div>
+<p>The different types of queries are almost limitless, and the key to using the database is less about knowing SQL and more about being able to articulate the type of information one wants to extract.</p>
+<p>For more ideas of how to exploit the database see <code class="docutils literal notranslate"><span class="pre">etc/queries.sql</span></code> found in every study carrel. That file is used to create <code class="docutils literal notranslate"><span class="pre">etc/report.txt</span></code>.</p>
 </div>
 <div class="section" id="play">
 <h2><code class="docutils literal notranslate"><span class="pre">play</span></code><a class="headerlink" href="#play" title="Permalink to this headline">¶</a></h2>
+<p>Use this subcommand to play hangman. It is that simple.</p>
 </div>
 </div>
 
@@ -323,6 +391,7 @@ cd $(rdr get)
 <li class="toctree-l2"><a class="reference internal" href="#browse"><code class="docutils literal notranslate"><span class="pre">browse</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#download"><code class="docutils literal notranslate"><span class="pre">download</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ngrams"><code class="docutils literal notranslate"><span class="pre">ngrams</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edit"><code class="docutils literal notranslate"><span class="pre">edit</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#concordance"><code class="docutils literal notranslate"><span class="pre">concordance</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cluster"><code class="docutils literal notranslate"><span class="pre">cluster</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tm"><code class="docutils literal notranslate"><span class="pre">tm</span></code></a></li>

@@ -29,7 +29,7 @@ This makes it easier to manage your collection of study carrels, and it will als
 ``catalog``
 -----------
 
-Use the ``catalog`` subcommand to create lists of study carrels.
+Use the ``catalog`` subcommand to list study carrels.
 
 By default this subcommand will output a very simple list of the locally saved carrels: ::
 
@@ -80,11 +80,11 @@ Study carrels are data sets. A subset of the datasets are HTML files intended fo
 ``browse``
 ----------
 
-The ``browse`` subcommand is very similar ``read`` but the view of the study carrel is more akin to perusing a computer's directory structure. Using the ``browse`` command against a remote study carrel returns a manifest, a sort of directory listing. For example: ::
+The ``browse`` subcommand is very similar to ``read`` but the view of the study carrel is more akin to perusing a computer's directory structure. Using the ``browse`` command against a remote study carrel returns a manifest, a sort of directory listing. For example: ::
 
   rdr browse -l remote homer
 
-Using the ``browse`` on a carrel in your local collection is facilitated through a terminal-based Web browser called Lynx. Don't laugh. Lynx is full-fledged browser. It just does not support Javascript. There are many things Lynx can do that Chrome, Safari, or FireFox can not. For example, it can open files with non-standard file extension, such as pos, ent, or wrd.
+Using ``browse`` on a carrel in your local collection is facilitated through a terminal-based Web browser called Lynx. Don't laugh. Lynx is full-fledged browser. It just does not support Javascript. There are many things Lynx can do that Chrome, Safari, or FireFox can not. For example, it can open files with non-standard file extension, such as pos, ent, or wrd.
 
 If you do not have Lynx installed, then consider using your computer's native tools to browse your collection. Remember, 99% of the files in a study carrel are plain text files, and you can open them in your word processor, text editor, spreadsheet, or database program.
 
@@ -156,13 +156,16 @@ At this point you may want to redirect the output to a file, and then, again, us
   
 Finally, ``ngrams`` filters results using a stop word list contained in very study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the ``edit`` subcommand is for; the ``edit`` subcommand makes it easy to modify a carrel's stop word list, and consequently make the output of ``ngrams`` more meaningful. See the section on ``edit`` for more detail.
 
+``edit``
+--------
+
 
 ``concordance``
 ---------------
 
 Developed in the 13th century, concordances are the oldest of text mining tools, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man's search engine. 
 
-Use ``concordance`` to see what words are used in the same breath as a given word. Used without any options, the ``concordance`` tool will query the given carrel for the word "love", and the result will be a number of line where each line contains about 40 characters prior to the word "love", the word "love", and about 40 characters after the word "love": ::
+Use ``concordance`` to see what words are used in the same breath as a given word. Used without any options, the ``concordance`` tool will query the given carrel for the word "love", and the result will be a number of lines where each line contains about 40 characters prior to the word "love", the word "love", and about 40 characters after the word "love": ::
 
   rdr concordance homer
   
@@ -188,7 +191,7 @@ You can also configure the size of each line's width -- the number of characters
 
 It is useful to first exploit the ``ngrams`` command to identify words or phrases of interest, then use the results as input for the ``concordance`` command.
 
-Like many of the other commands, the output of ``concordance`` is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results ``concordance`` to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results: ::
+Like many of the other commands, the output of ``concordance`` is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results of ``concordance`` to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results: ::
 
   rdr concordance homer > homer.txt
   
@@ -218,7 +221,34 @@ If your carrel contains sets of journal articles, all of the chapters of a given
 ``tm``
 ------
 
+Use this subcommand to do topic modeling.
 
+Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, "What N things is the carrel about, and how might each N thing be described?" But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare's works about?
+
+This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.
+
+When using the ``tm`` command, start with a small number of topics, say seven, which is the default: ::
+
+  rdr tm homer
+
+If there are many overlapping circles in the results, then consider reducing the number of topics: ::
+
+  rdr tm homer -t 5
+
+Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating: ::
+
+  rdr tm homer -t 5 -w 24
+
+If you observe words in the output which you deem as useless, then consider using ``rdr edit`` to denote those words as stop words. When running ``tm`` again, those words ought not be in the output.
+
+The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example: ::
+
+  rdr tm homer -t 5 -w 24 -i 4800
+
+Knowing the correct value for ``-i`` is determined by the size of your carrel, the size of your computer, and your patience.
+
+
+   
 ``grammars``
 ------------
 
@@ -264,7 +294,7 @@ Using the semi-structured grammars is sometimes more accurate than filtering con
 
   rdr grammars -g sss -n horses -l be homer
 
-Using the ``-q`` option, the student, researcher, or scholar can filter the output of ``grammars``. Like most of the other filters, this one takes a regular expressions as an argument. Thus, to filter the ``svo`` option with the letters l-o-v-e, try: ::
+Using the ``-q`` option, the student, researcher, or scholar can filter the output of ``grammars``. Like most of the other filters, this one takes a regular expression as an argument. Thus, to filter the ``svo`` option with the letters l-o-v-e, try: ::
 
   rdr grammars -g svo -q love homer
   
@@ -290,10 +320,57 @@ Again, language follows patterns, and these patterns are called grammars. By app
 ``sql``
 -------
 
+This subcommand launches a subsystem called "Datasette", and through its use the student, researcher, or scholar can easily query the given carrel's underlying SQLite relational database file.
+
+The underlying database's structure is defined in each carrel's ``etc/reader.sql`` file, and the database is essentially a distillation of all the content found in the ``adr``, ``bib``, ``ent``, ``pos``, ``urls``, and ``wrd`` directories of each carrel. Thus, the database includes email addresses, bibliographics, named-entities, parts-of-speech, URLs, and statistically significant keywords extracted from each and every text-based file found in the cache directory.
+
+Given this database, it is possible to exact all sorts of information through the use of SQL (structured query language). For example, begin to work with the carrel named homer: ::
+
+  rdr sql homer
+
+Then query the database: ::
+
+  -- list all identifiers
+  SELECT id FROM bib;
+  
+  -- count & tabulate the keywords
+  SELECT COUNT( keyword ) AS c, keyword FROM wrd GROUP BY keyword ORDER BY c DESC;
+  
+  -- list all items "about" Trojans; notice whence each book comes
+  SELECT b.id FROM bib AS b, wrd AS w WHERE w.keyword IS 'Trojans' AND b.id IS w.id;
+  
+  -- list all items "about" Ulysses; again, notice whence each book comes; what does that tell you about the books?
+  SELECT b.id FROM bib AS b, wrd AS w WHERE w.keyword IS 'Ulysses' AND b.id IS w.id;
+  
+  -- create a rudimentary bibliography
+  SELECT b.id, GROUP_CONCAT( w.keyword, '; ' ) AS keywords, b.summary FROM bib AS b, wrd AS w WHERE b.id = w.id GROUP BY b.id ORDER BY b.id;
+
+  -- count & tabulate the people
+  SELECT COUNT( entity ) AS c, entity FROM ent WHERE type IS 'PERSON' GROUP BY entity ORDER BY c DESC;
+
+  -- count & tabulate the locations
+  SELECT COUNT( entity ) AS c, entity FROM ent WHERE type IS 'LOC' GROUP BY entity ORDER BY c DESC;
+
+  -- list all the verbs
+  -- what do things do, and in any carrel the vast majority of time it is always about being and having
+  SELECT COUNT( lemma ) AS c, lemma FROM pos WHERE pos LIKE 'V%' GROUP BY lemma ORDER BY c DESC;
+
+  -- list all the nouns
+  -- what things exist?
+  SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE 'N%' GROUP BY LOWER( lemma ) ORDER BY c DESC;
+
+  -- list all the adjectives
+  -- how are things described?
+  SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE 'J%' GROUP BY LOWER( lemma ) ORDER BY c DESC;
+
+The different types of queries are almost limitless, and the key to using the database is less about knowing SQL and more about being able to articulate the type of information one wants to extract. 
+
+For more ideas of how to exploit the database see ``etc/queries.sql`` found in every study carrel. That file is used to create ``etc/report.txt``.
+
 
 ``play``
 --------
 
-
+Use this subcommand to play hangman. It is that simple. 
 
 

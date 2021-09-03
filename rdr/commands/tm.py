@@ -51,7 +51,7 @@ so you will need to run 'rdr set -s mallet'.''', err=True )
 
 @click.command( options_metavar='<options>' )
 @click.option('-t', '--topics', default=7, help="number of topics to generate")
-@click.option('-w', '--words', default=30, help="number of words used to describe topic")
+@click.option('-w', '--words', default=7, help="number of words used to describe topic")
 @click.option('-i', '--iterations', default=2400, help="number of iterations")
 @click.argument( 'carrel', metavar='<carrel>' )
 def tm( carrel, topics, words, iterations ) :
