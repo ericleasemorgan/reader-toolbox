@@ -1,35 +1,85 @@
 Quicker start
 =============
 
-This is more terse quickstart: ::
+Here is a quicker start, sans much elaboration: ::
 
-  # output menu
-  rdr
+  # install
+  pip install reader-toolbox --upgrade
   
-  # configure where your study carrels will go
+  # configure; accept the default
   rdr set local
   
-  # cache a study carrel named homer
+  # add an item to your library
   rdr download homer
   
-  # output all the words in homer
+  # read homer
+  rdr read homer
+
+  # list all words
   rdr ngrams homer
   
-  # see how the word love is used in homer
-  rdr concordance -q love homer
+  # list all bigrams
+  rdr ngrams -s 2 homer
   
-  # cache a study carrel named sonnets
-  rdr download sonnets
+  # list all bigrams and count them
+  rdr ngrams -s 2 -c homer
   
-  # output all the words in sonnets
-  rdr ngrams sonnets
+  # list all bigrams, count them, and filter the results
+  rdr ngrams -s 2 -c -q love homer
   
-  # see how the word love is used in sonnets
-  rdr concordance -q love sonnets
+  # same as the above, but pipe the result through a pager
+  rdr ngrams -s 2 -c -q love homer | more
   
-  # cache a study carrel named pride
+  # search
+  rdr concordance homer
+    
+  # search again, but specify a query
+  rdr concordance -q war homer
+    
+  # same as the above, but pipe the result through a pager
+  rdr concordance -q war homer | more
+    
+  # list subject-verb-object fragments; please be patient
+  rdr grammars homer
+  
+  # list noun phrases
+  rdr grammars -g nouns homer
+  
+  # same as the above, but tabulate the results, look for love, and page the results
+  rdr grammars -g nouns -c -q love homer | more
+  
+  # cluster; do the items in the carrel group themselves?
+  rdr cluster homer
+    
+  # topic model; similar to cluster but with more detail
+  rdr tm homer
+  
+  # play hangman
+  rdr play
+  
+  # page through additional carrels for downloading
+  rdr catalog -l remote -h
+  
+  # read a remote study carrel
+  rdr read -l remote pride
+  
+  # browse the content of a remote study carrel
+  rdr browse -l remote pride
+
+  # download another carrel
   rdr download pride
   
-  # see how the word love is used on pride
+  # download yet another carrel
+  rdr download sonnets
+  
+  # list your carrels
+  rdr catalog
+    
+  # search for love
   rdr concordance -q love pride
+
+  # find a lot of love
+  rdr concordance -q love sonnets
+
+
 

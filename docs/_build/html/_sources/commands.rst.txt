@@ -3,18 +3,22 @@ Commands in depth
 
 This section describes each Toolbox command in greater detail. They are listed, more or less, in the order they ought to be executed when wanting to do your analysis.
 
-``set``
--------
+set
+---
 
-Use the ``set`` subcommand to tell the Toolbox two things: 1) the location of your locally cached study carrels, and 2) the location of an external tool called MALLET.
+Use the ``set`` subcommand to tell the Toolbox two things: 1) the location of your locally cached study carrels, and 2) the location of an external tool called MALLET. For example, to set the location of your local cache of study carrels, enter: ::
 
-By default, the location of your study carrels is set to reader-library in your home directory, but this setting does not take effect until you run ``set``. You can move your collection of carrels anywhere you desire. In fact, you might consider having more than one collection. Just tell the Toolbox which cache you want to use.
+  rdr set local
 
-When you initially run the ``tm`` command, and if the subsystem called MALLET is not configured, then the Toolbox will download MALLET, save it in your home directory, and automatically update the configuration. Like above, you can move MALLET any where you desire, but you need to tell the Toolbox where it is located. Otherwise, the Toolbox will download an additional copy.
+By default, the location of your study carrels is set to ``reader-library`` in your home directory, but this setting does not take effect until you run ``set``. You can move your collection of carrels anywhere you desire. In fact, you might consider having more than one collection. Just tell the Toolbox which cache you want to use.
+
+When you initially run the ``tm`` command, and if the subsystem called MALLET is not configured, then the Toolbox will download MALLET, save it in your home directory, and automatically update the configuration. Like above, you can move MALLET any where you desire, but you need to tell the Toolbox where it is located: ::
+
+  rdr set mallet
 
 
-``get``
--------
+get
+---
 
 Use ``get`` to echo the values denoting the location of your local cache of study carrels as well as the location of MALLET. More than anything, this command is used for debugging purposes. 
 
@@ -23,11 +27,11 @@ People using Linux or Macintosh computers can run the following command, and the
   # change directories to local collection of carrels
   cd $(rdr get)
 
-This makes it easier to manage your collection of study carrels, and it will also make command line completion easier. There is most likely a similar command for Windows computers. I'll give $5 to the first person who tells me what the command is. Really. I promise.
+This makes it easier to manage your local collection, and it will also make command line completion easier. There is most likely a similar command for people using Windows computers, and I will give $5 to the first person who tells me what the command is. Really. I promise.
 
 
-``catalog``
------------
+catalog
+-------
 
 Use the ``catalog`` subcommand to list study carrels.
 
@@ -37,11 +41,11 @@ By default this subcommand will output a very simple list of the locally saved c
 
 As your collection grows, you will probably use this version of the subcommand more and more often.
 
-When you are just starting out, you will probably want to learn what carrels have been previously created and available for downloading. As of this writing, there are about 3,000 publicly items. Thus, you will use want to use the ``-l`` option to see what carrels exist: ::
+When you are just starting out, you will probably want to learn what carrels have been previously created and available for downloading. As of this writing, there are about 3,000 publicly available items. Thus, you will use want to use the ``-l`` option to see what carrels exist: ::
 
   rdr catalog -l remote
   
-The remote list of carrels is returned as a tab-delimited stream of text with seven fields:
+The remote list of carrels is returned as a tab-delimited stream of text with seven columns:
 
 1. name
 2. date created
@@ -51,7 +55,7 @@ The remote list of carrels is returned as a tab-delimited stream of text with se
 6. average readability score
 7. size of compressed carrel measured in bytes
 
-The student, researcher, or scholar can then use their computer's operating sytem functionality to parse, sort, filter, etc, the catalog data. For example: ::
+The student, researcher, or scholar can then use their computer's operating sytem functionality to parse, sort, filter, etc, the catalog data. For example, the following may work for you: ::
 
   rdr catalog -l remote | cut -f1,3 | grep love | less -x42 -S
 
@@ -63,36 +67,36 @@ Finally, you might also consider outputting the catalog to a file, like this: ::
 
   rdr catalog -l remote > catalog.tsv
   
-You can then open catalog.tsv in your favorite spreadsheet application and from there you can search, filter, and sort.
+You can then open ``catalog.tsv`` in your favorite spreadsheet application and from there you can search, filter, sort, and group.
 
 
-``read``
---------
+read
+----
 
 Use the ``read`` subcommand to look through and peruse the contents of a local or remote study carrel. Two examples include: ::
 
   rdr read homer
   rdr read -l remote homer
 
-Study carrels are data sets. A subset of the datasets are HTML files intended for traditional reading purpose. These HTML files are narrative in nature but there are a number of interactive tables as well. The use of the ``read`` subcommand is a great way to become familiar with a study carrel's provenance, breadth, depth, and content. 
+Study carrels are data sets. A subset of the datasets are HTML files intended for traditional reading purposes. These HTML files are narrative in nature but there are a number of interactive tables as well. The use of the ``read`` subcommand is a great way to become familiar with a study carrel's provenance, breadth, depth, and content. 
 
 
-``browse``
-----------
+browse
+------
 
 The ``browse`` subcommand is very similar to ``read`` but the view of the study carrel is more akin to perusing a computer's directory structure. Using the ``browse`` command against a remote study carrel returns a manifest, a sort of directory listing. For example: ::
 
   rdr browse -l remote homer
 
-Using ``browse`` on a carrel in your local collection is facilitated through a terminal-based Web browser called Lynx. Don't laugh. Lynx is full-fledged browser. It just does not support Javascript. There are many things Lynx can do that Chrome, Safari, or FireFox can not. For example, it can open files with non-standard file extension, such as pos, ent, or wrd.
+Using ``browse`` on a carrel in your local collection is facilitated through a terminal-based Web browser called Lynx. Don't laugh. Lynx is full-fledged browser. It just does not support Javascript. There are many things Lynx can do that Chrome, Safari, nor FireFox can. For example, it can open files with non-standard file extensions, such as pos, ent, or wrd.
 
 If you do not have Lynx installed, then consider using your computer's native tools to browse your collection. Remember, 99% of the files in a study carrel are plain text files, and you can open them in your word processor, text editor, spreadsheet, or database program.
 
 When doing your analysis, it is very important to become familiar with your data. The purposes of ``read`` and ``browse`` are complementary, and they go a long way to helping you answer your research questions.
 
 
-``download``
-------------
+download
+--------
 
 The ``download`` command is used to cache a study carrel from the public collection to your local computer. Begin by using variations of the ``catalog`` command to identify the name of a study carrel of interest. And then use the ``download`` command: ::
 
@@ -103,8 +107,8 @@ If you have not configured the Toolbox to denote the location of your local cach
 Unlike traditional libraries, once you check something out of the Reader's library, you do not have to return it. :)
 
 
-``ngrams``
-----------
+ngrams
+------
 
 This is one of the strongest subcommands in the Toolbox. Use it to comprehend the breadth, depth, and scope of a carrel. Begin by simply giving ``ngrams`` the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords: ::
 
@@ -118,7 +122,7 @@ If you specify a size greater than 2, then stop words will not be removed: ::
 
   rdr ngrams -s 3 homer
   
-At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result to a file named bigrams.tsv, and then open bigrams.tsv in your spreadsheet application for searching and sorting purposes: ::
+At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result to a file named ``bigrams.tsv``, and then open ``bigrams.tsv`` in your spreadsheet application for searching, sorting, and grouping purposes: ::
 
   rdr ngrams -s 2 homer > bigrams.tsv
   
@@ -150,20 +154,20 @@ Or list the most frequent bigrams containing the letters l-o-v-e: ::
 
   rdr ngrams -c -s 2 -q love homer | more
 
-At this point you may want to redirect the output to a file, and then, again, use another application to do additional analysis. For example, find all bigrams containing the l-o-v-e, redirect the output to a file, and then import the result into a network analysis program (like Gephi) to illustrate relationships: ::
+At this point you may want to redirect the output to a file, and then, again, use another application to do additional analysis. For example, find all bigrams containing l-o-v-e, redirect the output to a file, and then import the result into a network analysis program (like Gephi) to illustrate relationships: ::
 
   rdr ngrams -s 2 -q love homer > love.tsv
   
 Finally, ``ngrams`` filters results using a stop word list contained in very study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the ``edit`` subcommand is for; the ``edit`` subcommand makes it easy to modify a carrel's stop word list, and consequently make the output of ``ngrams`` more meaningful. See the section on ``edit`` for more detail.
 
-``edit``
---------
+edit
+----
 
 
-``concordance``
----------------
+concordance
+-----------
 
-Developed in the 13th century, concordances are the oldest of text mining tools, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man's search engine. 
+Developed in the 13th century, concordances are the oldest form of text mining, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man's search engine. 
 
 Use ``concordance`` to see what words are used in the same breath as a given word. Used without any options, the ``concordance`` tool will query the given carrel for the word "love", and the result will be a number of lines where each line contains about 40 characters prior to the word "love", the word "love", and about 40 characters after the word "love": ::
 
@@ -191,15 +195,15 @@ You can also configure the size of each line's width -- the number of characters
 
 It is useful to first exploit the ``ngrams`` command to identify words or phrases of interest, then use the results as input for the ``concordance`` command.
 
-Like many of the other commands, the output of ``concordance`` is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results of ``concordance`` to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results: ::
+Like many of the other subcommands, the output of ``concordance`` is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results of ``concordance`` to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results: ::
 
   rdr concordance homer > homer.txt
   
 Initially, the cloud will be dominated by the value of ``-q``, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.
 
 
-``cluster``
------------
+cluster
+-------
 
 Use the ``cluster`` subcommand to get an idea of a given carrel's homogeneity. 
 
@@ -218,8 +222,8 @@ The second type of clustering (``cube``) reduces the carrel to three dimensions 
 If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the ``cluster`` subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The ``cluster`` subcommand is also useful when using the ``tm`` (topic modeling) subcommand, because ``cluster`` will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result will most likely not be very readable.
 
 
-``tm``
-------
+tm
+--
 
 Use this subcommand to do topic modeling.
 
@@ -239,7 +243,7 @@ Many people find topic modeling to be confusing, and this is because they specif
 
   rdr tm homer -t 5 -w 24
 
-If you observe words in the output which you deem as useless, then consider using ``rdr edit`` to denote those words as stop words. When running ``tm`` again, those words ought not be in the output.
+If you observe words in the output which you deem as useless, then consider using the ``edit`` subcommand to denote those words as stop words. When running ``tm`` again, those words ought not be in the output.
 
 The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example: ::
 
@@ -248,9 +252,8 @@ The larger the study carrel, the more important it is to allow the underlying su
 Knowing the correct value for ``-i`` is determined by the size of your carrel, the size of your computer, and your patience.
 
 
-   
-``grammars``
-------------
+grammars
+--------
 
 Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.
 
@@ -260,7 +263,7 @@ The Toolbox supports four different grammars. The first is subject-verb-object (
 
   rdr grammars homer
 
-The result is usually lengthy, and consequently you may want to pipe the results through to a pager such as more: ::
+The result is usually lengthy, and consequently you may want to pipe the results through to a pager such as "more": ::
 
   rdr grammars homer | more
   
@@ -314,21 +317,19 @@ Similarly, the ``-c`` option counts and tabulates the results, and this is quite
 
   rdr grammars -g nouns -c homer | more
   
-Again, language follows patterns, and these patterns are called grammars. By applying a language model to a given carrel, the student, researcher, or scholar can extract specific grammars. The results are usually more meaningful than simple frequencies of ngrams or the use of a concordance. On the other hand, modeling language is not a trivial computing task. The process can be slow and it is not 100% accurate.  
 
+sql
+---
 
-``sql``
--------
+This subcommand launches a subsystem called Datasette, and through its use the student, researcher, or scholar can easily query the given carrel's underlying SQLite relational database file.
 
-This subcommand launches a subsystem called "Datasette", and through its use the student, researcher, or scholar can easily query the given carrel's underlying SQLite relational database file.
-
-The underlying database's structure is defined in each carrel's ``etc/reader.sql`` file, and the database is essentially a distillation of all the content found in the ``adr``, ``bib``, ``ent``, ``pos``, ``urls``, and ``wrd`` directories of each carrel. Thus, the database includes email addresses, bibliographics, named-entities, parts-of-speech, URLs, and statistically significant keywords extracted from each and every text-based file found in the cache directory.
+The underlying database's structure is defined in each carrel's ``etc/reader.sql`` file, and the database is essentially a distillation of all the content found in the ``adr``, ``bib``, ``ent``, ``pos``, ``urls``, and ``wrd`` directories of each carrel. Thus, the database includes email addresses, bibliographics, named-entities, parts-of-speech, URLs, and statistically significant keywords extracted from each and every text-based file found in the carrel's ``cache`` directory.
 
 Given this database, it is possible to exact all sorts of information through the use of SQL (structured query language). For example, begin to work with the carrel named homer: ::
 
   rdr sql homer
 
-Then query the database: ::
+Then query the database in a number of different ways: ::
 
   -- list all identifiers
   SELECT id FROM bib;
@@ -355,12 +356,10 @@ Then query the database: ::
   -- what do things do, and in any carrel the vast majority of time it is always about being and having
   SELECT COUNT( lemma ) AS c, lemma FROM pos WHERE pos LIKE 'V%' GROUP BY lemma ORDER BY c DESC;
 
-  -- list all the nouns
-  -- what things exist?
+  -- list all the nouns; what things exist?
   SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE 'N%' GROUP BY LOWER( lemma ) ORDER BY c DESC;
 
-  -- list all the adjectives
-  -- how are things described?
+  -- list all the adjectives; how are things described?
   SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE 'J%' GROUP BY LOWER( lemma ) ORDER BY c DESC;
 
 The different types of queries are almost limitless, and the key to using the database is less about knowing SQL and more about being able to articulate the type of information one wants to extract. 
@@ -368,8 +367,8 @@ The different types of queries are almost limitless, and the key to using the da
 For more ideas of how to exploit the database see ``etc/queries.sql`` found in every study carrel. That file is used to create ``etc/report.txt``.
 
 
-``play``
---------
+play
+----
 
 Use this subcommand to play hangman. It is that simple. 
 

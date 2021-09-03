@@ -15,8 +15,8 @@
     <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Quick start" href="quick-start.html" />
-    <link rel="prev" title="Installation" href="installation.html" />
+    <link rel="next" title="Commands in depth" href="commands.html" />
+    <link rel="prev" title="Quick start" href="quick-start.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -35,36 +35,84 @@
             
   <div class="section" id="quicker-start">
 <h1>Quicker start<a class="headerlink" href="#quicker-start" title="Permalink to this headline">¶</a></h1>
-<p>This is more terse quickstart:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># output menu</span>
-<span class="n">rdr</span>
+<p>Here is a quicker start, sans much elaboration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># install</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">reader</span><span class="o">-</span><span class="n">toolbox</span> <span class="o">--</span><span class="n">upgrade</span>
 
-<span class="c1"># configure where your study carrels will go</span>
+<span class="c1"># configure; accept the default</span>
 <span class="n">rdr</span> <span class="nb">set</span> <span class="n">local</span>
 
-<span class="c1"># cache a study carrel named homer</span>
+<span class="c1"># add an item to your library</span>
 <span class="n">rdr</span> <span class="n">download</span> <span class="n">homer</span>
 
-<span class="c1"># output all the words in homer</span>
+<span class="c1"># read homer</span>
+<span class="n">rdr</span> <span class="n">read</span> <span class="n">homer</span>
+
+<span class="c1"># list all words</span>
 <span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span>
 
-<span class="c1"># see how the word love is used in homer</span>
-<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+<span class="c1"># list all bigrams</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="n">homer</span>
 
-<span class="c1"># cache a study carrel named sonnets</span>
-<span class="n">rdr</span> <span class="n">download</span> <span class="n">sonnets</span>
+<span class="c1"># list all bigrams and count them</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span>
 
-<span class="c1"># output all the words in sonnets</span>
-<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">sonnets</span>
+<span class="c1"># list all bigrams, count them, and filter the results</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
 
-<span class="c1"># see how the word love is used in sonnets</span>
-<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">sonnets</span>
+<span class="c1"># same as the above, but pipe the result through a pager</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
 
-<span class="c1"># cache a study carrel named pride</span>
+<span class="c1"># search</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span>
+
+<span class="c1"># search again, but specify a query</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">war</span> <span class="n">homer</span>
+
+<span class="c1"># same as the above, but pipe the result through a pager</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">war</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+
+<span class="c1"># list subject-verb-object fragments; please be patient</span>
+<span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span>
+
+<span class="c1"># list noun phrases</span>
+<span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="n">homer</span>
+
+<span class="c1"># same as the above, but tabulate the results, look for love, and page the results</span>
+<span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+
+<span class="c1"># cluster; do the items in the carrel group themselves?</span>
+<span class="n">rdr</span> <span class="n">cluster</span> <span class="n">homer</span>
+
+<span class="c1"># topic model; similar to cluster but with more detail</span>
+<span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span>
+
+<span class="c1"># play hangman</span>
+<span class="n">rdr</span> <span class="n">play</span>
+
+<span class="c1"># page through additional carrels for downloading</span>
+<span class="n">rdr</span> <span class="n">catalog</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="o">-</span><span class="n">h</span>
+
+<span class="c1"># read a remote study carrel</span>
+<span class="n">rdr</span> <span class="n">read</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="n">pride</span>
+
+<span class="c1"># browse the content of a remote study carrel</span>
+<span class="n">rdr</span> <span class="n">browse</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="n">pride</span>
+
+<span class="c1"># download another carrel</span>
 <span class="n">rdr</span> <span class="n">download</span> <span class="n">pride</span>
 
-<span class="c1"># see how the word love is used on pride</span>
+<span class="c1"># download yet another carrel</span>
+<span class="n">rdr</span> <span class="n">download</span> <span class="n">sonnets</span>
+
+<span class="c1"># list your carrels</span>
+<span class="n">rdr</span> <span class="n">catalog</span>
+
+<span class="c1"># search for love</span>
 <span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">pride</span>
+
+<span class="c1"># find a lot of love</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">sonnets</span>
 </pre></div>
 </div>
 </div>
@@ -88,8 +136,8 @@
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Quicker start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quicker start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands in depth</a></li>
 </ul>
 
@@ -97,8 +145,8 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
-      <li>Next: <a href="quick-start.html" title="next chapter">Quick start</a></li>
+      <li>Previous: <a href="quick-start.html" title="previous chapter">Quick start</a></li>
+      <li>Next: <a href="commands.html" title="next chapter">Commands in depth</a></li>
   </ul></li>
 </ul>
 </div>

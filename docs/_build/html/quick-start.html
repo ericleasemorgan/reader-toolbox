@@ -35,10 +35,10 @@
             
   <div class="section" id="quick-start">
 <h1>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h1>
-<p>The Toolbox is run from the command-line with the command ‘rdr’, and the command is made up of many subcommands.</p>
+<p>The Toolbox is run from the command-line with the command <code class="docutils literal notranslate"><span class="pre">rdr</span></code>, and the command is made up of many subcommands.</p>
 <div class="section" id="your-first-command">
 <h2>Your first command<a class="headerlink" href="#your-first-command" title="Permalink to this headline">¶</a></h2>
-<p>To list all Toolbox subcommands open your terminal and enter:</p>
+<p>List all Toolbox subcommands by opening your terminal and entering:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span>
 </pre></div>
 </div>
@@ -49,49 +49,57 @@
       <span class="o">--</span><span class="n">help</span>  <span class="n">Show</span> <span class="n">this</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span><span class="o">.</span>
 
 <span class="n">Commands</span><span class="p">:</span>
-      <span class="n">browse</span>       <span class="n">Use</span> <span class="n">a</span> <span class="n">Web</span> <span class="n">browser</span> <span class="n">called</span> <span class="n">Lynx</span> <span class="n">to</span> <span class="n">peruse</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="n">Study</span><span class="o">...</span>
-      <span class="n">catalog</span>      <span class="n">List</span> <span class="n">the</span> <span class="n">items</span> <span class="ow">in</span> <span class="n">a</span> <span class="n">library</span> <span class="n">where</span> <span class="o">&lt;</span><span class="n">location</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">either</span><span class="o">...</span>
-      <span class="n">cluster</span>      <span class="n">Apply</span> <span class="n">dimension</span> <span class="n">reduction</span> <span class="n">to</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="ow">and</span> <span class="n">visualize</span> <span class="n">where</span><span class="o">...</span>
-      <span class="n">concordance</span>  <span class="n">Output</span> <span class="n">matching</span> <span class="n">lines</span> <span class="kn">from</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="n">where</span> <span class="o">&lt;</span><span class="n">query</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">word</span><span class="o">...</span>
-      <span class="n">datasette</span>    <span class="n">Use</span> <span class="n">Datasette</span> <span class="n">to</span> <span class="n">query</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span><span class="s1">&#39;s database Datasette is an...</span>
+      <span class="n">browse</span>       <span class="n">Peruse</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="k">as</span> <span class="n">a</span> <span class="n">file</span> <span class="n">system</span> <span class="n">Study</span> <span class="n">carrels</span> <span class="n">are</span> <span class="n">sets</span> <span class="n">of</span><span class="o">...</span>
+      <span class="n">catalog</span>      <span class="n">List</span> <span class="n">study</span> <span class="n">carrels</span> <span class="n">Use</span> <span class="n">this</span> <span class="n">command</span> <span class="n">to</span> <span class="nb">enumerate</span> <span class="n">the</span> <span class="n">study</span><span class="o">...</span>
+      <span class="n">cluster</span>      <span class="n">Apply</span> <span class="n">dimension</span> <span class="n">reduction</span> <span class="n">to</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="ow">and</span> <span class="n">visualize</span> <span class="n">the</span><span class="o">...</span>
+      <span class="n">concordance</span>  <span class="n">A</span> <span class="n">poor</span> <span class="n">man</span><span class="s1">&#39;s search engine Given a query, this subcommand...</span>
       <span class="n">download</span>     <span class="n">Download</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">public</span> <span class="n">library</span> <span class="n">of</span> <span class="n">study</span> <span class="n">carrels</span> <span class="n">A</span><span class="o">...</span>
-      <span class="n">get</span>          <span class="n">Echo</span> <span class="n">the</span> <span class="n">full</span> <span class="n">path</span> <span class="n">to</span> <span class="n">your</span> <span class="n">local</span> <span class="n">library</span> <span class="n">of</span> <span class="n">study</span> <span class="n">carrels</span><span class="o">...</span>
-      <span class="n">grammars</span>     <span class="n">Extract</span> <span class="n">grammatical</span> <span class="n">sentence</span> <span class="n">fragments</span> <span class="kn">from</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="n">where</span><span class="o">...</span>
-      <span class="n">ngrams</span>       <span class="n">Output</span> <span class="n">ngrams</span> <span class="n">of</span> <span class="n">the</span> <span class="n">given</span> <span class="o">&lt;</span><span class="n">size</span><span class="o">&gt;</span> <span class="kn">from</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span>
-      <span class="n">play</span>         <span class="n">Play</span> <span class="n">a</span> <span class="n">game</span>
+      <span class="n">edit</span>         <span class="n">Edit</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span><span class="s1">&#39;s stopword list When using subcommands such as...</span>
+      <span class="n">get</span>          <span class="n">Echo</span> <span class="n">the</span> <span class="n">values</span> <span class="n">denoted</span> <span class="n">by</span> <span class="n">the</span> <span class="nb">set</span> <span class="n">subcommand</span> <span class="n">This</span> <span class="ow">is</span> <span class="n">useful</span><span class="o">...</span>
+      <span class="n">grammars</span>     <span class="n">Extract</span> <span class="n">sentence</span> <span class="n">fragments</span> <span class="kn">from</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="n">where</span> <span class="n">fragments</span> <span class="n">are</span><span class="o">...</span>
+      <span class="n">ngrams</span>       <span class="n">Given</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">output</span> <span class="n">ngrams</span> <span class="n">Examples</span><span class="p">:</span> <span class="o">*</span> <span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span><span class="o">...</span>
+      <span class="n">play</span>         <span class="n">Play</span> <span class="n">the</span> <span class="n">word</span> <span class="n">game</span> <span class="n">called</span> <span class="n">hangman</span><span class="o">.</span>
       <span class="n">read</span>         <span class="n">Open</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="n">your</span> <span class="n">default</span> <span class="n">Web</span> <span class="n">browser</span> <span class="n">where</span> <span class="n">the</span> <span class="n">location</span><span class="o">...</span>
       <span class="nb">set</span>          <span class="n">Set</span> <span class="n">the</span> <span class="n">location</span> <span class="n">of</span> <span class="n">various</span> <span class="n">items</span>
+      <span class="n">sql</span>          <span class="n">Use</span> <span class="n">Datasette</span> <span class="n">to</span> <span class="n">query</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span><span class="s1">&#39;s database Datasette is an...</span>
       <span class="n">tm</span>           <span class="n">Apply</span> <span class="n">topic</span> <span class="n">modeling</span> <span class="n">against</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="n">Topic</span> <span class="n">modeling</span> <span class="ow">is</span> <span class="n">the</span><span class="o">...</span>
 </pre></div>
 </div>
-<p>To output the help text for any command append ‘–help’ to any command, for example:</p>
+<p>To output details regarding a subcommand append <code class="docutils literal notranslate"><span class="pre">--help</span></code>, for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">--</span><span class="n">help</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="ngrams">
-<h2>Ngrams<a class="headerlink" href="#ngrams" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="list-words">
+<h2>List words<a class="headerlink" href="#list-words" title="Permalink to this headline">¶</a></h2>
 <p>List of all the words (unigrams) from a study carrel in the remote library:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>Do the same thing, but this time request bigrams (two-word phrases)</p>
+<p>Do the same thing, but this time request bigrams (two-word phrases):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>There are many more options, including the ability to count and tabulate the results, filter (query) the results using regular expressions, and apply these same techniques to study carrels saved locally.</p>
+<p>There are many more options, including the ability to count and tabulate the results, filter (query) the results using regular expressions, and more importantly, apply these same techniques to study carrels saved locally.</p>
 </div>
-<div class="section" id="public-library">
-<h2>Public library<a class="headerlink" href="#public-library" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="browse-the-public-library">
+<h2>Browse the public library<a class="headerlink" href="#browse-the-public-library" title="Permalink to this headline">¶</a></h2>
 <p>There are about 3,000 previously created and freely available study carrels available for downloading. To page through a human-readable list of them enter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">catalog</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="o">-</span><span class="n">h</span>
 </pre></div>
 </div>
-<p>The raw, unprocessed listing of remote study carrels is a tab-delimited stream, and consequently the previous command, sans the -h option, is very amenable to post-processing. For more detail, see the Tutorials.</p>
+<p>The raw, unprocessed listing of remote study carrels is a tab-delimited stream, and consequently the previous command, sans the <code class="docutils literal notranslate"><span class="pre">-h</span></code> option, is very amenable to post-processing. For example, pipe the results to a pager:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">catalog</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
 </div>
-<div class="section" id="local-library">
-<h2>Local library<a class="headerlink" href="#local-library" title="Permalink to this headline">¶</a></h2>
-<p>If you create a local collection of study carrels, then there are many more things you can do. To configure the location of your local collection, use the ‘set’ command, and you will be prompted for the name of a folder/directory:</p>
+<p>Or save the results to a file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">catalog</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="o">&gt;</span> <span class="n">catalog</span><span class="o">.</span><span class="n">tsv</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-your-library">
+<h2>Create your library<a class="headerlink" href="#create-your-library" title="Permalink to this headline">¶</a></h2>
+<p>When you create a local collection of study carrels – your library, then there are many more things you can do. To configure the location of your local collection, use the <code class="docutils literal notranslate"><span class="pre">set</span></code> command, and you will be prompted for the name of a folder/directory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span> <span class="n">local</span>
 </pre></div>
 </div>
@@ -99,33 +107,63 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">download</span> <span class="n">homer</span>
 </pre></div>
 </div>
+<p>Add a couple more items to your local collection:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">download</span> <span class="n">sonnets</span>
+<span class="n">rdr</span> <span class="n">download</span> <span class="n">pride</span>
+</pre></div>
+</div>
 <p>You can now list the study carrels in your local collection:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">catalog</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="concordancing-the-poor-man-s-search-engine">
-<h2>Concordancing, the poor man’s search engine<a class="headerlink" href="#concordancing-the-poor-man-s-search-engine" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="list-words-revisited">
+<h2>List words, revisited<a class="headerlink" href="#list-words-revisited" title="Permalink to this headline">¶</a></h2>
+<p>Now that you have created a local library, you can apply the <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> function to them with any of the following commands:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># all unigrams</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span>
+
+<span class="c1"># all bigrams</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s2</span> <span class="n">homer</span>
+
+<span class="c1"># count and tabulate bigrams</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+
+<span class="c1"># just like above, but filter with the word &quot;love&quot;</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="search">
+<h2>Search<a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h2>
 <p>Once you have identified words or ngrams of interest, you use a concordance (a poor man’s search engine) to see how the words are used within the context of a study carrel. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="n">horse</span>
 </pre></div>
 </div>
-<p>The -q option can also be a phrase:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">-q</span></code> option can also be a phrase:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;fleet horses&#39;</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="grammars">
-<h2>Grammars<a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
-<p>Many times sentences are written using well-known, well-understood grammars, and it is easy to extract sentence fragments matching those grammars. For example, to extract all the sentence fragments whose sentences are in the form of subject-verb-object, enter the command below. In order to use this function, you may need to install a language model, and if you do, then you will be asked to do so, but you will only have to do it once:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="n">svo</span>
+<div class="section" id="list-sentence-like-phrases">
+<h2>List sentence-like phrases<a class="headerlink" href="#list-sentence-like-phrases" title="Permalink to this headline">¶</a></h2>
+<p>Many times sentences are written using well-understood grammars, and it is easy to extract sentence fragments matching those grammars. For example, to extract all the fragments whose sentences are in the form of subject-verb-object, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>There are a few more grammars availble in the Toolbox.</p>
+<p>(In order to use this function, you may need to install a language model, and if you do, then you will be asked to do so, but you will only have to do it once. Moreover, the given carrel will need to be modeled, and that only has to be done once as well.)</p>
+<p>You can also list the noun phrases in a carrel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="n">homer</span>
+</pre></div>
 </div>
-<div class="section" id="next-steps">
-<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
-<p>This was only an introduction to the Reader Toolbox. Please see the Tutorials for more detail.</p>
+<p>You can also count such things:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The list of grammars may be long, so you might want to pipe the result through a pager:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -150,16 +188,15 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quick start</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#your-first-command">Your first command</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ngrams">Ngrams</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#public-library">Public library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#local-library">Local library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#concordancing-the-poor-man-s-search-engine">Concordancing, the poor man’s search engine</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#grammars">Grammars</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#list-words">List words</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#browse-the-public-library">Browse the public library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-your-library">Create your library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#list-words-revisited">List words, revisited</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search">Search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#list-sentence-like-phrases">List sentence-like phrases</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="quicker-start.html">Quicker start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quickest-start.html">Quickest start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands in depth</a></li>
 </ul>
 
