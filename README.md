@@ -65,7 +65,7 @@ A command-line interface for interacting with [Distant Reader](https://distantre
 
 ## Description and background
 
-The Reader Toolbox -- run from the command-line as 'rdr' -- is designed to interact with Distant Reader study carrels. Using the Toolbox you can things such as but not limited to:
+The Reader Toolbox -- run from the command-line as ``rdr`` -- is designed to interact with Distant Reader study carrels. Using the Toolbox you can things such as but not limited to:
 
    * search and browse the collection of more than 3,000 publicly available study carrels
    * download study carrels from the public collection and add them to your own collection
