@@ -68,8 +68,8 @@ Or save the results to a file: ::
   rdr catalog -l remote > catalog.tsv
 
 
-Create your library
--------------------
+Build your library
+------------------
 
 When you create a local collection of study carrels -- your library, then there are many more things you can do. To configure the location of your local collection, use the ``set`` command, and you will be prompted for the name of a folder/directory: ::
 

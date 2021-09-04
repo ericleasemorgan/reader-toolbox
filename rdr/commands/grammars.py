@@ -100,14 +100,21 @@ def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 	"""Extract sentence fragments from <carrel> where fragments are one of:
 	
 	\b
-	  * nouns - all the nouns and noun chunks
-	  * quotes - things people say
-	  * svo - fragments in the form of subject-verb-object (the default)
-	  * sss - a more advanced version of svo; fragments beginning
+	  nouns - all the nouns and noun chunks
+	  quotes - things people say
+	  svo - fragments in the form of subject-verb-object (the default)
+	  sss - a more advanced version of svo; fragments beginning
 	    with an entity, are co-occur with a verb, and are followed
 	    by a phrase
 	
-	This is very useful for the purposes of listing more complete ideas from a text."""
+	This is very useful for the purposes of listing more complete ideas from a text.
+	
+	Examples:
+	
+	\b
+	  rdr grammars homer
+	  rdr grammars -g nouns homer
+	  rdr grammars -g sss -n hector -l be homer"""
 	
 	# require
 	from textacy import extract

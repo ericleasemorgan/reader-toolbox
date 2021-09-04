@@ -13,13 +13,21 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def ngrams( carrel, size, query, count, location ) :
 
-	"""Given <carrel>, output ngrams
-	
+	"""Output and list words or phrases found in <carrel>
+
+	This is almost always the first place to start when doing your analysis.
+
 	Examples:
-	
+
 	\b
-	  * rdr ngrams homer
-	  * rdr ngrams -l remote sonnets"""
+	  rdr ngrams homer
+	  rdr ngrams -s 2 homer
+	  rdr ngrams -s 2 -c homer
+	  rdr ngrams -s 2 -c -q love homer
+	  rdr ngrams -s 2 -c -q love homer | more
+	  rdr ngrams -s 2 -c -q love -l remote sonnets | more
+
+	See also: rdr concordance --help"""
 
 	# require
 	from re       import search

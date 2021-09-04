@@ -8,11 +8,18 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def sql( carrel ) :
 
-	"""Use Datasette to query <carrel>'s database
+	"""Use SQL queries against the database of <carrel>
 	
-	Datasette is an browser-based interface to SQLite database files. Each study carrel includes such a file, and it contains information regarding parts-of-speech, named-entities, bibliographics, keywords, etc. Through the use of Datasette and a knowledge of SQL, the underlying database can be queried and results returned in ways not possible by merely browsing the given reports.
+	Study carrels are made up of many files. One of those files is an SQLite database file (etc/reader.db). Use this subcommand to query the database. Because the database is relational in design, the use of SQL can draw information from many different tables and address almost any question about <carrel>. An excellent query that an be applied to any carrel includes:
 	
-	Example: rdr datasette homer"""
+	\b
+	  SELECT b.id, GROUP_CONCAT( w.keyword, '; ' ) AS keywords, b.summary
+	  FROM bib AS b, wrd AS w
+	  WHERE b.id = w.id
+	  GROUP BY b.id
+	  ORDER BY b.id;
+	
+	Example: rdr sql homer"""
 
 	# configure
 	DATASETTE = 'datasette'

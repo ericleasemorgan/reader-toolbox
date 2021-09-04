@@ -163,6 +163,16 @@ Finally, ``ngrams`` filters results using a stop word list contained in very stu
 edit
 ----
 
+Use the ``edit`` command to modify the given carrel's stop word list. For example: ::
+
+  rdr edit homer
+
+Each study carrel comes with a stop word list located at ``etc/stopwords.txt``. This list is taken into account whenever the ``ngram`` or ``tm`` subcommands are executed. Through your reading, you may observe words which are meaningless to your investigations. Conversely, you may identify words which do not appear, and you believe they should. Thus, you may want to modify the stop word list. 
+
+Given a carrel's name, this command will read your computer's environment, determine what text editor you have defined as the default, launch that editor, and open the stop words file. Use the result to add or subtract from the list, and save the file.  When you run ``ngrams`` or ``tm`` again, the results ought to be cleaner. 
+
+It is not necessary to use the ``edit`` subcommand to process your list of stop words. You can use just about any editor you desire, but it is imperative that you save the result as a plain text file and its name must be ``stopwords.txt``.
+
 
 concordance
 -----------

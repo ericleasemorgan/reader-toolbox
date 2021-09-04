@@ -9,7 +9,7 @@ def get( setting ) :
 
 	"""Echo the values denoted by the set subcommand
 	
-	This is useful for verifying where you locally cached study carrels are saved as well as where you have saved the MALLET subsystem. 
+	This is useful for verifying where your locally cached study carrels are saved as well as where you have saved the MALLET subsystem. 
 	
 	Example: rdr get
 	

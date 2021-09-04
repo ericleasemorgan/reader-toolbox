@@ -6,18 +6,22 @@ from rdr import *
 
 # read
 @click.command( options_metavar='<options>' )
-@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='output in a more human-readable form')
+@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='where is the carrel')
 @click.argument( 'carrel', metavar='<carrel>' )
 def read( carrel, location ) :
 
-	"""Open <carrel> in your default Web browser where the location is one of:
+	"""Open <carrel> in your Web browser
+	
+	Use this subcommand to peruse the narrative texts and interactive reports found in every study carrel; use this command to become familiar with the content of <carrel>.
+	
+	Examples:
 	
 	\b
-	  * local - from your local library
-	  * remote - from the remote library
+	  rdr read homer
+	  rdr read -l remote sonnets
+	  rdr read -l remote pride
 	
-	Example: rdr read homer
-	"""
+	See also: rdr browse --help"""
 		
 	# require
 	from webbrowser import open

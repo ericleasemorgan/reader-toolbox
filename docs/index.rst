@@ -11,7 +11,10 @@ A command-line tool for interacting with Distant Reader study carrels
 .. toctree::
    :maxdepth: 2
 
+   introduction
    installation
    quick-start
    quicker-start
    commands
+   more
+   author

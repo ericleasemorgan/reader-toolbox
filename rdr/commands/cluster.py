@@ -12,7 +12,7 @@ def cluster( carrel, type ) :
 
 	"""Apply dimension reduction to <carrel> and visualize the result
 	
-	This is a useful function to determine how holistic the contents of a study carrel is.
+	This is useful to determine how holistic a study carrel is.
 	
 	Example: rdr cluster homer
 	

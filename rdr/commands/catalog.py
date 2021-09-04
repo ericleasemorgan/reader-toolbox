@@ -11,9 +11,14 @@ def catalog( human, location ) :
 
 	"""List study carrels
 	
-	Use this command to enumerate the study carrels cached locally or remotely available at http:/library.distantreader.org. The remote option, by default, returns a tab-delimited stream very amenable to post processing with utilities such as cut, grep, sort, and less.
+	Use this command to enumerate the study carrels cached locally or remotely available at http://library.distantreader.org. The remote option, by default, returns a tab-delimited stream very amenable to post processing with utilities such as cut, grep, sort, and less.
 	
-	Examples: rdr catalog; rdr catalog -l remote; rdr catalog -l remote -h
+	Examples:
+	
+	\b
+	  rdr catalog
+	  rdr catalog -l remote
+	  rdr catalog -l remote -h
 
 	See also: rdr download --help"""
 	

@@ -4,10 +4,20 @@ from rdr import *
 
 # config
 @click.command()
-@click.argument( 'item', type=click.Choice( [ 'local', 'mallet' ], case_sensitive=False ) )
-def set( item ) :
+@click.option('-s', '--setting', default='local', type=click.Choice( [ 'local', 'mallet' ] ), help='configure the given setting')
+def set( setting ) :
 
-	"""Set the location of various items"""
+	"""Configure the location of your study carrels and a subsystem called MALLET
+	
+	You need to run this command before you are able to download carrels.
+	
+	Examples:
+	
+	\b
+	  rdr set
+	  rdr set -s mallet
+	
+	See also: rdr get --help"""
 	
 	# require
 	from configparser import ConfigParser
@@ -33,7 +43,7 @@ def set( item ) :
 	malletHome    = configuration( 'malletHome' )
 
 	# branch accordingly, local
-	if item == 'local' :
+	if setting == 'local' :
 	
 		# get the desired library location
 		click.echo( 'Where do you want to save your study carrels? Press enter to accept the default.' )
@@ -45,7 +55,7 @@ def set( item ) :
 		except FileNotFoundError : click.echo( "Error: File not found. Are you sure you entered a valid path?", err=True )		
 
 	# mallet
-	elif item == 'mallet' :
+	elif setting == 'mallet' :
 	
 		# get the desired library location
 		click.echo( 'What is the full path to your MALLET distribution?' )

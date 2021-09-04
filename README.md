@@ -2,31 +2,69 @@
 
 # Distant Reader Toolbox
 
-A command-line interface for interacting with Distant Reader study carrels
+A command-line interface for interacting with [Distant Reader](https://distantreader.org) study carrels
 
 
 ## Installation
 
-> `pip install reader-toolbox`
+```
+	pip install reader-toolbox
+```
 
+## Quick start
+
+```  
+	# configure; accept the default
+	rdr set local
+
+	# add an item to your library
+	rdr download homer
+
+	# read homer
+	rdr read homer
+
+	# list all words
+	rdr ngrams homer
+
+	# list all bigrams
+	rdr ngrams -s 2 homer
+
+	# list all bigrams and count them
+	rdr ngrams -s 2 -c homer
+
+	# search
+	rdr concordance homer
+
+	# search again, but specify a query
+	rdr concordance -q war homer
+
+	# list subject-verb-object fragments; please be patient
+	rdr grammars homer
+
+	# list noun phrases
+	rdr grammars -g nouns homer
+
+	# cluster; do the items in the carrel group themselves?
+	rdr cluster homer
+
+	# topic model; similar to cluster but with more detail
+	rdr tm homer
+
+	# page through additional carrels for downloading
+	rdr catalog -l remote -h
+
+	# download another carrel
+	rdr download pride
+
+	# download yet another carrel
+	rdr download sonnets
+
+	# list your carrels
+	rdr catalog
+```
 
 ## Description and background
 
-A freely accessible Web-based system called the [Distant Reader](https:/distantreader.org) takes an almost arbitrary amount of unstructured data (text) as input, does text mining and natural language processing against it, and outputs structured data sets designed for more in-depth analysis -- "reading". These data sets are affectionally called "study carrels", you know, those little tables or rooms found in libraries were students, researchers, or scholars are authorized to collect materials for their own private use.
-
-Distant Reader study carrels include a wealth of data and information useful for generating knowledge. For example, study carrels include a cache of the original documents because links break and printing documents can be quite useful for traditional reading purposes. They contain plain text versions of the original documents because text mining and natural language processing is not possible without it. Study carrels include listings each and every word in each and every document, and each word is described by its position in the document, its lemma (root word), and part-of-speech. Carrels include similar listings for named entities, email addresses, URLs, keywords, and bibliographics. All of this data has been distilled into a single, platform-independent relational database file which is also available in a study carrel.
-
-Given the information organized in a study carrel, one can address questions from the mundane to the sublime. Examples include:
-
-   * What words are in a study carrel?
-   * What are the most frequent words?
-   * What are the most frequent two-word phrases? Three-word phrase? Four-word phrases? Etc?
-   * What are the items (the simple nouns ) of discussion? 
-   * What do things do -- the verbs?
-   * How are things described -- the adjectives and adverbs?
-   * What people are mentioned in a corpus?
-   * What places are mentioned in a corpus?
-   
 The Reader Toolbox -- run from the command-line as 'rdr' -- is designed to interact with Distant Reader study carrels. Using the Toolbox you can things such as but not limited to:
 
    * search and browse the collection of more than 3,000 publicly available study carrels
@@ -44,9 +82,6 @@ The Reader Toolbox -- run from the command-line as 'rdr' -- is designed to inter
    * source code: [https://github.com/ericleasemorgan/reader-toolbox](https://github.com/ericleasemorgan/reader-toolbox)
    * bug tracker: [https://github.com/ericleasemorgan/reader-toolbox/issues](https://github.com/ericleasemorgan/reader-toolbox/issues)
 
-
-
-
 ---
 Eric Lease Morgan &lt;emorgan@nd.edu&gt;  
-August 15, 2021
+September 4, 2021
