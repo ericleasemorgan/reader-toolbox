@@ -8,59 +8,59 @@ A command-line interface for interacting with [Distant Reader](https://distantre
 ## Installation
 
 ```
-	pip install reader-toolbox
+  pip install reader-toolbox
 ```
 
 ## Quick start
 
 ```  
-	# configure; accept the default
-	rdr set local
+  # configure; accept the default
+  rdr set local
 
-	# add an item to your library
-	rdr download homer
+  # add an item to your library
+  rdr download homer
 
-	# read homer
-	rdr read homer
+  # read homer
+  rdr read homer
 
-	# list all words
-	rdr ngrams homer
+  # list all words
+  rdr ngrams homer
 
-	# list all bigrams
-	rdr ngrams -s 2 homer
+  # list all bigrams
+  rdr ngrams -s 2 homer
 
-	# list all bigrams and count them
-	rdr ngrams -s 2 -c homer
+  # list all bigrams and count them
+  rdr ngrams -s 2 -c homer
 
-	# search
-	rdr concordance homer
+  # search
+  rdr concordance homer
 
-	# search again, but specify a query
-	rdr concordance -q war homer
+  # search again, but specify a query
+  rdr concordance -q war homer
 
-	# list subject-verb-object fragments; please be patient
-	rdr grammars homer
+  # list subject-verb-object fragments; please be patient
+  rdr grammars homer
 
-	# list noun phrases
-	rdr grammars -g nouns homer
+  # list noun phrases
+  rdr grammars -g nouns homer
 
-	# cluster; do the items in the carrel group themselves?
-	rdr cluster homer
+  # cluster; do the items in the carrel group themselves?
+  rdr cluster homer
 
-	# topic model; similar to cluster but with more detail
-	rdr tm homer
+  # topic model; similar to cluster but with more detail
+  rdr tm homer
 
-	# page through additional carrels for downloading
-	rdr catalog -l remote -h
+  # page through additional carrels for downloading
+  rdr catalog -l remote -h
 
-	# download another carrel
-	rdr download pride
+  # download another carrel
+  rdr download pride
 
-	# download yet another carrel
-	rdr download sonnets
+  # download yet another carrel
+  rdr download sonnets
 
-	# list your carrels
-	rdr catalog
+  # list your carrels
+  rdr catalog
 ```
 
 ## Description and background
