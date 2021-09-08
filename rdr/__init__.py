@@ -42,6 +42,7 @@ INDEX     = 'index.htm'
 MANIFEST  = 'MANIFEST.xml'
 STOPWORDS = 'stopwords.txt'
 TXT       = 'txt'
+CACHE     = 'cache'
 
 # spacy langauge model
 MODEL = 'en_core_web_sm'
