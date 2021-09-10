@@ -122,6 +122,51 @@ cd $(rdr get)
 <p>If you have not configured the Toolbox to denote the location of your local cache, then this operation will gracefully fail. You will then be prompted to make the configuration.</p>
 <p>Unlike traditional libraries, once you check something out of the Reader’s library, you do not have to return it. :)</p>
 </div>
+<div class="section" id="cluster">
+<h2>cluster<a class="headerlink" href="#cluster" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand to get an idea of a given carrel’s homogeneity.</p>
+<p>The Toolbox supports two types of clustering. The first (and default) is <code class="docutils literal notranslate"><span class="pre">dendrogram</span></code> where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The following command is equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="o">-</span><span class="n">t</span> <span class="n">dendrogram</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The second type of clustering (<code class="docutils literal notranslate"><span class="pre">cube</span></code>) reduces the carrel to three dimensions and plots the results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="o">-</span><span class="n">t</span> <span class="n">cube</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand is also useful when using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> (topic modeling) subcommand, because <code class="docutils literal notranslate"><span class="pre">cluster</span></code> will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result will most likely not be very readable.</p>
+</div>
+<div class="section" id="tm">
+<h2>tm<a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
+<p>Use this subcommand to do topic modeling.</p>
+<p>Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, “What N things is the carrel about, and how might each N thing be described?” But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare’s works about?</p>
+<p>This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.</p>
+<p>When using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, start with a small number of topics, say seven, which is the default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>If there are many overlapping circles in the results, then consider reducing the number of topics:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span>
+</pre></div>
+</div>
+<p>If you observe words in the output which you deem as useless, then consider using the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand to denote those words as stop words. When running <code class="docutils literal notranslate"><span class="pre">tm</span></code> again, those words ought not be in the output.</p>
+<p>The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span> <span class="o">-</span><span class="n">i</span> <span class="mi">4800</span>
+</pre></div>
+</div>
+<p>Knowing the correct value for <code class="docutils literal notranslate"><span class="pre">-i</span></code> is determined by the size of your carrel, the size of your computer, and your patience.</p>
+</div>
+<div class="section" id="semantics">
+<h2>semantics<a class="headerlink" href="#semantics" title="Permalink to this headline">¶</a></h2>
+<p>[INSERT DOCUMENTATION REGARDING SEMANTICS HERE.]</p>
+</div>
 <div class="section" id="ngrams">
 <h2>ngrams<a class="headerlink" href="#ngrams" title="Permalink to this headline">¶</a></h2>
 <p>This is one of the strongest subcommands in the Toolbox. Use it to comprehend the breadth, depth, and scope of a carrel. Begin by simply giving <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords:</p>
@@ -218,46 +263,9 @@ cd $(rdr get)
 </div>
 <p>Initially, the cloud will be dominated by the value of <code class="docutils literal notranslate"><span class="pre">-q</span></code>, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.</p>
 </div>
-<div class="section" id="cluster">
-<h2>cluster<a class="headerlink" href="#cluster" title="Permalink to this headline">¶</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand to get an idea of a given carrel’s homogeneity.</p>
-<p>The Toolbox supports two types of clustering. The first (and default) is <code class="docutils literal notranslate"><span class="pre">dendrogram</span></code> where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>The following command is equivalent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="o">-</span><span class="n">t</span> <span class="n">dendrogram</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>The second type of clustering (<code class="docutils literal notranslate"><span class="pre">cube</span></code>) reduces the carrel to three dimensions and plots the results:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="o">-</span><span class="n">t</span> <span class="n">cube</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand is also useful when using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> (topic modeling) subcommand, because <code class="docutils literal notranslate"><span class="pre">cluster</span></code> will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result will most likely not be very readable.</p>
-</div>
-<div class="section" id="tm">
-<h2>tm<a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
-<p>Use this subcommand to do topic modeling.</p>
-<p>Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, “What N things is the carrel about, and how might each N thing be described?” But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare’s works about?</p>
-<p>This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.</p>
-<p>When using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, start with a small number of topics, say seven, which is the default:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>If there are many overlapping circles in the results, then consider reducing the number of topics:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span>
-</pre></div>
-</div>
-<p>Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span>
-</pre></div>
-</div>
-<p>If you observe words in the output which you deem as useless, then consider using the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand to denote those words as stop words. When running <code class="docutils literal notranslate"><span class="pre">tm</span></code> again, those words ought not be in the output.</p>
-<p>The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span> <span class="o">-</span><span class="n">i</span> <span class="mi">4800</span>
-</pre></div>
-</div>
-<p>Knowing the correct value for <code class="docutils literal notranslate"><span class="pre">-i</span></code> is determined by the size of your carrel, the size of your computer, and your patience.</p>
+<div class="section" id="search">
+<h2>search<a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h2>
+<p>[INSERT DOCUMENTATION REGARDING SEARCH HERE.]</p>
 </div>
 <div class="section" id="grammars">
 <h2>grammars<a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
@@ -401,11 +409,13 @@ SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE &#39
 <li class="toctree-l2"><a class="reference internal" href="#read">read</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#browse">browse</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#download">download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cluster">cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tm">tm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#semantics">semantics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ngrams">ngrams</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#edit">edit</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#concordance">concordance</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cluster">cluster</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tm">tm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search">search</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#grammars">grammars</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sql">sql</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#play">play</a></li>

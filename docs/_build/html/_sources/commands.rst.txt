@@ -107,6 +107,62 @@ If you have not configured the Toolbox to denote the location of your local cach
 Unlike traditional libraries, once you check something out of the Reader's library, you do not have to return it. :)
 
 
+cluster
+-------
+
+Use the ``cluster`` subcommand to get an idea of a given carrel's homogeneity. 
+
+The Toolbox supports two types of clustering. The first (and default) is ``dendrogram`` where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example: ::
+
+  rdr cluster homer
+
+The following command is equivalent: ::
+
+  rdr cluster -t dendrogram homer
+
+The second type of clustering (``cube``) reduces the carrel to three dimensions and plots the results: ::
+
+  rdr cluster -t cube homer
+
+If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the ``cluster`` subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The ``cluster`` subcommand is also useful when using the ``tm`` (topic modeling) subcommand, because ``cluster`` will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result will most likely not be very readable.
+
+
+tm
+--
+
+Use this subcommand to do topic modeling.
+
+Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, "What N things is the carrel about, and how might each N thing be described?" But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare's works about?
+
+This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.
+
+When using the ``tm`` command, start with a small number of topics, say seven, which is the default: ::
+
+  rdr tm homer
+
+If there are many overlapping circles in the results, then consider reducing the number of topics: ::
+
+  rdr tm homer -t 5
+
+Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating: ::
+
+  rdr tm homer -t 5 -w 24
+
+If you observe words in the output which you deem as useless, then consider using the ``edit`` subcommand to denote those words as stop words. When running ``tm`` again, those words ought not be in the output.
+
+The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example: ::
+
+  rdr tm homer -t 5 -w 24 -i 4800
+
+Knowing the correct value for ``-i`` is determined by the size of your carrel, the size of your computer, and your patience.
+
+
+semantics
+---------
+
+[INSERT DOCUMENTATION REGARDING SEMANTICS HERE.]
+
+
 ngrams
 ------
 
@@ -212,54 +268,10 @@ Like many of the other subcommands, the output of ``concordance`` is designed to
 Initially, the cloud will be dominated by the value of ``-q``, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.
 
 
-cluster
--------
+search
+------
 
-Use the ``cluster`` subcommand to get an idea of a given carrel's homogeneity. 
-
-The Toolbox supports two types of clustering. The first (and default) is ``dendrogram`` where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example: ::
-
-  rdr cluster homer
-
-The following command is equivalent: ::
-
-  rdr cluster -t dendrogram homer
-
-The second type of clustering (``cube``) reduces the carrel to three dimensions and plots the results: ::
-
-  rdr cluster -t cube homer
-
-If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the ``cluster`` subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The ``cluster`` subcommand is also useful when using the ``tm`` (topic modeling) subcommand, because ``cluster`` will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result will most likely not be very readable.
-
-
-tm
---
-
-Use this subcommand to do topic modeling.
-
-Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, "What N things is the carrel about, and how might each N thing be described?" But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare's works about?
-
-This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.
-
-When using the ``tm`` command, start with a small number of topics, say seven, which is the default: ::
-
-  rdr tm homer
-
-If there are many overlapping circles in the results, then consider reducing the number of topics: ::
-
-  rdr tm homer -t 5
-
-Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating: ::
-
-  rdr tm homer -t 5 -w 24
-
-If you observe words in the output which you deem as useless, then consider using the ``edit`` subcommand to denote those words as stop words. When running ``tm`` again, those words ought not be in the output.
-
-The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example: ::
-
-  rdr tm homer -t 5 -w 24 -i 4800
-
-Knowing the correct value for ``-i`` is determined by the size of your carrel, the size of your computer, and your patience.
+[INSERT DOCUMENTATION REGARDING SEARCH HERE.]
 
 
 grammars
