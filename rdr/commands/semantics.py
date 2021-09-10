@@ -69,7 +69,16 @@ def checkForSemanticIndex( carrel ) :
 @click.option('-s', '--size', default=10, help='number of results to return')
 def semantics( carrel, type, query, size ) :
 
-	'''Apply semantic indexing queries against <carrel>'''
+	'''Apply semantic indexing queries against <carrel>
+	
+	Sometimes called "word embedding", use this subcommand to learn: 1) what words are similar to a given word, 2) how close sets of words are, or 3) what words compare to three words. In order to work accurately, semantic indexing requires larger rather than smaller corpora; results from corpora less than 1,000,000 words in size ought to be considered dubious at best.
+	
+	Examples:
+	
+	\b
+	  rdr semantics -t similarity -q war homer
+	  rdr semantics -t distance -q "king queen prince love war" homer
+	  rdr semantics -t analogy -q "king queen prince" homer'''
 
 	# configure
 	MODEL    = 'reader.bin'

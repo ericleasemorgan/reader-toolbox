@@ -38,7 +38,7 @@ def checkForIndex( carrel ) :
 	if results == [] :
 		
 		# nope; create full text table
-		click.echo( 'Index. The carrel must be set up for full text searching.', err=True )
+		click.echo( 'Indexing; the carrel must be set up for full text searching.', err=True )
 		click.echo( 'Step #1 of 4: Creating table to contain full text...', err=True )
 		connection.execute( DROPFULLTEXT )
 		connection.execute( CREATEFULLTEXT )
@@ -105,7 +105,16 @@ def checkForIndex( carrel ) :
 @click.argument( 'carrel', metavar='<carrel>' )
 def search( carrel, query ) :
 
-	'''Perform a full text query against <carrel>'''
+	'''Perform a full text query against <carrel>
+	
+	Given words, phrases, fields, and Boolean operators, use this subcommand to find and describe specific items in <carrel>. The query language is quite extensive, but in general, enter words and/or phrases, and a list of matching documents ought to be returned. For more detail, please see: [INSERT URL HERE]
+	
+	Examples:
+	
+	\b
+	  rdr search -q 'truth beauty war love' homer
+	  rdr search -q 'title:iliad AND summary:war' homer
+	  rdr search -q '"keep his anger"' homer'''
 
 	# configure
 	SQL = "SELECT id, author, title, date, summary, keyword, words, sentence, flesch, '##CACHE##' || cache AS cache, '##TXT##' || txt AS txt FROM indx WHERE indx MATCH '##QUERY##' ORDER BY RANK;"
@@ -113,10 +122,8 @@ def search( carrel, query ) :
 	# require
 	import sqlite3
 
-	# sanity check
+	# sanity checks
 	checkForCarrel( carrel )
-
-	# check for index
 	checkForIndex( carrel )
 	
 	# initialize
