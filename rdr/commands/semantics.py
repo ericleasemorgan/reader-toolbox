@@ -64,13 +64,16 @@ def checkForSemanticIndex( carrel ) :
 
 @click.command( options_metavar='<options>' )
 @click.argument( 'carrel', metavar='<carrel>' )
+@click.option('-t', '--type', default='similarity', type=click.Choice( [ 'similarity', 'distance', 'analogy' ], case_sensitive=True ), help="query type")
 @click.option('-q', '--query', default='love', help='the word(s) to be used for search')
-def semantics( carrel, query ) :
+@click.option('-s', '--size', default=10, help='number of results to return')
+def semantics( carrel, type, query, size ) :
 
-	'''Apply semantic text queries against <carrel>'''
+	'''Apply semantic indexing queries against <carrel>'''
 
 	# configure
-	MODEL = 'reader.bin'
+	MODEL    = 'reader.bin'
+	DISTANCE = 'model.distance( ##QUERY## )'
 
 	# require
 	import word2vec
@@ -86,13 +89,76 @@ def semantics( carrel, query ) :
 	# load model
 	model = word2vec.load( model )
 
-	# search and output
-	try :
+	# similarity
+	if type == 'similarity' :
 	
-		indexes, metrics = model.similar( query )
-		similarities = model.generate_response( indexes, metrics ).tolist()
-		for similarity in similarities : click.echo( '\t'.join( [ similarity[ 0 ], str( similarity[ 1 ] ) ] ) )
+		# sanity check
+		if len( query.split() ) != 1 :
 		
-	# word not found
-	except KeyError as word : click.echo ( ( 'The word -- %s -- is not in the index.' % word ), err=True )
+			# error
+			click.echo( "The query for similarity requires exactly one word.", err=True )
+			exit()
+
+		# search and output
+		try :
+	
+			indexes, metrics = model.similar( query, n=size )
+			similarities = model.generate_response( indexes, metrics ).tolist()
+			for similarity in similarities : click.echo( '\t'.join( [ similarity[ 0 ], str( similarity[ 1 ] ) ] ) )
+		
+		# word not found
+		except KeyError as word : click.echo ( ( 'The word -- %s -- is not in the index.' % word ), err=True )
+
+	# distance
+	elif type == 'distance' :
+
+		# get the query words
+		words = query.split()
+
+		# sanity check
+		if len( words ) < 2 :
+		
+			# error
+			click.echo( "The query for distance requires at least two words.", err=True )
+			exit()
+
+		# create a distance command; hacky!
+		queries = [ ( "'%s'" % word ) for word in words ]
+		command = DISTANCE.replace( '##QUERY##', ', '.join( queries ) )
+		
+		# try to compute
+		try :
+		
+			# search, sort, output, and done
+			distances = eval( command )
+			distances.sort( key=lambda i: i[ 2 ], reverse=True )
+			for distance in distances : print( '\t'.join( [ distance[ 0 ], distance[ 1 ], str( distance[ 2 ] ) ] ) )
+
+		# error
+		except KeyError as word : 
+			sys.stderr.write( ( 'A word in your query -- %s -- is not in the index. Please remove it.\n' % word ) )
+
+	# analogy
+	elif type == 'analogy' :
+	
+		# get the query words
+		words = query.split()
+		
+		# sanity check
+		if len( words ) != 3 :
+		
+			# error
+			click.echo( "The query for analogy requires exactly three words.", err=True )
+			exit()
+		
+		# try to compute
+		try :
+		
+			# search, sort, output, and done
+			indexes, metrics = model.analogy( pos=[ words[ 0 ], words[ 1 ] ], neg=[ words[ 2 ] ], n=size )
+			analogies = model.generate_response( indexes, metrics ).tolist()
+			for analogy in analogies : print( '\t'.join( [ analogy[ 0 ], str( analogy[ 1 ] ) ] ) )
+
+		# error
+		except KeyError as word : click.echo( ( 'A word in your query -- %s -- is not in the index. Please remove it.\n' % word ), err=True )
 
