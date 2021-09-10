@@ -21,6 +21,7 @@ import rdr.commands.ngrams      as ngrams
 import rdr.commands.play        as play
 import rdr.commands.read        as read
 import rdr.commands.search      as search
+import rdr.commands.semantics   as semantics
 import rdr.commands.set         as set
 import rdr.commands.sql         as sql
 import rdr.commands.tm          as tm
@@ -42,6 +43,7 @@ rdr.add_command( ngrams.ngrams )
 rdr.add_command( play.play )
 rdr.add_command( read.read )
 rdr.add_command( search.search )
+rdr.add_command( semantics.semantics )
 rdr.add_command( set.set )
 rdr.add_command( sql.sql )
 rdr.add_command( tm.tm )
