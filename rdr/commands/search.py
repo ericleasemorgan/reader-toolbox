@@ -101,13 +101,14 @@ def checkForIndex( carrel ) :
 
 
 @click.command( options_metavar='<options>' )
+@click.option('-o', '--output', default='human', type=click.Choice( [ 'human', 'csv', 'tsv', 'json' ] ), help='the format of the results')
 @click.option('-q', '--query', default='love', help='a full text query')
 @click.argument( 'carrel', metavar='<carrel>' )
-def search( carrel, query ) :
+def search( query, output, carrel ) :
 
 	'''Perform a full text query against <carrel>
 	
-	Given words, phrases, fields, and Boolean operators, use this subcommand to find and describe specific items in <carrel>. The query language is quite extensive, but in general, enter words and/or phrases, and a list of matching documents ought to be returned. For more detail, please see: [INSERT URL HERE]
+	Given words, phrases, fields, and Boolean operators, use this subcommand to find and describe specific items in <carrel>. The query language is quite extensive, but in general, enter words and/or phrases, and a list of matching documents ought to be returned. For more detail, please see: https://reader-toolbox.rtfd.io/en/latest/commands.html#search
 	
 	Examples:
 	
@@ -121,7 +122,8 @@ def search( carrel, query ) :
 
 	# require
 	import sqlite3
-
+	import pandas as pd
+	
 	# sanity checks
 	checkForCarrel( carrel )
 	checkForIndex( carrel )
@@ -131,45 +133,19 @@ def search( carrel, query ) :
 	txt          = str( localLibrary/carrel/TXT ) + '/'
 	cache        = str( localLibrary/carrel/CACHE ) + '/'
 	db           = str( localLibrary/carrel/ETC/DATABASE )
-	
-	# connect to database
-	connection             = sqlite3.connect( db )
-	connection.row_factory = sqlite3.Row
-	cursor                 = connection.cursor()
+	connection   = sqlite3.connect( db )
 
 	# build sql
 	sql = SQL.replace( '##CACHE##', cache )
 	sql = sql.replace( '##TXT##', txt )
 	sql = sql.replace( '##QUERY##', query )
 
-	# search and process each result
-	cursor.execute( sql )
-	for row in cursor.fetchall() :
+	# search
+	rows = pd.read_sql_query( sql, connection, index_col='id' )
 	
-		# parse
-		id       = row[ 'id' ]
-		author   = row[ 'author' ]
-		title    = row[ 'title' ]
-		date     = row[ 'date' ]
-		summary  = row[ 'summary' ]
-		keyword  = row[ 'keyword' ]
-		words    = row[ 'words' ]
-		sentence = row[ 'sentence' ]
-		flesch   = row[ 'flesch' ]
-		cache    = row[ 'cache' ]
-		txt      = row[ 'txt' ]
-
-		# output
-		click.echo( '         id: %s' % id )
-		click.echo( '     author: %s' % author )
-		click.echo( '      title: %s' % title )
-		click.echo( '       date: %s' % date )
-		click.echo( '    summary: %s' % summary )
-		click.echo( '    keyword: %s' % keyword )
-		click.echo( '      words: %s' % words )
-		click.echo( '  sentences: %s' % sentence )
-		click.echo( '     flesch: %s' % flesch )
-		click.echo( '      cache: %s' % cache )
-		click.echo( '        txt: %s' % txt )
-		click.echo()
-
+	# output
+	if output   == 'csv'   : click.echo( rows.to_csv() )
+	elif output == 'tsv'   : click.echo( rows.to_csv( header=False, sep='\t' ) )
+	elif output == 'json'  : click.echo( rows.to_json( orient='records' ) )
+	elif output == 'human' : click.echo( "Human is not implemented, yet", err=True )
+	

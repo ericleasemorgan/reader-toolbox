@@ -8,13 +8,13 @@ set
 
 Use the ``set`` subcommand to tell the Toolbox two things: 1) the location of your locally cached study carrels, and 2) the location of an external tool called MALLET. For example, to set the location of your local cache of study carrels, enter: ::
 
-  rdr set local
+  rdr set
 
 By default, the location of your study carrels is set to ``reader-library`` in your home directory, but this setting does not take effect until you run ``set``. You can move your collection of carrels anywhere you desire. In fact, you might consider having more than one collection. Just tell the Toolbox which cache you want to use.
 
 When you initially run the ``tm`` command, and if the subsystem called MALLET is not configured, then the Toolbox will download MALLET, save it in your home directory, and automatically update the configuration. Like above, you can move MALLET any where you desire, but you need to tell the Toolbox where it is located: ::
 
-  rdr set mallet
+  rdr set -s mallet
 
 
 get
@@ -160,7 +160,17 @@ Knowing the correct value for ``-i`` is determined by the size of your carrel, t
 semantics
 ---------
 
-[INSERT DOCUMENTATION REGARDING SEMANTICS HERE.]
+Similar to concordancing and topic modeling, this subcommand is useful for learning what words are related in meaning to other words. It is an implementation of "semantic indexing" or sometimes called "word embedding". It is based on a tool named word2vec.
+
+The subcommand understands three different semantics. The first is similarity. Given a word, the tool will return a list, and each item will include a word and a score. The closer the score is to 1 the more similar the listed words are considered. This does not mean the words are synonyms. Instead it means they are more likely mentioned "in the same breath" as the given word. 
+
+The semantic called distance take two or more words as input. Like the similarity measure, it will return a list but each item will include three fields: one of the given words, another of the given words, and a distance measure. The list will be sorted by the distance measure between the two words. Given a longer rather than shorter list of words as input, the student, researcher, or scholar can begin to see patterns, themes, or trends in the study carrel. 
+
+The last semantic is analogy, and it takes three words as input. The first two words are expected to have some sort of pre-conceived relationship. The third is the query in the hopes of identifying other words which have a similar relationship as first two words. The canonical example is king, queen, and prince, in the hopes of returning words like princess.
+
+Think of semantic indexing this way. When this word, that word, or the other word is used in the corpus, what other words are also used, or what other words are not used.
+
+Semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than 1,000,000 words ought to be considered dubious at best.
 
 
 ngrams
@@ -271,7 +281,61 @@ Initially, the cloud will be dominated by the value of ``-q``, but you can use y
 search
 ------
 
-[INSERT DOCUMENTATION REGARDING SEARCH HERE.]
+This subcommand is an implementation of the traditional full text, bibliographic query.
+
+Given an expression ranging from the simple to the complex, this subcommand will return a list of items from the carrel, and each item will be include authors, titles, summaries, keywords, etc.
+
+The expression can be quite... expressive. It can be a single word, a phrase, a fielded search, a Boolean operation, and even a nested query. Rudimentary examples follow: ::
+
+  # single word search
+  rdr search -q love homer
+  
+  # phrase search
+  rdr search -q '"floods of rain"' homer
+  
+  # implicit Boolean intersection (AND)
+  rdr search -q 'love justice' homer
+  
+  # explicit Boolean intersection
+  rdr search -q 'love AND justice' homer
+  
+  # Boolean union (OR)
+  rdr search -q 'love OR justice' homer
+  
+  # Boolean negation (NOT)
+  rdr search -q 'love NOT justice' homer
+  
+Each bibliographic record is made up of many fields, and those fields include:
+
+1. id - a unique identifier
+2. author - the creator of the work
+3. title - the title of of the work
+4. date - the date when the item was created
+5. summary - a computed narative describing the work
+6. keyword - a statistically significant word; akin to a subject heading
+7. words - an integer denoting the size of the document measured in words
+8. sentences - an integer denoting the size of the document measured in sentences
+9. flesch - an integer denoting the work's reading difficulty; values closer to 100 are easier to read
+
+Each one of these fields can be used in a query, but not all fields will necessarily have values. Additional query examples include: ::
+
+  # keyword search
+  rdr search -q keyword:trojans homer
+  
+  # keyword search with Boolean intersection (AND)
+  rdr search -q 'keyword:trojans AND keyword:hector' homer
+  
+  # summary search
+  rdr search -q summary:war homer
+  
+Queries can also be nested, thus allowing you to override the presidence of Boolean operations: ::
+
+  # nested query
+  rdr search -q '(keyword:trojans AND keyword:hector) OR (love AND justice)' homer
+
+The words, sentences, and flesch fields are searchable, but their values have been normalized into strings, and therefore mathematical operations are not possible. 
+
+Search results are always returned in a relevancy ranked order. If you need or want to sort, group, or filter the results in some other way, then export the results as a comma-separated value (CSV) file and use your favorite spreadsheet application accordingly.
 
 
 grammars

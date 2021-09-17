@@ -39,12 +39,12 @@
 <div class="section" id="set">
 <h2>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h2>
 <p>Use the <code class="docutils literal notranslate"><span class="pre">set</span></code> subcommand to tell the Toolbox two things: 1) the location of your locally cached study carrels, and 2) the location of an external tool called MALLET. For example, to set the location of your local cache of study carrels, enter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span> <span class="n">local</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span>
 </pre></div>
 </div>
 <p>By default, the location of your study carrels is set to <code class="docutils literal notranslate"><span class="pre">reader-library</span></code> in your home directory, but this setting does not take effect until you run <code class="docutils literal notranslate"><span class="pre">set</span></code>. You can move your collection of carrels anywhere you desire. In fact, you might consider having more than one collection. Just tell the Toolbox which cache you want to use.</p>
 <p>When you initially run the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, and if the subsystem called MALLET is not configured, then the Toolbox will download MALLET, save it in your home directory, and automatically update the configuration. Like above, you can move MALLET any where you desire, but you need to tell the Toolbox where it is located:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span> <span class="n">mallet</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span> <span class="o">-</span><span class="n">s</span> <span class="n">mallet</span>
 </pre></div>
 </div>
 </div>
@@ -165,7 +165,12 @@ cd $(rdr get)
 </div>
 <div class="section" id="semantics">
 <h2>semantics<a class="headerlink" href="#semantics" title="Permalink to this headline">¶</a></h2>
-<p>[INSERT DOCUMENTATION REGARDING SEMANTICS HERE.]</p>
+<p>Similar to concordancing and topic modeling, this subcommand is useful for learning what words are related in meaning to other words. It is an implementation of “semantic indexing” or sometimes called “word embedding”. It is based on a tool named word2vec.</p>
+<p>The subcommand understands three different semantics. The first is similarity. Given a word, the tool will return a list, and each item will include a word and a score. The closer the score is to 1 the more similar the listed words are considered. This does not mean the words are synonyms. Instead it means they are more likely mentioned “in the same breath” as the given word.</p>
+<p>The semantic called distance take two or more words as input. Like the similarity measure, it will return a list but each item will include three fields: one of the given words, another of the given words, and a distance measure. The list will be sorted by the distance measure between the two words. Given a longer rather than shorter list of words as input, the student, researcher, or scholar can begin to see patterns, themes, or trends in the study carrel.</p>
+<p>The last semantic is analogy, and it takes three words as input. The first two words are expected to have some sort of pre-conceived relationship. The third is the query in the hopes of identifying other words which have a similar relationship as first two words. The canonical example is king, queen, and prince, in the hopes of returning words like princess.</p>
+<p>Think of semantic indexing this way. When this word, that word, or the other word is used in the corpus, what other words are also used, or what other words are not used.</p>
+<p>Semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than 1,000,000 words ought to be considered dubious at best.</p>
 </div>
 <div class="section" id="ngrams">
 <h2>ngrams<a class="headerlink" href="#ngrams" title="Permalink to this headline">¶</a></h2>
@@ -265,7 +270,58 @@ cd $(rdr get)
 </div>
 <div class="section" id="search">
 <h2>search<a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h2>
-<p>[INSERT DOCUMENTATION REGARDING SEARCH HERE.]</p>
+<p>This subcommand is an implementation of the traditional full text, bibliographic query.</p>
+<p>Given an expression ranging from the simple to the complex, this subcommand will return a list of items from the carrel, and each item will be include authors, titles, summaries, keywords, etc.</p>
+<p>The expression can be quite… expressive. It can be a single word, a phrase, a fielded search, a Boolean operation, and even a nested query. Rudimentary examples follow:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># single word search</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+
+<span class="c1"># phrase search</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;&quot;floods of rain&quot;&#39;</span> <span class="n">homer</span>
+
+<span class="c1"># implicit Boolean intersection (AND)</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love justice&#39;</span> <span class="n">homer</span>
+
+<span class="c1"># explicit Boolean intersection</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love AND justice&#39;</span> <span class="n">homer</span>
+
+<span class="c1"># Boolean union (OR)</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love OR justice&#39;</span> <span class="n">homer</span>
+
+<span class="c1"># Boolean negation (NOT)</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love NOT justice&#39;</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Each bibliographic record is made up of many fields, and those fields include:</p>
+<ol class="arabic simple">
+<li><p>id - a unique identifier</p></li>
+<li><p>author - the creator of the work</p></li>
+<li><p>title - the title of of the work</p></li>
+<li><p>date - the date when the item was created</p></li>
+<li><p>summary - a computed narative describing the work</p></li>
+<li><p>keyword - a statistically significant word; akin to a subject heading</p></li>
+<li><p>words - an integer denoting the size of the document measured in words</p></li>
+<li><p>sentences - an integer denoting the size of the document measured in sentences</p></li>
+<li><p>flesch - an integer denoting the work’s reading difficulty; values closer to 100 are easier to read</p></li>
+</ol>
+<p>Each one of these fields can be used in a query, but not all fields will necessarily have values. Additional query examples include:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># keyword search</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="n">keyword</span><span class="p">:</span><span class="n">trojans</span> <span class="n">homer</span>
+
+<span class="c1"># keyword search with Boolean intersection (AND)</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;keyword:trojans AND keyword:hector&#39;</span> <span class="n">homer</span>
+
+<span class="c1"># summary search</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="n">summary</span><span class="p">:</span><span class="n">war</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Queries can also be nested, thus allowing you to override the presidence of Boolean operations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># nested query</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;(keyword:trojans AND keyword:hector) OR (love AND justice)&#39;</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The words, sentences, and flesch fields are searchable, but their values have been normalized into strings, and therefore mathematical operations are not possible.</p>
+<p>Search results are always returned in a relevancy ranked order. If you need or want to sort, group, or filter the results in some other way, then export the results as a comma-separated value (CSV) file and use your favorite spreadsheet application accordingly.</p>
 </div>
 <div class="section" id="grammars">
 <h2>grammars<a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
