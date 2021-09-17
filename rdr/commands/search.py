@@ -120,6 +120,10 @@ def search( query, output, carrel ) :
 	# configure
 	SQL = "SELECT id, author, title, date, summary, keyword, words, sentence, flesch, '##CACHE##' || cache AS cache, '##TXT##' || txt AS txt FROM indx WHERE indx MATCH '##QUERY##' ORDER BY RANK;"
 
+	# configure
+	RESULTS = '\nYour search (##QUERY##) against the study carrel named "##CARREL##" returned ##COUNT## record(s):\n\n##RECORDS##'
+	RECORD  = '          id: ##ID##\n      author: ##AUTHOR##\n       title: ##TITLE##\n        date: ##DATE##\n     summary: ##SUMMARY##\n  keyword(s): ##KEYWORD##\n       words: ##WORDS##\n    sentence: ##SENTENCE##\n      flesch: ##FLESCH##\n       cache: ##CACHE##\n         txt: ##TXT##\n\n'
+	
 	# require
 	import sqlite3
 	import pandas as pd
@@ -143,9 +147,57 @@ def search( query, output, carrel ) :
 	# search
 	rows = pd.read_sql_query( sql, connection, index_col='id' )
 	
-	# output
-	if output   == 'csv'   : click.echo( rows.to_csv() )
-	elif output == 'tsv'   : click.echo( rows.to_csv( header=False, sep='\t' ) )
-	elif output == 'json'  : click.echo( rows.to_json( orient='records' ) )
-	elif output == 'human' : click.echo( "Human is not implemented, yet", err=True )
+	# output; csv
+	if output   == 'csv' : click.echo( rows.to_csv() )
+	
+	# tsv
+	elif output == 'tsv' : click.echo( rows.to_csv( header=False, sep='\t' ) )
+	
+	# json
+	elif output == 'json' : click.echo( rows.to_json( orient='records' ) )
+	
+	# paged
+	elif output == 'human' : 
+			
+		# initialize the results
+		results = RESULTS.replace( '##QUERY##', query )
+		results = results.replace( '##CARREL##', carrel )
+		results = results.replace( '##COUNT##', str( rows.shape[ 0 ] ) )
+		
+		# process each row
+		records = ''
+		for id, row in rows.iterrows() :
+								
+			# parse
+			author   = row[ 'author' ]
+			title    = row[ 'title' ]
+			date     = row[ 'date' ]
+			summary  = row[ 'summary' ]
+			keyword  = row[ 'keyword' ]
+			words    = row[ 'words' ]
+			sentence = row[ 'sentence' ]
+			flesch   = row[ 'flesch' ]
+			cache    = row[ 'cache' ]
+			txt      = row[ 'txt' ]
+			
+			# create a record
+			record = RECORD.replace( '##ID##', id )
+			record = record.replace( '##AUTHOR##', author )
+			record = record.replace( '##TITLE##', title )
+			record = record.replace( '##DATE##', date )
+			record = record.replace( '##SUMMARY##', summary )
+			record = record.replace( '##KEYWORD##', keyword )
+			record = record.replace( '##WORDS##', str( words ) )
+			record = record.replace( '##SENTENCE##', str( sentence ) )
+			record = record.replace( '##FLESCH##', str( flesch ) )
+			record = record.replace( '##CACHE##', cache )
+			record = record.replace( '##TXT##', txt )
+		
+			# update
+			records += record
+		
+		results = results.replace( '##RECORDS##', records )
+		click.echo_via_pager( results )
+		
+		
 	
