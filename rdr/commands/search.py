@@ -101,7 +101,7 @@ def checkForIndex( carrel ) :
 
 
 @click.command( options_metavar='<options>' )
-@click.option('-o', '--output', default='human', type=click.Choice( [ 'human', 'csv', 'tsv', 'json' ] ), help='the format of the results')
+@click.option('-o', '--output', default='human', type=click.Choice( [ 'human', 'csv', 'tsv', 'json', 'count' ] ), help='the format of the results')
 @click.option('-q', '--query', default='love', help='a full text query')
 @click.argument( 'carrel', metavar='<carrel>' )
 def search( query, output, carrel ) :
@@ -123,7 +123,8 @@ def search( query, output, carrel ) :
 	# configure
 	RESULTS = '\nYour search (##QUERY##) against the study carrel named "##CARREL##" returned ##COUNT## record(s):\n\n##RECORDS##'
 	RECORD  = '          id: ##ID##\n      author: ##AUTHOR##\n       title: ##TITLE##\n        date: ##DATE##\n     summary: ##SUMMARY##\n  keyword(s): ##KEYWORD##\n       words: ##WORDS##\n    sentence: ##SENTENCE##\n      flesch: ##FLESCH##\n       cache: ##CACHE##\n         txt: ##TXT##\n\n'
-	
+	COUNT   = '##CARREL##\t##QUERY##\t##COUNT##'
+
 	# require
 	import sqlite3
 	import pandas as pd
@@ -155,6 +156,17 @@ def search( query, output, carrel ) :
 	
 	# json
 	elif output == 'json' : click.echo( rows.to_json( orient='records' ) )
+	
+	# count; tsv stream of metadata
+	elif output == 'count' :
+	
+		# build
+		results = COUNT.replace( '##CARREL##', carrel )
+		results = results.replace( '##QUERY##', query )
+		results = results.replace( '##COUNT##', str( rows.shape[ 0 ] ) )
+		
+		# output
+		click.echo( results )
 	
 	# paged
 	elif output == 'human' : 
