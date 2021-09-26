@@ -17,4 +17,5 @@ A command-line tool for interacting with Distant Reader study carrels
    quicker-start
    commands
    more
+   software
    author
