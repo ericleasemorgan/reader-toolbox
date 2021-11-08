@@ -192,6 +192,9 @@ def search( query, output, carrel ) :
 			cache    = row[ 'cache' ]
 			txt      = row[ 'txt' ]
 			
+			if not summary : summary = ' '
+			if not cache   : cache   = ' '
+			
 			# create a record
 			record = RECORD.replace( '##ID##', id )
 			record = record.replace( '##AUTHOR##', author )
