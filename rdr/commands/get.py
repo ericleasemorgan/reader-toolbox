@@ -7,7 +7,7 @@ from rdr import *
 @click.option('-s', '--setting', default='local', type=click.Choice( [ 'local', 'mallet' ] ), help='output the given setting')
 def get( setting ) :
 
-	"""Echo the values denoted by the set subcommand
+	"""Echo the values denoted by the set subcommand.
 	
 	This is useful for verifying where your locally cached study carrels are saved as well as where you have saved the MALLET subsystem. 
 	

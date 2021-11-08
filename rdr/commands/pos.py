@@ -13,7 +13,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def pos( carrel, select, like, count, normalize ) :
 
-	"""Filter out parts-of-speech, words, and lemmas found in <carrel>
+	"""Filter out parts-of-speech, words, and lemmas found in <carrel>.
 
 	Use this subcommand to address questions such as: what is mentioned in <carrel>, what do those things do, and how are they described.
 

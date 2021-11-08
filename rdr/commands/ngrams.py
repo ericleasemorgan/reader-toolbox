@@ -13,7 +13,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def ngrams( carrel, size, query, count, location ) :
 
-	"""Output and list words or phrases found in <carrel>
+	"""Output and list words or phrases found in <carrel>.
 
 	This is almost always the first place to start when doing your analysis.
 

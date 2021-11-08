@@ -9,7 +9,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def download( carrel ) :
 
-	"""Cache <carrel> from the public library of study carrels
+	"""Cache <carrel> from the public library of study carrels.
 
 	A collection of about 3,000 pre-created study carrels is available at http://library.distantreader.org. Given <carrel>, this function will download the remote carrel and save it locally.
 

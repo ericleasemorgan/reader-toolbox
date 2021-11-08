@@ -56,7 +56,7 @@ so you will need to run 'rdr set -s mallet'.''', err=True )
 @click.argument( 'carrel', metavar='<carrel>' )
 def tm( carrel, topics, words, iterations ) :
 
-	"""Apply topic modeling against <carrel>
+	"""Apply topic modeling against <carrel>.
 	
 	Topic modeling is the process of enumerating latent themes from a corpus, and it is yet another way to describe a corpus's aboutness. It is suggested you start out small when it comes to the values for -t and -w. Repeat the modeling process and gradually increase the values. Increase the value of -i as the size of your carrel increases. 
 	

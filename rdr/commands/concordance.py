@@ -11,7 +11,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def concordance( carrel, query, width, lines ) :
 
-	"""A poor man's search engine
+	"""A poor man's search engine.
 	
 	Given a query, this subcommand will search <carrel> and return a list of results where each result is a set of words to the left of query, the query, and a set of words to the right of query -- a keyword-in-context index. This is useful for answering the question, "What words are used in the same breath as the given word?" The query can be a phrase.
 	

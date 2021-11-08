@@ -11,7 +11,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def url( carrel, type, count ) :
 
-	"""Filter URLs and domains from <carrel>
+	"""Filter URLs and domains from <carrel>.
 
 	Use this subcommand to learn what is hyperlinked from <carrel>.
 

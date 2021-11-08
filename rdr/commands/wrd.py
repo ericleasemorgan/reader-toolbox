@@ -10,7 +10,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def wrd( carrel, count ) :
 
-	"""Filter statistically computed keywords from <carrel>
+	"""Filter statistically computed keywords from <carrel>.
 
 	Use this subcommand to address the question, "What is this <carrel> about?"
 

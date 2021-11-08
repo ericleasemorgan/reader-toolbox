@@ -7,7 +7,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def edit( carrel ) :
 
-	'''Modify <carrel>'s stop word list
+	'''Modify <carrel>'s stop word list.
 
 When using subcommands such as ngrams or tm, you may observe words of no importance to your analysis. Iteratively use this subcommand to update the <carrel>'s stop word list and ultimately remove those words. Change the value of your shell's EDITOR environment variable to define what text editor you want to use.
 

@@ -12,7 +12,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def ent( carrel, select, like, count ) :
 
-	"""Filter out named entities and types of entities found in <carrel>
+	"""Filter out named entities and types of entities found in <carrel>.
 
 	Use this subcommand to address who, what, when, and where questions regarding <carrel>.
 

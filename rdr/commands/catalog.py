@@ -9,7 +9,7 @@ from rdr import *
 @click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='output in a more human-readable form')
 def catalog( human, location ) :
 
-	"""List study carrels
+	"""List study carrels.
 	
 	Use this command to enumerate the study carrels cached locally or remotely available at http://library.distantreader.org. The remote option, by default, returns a tab-delimited stream very amenable to post processing with utilities such as cut, grep, sort, and less.
 	

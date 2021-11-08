@@ -7,7 +7,7 @@ from rdr import *
 @click.option('-s', '--setting', default='local', type=click.Choice( [ 'local', 'mallet' ] ), help='configure the given setting')
 def set( setting ) :
 
-	"""Configure the location of your study carrels and a subsystem called MALLET
+	"""Configure the location of study carrels and a subsystem called MALLET.
 	
 	You need to run this command before you are able to download carrels.
 	

@@ -106,7 +106,7 @@ def checkForIndex( carrel ) :
 @click.argument( 'carrel', metavar='<carrel>' )
 def search( query, output, carrel ) :
 
-	'''Perform a full text query against <carrel>
+	'''Perform a full text query against <carrel>.
 	
 	Given words, phrases, fields, and Boolean operators, use this subcommand to find and describe specific items in <carrel>. The query language is quite extensive, but in general, enter words and/or phrases, and a list of matching documents ought to be returned. For more detail, please see: https://reader-toolbox.rtfd.io/en/latest/commands.html#search
 	
