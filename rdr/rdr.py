@@ -10,6 +10,7 @@
 # require
 from rdr import *
 import rdr.commands.adr         as adr
+import rdr.commands.bib         as bib
 import rdr.commands.browse      as browse
 import rdr.commands.catalog     as catalog
 import rdr.commands.cluster     as cluster
@@ -19,6 +20,7 @@ import rdr.commands.edit        as edit
 import rdr.commands.ent         as ent
 import rdr.commands.get         as get
 import rdr.commands.grammars    as grammars
+import rdr.commands.info        as info
 import rdr.commands.ngrams      as ngrams
 import rdr.commands.play        as play
 import rdr.commands.pos         as pos
@@ -37,6 +39,7 @@ def rdr() : pass
 
 # update the list of commands
 rdr.add_command( adr.adr )
+rdr.add_command( bib.bib )
 rdr.add_command( browse.browse )
 rdr.add_command( catalog.catalog )
 rdr.add_command( cluster.cluster )
@@ -46,6 +49,7 @@ rdr.add_command( edit.edit )
 rdr.add_command( ent.ent )
 rdr.add_command( get.get )
 rdr.add_command( grammars.grammars )
+rdr.add_command( info.info )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( play.play )
 rdr.add_command( pos.pos )
