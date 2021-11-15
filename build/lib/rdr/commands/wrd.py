@@ -12,19 +12,15 @@ def wrd( carrel, count ) :
 
 	"""Filter statistically computed keywords from <carrel>.
 
-	Use this subcommand to address the question, "What is <carrel> about?" Algorithms akin to the venerable TF/IDF and Google's PageRank were used against each item in <carrel> to extract statistically significant keywords (think "subject terms"). These words were saved in files in the wrd directory of <carrel>, and they have been saved to a relational database as well. This command queries that database. The results of this command help you describe the "aboutness" of <carrel> and the keywords can be used to increase precision/recall when doing full text searches. Consider also the use of the resulting keywords as input to the concordance subcommand.
+	Use this subcommand to address the question, "What is this <carrel> about?"
 
 	Examples:
 
 	\b
 	  rdr wrd homer
-	  rdr wrd -c homer
+	  rdr word -c homer
 
-	See also:
-	
-	\b
-	  rdr concordance --help
-	  rdr search --help"""
+	See also: rdr ent --help"""
 
 	# require
 	import sqlite3

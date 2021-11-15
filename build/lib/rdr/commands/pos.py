@@ -15,24 +15,19 @@ def pos( carrel, select, like, count, normalize ) :
 
 	"""Filter out parts-of-speech, words, and lemmas found in <carrel>.
 
-	Use this subcommand to address questions such as: what is mentioned in <carrel>, what do those things do, and how are they described. A spaCy language model was applied to every item in <carrel>. The model was used to denote nouns, verbs, adjectives, punctuation, etc found in <carrel>. It was also used to denote the lemma values (think "root") for each word. This information was saved in files the pos directory of <carrel>, but it has also been saved in a relational database. This subcommand queries that database. Using this commmand, you can begin to characterize an author's style, learn to what degree is the action about saying, examining, or doing, and more importantly, put words into context because they have been associated with specific parts-of-speech values. Finally, the spaCy model works well, most of the time. Please don't let the perfect be the enemy of the good.
+	Use this subcommand to address questions such as: what is mentioned in <carrel>, what do those things do, and how are they described.
 
 	Examples:
 
 	\b
 	  rdr pos homer
-	  rdr pos -c homer
-	  rdr pos -s words -l N homer
-	  rdr pos -s words -l N -c homer
-	  rdr pos -s lemmas -l N -c -n homer
-	  rdr pos -s lemmas -l V -c -n homer
-	  rdr pos -s lemmas -l J -c -n homer
+	  rdr pos -s parts homer
+	  rdr pos -s words -l nouns homer
+	  rdr pos -s words -l nouns -c homer
+	  rdr pos -s lemmas -l nouns -c -n homer
+	  rdr pos -s lemmas -l verbs -c -n homer
 
-	See also:
-	
-	\b
-	  rdr ngrams --help
-	  rdr ent --help"""
+	See also: rdr ngrams --help"""
 
 	# require
 	import sqlite3

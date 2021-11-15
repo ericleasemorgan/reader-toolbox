@@ -6,7 +6,7 @@ from rdr import *
 
 # ngrams
 @click.command( options_metavar='<options>' )
-@click.option('-l', '--like',   type=click.STRING, help="filter results using the given pattern")
+@click.option('-l', '--like',   type=click.STRING, help="filter results using the given regular expression")
 @click.option('-c', '--count', is_flag=True, help='count and tabulate the result')
 @click.argument( 'carrel', metavar='<carrel>' )
 def adr( carrel, count, like ) :
@@ -20,7 +20,6 @@ def adr( carrel, count, like ) :
 	\b
 	  rdr adr ital
 	  rdr adr -c ital
-	  rdr adr -c -l gmail ital
 
 	See also: rdr url --help"""
 
@@ -79,6 +78,6 @@ def adr( carrel, count, like ) :
 		rows = connection.execute( sql )
 		for row in rows : click.echo( "\t".join( [ row[ 'address' ], str( row[ 'count' ] ) ] ) )			
 
-	# clean up and done
+	# clean up
 	connection.close()
 

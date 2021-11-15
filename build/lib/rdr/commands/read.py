@@ -12,13 +12,12 @@ def read( carrel, location ) :
 
 	"""Open <carrel> in your Web browser.
 	
-	Use this subcommand to peruse the narrative texts and interactive reports found in <carrel>; use this command to become familiar with the content of <carrel>.
+	Use this subcommand to peruse the narrative texts and interactive reports found in every study carrel; use this command to become familiar with the content of <carrel>.
 	
 	Examples:
 	
 	\b
 	  rdr read homer
-	  rdr read -l remote homer
 	  rdr read -l remote sonnets
 	  rdr read -l remote pride
 	
