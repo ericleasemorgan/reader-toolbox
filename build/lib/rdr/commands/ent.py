@@ -14,13 +14,16 @@ def ent( carrel, select, like, count ) :
 
 	"""Filter out named entities and types of entities found in <carrel>.
 
-	Use this subcommand to address who, what, when, and where questions regarding <carrel>.
+	Use this subcommand to address who, what, when, and where questions regarding <carrel>. A spaCy language model was applied to each item in your study carrel. This process extracted named-entities (persons, places, organizations, dates, times, etc.) and saved them in files located the ent directory of <carrel>. This same data was also distilled into a relational database file, and this subcommand queries that database file. Through the use of this subcommand, you can learn what people are mentioned, what places are mentioned, what dates and times are mentioned, etc. Based on these things, you will be able to characterize <carrel>. For example, are the mentioned people Platonists? Does most of the action take place in American but some in Europe, and if so, then where? Finally, the spaCy model works well, most of the time. There will be errors, but please don't let the perfect be the enemy of the good.
 
 	Examples:
-
+	
 	\b
 	  rdr ent homer
-
+	  rdr ent -c homer
+	  rdr ent -s entity -c homer
+	  rdr ent -s entity -l PERSON -c homer
+	  
 	See also: rdr pos --help"""
 
 	# require

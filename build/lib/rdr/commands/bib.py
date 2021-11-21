@@ -11,14 +11,15 @@ def bib( carrel ) :
 
 	"""Output rudimentary bibliographics from <carrel>.
 
-	Use this subcommand to learn more about the specific items in <carrel>.
+	Use this subcommand to output metadata regarding the specific items in <carrel>. Metadata on the items includes: identifier, author, title, date, size in words, readability (Flesch) score, summary, keywords, location of cached original, and location of derived plain text. Because of the characteristics of the original input used to create <carrel>, some metadata fields may not have values. Author and date are the best examples. Moreover, the value for title be derived. The combined use of the info command and the bib command will garaner you a good understanding of <carrel>'s breadth and depth.
 
-	Examples:
+	Example: rdr bib homer
 
+	See also:
+	
 	\b
-	  rdr bib homer
-
-	See also: rdr info --help"""
+	  rdr info --help
+	  rdr search --help"""
 
 	# require
 	import sqlite3
@@ -61,6 +62,7 @@ def bib( carrel ) :
 		
 		# output
 		click.echo( '        item: #%s of %s' % ( str( item + 1 ), total ) )
+		click.echo( '          id: %s' % id )
 		click.echo( '      author: %s' % author )
 		click.echo( '       title: %s' % title )
 		click.echo( '        date: %s' % date )
@@ -70,10 +72,8 @@ def bib( carrel ) :
 		click.echo( '    keywords: %s' % keywords )
 		click.echo( '       cache: %s' % cache )
 		click.echo( '  plain text: %s' % text )
-		click.echo( '          id: %s' % id )
 		click.echo()
 	
-		
 	# clean up
 	connection.close()
 

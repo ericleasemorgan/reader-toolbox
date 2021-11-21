@@ -15,7 +15,11 @@ def download( carrel ) :
 
 	Example: rdr download homer
 
-	See also: rdr set local"""
+	See also:
+	
+	\b
+	  rdr catalog --help
+	  rdr set --help"""
 			
 	# configure
 	ZIPFILE = 'study-carrel.zip'
