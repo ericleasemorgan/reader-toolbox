@@ -107,6 +107,52 @@ If you have not configured the Toolbox to denote the location of your local cach
 Unlike traditional libraries, once you check something out of the Reader's library, you do not have to return it. :)
 
 
+info
+----
+
+Use the ``info`` subcommand to get the broadest of views describing the carrel and whence it came. For example: ::
+
+  rdr info homer
+
+The result will be a human-readable snippet of text listing the name(s) of the carrel as it appears on your file system, who published (created) the carrel and when, the Distant Reader process used to create the carrel and the associated input, a number of extents (sizes) describing the carrel, and the most frequent statistically significant computed keywords.
+
+Think of the output of the ``info`` command akin to a traditional library catalog card. Remember those? For most of us, probably not.
+
+
+bib
+---
+
+Use the ``bib`` subcommand to list the bibliographic characteristics of each item in your carrel. The result is a sort of bibliography: ::
+
+  rdr bib homer
+
+The result will be quite long, and thus, you may want to pipe the result through your pager, like "more": ::
+
+  rdr bib homer | more
+  
+Each item will include the following fields, but not all the fields will have values:
+
+1. item - a running integer denoting where the item is in the list as a whole
+2. id - the unique identifier of the item, a very important value, a sort of key
+3. author - the creator of the item; this field may not have a value
+4. title - the title of the item; for a variety of reasons, this field may echo the value of id
+5. date - the date when the item was created; this field may not have a value
+6. words - an integer denoting the size of the document measured in words
+7. flesch - an integer denoting the work's readability score; values closer to 100 are easier to read
+8. summary - a computed narative describing the work
+9. keyword - a list of statistically significant keywords, akin to subject headings
+10. cache - the full path of the original item on your file system
+11. plain text - the full path of the plain text version of the original item; all analysis was done against this file
+
+The author and date fields may not have values, and the value of title may be the value of id. This is because it is very difficult to automatically extract author, title, and date values from the original content, the content denoted by the value of cache. The original content may have been manifested as a PDF file, a Microsoft Word document, an HTML file, etc. Each of these file formats include placeholders for author, title, and data values, but the placeholders may not have values. The Distant Reader does its best to determine the values of author, title, and date, but if no values are present then author and date are left empty, and the value of title is denoted as the value of id. All the other values in the bibliography are computable, and consequently they have values.
+
+There are many different ways the output of ``bib`` can be used. One of the quickest and easiest is to use it to use the value of plain text as input to their operating system's pager command -- like "more" or "less". This enables you to read the file in the traditional manner. On my computer, an example includes: ::
+
+  more /Users/eric/Documents/reader-library/homer/txt/homer-odyssey_24.txt
+
+Additionally, the student, researcher, or scholar may observe the values in the keyword field, and then use the ``search`` subcommand (described below), to identify other documents about the same topic.
+
+
 cluster
 -------
 
@@ -120,11 +166,141 @@ The following command is equivalent: ::
 
   rdr cluster -t dendrogram homer
 
-The second type of clustering (``cube``) reduces the carrel to three dimensions and plots the results: ::
+The second type of clustering (``cube``) reduces the carrel to three dimensions and plots the results in a space: ::
 
   rdr cluster -t cube homer
 
-If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the ``cluster`` subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The ``cluster`` subcommand is also useful when using the ``tm`` (topic modeling) subcommand, because ``cluster`` will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result will most likely not be very readable.
+If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the ``cluster`` subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The ``cluster`` subcommand is also useful when using the ``tm`` (topic modeling) subcommand, because ``cluster`` will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result of ``cluster`` most likely not be very readable.
+
+
+ngrams
+------
+
+This is one of the strongest subcommands in the Toolbox. Use it to comprehend a deeper breadth, depth, and scope of a carrel. Begin by simply giving ``ngrams`` the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords: ::
+
+  rdr ngrams homer
+
+The student, researcher, or scholar will often want to count the occurances of ngrams, and that is what the ``-c`` option is for. For example, to count and tabulate the most frequent unigrams in a carrel you can: ::
+
+  rdr ngrams -c homer
+
+The result will be very long, and you can probably pipe the results through to an operating system utility called "more" in order to page through the results: ::
+
+  rdr ngrams -c homer | more
+
+You can do the same thing but this time, you can use the ``-s`` option to denote the size of the ngram, for example, two-word phrases: ::
+
+  rdr ngrams -c -s 2 homer | more
+  
+If you specify a size greater than 2, then stop words will not be removed: ::
+
+  rdr ngrams -c -s 3 homer | more
+  
+At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result to a file named ``bigrams.tsv``, and then open ``bigrams.tsv`` in your spreadsheet application for searching, sorting, and grouping purposes: ::
+
+  rdr ngrams -s 2 homer > bigrams.tsv
+  
+It is possible to query (filter) the results of the ``ngrams`` subcommand with the ``-q`` option. Queries are expected to be regular expressions so the results of the following command will be a list of all bigrams containing the characters l-o-v-e: ::
+
+  rdr ngrams -s 2 -q love homer
+  
+You might enhance the query to return all bigrams beginning with the characters l-o-v-e: ::
+  
+  rdr ngrams -s 2 -q "^love" homer
+
+Or only the bigrams beginning with the word "love": ::
+
+  rdr ngrams -s 2 -q "^love\b" homer
+
+Or list the most frequent bigrams containing the letters l-o-v-e: ::
+
+  rdr ngrams -c -s 2 -q love homer | more
+
+At this point you may want to redirect the output to a file, and then, again, use another application to do additional analysis. For example, find all bigrams containing l-o-v-e, redirect the output to a file, and then import the result into a network analysis program (like Gephi) to illustrate relationships: ::
+
+  rdr ngrams -s 2 -q love homer > love.tsv
+  
+Finally, ``ngrams`` filters results using a stop word list contained in every study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the ``edit`` subcommand is for; the ``edit`` subcommand makes it easy to modify a carrel's stop word list, and consequently make the output of ``ngrams`` more meaningful. See the next section for more detail.
+
+
+edit
+----
+
+Use the ``edit`` command to modify the given carrel's stop word list. For example: ::
+
+  rdr edit homer
+
+Each study carrel comes with a stop word list located at ``etc/stopwords.txt``. This list is taken into account whenever the ``ngram``, ``tm``, or ``semantics`` subcommands are executed. Through your reading, you may observe words which are meaningless to your investigations. Conversely, you may identify words which do not appear, and you believe they should. Thus, you may want to modify the stop word list. 
+
+Given a carrel's name, this command will read your computer's environment, determine what text editor you have defined as the default, launch that editor, and open the stop words file. Use the result to add or subtract from the list, and save the file.  When you run ``ngrams``, ``tm``, ``semantics`` again, the results ought to be cleaner. 
+
+It is not necessary to use the ``edit`` subcommand to process your list of stop words. You can use just about any editor you desire, but it is imperative that you save the result as a plain text file and its name must be ``stopwords.txt``.
+
+
+concordance
+-----------
+
+Developed in the 13th century, concordances are the oldest form of text mining, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man's search engine. Iteratively use the ``concordance`` command as you cycle through the use of the other commands.
+
+Use ``concordance`` to see what words are used in the same breath as a given word. Used without any options, the ``concordance`` tool will query the given carrel for the word "love", and the result will be a number of lines where each line contains about 40 characters prior to the word "love", the word "love", and about 40 characters after the word "love": ::
+
+  rdr concordance homer
+  
+You can query (filter) the results with the ``-q`` option, and the query must be a word or phrase, not a regular expression. Thus, the following command is identical to the default: ::
+
+  rdr concordance -q love homer
+
+Alternatively, the query can be a phrase, and it is often interesting to associate a noun with a verb, such as: ::
+
+  rdr concordance -q "war is" homer
+
+Or: ::
+
+  rdr concordance -q "hector had" homer
+
+By default, ``concordance`` will output as many 999 lines. Using the ``-l`` option you can configure the number of lines. For example, to output only 5 lines, try: ::
+
+  rdr concordance -l 5 homer
+  
+You can also configure the size of each line's width -- the number of characters on either side of the query. To see very short snippets, try: ::
+
+  rdr concordance -w 24 homer
+
+It is useful to first exploit the ``ngrams`` command to identify words or phrases of interest, then use the results as input for the ``concordance`` command. The same thing holds true for many of the other commands; use the other subcommands to identify words of interest, and then use ``concordance`` to see how they are used in context.
+
+Like many of the other subcommands, the output of ``concordance`` is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results of ``concordance`` to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results: ::
+
+  rdr concordance homer > homer.txt
+  
+Initially, the cloud will be dominated by the value of ``-q``, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.
+
+
+wrd
+---
+
+Use the ``wrd`` subcommand to count and tabulate the statistically significant keywords from your carrel.
+
+Statistically significant keywords can be computed from a given text by comparing each word's frequency with the frequency of other words and the size of the given text. The resulting words are often a good way to denote a text's "aboutness". The Distant Reader did such computing, saved the results in your carrel, and this command reports on those values. For example, to list all the statistically significant keywords, try: ::
+
+  rdr wrd homer
+
+More often than not, you will want to count & tabulate the results. Thus, you ought to use the ``-c`` flag, like this: ::
+
+  rdr wrd -c homer
+
+The result may be quite long, and consequently you will want to pipe the result through your pager: ::
+
+  rdr wrd -c homer | more
+
+Scan the list for words of personal interest, and use those words as input to the ``concordance`` subcommand.
+
+ 
+pos
+---
+
+
+ent
+---
 
 
 tm
@@ -171,111 +347,6 @@ The last semantic is analogy, and it takes three words as input. The first two w
 Think of semantic indexing this way. When this word, that word, or the other word is used in the corpus, what other words are also used, or what other words are not used.
 
 Semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than 1,000,000 words ought to be considered dubious at best.
-
-
-ngrams
-------
-
-This is one of the strongest subcommands in the Toolbox. Use it to comprehend the breadth, depth, and scope of a carrel. Begin by simply giving ``ngrams`` the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords: ::
-
-  rdr ngrams homer
-
-You can do the same thing but this time, you can use the ``-s`` option to denote the size of the ngram, for example, two-word phrases: ::
-
-  rdr ngrams -s 2 homer
-  
-If you specify a size greater than 2, then stop words will not be removed: ::
-
-  rdr ngrams -s 3 homer
-  
-At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result to a file named ``bigrams.tsv``, and then open ``bigrams.tsv`` in your spreadsheet application for searching, sorting, and grouping purposes: ::
-
-  rdr ngrams -s 2 homer > bigrams.tsv
-  
-It is possible to query (filter) the results of the ``ngrams`` subcommand with the ``-q`` option. Queries are expected to be regular expressions so the results of the following command will be a list of all bigrams containing the characters l-o-v-e: ::
-
-  rdr ngrams -s 2 -q love homer
-  
-You might enhance the query to return all bigrams beginning with the characters l-o-v-e: ::
-  
-  rdr ngrams -s 2 -q "^love" homer
-
-Or only the bigrams beginning with the word "love": ::
-
-  rdr ngrams -s 2 -q "^love\b" homer
-
-The student, researcher, or scholar will often want to count the occurances of ngrams, and that is what the ``-c`` option is for. For example, to count and tabulate the most frequent unigrams in a carrel you can: ::
-
-  rdr ngrams -c homer
-
-You can probably pipe the results through to an operating system utility called "more" in order to page through the results: ::
-
-  rdr ngrams -c homer | more
-
-Do the same thing but with bigrams: ::
-
-  rdr ngrams -c -s 2 homer | more
-  
-Or list the most frequent bigrams containing the letters l-o-v-e: ::
-
-  rdr ngrams -c -s 2 -q love homer | more
-
-At this point you may want to redirect the output to a file, and then, again, use another application to do additional analysis. For example, find all bigrams containing l-o-v-e, redirect the output to a file, and then import the result into a network analysis program (like Gephi) to illustrate relationships: ::
-
-  rdr ngrams -s 2 -q love homer > love.tsv
-  
-Finally, ``ngrams`` filters results using a stop word list contained in very study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the ``edit`` subcommand is for; the ``edit`` subcommand makes it easy to modify a carrel's stop word list, and consequently make the output of ``ngrams`` more meaningful. See the section on ``edit`` for more detail.
-
-edit
-----
-
-Use the ``edit`` command to modify the given carrel's stop word list. For example: ::
-
-  rdr edit homer
-
-Each study carrel comes with a stop word list located at ``etc/stopwords.txt``. This list is taken into account whenever the ``ngram`` or ``tm`` subcommands are executed. Through your reading, you may observe words which are meaningless to your investigations. Conversely, you may identify words which do not appear, and you believe they should. Thus, you may want to modify the stop word list. 
-
-Given a carrel's name, this command will read your computer's environment, determine what text editor you have defined as the default, launch that editor, and open the stop words file. Use the result to add or subtract from the list, and save the file.  When you run ``ngrams`` or ``tm`` again, the results ought to be cleaner. 
-
-It is not necessary to use the ``edit`` subcommand to process your list of stop words. You can use just about any editor you desire, but it is imperative that you save the result as a plain text file and its name must be ``stopwords.txt``.
-
-
-concordance
------------
-
-Developed in the 13th century, concordances are the oldest form of text mining, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man's search engine. 
-
-Use ``concordance`` to see what words are used in the same breath as a given word. Used without any options, the ``concordance`` tool will query the given carrel for the word "love", and the result will be a number of lines where each line contains about 40 characters prior to the word "love", the word "love", and about 40 characters after the word "love": ::
-
-  rdr concordance homer
-  
-You can query (filter) the results with the ``-q`` option, and the query must be a word for phrase, not a regular expression. Thus, the following command is identical to the default: ::
-
-  rdr concordance -q love homer
-
-Alternatively, the query can be a phrase, and it is often interesting to associate a noun with a verb, such as: ::
-
-  rdr concordance -q "war is" homer
-
-Or: ::
-
-  rdr concordance -q "hector had" homer
-
-By default, ``concordance`` will output as many 999 lines. Using the ``-l`` option you can configure the number of lines. For example, to output only 5 lines, try: ::
-
-  rdr concordance -l 5 homer
-  
-You can also configure the size of each line's width -- the number of characters on either side of the query. To see very short snippets, try: ::
-
-  rdr concordance -w 24 homer
-
-It is useful to first exploit the ``ngrams`` command to identify words or phrases of interest, then use the results as input for the ``concordance`` command.
-
-Like many of the other subcommands, the output of ``concordance`` is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results of ``concordance`` to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results: ::
-
-  rdr concordance homer > homer.txt
-  
-Initially, the cloud will be dominated by the value of ``-q``, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.
 
 
 search
@@ -403,6 +474,13 @@ Similarly, the ``-c`` option counts and tabulates the results, and this is quite
 
   rdr grammars -g nouns -c homer | more
   
+
+adr
+---
+
+url
+---
+
 
 sql
 ---
