@@ -290,13 +290,64 @@ cd $(rdr get)
 </div>
 <div class="section" id="pos">
 <h2>pos<a class="headerlink" href="#pos" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">pos</span></code> to output, enumerate, and filter parts-of-speech values from your study carrel.</p>
+<p>Up until now, all of the previous subcommands had very little meaning associated with them. That is because all of the content of the previous subcommands had no context. The content was merely strings of characters, and such analysis could have just as easily been done in any language, including Klingon. Conversely, the <code class="docutils literal notranslate"><span class="pre">pos</span></code>, <code class="docutils literal notranslate"><span class="pre">ent</span></code>, and <code class="docutils literal notranslate"><span class="pre">grammars</span></code> subcommands take advantage of language (spaCy) models to guess the parts-of-speech values, named entity values, and grammars. These values represent context. Given these educated guesses – the context, it becomes easier to answer newspaper reporter-like questions such as: who, what, when, where, how, and how many. Through the use of text mining, it is very difficult to answer questions regarding why.</p>
+<p>The default output of <code class="docutils literal notranslate"><span class="pre">pos</span></code> will be as stream of parts-of-speech tags, and this is an excellent way to begin stylometric analysis:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>A power user’s modification of the previous command outputs something akin to a narrative text but in tags:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">tr</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="s1">&#39; &#39;</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>For most people, the following command is more meaningful, since it counts and tabulates each parts-of-speech value and pipes the result through a pager:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>What are those values? Well, for the most part all you need to know is that different types of nouns begin with N, verbs begin with V, and adjectives begin with J. Given such information, the student, researcher, or scholar can count and tabulate the noun types, verb types, and adjective types:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">parts</span> <span class="o">-</span><span class="n">l</span> <span class="n">N</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">parts</span> <span class="o">-</span><span class="n">l</span> <span class="n">V</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">parts</span> <span class="o">-</span><span class="n">l</span> <span class="n">J</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>So, what is a count and tabulation of all the nouns? To answer the question, use this:</p>
+<blockquote>
+<div><p>rdr pos -s words -l N -c homer | more</p>
+</div></blockquote>
+<p>You might want to normalize (lowercase) the values to get a more accurate count:</p>
+<blockquote>
+<div><p>rdr pos -s words -l N -c -n homer | more</p>
+</div></blockquote>
+<p>A count and tabulation of verbs addresses the question, “What do the things in the text do?” In this case it is often useful to count and tabulate the verbs’ lemma (root) values:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">lemmas</span> <span class="o">-</span><span class="n">l</span> <span class="n">V</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">n</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>The vast majority of time, the lemmas “be” and “have” are number 1 and number 2 on such a list. Novels often include the word “say”. Scientific journal articles often include words like “examine” and “measure”.</p>
+<p>Use the output of <code class="docutils literal notranslate"><span class="pre">pos</span></code> to identify words of interest. Use the words as input to <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see how the words are used in context.</p>
 </div>
 <div class="section" id="ent">
 <h2>ent<a class="headerlink" href="#ent" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">ent</span></code> to output, enumerate, and filter named entity values from your study carrel.</p>
+<p>Think of named entities as even more specific types of nouns. Common types include persons, organizations, places, dates, and times. Given these sorts of values, more accurate newspaper reporter-like questions can be addressed.  Like <code class="docutils literal notranslate"><span class="pre">pos</span></code> and <code class="docutils literal notranslate"><span class="pre">grammars</span></code>, <code class="docutils literal notranslate"><span class="pre">ent</span></code> exploits a (spaCy) language model to make educated guesses at what these values are in your carrel. For example, to count and tabulate the different types of entities in your carrel, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ent</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>If you wanted to count &amp; tabulate the names of people in your carrel, then try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ent</span> <span class="o">-</span><span class="n">s</span> <span class="n">entity</span> <span class="o">-</span><span class="n">l</span> <span class="n">PERSON</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>The same things can be done for places and locations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ent</span> <span class="o">-</span><span class="n">s</span> <span class="n">entity</span> <span class="o">-</span><span class="n">l</span> <span class="n">GPE</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">ent</span> <span class="o">-</span><span class="n">s</span> <span class="n">entity</span> <span class="o">-</span><span class="n">l</span> <span class="n">LOC</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>The returned values are not always accurate, but in this vein, “Do not let the perfect be the enemy of the good.” While computers are pretty stupid, they can make educated guesses.</p>
+<p>Use the output of <code class="docutils literal notranslate"><span class="pre">ent</span></code> as input to <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see how entities of interest are used in context.</p>
+<p>For extra credit, export things like people or places to a file. Programmatically look up those values in an encyclopedia or gazateer to get birth dates, death dates, or geographic locations. From the results, create a timeline or map. The results will illustrate characteristics of your carrel not immediately apparent.</p>
 </div>
 <div class="section" id="tm">
 <h2>tm<a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
-<p>Use this subcommand to do topic modeling.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">tm</span></code> to do topic modeling.</p>
 <p>Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, “What N things is the carrel about, and how might each N thing be described?” But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare’s works about?</p>
 <p>This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.</p>
 <p>When using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, start with a small number of topics, say seven, which is the default:</p>

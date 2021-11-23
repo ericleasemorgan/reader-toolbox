@@ -48,11 +48,15 @@ def pos( carrel, select, like, count, normalize ) :
 	# branch accordingly; parts-of-speech
 	if select == 'parts' :
 	
+		# initialize like
+		if like == 'any' : like = '%'
+		else             : like = like.upper() + '%'
+		
 		# dump parts-of-speech tags
 		if not count :
 
 			# articulate sql, search, and output
-			sql  = 'SELECT pos FROM pos;'
+			sql  = ( "SELECT pos FROM pos WHERE pos LIKE '%s';" % like )
 			rows = connection.execute( sql )
 			for row in rows : click.echo( row[ 'pos' ] )
 
@@ -60,7 +64,7 @@ def pos( carrel, select, like, count, normalize ) :
 		else :
 		
 			# articulate sql, search, and output
-			sql  = 'SELECT pos, COUNT( pos ) AS count FROM pos GROUP BY pos ORDER BY count DESC;'
+			sql  = ( "SELECT pos, COUNT( pos ) AS count FROM pos WHERE pos LIKE '%s' GROUP BY pos ORDER BY count DESC;" % like )
 			rows = connection.execute( sql )
 			for row in rows : click.echo( "\t".join( [ row[ 'pos' ], str( row[ 'count' ] ) ] ) )			
 			

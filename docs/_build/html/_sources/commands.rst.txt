@@ -298,15 +298,74 @@ Scan the list for words of personal interest, and use those words as input to th
 pos
 ---
 
+Use ``pos`` to output, enumerate, and filter parts-of-speech values from your study carrel.
+
+Up until now, all of the previous subcommands had very little meaning associated with them. That is because all of the content of the previous subcommands had no context. The content was merely strings of characters, and such analysis could have just as easily been done in any language, including Klingon. Conversely, the ``pos``, ``ent``, and ``grammars`` subcommands take advantage of language (spaCy) models to guess the parts-of-speech values, named entity values, and grammars. These values represent context. Given these educated guesses -- the context, it becomes easier to answer newspaper reporter-like questions such as: who, what, when, where, how, and how many. Through the use of text mining, it is very difficult to answer questions regarding why.
+
+The default output of ``pos`` will be as stream of parts-of-speech tags, and this is an excellent way to begin stylometric analysis: ::
+
+  rdr pos homer
+
+A power user's modification of the previous command outputs something akin to a narrative text but in tags: ::
+
+  rdr pos homer | tr '\n' ' ' | more
+
+For most people, the following command is more meaningful, since it counts and tabulates each parts-of-speech value and pipes the result through a pager: ::
+
+  rdr pos -c homer | more
+  
+What are those values? Well, for the most part all you need to know is that different types of nouns begin with N, verbs begin with V, and adjectives begin with J. Given such information, the student, researcher, or scholar can count and tabulate the noun types, verb types, and adjective types: ::
+
+  rdr pos -s parts -l N -c homer | more
+  rdr pos -s parts -l V -c homer | more
+  rdr pos -s parts -l J -c homer | more
+
+So, what is a count and tabulation of all the nouns? To answer the question, use this:
+
+  rdr pos -s words -l N -c homer | more
+  
+You might want to normalize (lowercase) the values to get a more accurate count:
+
+  rdr pos -s words -l N -c -n homer | more
+  
+A count and tabulation of verbs addresses the question, "What do the things in the text do?" In this case it is often useful to count and tabulate the verbs' lemma (root) values: ::
+
+  rdr pos -s lemmas -l V -c -n homer | more
+  
+The vast majority of time, the lemmas "be" and "have" are number 1 and number 2 on such a list. Novels often include the word "say". Scientific journal articles often include words like "examine" and "measure". 
+
+Use the output of ``pos`` to identify words of interest. Use the words as input to ``concordance`` to see how the words are used in context.
+
 
 ent
 ---
+
+Use ``ent`` to output, enumerate, and filter named entity values from your study carrel.
+
+Think of named entities as even more specific types of nouns. Common types include persons, organizations, places, dates, and times. Given these sorts of values, more accurate newspaper reporter-like questions can be addressed.  Like ``pos`` and ``grammars``, ``ent`` exploits a (spaCy) language model to make educated guesses at what these values are in your carrel. For example, to count and tabulate the different types of entities in your carrel, enter: ::
+
+  rdr ent -c homer | more
+  
+If you wanted to count & tabulate the names of people in your carrel, then try: ::
+
+  rdr ent -s entity -l PERSON -c homer | more
+
+The same things can be done for places and locations: ::
+
+  rdr ent -s entity -l GPE -c homer | more
+  rdr ent -s entity -l LOC -c homer | more
+
+The returned values are not always accurate, but in this vein, "Do not let the perfect be the enemy of the good." While computers are pretty stupid, they can make educated guesses. 
+
+Use the output of ``ent`` as input to ``concordance`` to see how entities of interest are used in context.
+
+For extra credit, export things like people or places to a file. Programmatically look up those values in an encyclopedia or gazateer to get birth dates, death dates, or geographic locations. From the results, create a timeline or map. The results will illustrate characteristics of your carrel not immediately apparent. 
 
 
 tm
 --
 
-Use this subcommand to do topic modeling.
+Use ``tm`` to do topic modeling.
 
 Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, "What N things is the carrel about, and how might each N thing be described?" But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare's works about?
 
