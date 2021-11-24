@@ -395,23 +395,41 @@ Knowing the correct value for ``-i`` is determined by the size of your carrel, t
 semantics
 ---------
 
-Similar to concordancing and topic modeling, this subcommand is useful for learning what words are related in meaning to other words. It is an implementation of "semantic indexing" or sometimes called "word embedding". It is based on a tool named word2vec.
+The use of ``semantics`` is to do semantic indexing and word embedding.
 
-The subcommand understands three different semantics. The first is similarity. Given a word, the tool will return a list, and each item will include a word and a score. The closer the score is to 1 the more similar the listed words are considered. This does not mean the words are synonyms. Instead it means they are more likely mentioned "in the same breath" as the given word. 
+Similar to concordancing and topic modeling, this subcommand is useful for learning what words are related in meaning to other words. It is an implementation of "semantic indexing" or sometimes called "word embedding". It is based on a tool called word2vec.
 
-The semantic called distance take two or more words as input. Like the similarity measure, it will return a list but each item will include three fields: one of the given words, another of the given words, and a distance measure. The list will be sorted by the distance measure between the two words. Given a longer rather than shorter list of words as input, the student, researcher, or scholar can begin to see patterns, themes, or trends in the study carrel. 
+This subcommand -- ``semantics`` -- understands three different semantics. The first is ``similarity``. Given a word, ``semantics`` will return a list, and each item will include a word and a score. The closer the score is to 1 the more similar the listed words are considered. This does not mean the words are synonyms. Instead it means they are more likely mentioned "in the same breath" as the given word. For example, the following command will return words close -- in the same semantic space -- to the word love: ::
 
-The last semantic is analogy, and it takes three words as input. The first two words are expected to have some sort of pre-conceived relationship. The third is the query in the hopes of identifying other words which have a similar relationship as first two words. The canonical example is king, queen, and prince, in the hopes of returning words like princess.
+  rdr semantics homer
 
+Alternatively, the query, the type of query, and the size of the result can be explicitly stated: ::
+
+  rdr semantics homer -q love
+  rdr semantics homer -q hector
+  rdr semantics homer -t similarity -q ajax
+  rdr semantics homer -s 25 -t similarity -q ajax
+
+The semantic called ``distance`` take two or more words as input. Like the ``similarity`` measure, it will return a list but each item will include three fields: one of the given words, another of the given words, and a distance measure. The list will be sorted by the distance measure between the two words. Given a longer rather than shorter list of words, the student, researcher, or scholar can begin to see patterns, themes, or trends in the study carrel. For example: ::
+
+  rdr semantics homer -t distance -q "love hector ajax son ship"
+  
+Note, the ``distance`` semantic returns a set of graphs -- a node, another node, and an edge. Consider outputing the result of the distance measure to a file, and then importing the file into something like Gephi to visualize the relationships. 
+
+The last semantic is analogy, and it takes three words as input. The first two words are expected to have some sort of pre-conceived relationship. The third is the query in the hopes of identifying other words which have a similar relationship to the first two words. The canonical example is father, queen, and prince, in the hopes of returning words like princess. Try: ::
+
+  rdr semantics homer -t analogy -q 'king queen prince'
+  rdr semantics homer -t analogy -q 'king queen prince' -s 25
+  
 Think of semantic indexing this way. When this word, that word, or the other word is used in the corpus, what other words are also used, or what other words are not used.
 
-Semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than 1,000,000 words ought to be considered dubious at best.
+Finally, and very importantly, semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than one million words ought to be considered dubious at best. (Melville's Moby Dick is often considered a long book, and it is only .2 million words long.) Corpora measuring 1.5 million words begins to be amenable. Corpora greater than two million words long ought to be good to go. The larger, the better. 
 
 
 search
 ------
 
-This subcommand is an implementation of the traditional full text, bibliographic query.
+This subcommand -- ``search`` -- is an implementation of the traditional full text, bibliographic query.
 
 Given an expression ranging from the simple to the complex, this subcommand will return a list of items from the carrel, and each item will be include authors, titles, summaries, keywords, etc.
 
@@ -471,9 +489,11 @@ Search results are always returned in a relevancy ranked order. If you need or w
 grammars
 --------
 
+Use ``grammars`` to output parts of sentences matching language patterns -- grammars.
+
 Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.
 
-In order to exploit grammars, a specific language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be a time consuming process, and the Toolbox will do this work, if it has not already been done.
+In order to exploit grammars, a specific (spaCy) language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be quite a time consuming process. The Toolbox will do this work, if it has not already been done.
 
 The Toolbox supports four different grammars. The first is subject-verb-object (svo) -- rudimentary sentences.  To extract svo-like fragments from a given study carrel, enter: ::
 
@@ -501,7 +521,7 @@ To list all the direct quotes in a carrel, enter: ::
 
   rdr grammars -g quotes homer
   
-Semi-structured sentences (sss) are the most complicated grammar, and it requires at least one additional option, ``-n`` where the value is some sort of noun. This grammar includes an optional option, ``-l`` for the lemma of a verb. By default, the value of ``-l`` is the lemma "be". Thus, to list all sentence fragments where the subject of the sentences is "war", and the predicate is a form of "be", enter: ::
+Semi-structured sentences (sss) are the most complicated grammar, and it requires at least one additional option, ``-n`` where the value is some sort of noun. This grammar provides for an additional option, ``-l`` for the lemma of a verb. By default, the value of ``-l`` is the lemma "be". Thus, to list all sentence fragments where the subject of the sentences is "war", and the predicate is a form of "be", enter: ::
 
   rdr grammars -g sss -n war homer
 
@@ -537,14 +557,73 @@ Similarly, the ``-c`` option counts and tabulates the results, and this is quite
 adr
 ---
 
+The ``adr`` subcommand is used to output email addresses.
+
+As a study carrel is created, the Distant Reader will look for email addresses in the content. Use this command to enumerate and filter those addresses. But alas, the works of Homer include zero email addresses. Consequently, download a different carrel which does, for example, part of a run of an electronic journal named Information Technology and Libraries: ::
+
+  rdr download ital-urls
+
+You can now list email addresses: ::
+
+  rdr adr ital-urls
+
+The ``adr`` subcommand does not echo the same address multiple times, but an address may very well occur more than once. To see how many times addresses occur, use the ``-c`` flag: ::
+
+  rdr adr ital-urls -c 
+
+The student, researcher, or scholar can filter the addresses with ``-l`` which is short for the LIKE operator in SQL. For example, to list all the addresses like ".com", use this: ::
+
+  rdr adr ital-urls -l .com
+
+And/or count the result: ::
+
+  rdr adr ital-urls -c -l .com
+
+Use the output of ``adr`` responsibly. You know what I mean.
+
+
 url
 ---
+
+Use ``url`` to list, enumerate, and filter URLs.
+
+Like the listing of words, persons, or keywords, the listing of URLs can be quite telling when it comes to learning the content of a study carrel. The ``url`` subcommand facilitates this. Again, Homer's works include zero URLs, so download a carrel named ital-urls, which includes many: ::
+
+  rdr download ital-urls
+
+List all the URLs and pipe them through a pager. They will be sorted alphabetically: ::
+
+  rdr url ital-urls | more
+  
+Many times the domain for a URL is telling, so you can list just those instead: ::
+
+  rdr url ital-urls -s domain | more
+  
+There will quite likely be duplicates, so you may want to count and tabulate the result: ::
+
+  rdr url ital-urls -s domain -c | more
+
+You can also filter the results with ``-l``. So, to count and tabulate URLs like pdf, try: ::
+
+  rdr url ital-urls -l pdf -c | more
+
+Besides using the URLs to help you learn about your carrel, you can also use ``url`` to assist you in acquiring additional content. For example, first filter the URLs for "pdf" and output the result to a file:
+
+  rdr url ital-urls -l pdf > pdfs.txt
+
+Then use pdfs.txt as input to a mass downloader to actually get the content. For example, use the venerable wget command ::
+
+  wget -i pdfs.txt
+
+Consider also using the output of ``urls`` as input to the Distant Reader; create a new study carrel using the URLs identified in a carrel.
+
+Finally, some of the URLs extracted from the underlying plain text are quite ugly, if not down-right invalid. Please remember, "Do not let the perfect be the enemy of the good." Moreover, keep in mind that URLs very frequently break, go stale, or require authentication. Such is not uncommon. Also, increasingly, URLs pointing to scholarly journal articles do not really point to journal articles. Instead, they point to "splash" or "landing" pages which then force you to find the link to the article, and even then the student, researcher, or scholar may not get the item in question, but a viewer instead. Your milage may vary.
 
 
 sql
 ---
 
-This subcommand launches a subsystem called Datasette, and through its use the student, researcher, or scholar can easily query the given carrel's underlying SQLite relational database file.
+The ``sql`` subcommand can be used to directly query the underlying study carrel SQLite database file.
 
 The underlying database's structure is defined in each carrel's ``etc/reader.sql`` file, and the database is essentially a distillation of all the content found in the ``adr``, ``bib``, ``ent``, ``pos``, ``urls``, and ``wrd`` directories of each carrel. Thus, the database includes email addresses, bibliographics, named-entities, parts-of-speech, URLs, and statistically significant keywords extracted from each and every text-based file found in the carrel's ``cache`` directory.
 
@@ -576,7 +655,7 @@ Then query the database in a number of different ways: ::
   SELECT COUNT( entity ) AS c, entity FROM ent WHERE type IS 'LOC' GROUP BY entity ORDER BY c DESC;
 
   -- list all the verbs
-  -- what do things do, and in any carrel the vast majority of time it is always about being and having
+  -- what do things do, and in any carrel the vast majority of the time it is always about being and having
   SELECT COUNT( lemma ) AS c, lemma FROM pos WHERE pos LIKE 'V%' GROUP BY lemma ORDER BY c DESC;
 
   -- list all the nouns; what things exist?

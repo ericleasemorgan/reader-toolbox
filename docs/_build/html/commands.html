@@ -343,7 +343,7 @@ cd $(rdr get)
 </div>
 <p>The returned values are not always accurate, but in this vein, “Do not let the perfect be the enemy of the good.” While computers are pretty stupid, they can make educated guesses.</p>
 <p>Use the output of <code class="docutils literal notranslate"><span class="pre">ent</span></code> as input to <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see how entities of interest are used in context.</p>
-<p>For extra credit, export things like people or places to a file. Programmatically look up those values in an encyclopedia or gazateer to get birth dates, death dates, or geographic locations. From the results, create a timeline or map. The results will illustrate characteristics of your carrel not immediately apparent.</p>
+<p>For extra credit, export things like people or places to a file. Programmatically look up those values in an encyclopedia or gazateer to get birth dates, death dates, or geographic coordinates. From the results, create a timeline or map. The results will illustrate characteristics of your carrel not immediately apparent.</p>
 </div>
 <div class="section" id="tm">
 <h2>tm<a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
@@ -371,16 +371,35 @@ cd $(rdr get)
 </div>
 <div class="section" id="semantics">
 <h2>semantics<a class="headerlink" href="#semantics" title="Permalink to this headline">¶</a></h2>
-<p>Similar to concordancing and topic modeling, this subcommand is useful for learning what words are related in meaning to other words. It is an implementation of “semantic indexing” or sometimes called “word embedding”. It is based on a tool named word2vec.</p>
-<p>The subcommand understands three different semantics. The first is similarity. Given a word, the tool will return a list, and each item will include a word and a score. The closer the score is to 1 the more similar the listed words are considered. This does not mean the words are synonyms. Instead it means they are more likely mentioned “in the same breath” as the given word.</p>
-<p>The semantic called distance take two or more words as input. Like the similarity measure, it will return a list but each item will include three fields: one of the given words, another of the given words, and a distance measure. The list will be sorted by the distance measure between the two words. Given a longer rather than shorter list of words as input, the student, researcher, or scholar can begin to see patterns, themes, or trends in the study carrel.</p>
-<p>The last semantic is analogy, and it takes three words as input. The first two words are expected to have some sort of pre-conceived relationship. The third is the query in the hopes of identifying other words which have a similar relationship as first two words. The canonical example is king, queen, and prince, in the hopes of returning words like princess.</p>
+<p>The use of <code class="docutils literal notranslate"><span class="pre">semantics</span></code> is to do semantic indexing and word embedding.</p>
+<p>Similar to concordancing and topic modeling, this subcommand is useful for learning what words are related in meaning to other words. It is an implementation of “semantic indexing” or sometimes called “word embedding”. It is based on a tool called word2vec.</p>
+<p>This subcommand – <code class="docutils literal notranslate"><span class="pre">semantics</span></code> – understands three different semantics. The first is <code class="docutils literal notranslate"><span class="pre">similarity</span></code>. Given a word, <code class="docutils literal notranslate"><span class="pre">semantics</span></code> will return a list, and each item will include a word and a score. The closer the score is to 1 the more similar the listed words are considered. This does not mean the words are synonyms. Instead it means they are more likely mentioned “in the same breath” as the given word. For example, the following command will return words close – in the same semantic space – to the word love:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">semantics</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Alternatively, the query, the type of query, and the size of the result can be explicitly stated:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">semantics</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>
+<span class="n">rdr</span> <span class="n">semantics</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="n">hector</span>
+<span class="n">rdr</span> <span class="n">semantics</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="n">similarity</span> <span class="o">-</span><span class="n">q</span> <span class="n">ajax</span>
+<span class="n">rdr</span> <span class="n">semantics</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">25</span> <span class="o">-</span><span class="n">t</span> <span class="n">similarity</span> <span class="o">-</span><span class="n">q</span> <span class="n">ajax</span>
+</pre></div>
+</div>
+<p>The semantic called <code class="docutils literal notranslate"><span class="pre">distance</span></code> take two or more words as input. Like the <code class="docutils literal notranslate"><span class="pre">similarity</span></code> measure, it will return a list but each item will include three fields: one of the given words, another of the given words, and a distance measure. The list will be sorted by the distance measure between the two words. Given a longer rather than shorter list of words, the student, researcher, or scholar can begin to see patterns, themes, or trends in the study carrel. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">semantics</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="n">distance</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;love hector ajax son ship&quot;</span>
+</pre></div>
+</div>
+<p>Note, the <code class="docutils literal notranslate"><span class="pre">distance</span></code> semantic returns a set of graphs – a node, another node, and an edge. Consider outputing the result of the distance measure to a file, and then importing the file into something like Gephi to visualize the relationships.</p>
+<p>The last semantic is analogy, and it takes three words as input. The first two words are expected to have some sort of pre-conceived relationship. The third is the query in the hopes of identifying other words which have a similar relationship to the first two words. The canonical example is father, queen, and prince, in the hopes of returning words like princess. Try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">semantics</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="n">analogy</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;king queen prince&#39;</span>
+<span class="n">rdr</span> <span class="n">semantics</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="n">analogy</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;king queen prince&#39;</span> <span class="o">-</span><span class="n">s</span> <span class="mi">25</span>
+</pre></div>
+</div>
 <p>Think of semantic indexing this way. When this word, that word, or the other word is used in the corpus, what other words are also used, or what other words are not used.</p>
-<p>Semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than 1,000,000 words ought to be considered dubious at best.</p>
+<p>Finally, and very importantly, semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than one million words ought to be considered dubious at best. (Melville’s Moby Dick is often considered a long book, and it is only .2 million words long.) Corpora measuring 1.5 million words begins to be amenable. Corpora greater than two million words long ought to be good to go. The larger, the better.</p>
 </div>
 <div class="section" id="search">
 <h2>search<a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h2>
-<p>This subcommand is an implementation of the traditional full text, bibliographic query.</p>
+<p>This subcommand – <code class="docutils literal notranslate"><span class="pre">search</span></code> – is an implementation of the traditional full text, bibliographic query.</p>
 <p>Given an expression ranging from the simple to the complex, this subcommand will return a list of items from the carrel, and each item will be include authors, titles, summaries, keywords, etc.</p>
 <p>The expression can be quite… expressive. It can be a single word, a phrase, a fielded search, a Boolean operation, and even a nested query. Rudimentary examples follow:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># single word search</span>
@@ -435,8 +454,9 @@ cd $(rdr get)
 </div>
 <div class="section" id="grammars">
 <h2>grammars<a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">grammars</span></code> to output parts of sentences matching language patterns – grammars.</p>
 <p>Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.</p>
-<p>In order to exploit grammars, a specific language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be a time consuming process, and the Toolbox will do this work, if it has not already been done.</p>
+<p>In order to exploit grammars, a specific (spaCy) language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be quite a time consuming process. The Toolbox will do this work, if it has not already been done.</p>
 <p>The Toolbox supports four different grammars. The first is subject-verb-object (svo) – rudimentary sentences.  To extract svo-like fragments from a given study carrel, enter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span>
 </pre></div>
@@ -463,7 +483,7 @@ cd $(rdr get)
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">quotes</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>Semi-structured sentences (sss) are the most complicated grammar, and it requires at least one additional option, <code class="docutils literal notranslate"><span class="pre">-n</span></code> where the value is some sort of noun. This grammar includes an optional option, <code class="docutils literal notranslate"><span class="pre">-l</span></code> for the lemma of a verb. By default, the value of <code class="docutils literal notranslate"><span class="pre">-l</span></code> is the lemma “be”. Thus, to list all sentence fragments where the subject of the sentences is “war”, and the predicate is a form of “be”, enter:</p>
+<p>Semi-structured sentences (sss) are the most complicated grammar, and it requires at least one additional option, <code class="docutils literal notranslate"><span class="pre">-n</span></code> where the value is some sort of noun. This grammar provides for an additional option, <code class="docutils literal notranslate"><span class="pre">-l</span></code> for the lemma of a verb. By default, the value of <code class="docutils literal notranslate"><span class="pre">-l</span></code> is the lemma “be”. Thus, to list all sentence fragments where the subject of the sentences is “war”, and the predicate is a form of “be”, enter:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">war</span> <span class="n">homer</span>
 </pre></div>
 </div>
@@ -498,13 +518,66 @@ cd $(rdr get)
 </div>
 <div class="section" id="adr">
 <h2>adr<a class="headerlink" href="#adr" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">adr</span></code> subcommand is used to output email addresses.</p>
+<p>As a study carrel is created, the Distant Reader will look for email addresses in the content. Use this command to enumerate and filter those addresses. But alas, the works of Homer include zero email addresses. Consequently, download a different carrel which does, for example, part of a run of an electronic journal named Information Technology and Libraries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">download</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span>
+</pre></div>
+</div>
+<p>You can now list email addresses:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">adr</span></code> subcommand does not echo the same address multiple times, but an address may very well occur more than once. To see how many times addresses occur, use the <code class="docutils literal notranslate"><span class="pre">-c</span></code> flag:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">c</span>
+</pre></div>
+</div>
+<p>The student, researcher, or scholar can filter the addresses with <code class="docutils literal notranslate"><span class="pre">-l</span></code> which is short for the LIKE operator in SQL. For example, to list all the addresses like “.com”, use this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">l</span> <span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+<p>And/or count the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">l</span> <span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+<p>Use the output of <code class="docutils literal notranslate"><span class="pre">adr</span></code> responsibly. You know what I mean.</p>
 </div>
 <div class="section" id="url">
 <h2>url<a class="headerlink" href="#url" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">url</span></code> to list, enumerate, and filter URLs.</p>
+<p>Like the listing of words, persons, or keywords, the listing of URLs can be quite telling when it comes to learning the content of a study carrel. The <code class="docutils literal notranslate"><span class="pre">url</span></code> subcommand facilitates this. Again, Homer’s works include zero URLs, so download a carrel named ital-urls, which includes many:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">download</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span>
+</pre></div>
+</div>
+<p>List all the URLs and pipe them through a pager. They will be sorted alphabetically:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>Many times the domain for a URL is telling, so you can list just those instead:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">s</span> <span class="n">domain</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>There will quite likely be duplicates, so you may want to count and tabulate the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">s</span> <span class="n">domain</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>You can also filter the results with <code class="docutils literal notranslate"><span class="pre">-l</span></code>. So, to count and tabulate URLs like pdf, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">l</span> <span class="n">pdf</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>Besides using the URLs to help you learn about your carrel, you can also use <code class="docutils literal notranslate"><span class="pre">url</span></code> to assist you in acquiring additional content. For example, first filter the URLs for “pdf” and output the result to a file:</p>
+<blockquote>
+<div><p>rdr url ital-urls -l pdf &gt; pdfs.txt</p>
+</div></blockquote>
+<p>Then use pdfs.txt as input to a mass downloader to actually get the content. For example, use the venerable wget command</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="o">-</span><span class="n">i</span> <span class="n">pdfs</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Consider also using the output of <code class="docutils literal notranslate"><span class="pre">urls</span></code> as input to the Distant Reader; create a new study carrel using the URLs identified in a carrel.</p>
+<p>Finally, some of the URLs extracted from the underlying plain text are quite ugly, if not down-right invalid. Please remember, “Do not let the perfect be the enemy of the good.” Moreover, keep in mind that URLs very frequently break, go stale, or require authentication. Such is not uncommon. Also, increasingly, URLs pointing to scholarly journal articles do not really point to journal articles. Instead, they point to “splash” or “landing” pages which then force you to find the link to the article, and even then the student, researcher, or scholar may not get the item in question, but a viewer instead. Your milage may vary.</p>
 </div>
 <div class="section" id="sql">
 <h2>sql<a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h2>
-<p>This subcommand launches a subsystem called Datasette, and through its use the student, researcher, or scholar can easily query the given carrel’s underlying SQLite relational database file.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">sql</span></code> subcommand can be used to directly query the underlying study carrel SQLite database file.</p>
 <p>The underlying database’s structure is defined in each carrel’s <code class="docutils literal notranslate"><span class="pre">etc/reader.sql</span></code> file, and the database is essentially a distillation of all the content found in the <code class="docutils literal notranslate"><span class="pre">adr</span></code>, <code class="docutils literal notranslate"><span class="pre">bib</span></code>, <code class="docutils literal notranslate"><span class="pre">ent</span></code>, <code class="docutils literal notranslate"><span class="pre">pos</span></code>, <code class="docutils literal notranslate"><span class="pre">urls</span></code>, and <code class="docutils literal notranslate"><span class="pre">wrd</span></code> directories of each carrel. Thus, the database includes email addresses, bibliographics, named-entities, parts-of-speech, URLs, and statistically significant keywords extracted from each and every text-based file found in the carrel’s <code class="docutils literal notranslate"><span class="pre">cache</span></code> directory.</p>
 <p>Given this database, it is possible to exact all sorts of information through the use of SQL (structured query language). For example, begin to work with the carrel named homer:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sql</span> <span class="n">homer</span>
@@ -533,7 +606,7 @@ SELECT COUNT( entity ) AS c, entity FROM ent WHERE type IS &#39;PERSON&#39; GROU
 SELECT COUNT( entity ) AS c, entity FROM ent WHERE type IS &#39;LOC&#39; GROUP BY entity ORDER BY c DESC;
 
 -- list all the verbs
--- what do things do, and in any carrel the vast majority of time it is always about being and having
+-- what do things do, and in any carrel the vast majority of the time it is always about being and having
 SELECT COUNT( lemma ) AS c, lemma FROM pos WHERE pos LIKE &#39;V%&#39; GROUP BY lemma ORDER BY c DESC;
 
 -- list all the nouns; what things exist?
