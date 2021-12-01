@@ -35,7 +35,7 @@
             
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>From the command line, installation is as simple as:</p>
+<p>The Reader Toolbox is a suite of Python scripts integrated into a single command-line interface. It ought to run on any computer with Python 3 or above installed. From the command line, installation is as simple as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">reader</span><span class="o">-</span><span class="n">toolbox</span> <span class="o">--</span><span class="n">upgrade</span>
 </pre></div>
 </div>
@@ -43,6 +43,43 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span>
 </pre></div>
 </div>
+<p>The result ought to be listing of all the <code class="docutils literal notranslate"><span class="pre">rdr</span></code> subcommands and looking something like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span> <span class="n">rdr</span> <span class="p">[</span><span class="n">OPTIONS</span><span class="p">]</span> <span class="n">COMMAND</span> <span class="p">[</span><span class="n">ARGS</span><span class="p">]</span><span class="o">...</span>
+
+<span class="n">Options</span><span class="p">:</span>
+      <span class="o">--</span><span class="n">help</span>  <span class="n">Show</span> <span class="n">this</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span><span class="o">.</span>
+
+<span class="n">Commands</span><span class="p">:</span>
+      <span class="n">adr</span>          <span class="n">Filter</span> <span class="n">email</span> <span class="n">addresses</span> <span class="kn">from</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+      <span class="n">bib</span>          <span class="n">Output</span> <span class="n">rudimentary</span> <span class="n">bibliographics</span> <span class="kn">from</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+      <span class="n">browse</span>       <span class="n">Peruse</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="k">as</span> <span class="n">a</span> <span class="n">file</span> <span class="n">system</span><span class="o">.</span>
+      <span class="n">catalog</span>      <span class="n">List</span> <span class="n">study</span> <span class="n">carrels</span><span class="o">.</span>
+      <span class="n">cluster</span>      <span class="n">Apply</span> <span class="n">dimension</span> <span class="n">reduction</span> <span class="n">to</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="ow">and</span> <span class="n">visualize</span> <span class="n">the</span><span class="o">...</span>
+      <span class="n">concordance</span>  <span class="n">A</span> <span class="n">poor</span> <span class="n">mans</span> <span class="n">search</span> <span class="n">engine</span><span class="o">.</span>
+      <span class="n">download</span>     <span class="n">Cache</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">public</span> <span class="n">library</span> <span class="n">of</span> <span class="n">study</span> <span class="n">carrels</span><span class="o">.</span>
+      <span class="n">edit</span>         <span class="n">Modify</span> <span class="n">the</span> <span class="n">stop</span> <span class="n">word</span> <span class="nb">list</span> <span class="n">of</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+      <span class="n">ent</span>          <span class="n">Filter</span> <span class="n">out</span> <span class="n">named</span> <span class="n">entities</span> <span class="ow">and</span> <span class="n">types</span> <span class="n">of</span> <span class="n">entities</span> <span class="n">found</span> <span class="ow">in</span><span class="o">...</span>
+      <span class="n">get</span>          <span class="n">Echo</span> <span class="n">the</span> <span class="n">values</span> <span class="n">denoted</span> <span class="n">by</span> <span class="n">the</span> <span class="nb">set</span> <span class="n">subcommand</span><span class="o">.</span>
+      <span class="n">grammars</span>     <span class="n">Extract</span> <span class="n">sentence</span> <span class="n">fragments</span> <span class="kn">from</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="n">where</span> <span class="n">fragments</span> <span class="n">are</span><span class="o">...</span>
+      <span class="n">info</span>         <span class="n">Output</span> <span class="n">metadata</span> <span class="n">describing</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+      <span class="n">ngrams</span>       <span class="n">Output</span> <span class="ow">and</span> <span class="nb">list</span> <span class="n">words</span> <span class="ow">or</span> <span class="n">phrases</span> <span class="n">found</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+      <span class="n">play</span>         <span class="n">Play</span> <span class="n">the</span> <span class="n">word</span> <span class="n">game</span> <span class="n">called</span> <span class="n">hangman</span><span class="o">.</span>
+      <span class="n">pos</span>          <span class="n">Filter</span> <span class="n">out</span> <span class="n">parts</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">speech</span><span class="p">,</span> <span class="n">words</span><span class="p">,</span> <span class="ow">and</span> <span class="n">lemmas</span> <span class="n">found</span> <span class="ow">in</span><span class="o">...</span>
+      <span class="n">read</span>         <span class="n">Open</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="n">your</span> <span class="n">Web</span> <span class="n">browser</span><span class="o">.</span>
+      <span class="n">search</span>       <span class="n">Perform</span> <span class="n">a</span> <span class="n">full</span> <span class="n">text</span> <span class="n">query</span> <span class="n">against</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+      <span class="n">semantics</span>    <span class="n">Apply</span> <span class="n">semantic</span> <span class="n">indexing</span> <span class="n">against</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+      <span class="nb">set</span>          <span class="n">Configure</span> <span class="n">the</span> <span class="n">location</span> <span class="n">of</span> <span class="n">study</span> <span class="n">carrels</span> <span class="ow">and</span> <span class="n">a</span> <span class="n">subsystem</span><span class="o">...</span>
+      <span class="n">sql</span>          <span class="n">Use</span> <span class="n">SQL</span> <span class="n">queries</span> <span class="n">against</span> <span class="n">the</span> <span class="n">database</span> <span class="n">of</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+      <span class="n">tm</span>           <span class="n">Apply</span> <span class="n">topic</span> <span class="n">modeling</span> <span class="n">against</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+      <span class="n">url</span>          <span class="n">Filter</span> <span class="n">URLs</span> <span class="ow">and</span> <span class="n">domains</span> <span class="kn">from</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+      <span class="n">wrd</span>          <span class="n">Filter</span> <span class="n">statistically</span> <span class="n">computed</span> <span class="n">keywords</span> <span class="kn">from</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;.</span>
+</pre></div>
+</div>
+<p>From here you can issue a subcommand like the following to display a human-readable catalog of all the Distant Reader study carrels remotely available in the Reader’s public library:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">catalog</span> <span class="o">-</span><span class="n">h</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span>
+</pre></div>
+</div>
+<p>See  <a class="reference external" href="./quick-start.html">Quick start</a> to learn more about the subcommands.</p>
 </div>
 
 
@@ -66,10 +103,10 @@
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quicker-start.html">Quicker start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands in depth</a></li>
-<li class="toctree-l1"><a class="reference internal" href="more.html">More to come</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Supporting software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="more.html">More to come</a></li>
 <li class="toctree-l1"><a class="reference internal" href="author.html">About the author</a></li>
 </ul>
 

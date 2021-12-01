@@ -1,3 +1,5 @@
+
+
 Supporting software
 ===================
 
@@ -7,13 +9,11 @@ This Toolbox is really an amalgamation of other tools used to exploit Distant Re
 
    * `Datasette <https://datasette.io>`_ - used to implement the SQL interface to the Reader's underlying SQLite database file, and nice because it provides so many output formats
 
-   * `gensim (version 3.8.3) <https://radimrehurek.com/gensim/>`_ - a broad and wide-ranging module for natural language processing, and this specific version supports interactions with the MALLET subsystem for topic modeling
+   * `MALLET <https://mimno.github.io/Mallet/>`_ - used by the tm subcommand to extract latent themes
 
    * `Matplotlib <https://matplotlib.org>`_ - used in the cluster subcommand to visualize the results
 
    * `Natural Langauge Toolkit (NLTK) <http://www.nltk.org>`_ - used in a number of places throughout the Toolbox, and makes it easy to tokenize a text into words, ngrams, sentences, and implementing the concordance
-
-   * `pyLDAvis <https://github.com/bmabey/pyLDAvis>`_ - used in the tm subcommand to visualize the results
 
    * `scikit-learn <https://scikit-learn.org/>`_ - used in the cluster subcommand for feature extraction, calculating distances, and multidimensional scaling
 

@@ -14,8 +14,8 @@ A command-line tool for interacting with Distant Reader study carrels
    introduction
    installation
    quick-start
-   quicker-start
+   tutorial
    commands
-   more
    software
+   more
    author
