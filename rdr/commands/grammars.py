@@ -137,9 +137,9 @@ def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 		items = []
 		for feature in features :
 		
-			subject = [ token.text_with_ws for token in feature.subject ]
-			verb    = [ token.text_with_ws for token in feature.verb ]
-			object  = [ token.text_with_ws for token in feature.object ]
+			subject = feature[ 0 ].text
+			verb    = feature[ 1 ].text
+			object  = feature[ 2 ].text	
 			items.append(' \t'.join( [ ''.join( subject ), ''.join( verb ), ''.join( object ) ] ) )
 
 		# done
@@ -156,9 +156,9 @@ def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 		for feature in features :
 		
 			# parse and stringify
-			speaker = [ token.text_with_ws for token in feature.speaker ]
-			cue     = [ token.text_with_ws for token in feature.cue ]
-			content = feature.content.text_with_ws
+			speaker = feature[ 0 ].text
+			cue     = feature[ 1 ].text
+			content = feature[ 2 ].text
 			items.append( '\t'.join( [ ''.join( speaker ), ''.join( cue ), content ] ) )
 
 		# done
@@ -187,9 +187,9 @@ def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 		items = []
 		for feature in features :
 		
-			entity   = [ token.text_with_ws for token in feature.entity ]
-			cue      = [ token.text_with_ws for token in feature.cue ]
-			fragment = [ token.text_with_ws for token in feature.fragment ]
+			entity   = feature[ 0 ].text
+			cue      = feature[ 1 ].text
+			fragment = feature[ 2 ].text
 			items.append( '\t'.join( [ ''.join( entity ), ''.join( cue ), ''.join( fragment ) ] ) )
 
 		# done

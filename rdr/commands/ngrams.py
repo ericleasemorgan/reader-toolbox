@@ -49,8 +49,8 @@ def ngrams( carrel, size, query, count, location ) :
 	elif location == 'remote' :
 	
 		# read remote data; needs error checking
-		text      = get( '/'.join ( [ REMOTELIBRARY, CARRELS, carrel, ETC, CORPUS ] ) ).text
 		stopwords = get( '/'.join ( [ REMOTELIBRARY, CARRELS, carrel, ETC, STOPWORDS ] ) ).text.split()
+		text      = get( '/'.join ( [ REMOTELIBRARY, CARRELS, carrel, ETC, CORPUS ] ) ).text
 		
 	# error
 	else :
