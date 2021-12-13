@@ -1,0 +1,79 @@
+
+# networks - given a carrel, create bigram networks
+
+# require
+from rdr import *
+
+@click.command( options_metavar='<options>' )
+@click.argument( 'carrel', metavar='<carrel>' )
+@click.option('-f', '--filter', default=18, help="least number of occurances of bigram")
+@click.option('-m', '--measure', default='jaccard', type=click.Choice( [ 'chisqr', 'jaccard', 'likelihood', 'raw' ], case_sensitive=True ), help="type of measure")
+@click.option('-l', '--limit', default=200, help="number of features")
+@click.option('-w', '--window', default=5, help="size of window")
+@click.option('-o', '--output', default='image', type=click.Choice( [ 'image', 'gml' ], case_sensitive=True ), help="type of output")
+def networks( carrel, window, filter, measure, limit, output ) :
+
+	'''Output network graph based on measures applied against bigrams in <carrel>.'''
+	
+	# require
+	from   nltk.collocations import BigramAssocMeasures
+	import matplotlib.pyplot as plt
+	import networkx as nx
+	import nltk
+
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+	corpus       = str( localLibrary/carrel/ETC/CORPUS )
+	stopwords    = str( localLibrary/carrel/ETC/STOPWORDS )
+
+	# sanity checks
+	checkForCarrel( carrel )
+		
+	# read the stop words and the carrel
+	with open( stopwords ) as handle : stopwords = handle.read().split( '\n' )
+	with open( corpus )    as handle : carrel    = handle.read()
+
+	# featurize the carrel
+	features = nltk.word_tokenize( carrel )
+	features = [ feature for feature in features if feature.isalpha() ]
+	features = [ feature.lower() for feature in features ]
+	features = [ feature for feature in features if feature not in stopwords ]
+
+	# collocate
+	finder = nltk.BigramCollocationFinder.from_words( features, window_size=window )
+	
+	# filter
+	if filter > 0 : finder.apply_freq_filter( filter )
+	
+	# measure
+	if   measure == 'chisqr'     : records = finder.score_ngrams( BigramAssocMeasures.chi_sq )
+	elif measure == 'jaccard'    : records = finder.score_ngrams( BigramAssocMeasures.jaccard )
+	elif measure == 'likelihood' : records = finder.score_ngrams( BigramAssocMeasures.likelihood_ratio )
+	elif measure == 'raw'        : records = finder.score_ngrams( BigramAssocMeasures.raw_freq )
+	
+	# create a network from the scores
+	G = nx.Graph()
+	for index, record in enumerate( records ) :
+	
+		# parse
+		source = record[ 0 ][ 0 ]
+		target = record[ 0 ][ 1 ]
+		weight = record[ 1 ]
+	
+		# update
+		G.add_edge( source, target, weight=weight )
+	
+		# continue, conditionally
+		if index > limit : break
+	
+	# output image
+	if output == 'image' :
+	
+		# visualize
+		plt.figure()
+		nx.draw( G, with_labels=True, node_size=10, font_size=9, edge_color='silver' )
+		plt.show()
+	
+	# output gml; will probably break under Windows
+	else: nx.write_gml(G, '/dev/stdout' )
+	
