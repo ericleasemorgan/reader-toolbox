@@ -13,8 +13,23 @@ from rdr import *
 @click.option('-o', '--output', default='image', type=click.Choice( [ 'image', 'gml' ], case_sensitive=True ), help="type of output")
 def networks( carrel, window, filter, measure, limit, output ) :
 
-	'''Output network graph based on measures applied against bigrams in <carrel>.'''
+	'''Output network graph based on measures applied against bigrams in <carrel>.
+
+	This is an additional way of answering the questions: 1) what words are spoken in the same breath as other words, and 2) what words taken together connote themes.
+
+	Given a study carrel of about 200,000 words, the default values ought to generate a network graph with enough depth to be interesting. Specify the -o option to output a Graph Modeling Language (GML) file, and load the result into a visualizer like Gephi for further analysis.
 	
+	If the image output by the Toolbox is not very dense, then iteratively increase or decrease the values of -l and -f until the density is appealing.
+
+	Examples:
+
+	\b
+	  rdr networks homer
+	  rdr networks homer -o gml > homer.gml
+	  rdr networks homer -l 200 -f 18 -w 5
+	  rdr networks homer -l 200 -f 18 -w 5 -o gml > homer.gml
+	  rdr networks pride -l 1600 -f 8'''
+
 	# require
 	from   nltk.collocations import BigramAssocMeasures
 	import matplotlib.pyplot as plt
