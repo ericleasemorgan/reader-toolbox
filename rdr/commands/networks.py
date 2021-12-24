@@ -6,14 +6,14 @@ from rdr import *
 
 @click.command( options_metavar='<options>' )
 @click.argument( 'carrel', metavar='<carrel>' )
-@click.option('-f', '--filter', default=18, help="least number of occurances of bigram")
-@click.option('-m', '--measure', default='jaccard', type=click.Choice( [ 'chisqr', 'jaccard', 'likelihood', 'raw' ], case_sensitive=True ), help="type of measure")
-@click.option('-l', '--limit', default=200, help="number of features")
+@click.option('-f', '--filter', default=2, help="least number of occurances of bigram")
+@click.option('-m', '--measure', default='jaccard', type=click.Choice( [ 'fisher', 'chisqr', 'jaccard', 'likelihood', 'raw' ], case_sensitive=True ), help="type of measure")
+@click.option('-l', '--limit', default=100, help="number of features")
 @click.option('-w', '--window', default=5, help="size of window")
 @click.option('-o', '--output', default='image', type=click.Choice( [ 'image', 'gml' ], case_sensitive=True ), help="type of output")
 def networks( carrel, window, filter, measure, limit, output ) :
 
-	'''Output network graph based on measures applied against bigrams in <carrel>.
+	'''Output network graph based on measures applied against bigram collocations in <carrel>.
 
 	This is an additional way of answering the questions: 1) what words are spoken in the same breath as other words, and 2) what words taken together connote themes.
 
@@ -26,8 +26,8 @@ def networks( carrel, window, filter, measure, limit, output ) :
 	\b
 	  rdr networks homer
 	  rdr networks homer -o gml > homer.gml
-	  rdr networks homer -l 200 -f 18 -w 5
-	  rdr networks homer -l 200 -f 18 -w 5 -o gml > homer.gml
+	  rdr networks homer -l 2000 -f 18 -w 5
+	  rdr networks homer -l 2000 -f 18 -w 5 -o gml > homer.gml
 	  rdr networks pride -l 1600 -f 8'''
 
 	# require
@@ -46,10 +46,10 @@ def networks( carrel, window, filter, measure, limit, output ) :
 		
 	# read the stop words and the carrel
 	with open( stopwords ) as handle : stopwords = handle.read().split( '\n' )
-	with open( corpus )    as handle : carrel    = handle.read()
+	with open( corpus )    as handle : corpus    = handle.read()
 
 	# featurize the carrel
-	features = nltk.word_tokenize( carrel )
+	features = nltk.word_tokenize( corpus )
 	features = [ feature for feature in features if feature.isalpha() ]
 	features = [ feature.lower() for feature in features ]
 	features = [ feature for feature in features if feature not in stopwords ]
@@ -65,6 +65,7 @@ def networks( carrel, window, filter, measure, limit, output ) :
 	elif measure == 'jaccard'    : records = finder.score_ngrams( BigramAssocMeasures.jaccard )
 	elif measure == 'likelihood' : records = finder.score_ngrams( BigramAssocMeasures.likelihood_ratio )
 	elif measure == 'raw'        : records = finder.score_ngrams( BigramAssocMeasures.raw_freq )
+	elif measure == 'fisher'     : records = finder.score_ngrams( BigramAssocMeasures.fisher )
 	
 	# create a network from the scores
 	G = nx.Graph()
@@ -80,6 +81,18 @@ def networks( carrel, window, filter, measure, limit, output ) :
 	
 		# continue, conditionally
 		if index > limit : break
+	
+	# debug
+	click.echo( 'Parameters:', err=True )
+	click.echo( '  * carrel: '  + carrel, err=True )
+	click.echo( '  * limit: '   + str( limit ), err=True )
+	click.echo( '  * measure: ' + measure, err=True )
+	click.echo( '  * filter: '  + str( filter ), err=True )
+	click.echo( '  * window: '  + str( window), err=True )
+	click.echo( '', err=True )
+	click.echo( 'Result:', err=True )
+	click.echo( '  * number of nodes: ' + str( G.number_of_nodes() ), err=True )
+	click.echo( '  * number of edges: ' + str( G.number_of_edges() ), err=True )
 	
 	# output image
 	if output == 'image' :
