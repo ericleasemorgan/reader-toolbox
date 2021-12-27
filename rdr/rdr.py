@@ -12,6 +12,7 @@ from rdr import *
 import rdr.commands.adr         as adr
 import rdr.commands.bib         as bib
 import rdr.commands.browse      as browse
+import rdr.commands.build       as build
 import rdr.commands.catalog     as catalog
 import rdr.commands.cluster     as cluster
 import rdr.commands.concordance as concordance
@@ -21,6 +22,7 @@ import rdr.commands.ent         as ent
 import rdr.commands.get         as get
 import rdr.commands.grammars    as grammars
 import rdr.commands.info        as info
+import rdr.commands.networks    as networks
 import rdr.commands.ngrams      as ngrams
 import rdr.commands.play        as play
 import rdr.commands.pos         as pos
@@ -32,7 +34,6 @@ import rdr.commands.sql         as sql
 import rdr.commands.tm          as tm
 import rdr.commands.url         as url
 import rdr.commands.wrd         as wrd
-import rdr.commands.networks    as networks
 
 # initialize 
 @click.group()
@@ -42,6 +43,7 @@ def rdr() : pass
 rdr.add_command( adr.adr )
 rdr.add_command( bib.bib )
 rdr.add_command( browse.browse )
+rdr.add_command( build.build )
 rdr.add_command( catalog.catalog )
 rdr.add_command( cluster.cluster )
 rdr.add_command( concordance.concordance )
@@ -51,6 +53,7 @@ rdr.add_command( ent.ent )
 rdr.add_command( get.get )
 rdr.add_command( grammars.grammars )
 rdr.add_command( info.info )
+rdr.add_command( networks.networks )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( play.play )
 rdr.add_command( pos.pos )
@@ -62,7 +65,6 @@ rdr.add_command( sql.sql )
 rdr.add_command( tm.tm )
 rdr.add_command( url.url )
 rdr.add_command( wrd.wrd )
-rdr.add_command( networks.networks )
 
 # do the work
 if __name__ == '__main__' : rdr()

@@ -13,7 +13,7 @@ from rdr import *
 @click.option('-o', '--output', default='image', type=click.Choice( [ 'image', 'gml' ], case_sensitive=True ), help="type of output")
 def networks( carrel, window, filter, measure, limit, output ) :
 
-	'''Output network graph based on measures applied against bigram collocations in <carrel>.
+	'''Output network graph based on bigram collocations in <carrel>.
 
 	This is an additional way of answering the questions: 1) what words are spoken in the same breath as other words, and 2) what words taken together connote themes.
 
