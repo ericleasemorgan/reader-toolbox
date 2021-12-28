@@ -11,7 +11,7 @@ from rdr import *
 @click.option('-l', '--limit', default=100, help="number of features")
 @click.option('-w', '--window', default=5, help="size of window")
 @click.option('-o', '--output', default='image', type=click.Choice( [ 'image', 'gml' ], case_sensitive=True ), help="type of output")
-def networks( carrel, window, filter, measure, limit, output ) :
+def collocations( carrel, window, filter, measure, limit, output ) :
 
 	'''Output network graph based on bigram collocations in <carrel>.
 

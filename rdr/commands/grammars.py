@@ -97,7 +97,7 @@ ask yourself, "Self, what is justice?"''', err=True )
 @click.argument( 'carrel', metavar='<carrel>' )
 def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 
-	"""Extract sentence fragments from <carrel> where fragments are one of:
+	"""Extract sentence fragments from <carrel> as in:
 	
 	\b
 	  nouns - all the nouns and noun chunks

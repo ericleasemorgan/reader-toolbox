@@ -9,31 +9,31 @@
 
 # require
 from rdr import *
-import rdr.commands.adr         as adr
-import rdr.commands.bib         as bib
-import rdr.commands.browse      as browse
-import rdr.commands.build       as build
-import rdr.commands.catalog     as catalog
-import rdr.commands.cluster     as cluster
-import rdr.commands.concordance as concordance
-import rdr.commands.download    as download
-import rdr.commands.edit        as edit
-import rdr.commands.ent         as ent
-import rdr.commands.get         as get
-import rdr.commands.grammars    as grammars
-import rdr.commands.info        as info
-import rdr.commands.networks    as networks
-import rdr.commands.ngrams      as ngrams
-import rdr.commands.play        as play
-import rdr.commands.pos         as pos
-import rdr.commands.read        as read
-import rdr.commands.search      as search
-import rdr.commands.semantics   as semantics
-import rdr.commands.set         as set
-import rdr.commands.sql         as sql
-import rdr.commands.tm          as tm
-import rdr.commands.url         as url
-import rdr.commands.wrd         as wrd
+import rdr.commands.adr          as adr
+import rdr.commands.bib          as bib
+import rdr.commands.browse       as browse
+import rdr.commands.build        as build
+import rdr.commands.catalog      as catalog
+import rdr.commands.cluster      as cluster
+import rdr.commands.concordance  as concordance
+import rdr.commands.download     as download
+import rdr.commands.edit         as edit
+import rdr.commands.ent          as ent
+import rdr.commands.get          as get
+import rdr.commands.grammars     as grammars
+import rdr.commands.info         as info
+import rdr.commands.collocations as collocations
+import rdr.commands.ngrams       as ngrams
+import rdr.commands.play         as play
+import rdr.commands.pos          as pos
+import rdr.commands.read         as read
+import rdr.commands.search       as search
+import rdr.commands.semantics    as semantics
+import rdr.commands.set          as set
+import rdr.commands.sql          as sql
+import rdr.commands.tm           as tm
+import rdr.commands.url          as url
+import rdr.commands.wrd          as wrd
 
 # initialize 
 @click.group()
@@ -53,7 +53,7 @@ rdr.add_command( ent.ent )
 rdr.add_command( get.get )
 rdr.add_command( grammars.grammars )
 rdr.add_command( info.info )
-rdr.add_command( networks.networks )
+rdr.add_command( collocations.collocations )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( play.play )
 rdr.add_command( pos.pos )
