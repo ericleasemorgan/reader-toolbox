@@ -182,8 +182,11 @@ def search( query, output, carrel ) :
 								
 			# parse
 			author   = row[ 'author' ]
+			if not author : author = ''
 			title    = row[ 'title' ]
+			if not title : title = ''
 			date     = row[ 'date' ]
+			if not date : date = ''
 			summary  = row[ 'summary' ]
 			keyword  = row[ 'keyword' ]
 			words    = row[ 'words' ]

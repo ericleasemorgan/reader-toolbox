@@ -77,6 +77,7 @@ def normalize( text ) :
 	text = re.sub( '\t', ' ',  text )
 	text = re.sub( '- ', '',   text )
 	text = re.sub( ' +', ' ',  text )
+	text = re.sub( '\t', ' ',  text )
 
 	# done
 	return text
@@ -245,10 +246,10 @@ def txt2pos( carrel, file ) :
 				if token.text > ' ' :
 	
 					# parse and output
-					word  = str( token.text )
-					lemma = str( token.lemma_.lower() )
-					pos   = token.pos_
-					handle.write( '\t'.join( [  key, str( s + 1 ), str( t + 1 ), word, lemma, pos ] ) + '\n' )
+					feature = str( token.text )
+					lemma   = str( token.lemma_.lower() )
+					pos     = token.pos_
+					handle.write( '\t'.join( [  key, str( s + 1 ), str( t + 1 ), feature, lemma, pos ] ) + '\n' )
 
 
 # given a file, extract domains and urls
@@ -350,7 +351,7 @@ def file2bib( carrel, file ) :
 	COUNT        = 24
 	EXTENSION    = '.txt'
 	BIBEXTENSION = '.bib'
-	HEADER       = [ 'id', 'author', 'title', 'date', 'pages', 'extension', 'mime', 'words', 'sentences', 'flesch', 'summary', 'cache', 'txt' ]
+	HEADER       = [ 'id', 'author', 'title', 'date', 'pages', 'extension', 'mime', 'words', 'sentence', 'flesch', 'summary', 'cache', 'txt' ]
 
 	# require
 	from   gensim.summarization import summarize
@@ -457,7 +458,33 @@ def file2bib( carrel, file ) :
 		output = localLibrary/carrel/TXT/( key + EXTENSION )
 		with open( output, 'w' ) as handle : handle.write( text )
 
+
+# given a few configurations, reduce extracted features to a database
+def tsv2db( directory, extension, table, connection ) :
+
+	# require
+	import pandas as pd
 	
+	# debug
+	if VERBOSE : click.echo( '\tProcessing ' + table, err=True )
+	
+	# process each file in the given directory
+	for index, file in enumerate( directory.glob( extension ) ) :
+
+		# more debugging
+		if VERBOSE == 2 : click.echo( '\t' + str( file ), err=True )
+		
+		# read the file
+		df = pd.read_csv( file, sep='\t', header=0, low_memory=False, on_bad_lines='warn', quoting=3 )
+
+		# initialize the features or append to it
+		if index == 0 : features = df
+		else          : features = pd.concat( [ features, df ], sort=False )
+
+		# do the work; fill the database
+		features.to_sql( table, connection, if_exists='replace', index=False )
+
+
 # config
 @click.command( options_metavar='[<options>]' )
 @click.argument( 'carrel', metavar='<carrel>' )
@@ -468,13 +495,23 @@ def build( carrel, directory, erase ) :
 	"""Make <carrel> with files in <directory>"""
 
 	# configure
-	CACHE = 'cache'
-	TXT   = 'txt'
-
+	CACHE  = 'cache'
+	TXT    = 'txt'
+	SCHEMA = '''-- parts-of-speech\ncreate table pos (\n    id    TEXT,\n    sid   INT,\n    tid   INT,\n    token TEXT,\n    lemma TEXT,\n    pos   TEXT\n);\n\n-- name entitites\ncreate table ent (\n    id     TEXT,\n    sid    INT,\n    eid    INT,\n    entity TEXT,\n    type   TEXT\n);\n\n-- keywords\ncreate table wrd (\n    id      TEXT,\n    keyword TEXT\n);\n\n-- email addresses\ncreate table adr (\n    id      TEXT,\n    address TEXT\n);\n\n-- questions\ncreate table questions (\n    id       TEXT,\n    question TEXT\n);\n\n-- urls\ncreate table url (\n    id     TEXT,\n    domain TEXT,\n    url    TEXT\n);\n\n-- bibliographics, such as they are\ncreate table bib (\n    id        TEXT,\n    words     INT,\n    sentence  INT,\n    flesch    INT,\n    summary   TEXT,\n    title     TEXT,\n    author    TEXT,\n    date      TEXT,\n    txt       TEXT,\n    cache     TEXT,\n    pages     INT,\n    extension TEXT,\n    mime      TEXT,\n    genre     TEXT\n);'''
+	POS    = 'pos'
+	ENT    = 'ent'
+	WRD    = 'wrd'
+	ADR    = 'adr'
+	URL    = 'urls'
+	BIB    = 'bib'
+	
 	# require
-	from multiprocessing import Pool
+	from   multiprocessing import Pool
 	import os
 	import shutil
+	import sqlite3
+	import pandas as pd
+	
 
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
@@ -487,7 +524,7 @@ def build( carrel, directory, erase ) :
 		if erase :
 		
 			# debug and do the work
-			click.echo( ( '(Step #0 of 8) Deleting %s' % ( localLibrary/carrel ) ), err=True )
+			click.echo( ( '(Step #0 of 9) Deleting %s' % ( localLibrary/carrel ) ), err=True )
 			shutil.rmtree( localLibrary/carrel )
 			
 		# carrel exists and erasing was not specified
@@ -498,7 +535,7 @@ def build( carrel, directory, erase ) :
 			exit()
 
 	# build skeleton
-	click.echo( '(Step #1 of 8) Initializing %s with %s and stop words' % ( carrel, directory ), err=True )
+	click.echo( '(Step #1 of 9) Initializing %s with %s and stop words' % ( carrel, directory ), err=True )
 	initialize( carrel, directory )
 	
 	# create a list of filenames to process
@@ -511,11 +548,11 @@ def build( carrel, directory, erase ) :
 		else                    : filenames.append( os.path.join( cache, filename ) )
 	
 	# create bibliographics, such as they are
-	click.echo( '(Step #2 of 8) Extracting bibliographics and converting documents to plain text', err=True )
+	click.echo( '(Step #2 of 9) Extracting bibliographics and converting documents to plain text', err=True )
 	pool.starmap( file2bib, [ [ carrel, filename ] for filename in filenames ] )
 			
 	# bag of words
-	click.echo( '(Step #3 of 8) Creating bag-of-words', err=True )
+	click.echo( '(Step #3 of 9) Creating bag-of-words', err=True )
 	txt2bow( carrel )
 	
 	# out hint
@@ -527,27 +564,40 @@ def build( carrel, directory, erase ) :
 	for filename in os.listdir( txt ) : filenames.append( os.path.join( txt, filename ) )
 
 	# extract email addresses
-	click.echo( '(Step #4 of 8) Extracting (email) addresses', err=True )
+	click.echo( '(Step #4 of 9) Extracting (email) addresses', err=True )
 	pool.starmap( txt2adr, [ [ carrel, filename ] for filename in filenames ] )
 	
 	# extract named entities
-	click.echo( '(Step #5 of 8) Extracting (named) entities', err=True )
+	click.echo( '(Step #5 of 9) Extracting (named) entities', err=True )
 	pool.starmap( txt2ent, [ [ carrel, filename ] for filename in filenames ] )
 	
 	# extract parts-of-speech
-	click.echo( '(Step #6 of 8) Extracting parts-of-speech', err=True )
+	click.echo( '(Step #6 of 9) Extracting parts-of-speech', err=True )
 	pool.starmap( txt2pos, [ [ carrel, filename ] for filename in filenames ] )
 
 	# extract urls
-	click.echo( '(Step #7 of 8) Extracting URLs', err=True )
+	click.echo( '(Step #7 of 9) Extracting URLs', err=True )
 	pool.starmap( txt2url, [ [ carrel, filename ] for filename in filenames ] )
 
 	# extract keywords
-	click.echo( '(Step #8 of 8) Extracting (key) words', err=True )
+	click.echo( '(Step #8 of 9) Extracting (key) words', err=True )
 	pool.starmap( txt2wrd, [ [ carrel, filename ] for filename in filenames ] )
 
 	# clean up
 	pool.close()
 
+	# create database
+	click.echo( '(Step #8 of 9) Creating and filling database', err=True )
+	database   = str( localLibrary/carrel/ETC/DATABASE )
+	connection = sqlite3.connect( database )
+	cursor     = connection.cursor()
+	cursor.executescript( SCHEMA )
 	
+	# reduce; fill it with content
+	tsv2db( localLibrary/carrel/POS, '*.pos', 'pos', connection )
+	tsv2db( localLibrary/carrel/ENT, '*.ent', 'ent', connection )
+	tsv2db( localLibrary/carrel/WRD, '*.wrd', 'wrd', connection )
+	tsv2db( localLibrary/carrel/ADR, '*.adr', 'adr', connection )
+	tsv2db( localLibrary/carrel/URL, '*.url', 'url', connection )
+	tsv2db( localLibrary/carrel/BIB, '*.bib', 'bib', connection )
 	
