@@ -5,7 +5,7 @@
 from rdr import *
 
 # configure
-VERBOSE = 0
+VERBOSE = 1
 
 # create carrel skeleton
 def initialize( carrel, directory ) :
@@ -75,40 +75,11 @@ def normalize( text ) :
 	text = re.sub( '\n+', ' ', text )
 	text = re.sub( '^\W+', '', text )
 	text = re.sub( '\t', ' ',  text )
+	text = re.sub( '- ', '',   text )
 	text = re.sub( ' +', ' ',  text )
-	
+
 	# done
 	return text
-
-
-# given a file, extract and save plain text
-def file2txt( carrel, file ) :
-
-	# configure
-	EXTENSION = '.txt'
-	TXT       = 'txt'
-	
-	# require
-	from tika import parser
-
-	# initialize
-	key          = name2key( file )
-	localLibrary = configuration( 'localLibrary' )
-	
-	# debug 
-	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
-	
-	# pass the file on to tika and parse the content; again, assume Tika server is running
-	parsed  = parser.from_file( file )
-	content = parsed[ 'content' ]
-	
-	# check for content
-	if content : 
-
-		# configure output and output
-		output = localLibrary/carrel/TXT/( key + EXTENSION )
-		with open( output, 'w' ) as handle : handle.write( content )
-
 
 # create bag of words
 def txt2bow( carrel ) :
@@ -369,7 +340,124 @@ def txt2wrd( carrel, file ) :
 			keyword = keyword.lower()
 			handle.write( '\t'.join( ( key, keyword ) ) + '\n' )
 
+# given a file, create some bibliographics and save plain text
+def file2bib( carrel, file ) :
 
+	# configure
+	BIB          = 'bib'
+	TXT          = 'txt'
+	CACHE        = 'cache'
+	COUNT        = 24
+	EXTENSION    = '.txt'
+	BIBEXTENSION = '.bib'
+	HEADER       = [ 'id', 'author', 'title', 'date', 'pages', 'extension', 'mime', 'words', 'sentences', 'flesch', 'summary', 'cache', 'txt' ]
+
+	# require
+	from   gensim.summarization import summarize
+	from   tika import detector
+	from   tika import parser
+	import os
+	import spacy
+	import textacy
+	from   pathlib import Path
+	
+	# initialize
+	author       = ''
+	title        = name2key( file )
+	extension    = os.path.splitext( os.path.basename( file ) )[ 1 ]
+	key          = title
+	date         = ''
+	pages        = ''
+	summary      = ''
+	localLibrary = configuration( 'localLibrary' )
+
+	# debug 
+	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
+
+	# get the text, and if not, then return; the whole point is to have content to read!
+	parsed = parser.from_file( file )
+	text   = parsed[ 'content' ]	
+	if not text : return
+	
+	# get metadata
+	metadata = parsed[ 'metadata' ] 
+	mimetype = detector.from_file( file )
+
+	# author
+	if 'creator' in metadata :
+		author = metadata[ 'creator' ]
+		if ( isinstance( author, list ) ) : author = author[ 0 ]
+
+	# title
+	if 'title' in metadata :
+		title = metadata[ 'title' ]
+		if ( isinstance( title, list ) ) : title = title[ 0 ]
+		title = ' '.join( title.split() )
+
+	# date
+	if 'date' in metadata :
+		date = metadata[ 'date' ]
+		if ( isinstance( date, list ) ) : date = date[ 0 ]
+		date = date[:date.find( 'T' )]
+
+	# number of pages
+	if 'xmpTPg:NPages' in metadata :
+		pages = metadata[ 'xmpTPg:NPages' ]
+		if ( isinstance( pages, list ) ) : pages = pages[ 0 ]
+		
+	# summary
+	summary = summarize( normalize( text ), word_count=COUNT, split=False )
+
+	# model the text
+	nlp = spacy.load( MODEL, max_length=( len( text ) + 1 ) )
+	doc = nlp( text )
+
+	# parse out only the desired statistics
+	statistics = textacy.text_stats.TextStats( doc )
+	words      = statistics.n_words 
+	sentences  = statistics.n_sents 
+	syllables  = statistics.n_syllables
+	flesch     = int( textacy.text_stats.readability.flesch_reading_ease( syllables, words, sentences ) )
+
+	# cache and text locations
+	txt   = Path( TXT )/( key + EXTENSION )
+	cache = Path( CACHE )/( key + extension )
+
+	# debug
+	if VERBOSE == 2 :
+	
+		# provide a review
+		click.echo( '        key: ' + key,              err=True )
+		click.echo( '     author: ' + author,           err=True )
+		click.echo( '      title: ' + title,            err=True )
+		click.echo( '       date: ' + date,             err=True )
+		click.echo( '  extension: ' + extension,        err=True )
+		click.echo( '      pages: ' + pages,            err=True )
+		click.echo( '  mime-type: ' + mimetype,         err=True )
+		click.echo( '    summary: ' + summary,          err=True )
+		click.echo( '      words: ' + str( words ),     err=True )
+		click.echo( '  sentences: ' + str( sentences ), err=True )
+		click.echo( '     flesch: ' + str( flesch ),    err=True )
+		click.echo( '      cache: ' + str( cache ),     err=True )
+		click.echo( '        txt: ' + str( txt ),       err=True )
+		click.echo( '',                                 err=True )
+	
+	# open output
+	output = localLibrary/carrel/BIB/( key + BIBEXTENSION )
+	with open( output, 'w' ) as handle :
+	
+		# output the header and the data
+		handle.write( '\t'.join( HEADER ) + '\n' )
+		handle.write( '\t'.join( [ key, author, title, date, pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
+
+	# check for text, and it should exist; famous last words
+	if text : 
+
+		# configure output and output
+		output = localLibrary/carrel/TXT/( key + EXTENSION )
+		with open( output, 'w' ) as handle : handle.write( text )
+
+	
 # config
 @click.command( options_metavar='[<options>]' )
 @click.argument( 'carrel', metavar='<carrel>' )
@@ -416,15 +504,22 @@ def build( carrel, directory, erase ) :
 	# create a list of filenames to process
 	filenames = []
 	cache     = localLibrary/carrel/CACHE
-	for filename in os.listdir( cache ) : filenames.append( os.path.join( cache, filename ) )
-
-	# extract plain text
-	click.echo( '(Step #2 of 8) Converting cached documents to plain text', err=True )
-	pool.starmap( file2txt, [ [ carrel, filename ] for filename in filenames ] )
+	for filename in os.listdir( cache ) :
 	
+		# update list, conditionally
+		if filename[ 0 ] == '.' : continue
+		else                    : filenames.append( os.path.join( cache, filename ) )
+	
+	# create bibliographics, such as they are
+	click.echo( '(Step #2 of 8) Extracting bibliographics and converting documents to plain text', err=True )
+	pool.starmap( file2bib, [ [ carrel, filename ] for filename in filenames ] )
+			
 	# bag of words
 	click.echo( '(Step #3 of 8) Creating bag-of-words', err=True )
 	txt2bow( carrel )
+	
+	# out hint
+	click.echo( ( "\n  Hint: Now that the bag-of-words has been created, you can begin\n  to use many of the other Reader Toolbox commands while processing\n  continues. Open a new terminal window and try:\n\n    rdr cluster %s\n    rdr ngrams %s -c | more\n    rdr concordance %s\n    rdr collocations %s\n" % ( carrel, carrel, carrel, carrel ) ), err=True )
 	
 	# re-create a list of filenames to process
 	filenames = []
