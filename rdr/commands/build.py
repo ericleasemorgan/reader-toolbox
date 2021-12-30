@@ -5,28 +5,31 @@
 from rdr import *
 
 # configure
-VERBOSE = 1
+VERBOSE = 0
 
 # create carrel skeleton
 def initialize( carrel, directory ) :
 	
 	# configure
-	ADR   = 'adr'
-	BIB   = 'bib'
-	CACHE = 'cache'
-	ENT   = 'ent'
-	ETC   = 'etc'
-	POS   = 'pos'
-	TXT   = 'txt'
-	URLS  = 'urls'
-	WRD   = 'wrd'
-	WORDS = '''0\n1\n2\n3\n4\n5\n6\n7\n8\n9\na\na\nabout\nabove\nafter\nagain\nagainst\nall\nam\nan\nand\nany\nare\naren't\nas\nat\nb\nbe\nbecause\nbeen\nbefore\nbeing\nbelow\nbetween\nboth\nbut\nby\nc\ncan\ncan't\ncannot\ncould\ncouldn't\nd\ndid\ndidn't\ndo\ndoes\ndoesn't\ndoing\ndon't\ndown\nduring\ne\neach\nf\nfew\nfor\nfrom\nfurther\ng\nh\nhad\nhadn't\nhas\nhasn't\nhast\nhath\nhave\nhaven't\nhaving\nhe\nhe'd\nhe'll\nhe's\nher\nhere\nhere's\nhers\nherself\nhim\nhimself\nhis\nhow\nhow's\ni\ni'd\ni'll\ni'm\ni've\nif\nin\ninto\nis\nisn't\nit\nit's\nits\nitself\nj\nk\nl\nlet's\nm\nme\nmore\nmost\nmustn't\nmy\nmyself\nn\nno\nnor\nnot\no\nof\noff\non\nonce\none\nonly\nor\nother\nought\nour\nours\nourselves\nout\nover\nown\np\nq\nr\ns\nsaid\nsame\nshan't\nshe\nshe'd\nshe'll\nshe's\nshould\nshouldn't\nso\nsome\nsuch\nt\nthan\nthat\nthat's\nthe\nthee\ntheir\ntheirs\nthem\nthemselves\nthen\nthere\nthere's\nthese\nthey\nthey'd\nthey'll\nthey're\nthey've\nthis\nthose\nthou\nthrough\nthus\nthy\nto\ntoo\nu\nunder\nuntil\nunto\nup\nupon\nv\nvery\nw\nwas\nwasn't\nwe\nwe'd\nwe'll\nwe're\nwe've\nwere\nweren't\nwhat\nwhat's\nwhen\nwhen's\nwhere\nwhere's\nwhich\nwhile\nwho\nwho's\nwhom\nwhy\nwhy's\nwill\nwith\nwon't\nwould\nwouldn't\nx\ny\nyou\nyou'd\nyou'll\nyou're\nyou've\nyour\nyours\nyourself\nyourselves\nz\n'''
+	ADR     = 'adr'
+	BIB     = 'bib'
+	CACHE   = 'cache'
+	ENT     = 'ent'
+	ETC     = 'etc'
+	POS     = 'pos'
+	TXT     = 'txt'
+	URLS    = 'urls'
+	WRD     = 'wrd'
+	WORDS   = '''0\n1\n2\n3\n4\n5\n6\n7\n8\n9\na\na\nabout\nabove\nafter\nagain\nagainst\nall\nam\nan\nand\nany\nare\naren't\nas\nat\nb\nbe\nbecause\nbeen\nbefore\nbeing\nbelow\nbetween\nboth\nbut\nby\nc\ncan\ncan't\ncannot\ncould\ncouldn't\nd\ndid\ndidn't\ndo\ndoes\ndoesn't\ndoing\ndon't\ndown\nduring\ne\neach\nf\nfew\nfor\nfrom\nfurther\ng\nh\nhad\nhadn't\nhas\nhasn't\nhast\nhath\nhave\nhaven't\nhaving\nhe\nhe'd\nhe'll\nhe's\nher\nhere\nhere's\nhers\nherself\nhim\nhimself\nhis\nhow\nhow's\ni\ni'd\ni'll\ni'm\ni've\nif\nin\ninto\nis\nisn't\nit\nit's\nits\nitself\nj\nk\nl\nlet's\nm\nme\nmore\nmost\nmustn't\nmy\nmyself\nn\nno\nnor\nnot\no\nof\noff\non\nonce\none\nonly\nor\nother\nought\nour\nours\nourselves\nout\nover\nown\np\nq\nr\ns\nsaid\nsame\nshan't\nshe\nshe'd\nshe'll\nshe's\nshould\nshouldn't\nso\nsome\nsuch\nt\nthan\nthat\nthat's\nthe\nthee\ntheir\ntheirs\nthem\nthemselves\nthen\nthere\nthere's\nthese\nthey\nthey'd\nthey'll\nthey're\nthey've\nthis\nthose\nthou\nthrough\nthus\nthy\nto\ntoo\nu\nunder\nuntil\nunto\nup\nupon\nv\nvery\nw\nwas\nwasn't\nwe\nwe'd\nwe'll\nwe're\nwe've\nwere\nweren't\nwhat\nwhat's\nwhen\nwhen's\nwhere\nwhere's\nwhich\nwhile\nwho\nwho's\nwhom\nwhy\nwhy's\nwill\nwith\nwon't\nwould\nwouldn't\nx\ny\nyou\nyou'd\nyou'll\nyou're\nyou've\nyour\nyours\nyourself\nyourselves\nz\n'''
+	PROCESS = 'toolbox'
 	
 	# require
-	from   pathlib import Path
-	import shutil
+	from   datetime import datetime
+	from   getpass  import getuser
+	from   pathlib  import Path
 	import os
-
+	import shutil
+	
 	# create the library, the carrel, and the carrel's sub-directories
 	localLibrary = configuration( 'localLibrary' )
 	Path.mkdir( localLibrary,              exist_ok=True )
@@ -41,6 +44,17 @@ def initialize( carrel, directory ) :
 	Path.mkdir( localLibrary/carrel/URLS,  exist_ok=True )
 	Path.mkdir( localLibrary/carrel/WRD,   exist_ok=True )
 
+	# configure provenance and output it
+	process     = PROCESS
+	originalID  = carrel
+	dateCreated = datetime.today().strftime( '%Y-%m-%d' )
+	timeCreated = datetime.now().strftime("%H:%M")
+	creator     = getuser()
+	input       = directory
+	record      = [ PROCESS, originalID, dateCreated, timeCreated, creator, input ]
+	output      = localLibrary/carrel/PROVENANCE
+	with open( output, 'w' ) as handle : handle.write( '\t'.join( record ) + '\n' )
+	
 	# process each item in the given directory
 	directory = Path( directory )
 	for source in directory.glob( '*' ) :
@@ -274,39 +288,46 @@ def txt2url( carrel, file ) :
 	# slurp up the file
 	with open ( file ) as handle : text = normalize( handle.read() )
 
-	# open output
-	output = localLibrary/carrel/URLS/( key + EXTENSION )
-	with open( output, 'w' ) as handle :
-
-		# initialize the output
-		handle.write( '\t'.join( HEADER ) + '\n' )
-
-		# get and process each url, to the best of my ability
-		urls = re.findall( PATTERN, text )
-		for url in urls :
+	# get and process each url, to the best of my ability
+	urls = re.findall( PATTERN, text )
 	
-			# remove white space from end of url
-			url = re.sub( '\W$', '', url )
-			
-			# parse out the domain, to the best of my ability
-			domain = re.sub( '.*:\/\/', '', url )
-			domain = re.sub( '\/.*',    '', domain )
-			domain = re.sub( '\W$',     '', domain )
-			
-			# output
-			handle.write( '\t'.join( [ key, domain, url ] ) + '\n' )
+	# check for addresses
+	if len( urls ) > 0 :
+
+		# open output
+		output = localLibrary/carrel/URLS/( key + EXTENSION )
+		with open( output, 'w' ) as handle :
+
+			# initialize the output
+			handle.write( '\t'.join( HEADER ) + '\n' )
+
+			# process each url
+			for url in urls :
+
+				# remove white space from end of url
+				url = re.sub( '\W$', '', url )
+	
+				# parse out the domain, to the best of my ability
+				domain = re.sub( '.*:\/\/', '', url )
+				domain = re.sub( '\/.*',    '', domain )
+				domain = re.sub( '\W$',     '', domain )
+	
+				# output
+				handle.write( '\t'.join( [ key, domain, url ] ) + '\n' )
 
 
 # given a file, output keywords
 def txt2wrd( carrel, file ) :
 
 	# configure
-	EXTENSION = '.wrd'
-	WRD       = 'wrd'
-	NGRAMS    = 1
-	TOPN      = 0.005
-	HEADER    = [ 'id', 'keyword' ]
-
+	EXTENSION  = '.wrd'
+	WRD        = 'wrd'
+	NGRAMS     = 1
+	TOPN       = 0.005
+	HEADER     = [ 'id', 'keyword' ]
+	NORMALIZE  = 'lower'
+	WINDOWSIZE = 5
+	
 	# require
 	from  textacy.ke import yake
 	import spacy
@@ -322,24 +343,31 @@ def txt2wrd( carrel, file ) :
 	# slurp up the file
 	with open ( file ) as handle : text = normalize( handle.read() )
 
-	# model the text
+	# model the text and get the keywords
 	nlp = spacy.load( MODEL, max_length=( os.path.getsize( file ) + 1 ) )
 	doc = nlp( text )
 
-	# open output
-	output = localLibrary/carrel/WRD/( key + EXTENSION )
-	with open( output, 'w' ) as handle :
+	# do the extraction
+	records = ( yake( doc, ngrams=( 1, 2 ), window_size=WINDOWSIZE, topn=TOPN, normalize=NORMALIZE ) )
 	
-		# initialize the output
-		handle.write( '\t'.join( HEADER ) + '\n' )
-		
-		# do the extraction
-		for keyword, score in ( yake( doc, ngrams=NGRAMS, topn=TOPN, normalize='lemma' ) ) :
+	# check for records
+	if len( records ) > 0 :
+	
+		# open output
+		output = localLibrary/carrel/WRD/( key + EXTENSION )
+		with open( output, 'w' ) as handle :
 
-			# do the simplest of normalization and output
-			if len( keyword ) < 3 : continue
-			keyword = keyword.lower()
-			handle.write( '\t'.join( ( key, keyword ) ) + '\n' )
+			# initialize the output
+			handle.write( '\t'.join( HEADER ) + '\n' )
+
+			# process each record
+			for record in records :
+
+				# do the simplest of normalization and output
+				keyword = record[ 0 ]
+				if len( keyword ) < 3 : continue
+				handle.write( '\t'.join( ( key, keyword ) ) + '\n' )
+
 
 # given a file, create some bibliographics and save plain text
 def file2bib( carrel, file ) :
