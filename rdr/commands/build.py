@@ -5,29 +5,28 @@
 from rdr import *
 
 # configure
-VERBOSE = 0
+VERBOSE = 2
 
 # create carrel skeleton
 def initialize( carrel, directory ) :
 	
 	# configure
-	ADR     = 'adr'
-	BIB     = 'bib'
-	CACHE   = 'cache'
-	ENT     = 'ent'
-	ETC     = 'etc'
-	POS     = 'pos'
-	TXT     = 'txt'
-	URLS    = 'urls'
-	WRD     = 'wrd'
-	WORDS   = '''0\n1\n2\n3\n4\n5\n6\n7\n8\n9\na\na\nabout\nabove\nafter\nagain\nagainst\nall\nam\nan\nand\nany\nare\naren't\nas\nat\nb\nbe\nbecause\nbeen\nbefore\nbeing\nbelow\nbetween\nboth\nbut\nby\nc\ncan\ncan't\ncannot\ncould\ncouldn't\nd\ndid\ndidn't\ndo\ndoes\ndoesn't\ndoing\ndon't\ndown\nduring\ne\neach\nf\nfew\nfor\nfrom\nfurther\ng\nh\nhad\nhadn't\nhas\nhasn't\nhast\nhath\nhave\nhaven't\nhaving\nhe\nhe'd\nhe'll\nhe's\nher\nhere\nhere's\nhers\nherself\nhim\nhimself\nhis\nhow\nhow's\ni\ni'd\ni'll\ni'm\ni've\nif\nin\ninto\nis\nisn't\nit\nit's\nits\nitself\nj\nk\nl\nlet's\nm\nme\nmore\nmost\nmustn't\nmy\nmyself\nn\nno\nnor\nnot\no\nof\noff\non\nonce\none\nonly\nor\nother\nought\nour\nours\nourselves\nout\nover\nown\np\nq\nr\ns\nsaid\nsame\nshan't\nshe\nshe'd\nshe'll\nshe's\nshould\nshouldn't\nso\nsome\nsuch\nt\nthan\nthat\nthat's\nthe\nthee\ntheir\ntheirs\nthem\nthemselves\nthen\nthere\nthere's\nthese\nthey\nthey'd\nthey'll\nthey're\nthey've\nthis\nthose\nthou\nthrough\nthus\nthy\nto\ntoo\nu\nunder\nuntil\nunto\nup\nupon\nv\nvery\nw\nwas\nwasn't\nwe\nwe'd\nwe'll\nwe're\nwe've\nwere\nweren't\nwhat\nwhat's\nwhen\nwhen's\nwhere\nwhere's\nwhich\nwhile\nwho\nwho's\nwhom\nwhy\nwhy's\nwill\nwith\nwon't\nwould\nwouldn't\nx\ny\nyou\nyou'd\nyou'll\nyou're\nyou've\nyour\nyours\nyourself\nyourselves\nz\n'''
-	PROCESS = 'toolbox'
-	
+	ADR      = 'adr'
+	BIB      = 'bib'
+	CACHE    = 'cache'
+	ENT      = 'ent'
+	ETC      = 'etc'
+	POS      = 'pos'
+	TXT      = 'txt'
+	URLS     = 'urls'
+	WRD      = 'wrd'
+	WORDS    = '''0\n1\n2\n3\n4\n5\n6\n7\n8\n9\na\na\nabout\nabove\nafter\nagain\nagainst\nall\nam\nan\nand\nany\nare\naren't\nas\nat\nb\nbe\nbecause\nbeen\nbefore\nbeing\nbelow\nbetween\nboth\nbut\nby\nc\ncan\ncan't\ncannot\ncould\ncouldn't\nd\ndid\ndidn't\ndo\ndoes\ndoesn't\ndoing\ndon't\ndown\nduring\ne\neach\nf\nfew\nfor\nfrom\nfurther\ng\nh\nhad\nhadn't\nhas\nhasn't\nhast\nhath\nhave\nhaven't\nhaving\nhe\nhe'd\nhe'll\nhe's\nher\nhere\nhere's\nhers\nherself\nhim\nhimself\nhis\nhow\nhow's\ni\ni'd\ni'll\ni'm\ni've\nif\nin\ninto\nis\nisn't\nit\nit's\nits\nitself\nj\nk\nl\nlet's\nm\nme\nmore\nmost\nmustn't\nmy\nmyself\nn\nno\nnor\nnot\no\nof\noff\non\nonce\none\nonly\nor\nother\nought\nour\nours\nourselves\nout\nover\nown\np\nq\nr\ns\nsaid\nsame\nshan't\nshe\nshe'd\nshe'll\nshe's\nshould\nshouldn't\nso\nsome\nsuch\nt\nthan\nthat\nthat's\nthe\nthee\ntheir\ntheirs\nthem\nthemselves\nthen\nthere\nthere's\nthese\nthey\nthey'd\nthey'll\nthey're\nthey've\nthis\nthose\nthou\nthrough\nthus\nthy\nto\ntoo\nu\nunder\nuntil\nunto\nup\nupon\nv\nvery\nw\nwas\nwasn't\nwe\nwe'd\nwe'll\nwe're\nwe've\nwere\nweren't\nwhat\nwhat's\nwhen\nwhen's\nwhere\nwhere's\nwhich\nwhile\nwho\nwho's\nwhom\nwhy\nwhy's\nwill\nwith\nwon't\nwould\nwouldn't\nx\ny\nyou\nyou'd\nyou'll\nyou're\nyou've\nyour\nyours\nyourself\nyourselves\nz\n'''
+	PROCESS  = 'toolbox'
+
 	# require
 	from   datetime import datetime
 	from   getpass  import getuser
 	from   pathlib  import Path
-	import os
 	import shutil
 	
 	# create the library, the carrel, and the carrel's sub-directories
@@ -59,9 +58,18 @@ def initialize( carrel, directory ) :
 	directory = Path( directory )
 	for source in directory.glob( '*' ) :
 
-		# copy the file
-		destination = localLibrary/carrel/CACHE/(os.path.basename( source ) )
-		shutil.copyfile( source, destination )
+		# check for metadata file
+		if source.name == METADATA :
+		
+			# copy the metadata file to the root of the carrel
+			destination = localLibrary/carrel/( source.name )
+			shutil.copyfile( source, destination )
+
+		else :
+		
+			# copy the file to the cache directory
+			destination = localLibrary/carrel/CACHE/( source.name )
+			shutil.copyfile( source, destination )
 
 	# add stop words; there is probably a better way
 	output = localLibrary/carrel/ETC/STOPWORDS
@@ -370,8 +378,8 @@ def txt2wrd( carrel, file ) :
 
 
 # given a file, create some bibliographics and save plain text
-def file2bib( carrel, file ) :
-
+def file2bib( carrel, file, metadata=None ) :
+		
 	# configure
 	BIB          = 'bib'
 	TXT          = 'txt'
@@ -393,9 +401,9 @@ def file2bib( carrel, file ) :
 	# initialize
 	author       = ''
 	title        = name2key( file )
-	extension    = os.path.splitext( os.path.basename( file ) )[ 1 ]
-	key          = title
 	date         = ''
+	extension    = os.path.splitext( os.path.basename( file ) )[ 1 ]
+	key          = name2key( file )
 	pages        = ''
 	summary      = ''
 	localLibrary = configuration( 'localLibrary' )
@@ -408,26 +416,41 @@ def file2bib( carrel, file ) :
 	text   = parsed[ 'content' ]	
 	if not text : return
 	
-	# get metadata
+	# get metadata from the metadata file	
+	if str( type( metadata ) ) == "<class 'pandas.core.frame.DataFrame'>" :
+		
+		# parse
+		index = Path( file ).name
+		if 'author' in metadata : author = metadata.loc[ index ][ 'author' ]
+		if 'title'  in metadata : title  = metadata.loc[ index ][ 'title' ]
+		if 'date'   in metadata : date   = str( metadata.loc[ index ][ 'date' ] )
+		
+	# get metadata from the source file
 	metadata = parsed[ 'metadata' ] 
 	mimetype = detector.from_file( file )
 
 	# author
-	if 'creator' in metadata :
-		author = metadata[ 'creator' ]
-		if ( isinstance( author, list ) ) : author = author[ 0 ]
+	if author != '' : 
+	
+		if 'creator' in metadata :
+			author = metadata[ 'creator' ]
+			if ( isinstance( author, list ) ) : author = author[ 0 ]
 
 	# title
-	if 'title' in metadata :
-		title = metadata[ 'title' ]
-		if ( isinstance( title, list ) ) : title = title[ 0 ]
-		title = ' '.join( title.split() )
+	if title != '' : 
+	
+		if 'title' in metadata :
+			title = metadata[ 'title' ]
+			if ( isinstance( title, list ) ) : title = title[ 0 ]
+			title = ' '.join( title.split() )
 
 	# date
-	if 'date' in metadata :
-		date = metadata[ 'date' ]
-		if ( isinstance( date, list ) ) : date = date[ 0 ]
-		date = date[:date.find( 'T' )]
+	if date != '' : 
+	
+		if 'date' in metadata :
+			date = metadata[ 'date' ]
+			if ( isinstance( date, list ) ) : date = date[ 0 ]
+			date = date[:date.find( 'T' )]
 
 	# number of pages
 	if 'xmpTPg:NPages' in metadata :
@@ -540,7 +563,6 @@ def build( carrel, directory, erase ) :
 	import sqlite3
 	import pandas as pd
 	
-
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
 	pool         = Pool()
@@ -565,7 +587,7 @@ def build( carrel, directory, erase ) :
 	# build skeleton
 	click.echo( '(Step #1 of 9) Initializing %s with %s and stop words' % ( carrel, directory ), err=True )
 	initialize( carrel, directory )
-	
+		
 	# create a list of filenames to process
 	filenames = []
 	cache     = localLibrary/carrel/CACHE
@@ -575,22 +597,35 @@ def build( carrel, directory, erase ) :
 		if filename[ 0 ] == '.' : continue
 		else                    : filenames.append( os.path.join( cache, filename ) )
 	
-	# create bibliographics, such as they are
+	# conditionally slurp up the metadata file and submit 
 	click.echo( '(Step #2 of 9) Extracting bibliographics and converting documents to plain text', err=True )
-	pool.starmap( file2bib, [ [ carrel, filename ] for filename in filenames ] )
-			
+	
+	# check for metadata file
+	if ( localLibrary/carrel/METADATA ).exists() :
+	
+		try : metadata = pd.read_csv( localLibrary/carrel/METADATA, index_col='file' )
+		except ValueError :
+			click.echo( ( '\n  Error: The metadata file (metadata.csv) does not have a\n  column named "file". Remove metadata.csv from the original\n  input directory:\n\n    %s\n\n  Alternatively, edit the metadata file accordingly. Exiting.\n' % directory ), err=True )
+			exit()
+
+		pool.starmap( file2bib, [ [ carrel, filename, metadata ] for filename in filenames ] )
+		
+	# no metadata file; just do the work
+	else : pool.starmap( file2bib, [ [ carrel, filename ] for filename in filenames ] )
+		
 	# bag of words
 	click.echo( '(Step #3 of 9) Creating bag-of-words', err=True )
 	txt2bow( carrel )
 	
-	# out hint
-	click.echo( ( "\n  Hint: Now that the bag-of-words has been created, you can begin\n  to use many of the other Reader Toolbox commands while processing\n  continues. Open a new terminal window and try:\n\n    rdr cluster %s\n    rdr ngrams %s -c | more\n    rdr concordance %s\n    rdr collocations %s\n" % ( carrel, carrel, carrel, carrel ) ), err=True )
+	# output hint
+	click.echo( ( "\n  Hint: Now that the bag-of-words has been created, you can begin\n  to use many of the other Reader Toolbox commands while the\n  building process continues. This is especially true for larger\n  carrels. Open a new terminal window and try:\n\n    rdr cluster %s\n    rdr ngrams %s -c | more\n    rdr concordance %s\n    rdr collocations %s\n" % ( carrel, carrel, carrel, carrel ) ), err=True )
 	
 	# re-create a list of filenames to process
 	filenames = []
 	txt       = localLibrary/carrel/TXT
 	for filename in os.listdir( txt ) : filenames.append( os.path.join( txt, filename ) )
 
+	
 	# extract email addresses
 	click.echo( '(Step #4 of 9) Extracting (email) addresses', err=True )
 	pool.starmap( txt2adr, [ [ carrel, filename ] for filename in filenames ] )
@@ -615,7 +650,7 @@ def build( carrel, directory, erase ) :
 	pool.close()
 
 	# create database
-	click.echo( '(Step #8 of 9) Creating and filling database', err=True )
+	click.echo( '(Step #9 of 9) Creating and filling database (reducing)', err=True )
 	database   = str( localLibrary/carrel/ETC/DATABASE )
 	connection = sqlite3.connect( database )
 	cursor     = connection.cursor()
@@ -628,4 +663,8 @@ def build( carrel, directory, erase ) :
 	tsv2db( localLibrary/carrel/ADR, '*.adr', 'adr', connection )
 	tsv2db( localLibrary/carrel/URL, '*.url', 'url', connection )
 	tsv2db( localLibrary/carrel/BIB, '*.bib', 'bib', connection )
-	
+
+	# output another hint
+	# out hint
+	click.echo( ( '\n  Another hint: The build process is done, and now you ought to\n  be able to use any Toolbox command. For example:\n\n    rdr info %s\n    rdr bib %s | more\n    rdr tm %s\n' % ( carrel, carrel, carrel ) ), err=True )
+

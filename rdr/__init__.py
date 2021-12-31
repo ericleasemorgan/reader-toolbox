@@ -44,6 +44,7 @@ STOPWORDS  = 'stopwords.txt'
 TXT        = 'txt'
 CACHE      = 'cache'
 PROVENANCE = 'provenance.tsv'
+METADATA   = 'metadata.csv'
 
 # spacy langauge model
 MODEL = 'en_core_web_sm'
