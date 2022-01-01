@@ -68,6 +68,7 @@ rdr.add_command( tm.tm )
 rdr.add_command( url.url )
 rdr.add_command( sizes.sizes )
 rdr.add_command( readability.readability )
+rdr.add_command( wrd.wrd )
 
 # do the work
 if __name__ == '__main__' : rdr()
