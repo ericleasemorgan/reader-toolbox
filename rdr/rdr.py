@@ -34,6 +34,8 @@ import rdr.commands.sql          as sql
 import rdr.commands.tm           as tm
 import rdr.commands.url          as url
 import rdr.commands.wrd          as wrd
+import rdr.commands.sizes        as sizes
+import rdr.commands.readability  as readability
 
 # initialize 
 @click.group()
@@ -64,7 +66,8 @@ rdr.add_command( set.set )
 rdr.add_command( sql.sql )
 rdr.add_command( tm.tm )
 rdr.add_command( url.url )
-rdr.add_command( wrd.wrd )
+rdr.add_command( sizes.sizes )
+rdr.add_command( readability.readability )
 
 # do the work
 if __name__ == '__main__' : rdr()
