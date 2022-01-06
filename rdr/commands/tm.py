@@ -293,8 +293,8 @@ def tm( carrel, process, topics, words, iterations, output, field, type ) :
 				click.echo( summary, err=True )
 
 				# visualize
-				keys[ 'topics' ] = keys[ 'weights' ].apply( lambda x : x * SCALE )
-				keys.plot( kind='pie', y='topics', autopct=PERCENTAGE, labels=keys[ 'labels' ], legend=False ) 
+				summary[ 'topics' ] = summary[ 'weights' ].apply( lambda x : x * SCALE )
+				summary.plot( kind='pie', y='topics', autopct=PERCENTAGE, labels=summary[ 'labels' ], legend=False ) 
 				plot.show()
 
 			# bar, barh, or line
