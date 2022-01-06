@@ -5,7 +5,7 @@
 from rdr import *
 
 # configure
-VERBOSE = 2
+VERBOSE = 3
 
 # create carrel skeleton
 def initialize( carrel, directory ) :
@@ -356,7 +356,8 @@ def txt2wrd( carrel, file ) :
 	doc = nlp( text )
 
 	# do the extraction
-	records = ( yake( doc, ngrams=( 1, 2 ), window_size=WINDOWSIZE, topn=TOPN, normalize=NORMALIZE ) )
+	try    : records = ( yake( doc, ngrams=( 1, 2 ), window_size=WINDOWSIZE, topn=TOPN, normalize=NORMALIZE ) )
+	except : records = []
 	
 	# check for records
 	if len( records ) > 0 :
@@ -458,8 +459,9 @@ def file2bib( carrel, file, metadata=None ) :
 		if ( isinstance( pages, list ) ) : pages = pages[ 0 ]
 		
 	# summary
-	summary = summarize( normalize( text ), word_count=COUNT, split=False )
-
+	try    : summary = summarize( normalize( text ), word_count=COUNT, split=False )
+	except : summary = ''
+	
 	# model the text
 	nlp = spacy.load( MODEL, max_length=( len( text ) + 1 ) )
 	doc = nlp( text )
@@ -500,7 +502,7 @@ def file2bib( carrel, file, metadata=None ) :
 	
 		# output the header and the data
 		handle.write( '\t'.join( HEADER ) + '\n' )
-		handle.write( '\t'.join( [ key, author, title, date, pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
+		handle.write( '\t'.join( [ key, str( author ), title, str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
 
 	# check for text, and it should exist; famous last words
 	if text : 

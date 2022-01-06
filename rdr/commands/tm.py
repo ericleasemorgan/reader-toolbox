@@ -4,6 +4,25 @@
 # require
 from rdr import *
 
+# configure
+MODELDIR        = 'etc/topic-model'
+VECTORS         = 'model.vec'
+TXT2VEC         = "%s/bin/mallet import-dir --input %s --output %s --keep-sequence TRUE --stoplist-file %s"
+VEC2MODEL       = "%s/bin/mallet train-topics --input %s --num-topics %s --num-top-words %s --num-top-docs %s --num-iterations %s --num-threads 8 --optimize-interval 10 --output-doc-topics %s/topics.tsv --output-state %s/model-state.gz --output-topic-docs %s/documents.txt --output-topic-keys %s/keys.tsv --topic-word-weights-file %s/weights.tsv --word-topic-counts-file %s/counts.txt --xml-topic-phrase-report %s/phrases.xml --xml-topic-report %s/topics.xml"
+#VEC2MODEL       = "%s/bin/mallet train-topics --input %s --num-topics %s --num-top-words %s --num-top-docs %s --num-iterations %s --num-threads 8 --optimize-interval 10 --output-doc-topics %s/topics.tsv --output-state %s/model-state.gz --output-topic-docs %s/documents.txt --output-topic-keys %s/keys.tsv --random-seed 0 --topic-word-weights-file %s/weights.tsv --word-topic-counts-file %s/counts.txt --xml-topic-phrase-report %s/phrases.xml --xml-topic-report %s/topics.xml"
+KEYS            = 'keys.tsv'
+KEYSHEADER      = [ 'ids', 'weights', 'features' ]
+DOCUMENTS       = 'documents.txt'
+DOCUMENTSHEADER = [ 'ids', 'dids', 'files', 'proportions' ]
+TOPDOCS         = 5
+SCALE           = 100
+PERCENTAGE      = '%1.0f%%'
+SQL             = 'SELECT "file:%s/%s/txt/" || id || ".txt" AS file, %s FROM bib order by %s;'
+METADATA        = 'metadata.csv'
+TOPICS          = 'topics.tsv'
+LABELS          = [ 'docId', 'file' ]
+
+
 def makeSummary( keys, header ) :
 
 	# require
@@ -81,16 +100,87 @@ for future use. You can move MALLET to another location but once you do
 so you will need to run 'rdr set -s mallet'.''', err=True )
 
 
+def pivot( localLibrary, carrel, field, keys ) :
+
+	# require
+	import sqlite3
+	import pandas as pd
+
+	# initialize
+	db         = str( localLibrary/carrel/ETC/DATABASE )
+	sql        = ( SQL % ( str( localLibrary ), carrel, field, field ) )
+	metadata   = str( localLibrary/carrel/MODELDIR/METADATA )
+	topics     = str( localLibrary/carrel/MODELDIR/TOPICS )
+	connection = sqlite3.connect( db )
+
+	# search and save; should probably eliminate the I/O
+	results    = pd.read_sql_query( sql, connection )
+	results.to_csv( metadata, index=False )
+
+	# read saved files
+	topics   = pd.read_csv( topics, sep='\t' )
+	metadata = pd.read_csv( metadata )
+
+	# create generic labels
+	labels  = LABELS
+	columns = topics.shape[ 1 ]
+	for i in range( 0, columns - 2 ) :
+
+		# compute and update list of column names
+		i = str( i )
+		labels.append( i )
+
+	# create more meaningful labels; initialize some more
+	keys = pd.read_csv( keys, sep='\t', names=KEYSHEADER )
+	keys.sort_values( by='weights', ascending=False, inplace=True )
+
+	# add labels, drop docId, and merge with metadata
+	topics.columns = labels
+	topics         = topics.drop( [ 'docId' ], axis=1 )
+	topics         = pd.merge( topics, metadata )
+
+	# create meaningful labels for each topic
+	ids    = []
+	labels = []
+	for index, row in keys.iterrows() :
+
+		# update the list of ids
+		ids.append( index )
+
+		# get and loop through each feature
+		features = row[ 'features' ].split()
+		for feature in features :
+
+			# build the list, conditionally
+			if feature in labels : continue
+			labels.append( feature )
+			break
+
+	# update with generic labels
+	keys[ 'labels' ] = labels
+
+	# process each id; update with more meaningful labels
+	for index, id in enumerate( ids ) :
+
+		column = str( id )
+		label  = labels[ index ]
+		topics.rename( columns = { column:label }, inplace=True )
+
+	# pivot and return
+	topics = topics.pivot_table( list( topics.columns ), index=field )
+	return( topics )
+
+
 @click.command( options_metavar='<options>' )
 @click.option('-p', '--process', default='model', type=click.Choice( [ 'model', 'read' ] ), help="type of work to do" )
 @click.option('-t', '--topics', default=7, help="number of topics to generate" )
 @click.option('-w', '--words', default=7, help="number of words used to describe topic" )
 @click.option('-i', '--iterations', default=2400, help="number of times to cacluate" )
-@click.option('-o', '--output', default='summary', type=click.Choice( [ 'summary', 'pie', 'topdocs', 'pivot' ] ), help="type of report" )
+@click.option('-o', '--output', default='summary', type=click.Choice( [ 'summary', 'chart', 'topdocs', 'csv' ] ), help="type of report" )
 @click.option('-f', '--field', type=click.Choice( [ 'author', 'title', 'date' ] ), help="field for pivoting" )
-@click.option('-c', '--chart', type=click.Choice( [ 'bar', 'barh', 'line' ] ), help="type of chart" )
+@click.option('-y', '--type', default='pie', type=click.Choice( [ 'pie', 'bar', 'barh', 'line' ] ), help="type of chart" )
 @click.argument( 'carrel', metavar='<carrel>' )
-def tm( carrel, process, topics, words, iterations, output, field, chart ) :
+def tm( carrel, process, topics, words, iterations, output, field, type ) :
 
 	"""Apply topic modeling against <carrel>.
 	
@@ -105,32 +195,13 @@ def tm( carrel, process, topics, words, iterations, output, field, chart ) :
 	  rdr tm homer -p read
 	  rdr tm homer -p read -o pivot -f title -c line"""
 
-	# configure
-	MODELDIR        = 'etc/topic-model'
-	VECTORS         = 'model.vec'
-	TXT2VEC         = "%s/bin/mallet import-dir --input %s --output %s --keep-sequence TRUE --stoplist-file %s"
-	VEC2MODEL       = "%s/bin/mallet train-topics --input %s --num-topics %s --num-top-words %s --num-top-docs %s --num-iterations %s --num-threads 8 --optimize-interval 10 --output-doc-topics %s/topics.tsv --output-state %s/model-state.gz --output-topic-docs %s/documents.txt --output-topic-keys %s/keys.tsv --topic-word-weights-file %s/weights.tsv --word-topic-counts-file %s/counts.txt --xml-topic-phrase-report %s/phrases.xml --xml-topic-report %s/topics.xml"
-	#VEC2MODEL       = "%s/bin/mallet train-topics --input %s --num-topics %s --num-top-words %s --num-top-docs %s --num-iterations %s --num-threads 8 --optimize-interval 10 --output-doc-topics %s/topics.tsv --output-state %s/model-state.gz --output-topic-docs %s/documents.txt --output-topic-keys %s/keys.tsv --random-seed 0 --topic-word-weights-file %s/weights.tsv --word-topic-counts-file %s/counts.txt --xml-topic-phrase-report %s/phrases.xml --xml-topic-report %s/topics.xml"
-	KEYS            = 'keys.tsv'
-	KEYSHEADER      = [ 'ids', 'weights', 'features' ]
-	DOCUMENTS       = 'documents.txt'
-	DOCUMENTSHEADER = [ 'ids', 'dids', 'files', 'proportions' ]
-	TOPDOCS         = 5
-	SCALE           = 100
-	PERCENTAGE      = '%1.0f%%'
-	SQL             = 'SELECT "file:%s/%s/txt/" || id || ".txt" AS file, %s FROM bib order by %s;'
-	METADATA        = 'metadata.csv'
-	TOPICS          = 'topics.tsv'
-	LABELS          = [ 'docId', 'file' ]
-
 	# require
 	from pathlib import Path
 	import matplotlib.pyplot as plot
 	import os
-	import pandas as pd
 	import sys
-	import sqlite3
-
+	import pandas as pd
+	
 	# sanity checks
 	checkForCarrel( carrel )
 	checkForMallet( str( configuration( 'malletHome' ) ) + '/' + MALLETBIN )
@@ -170,103 +241,17 @@ def tm( carrel, process, topics, words, iterations, output, field, chart ) :
 		if output == 'summary' :
 			
 			# summarize and output
-			keys = makeSummary( keys, KEYSHEADER )
-			click.echo( keys )
-
-		# pie chart
-		elif output == 'pie' :
-		
-			# output a summary
-			keys = makeSummary( keys, KEYSHEADER )
-			click.echo( keys )
-
-			# visualize
-			keys[ 'weights' ] = keys[ 'weights' ].apply( lambda x : x * SCALE )
-			keys.plot( kind='pie', y='weights', autopct=PERCENTAGE, labels=keys[ 'labels' ], legend=False ) 
-			plot.show()
-
-		# pivot on metadata
-		elif output == 'pivot' :
-		
-			# sanity check
-			if not field or not chart :
-				click.echo( "Error: When using pivot (-o pivot) you must specify both a field (-f) and a chart (-c). See 'rdr tm --help' for more detail.", err=True )
-				exit()
-				
-			# initialize
-			db         = str( localLibrary/carrel/ETC/DATABASE )
-			sql        = ( SQL % ( str( localLibrary ), carrel, field, field ) )
-			metadata   = str( localLibrary/carrel/MODELDIR/METADATA )
-			topics     = str( localLibrary/carrel/MODELDIR/TOPICS )
-			connection = sqlite3.connect( db )
-		
-			# search and save; should probably eliminate the I/O
-			results    = pd.read_sql_query( sql, connection )
-			results.to_csv( metadata, index=False )
-
-			# read saved files
-			topics   = pd.read_csv( topics, sep='\t' )
-			metadata = pd.read_csv( metadata )
-
-			# create generic labels
-			labels  = LABELS
-			columns = topics.shape[ 1 ]
-			for i in range( 0, columns - 2 ) :
-
-				# compute and update list of column names
-				i = str( i )
-				labels.append( i )
-
-			# create more meaningful labels; initialize some more
-			keys = pd.read_csv( keys, sep='\t', names=KEYSHEADER )
-			keys.sort_values( by='weights', ascending=False, inplace=True )
-
-			# add labels, drop docId, and merge with metadata
-			topics.columns = labels
-			topics         = topics.drop( [ 'docId' ], axis=1 )
-			topics         = pd.merge( topics, metadata )
-
-			# create meaningful labels for each topic
-			ids    = []
-			labels = []
-			for index, row in keys.iterrows() :
-	
-				# update the list of ids
-				ids.append( index )
-	
-				# get and loop through each feature
-				features = row[ 'features' ].split()
-				for feature in features :
-	
-					# build the list, conditionally
-					if feature in labels : continue
-					labels.append( feature )
-					break
-	
-			# update with generic labels
-			keys[ 'labels' ] = labels
-			
-			# process each id; update with more meaningful labels
-			for index, id in enumerate( ids ) :
-
-				column = str( id )
-				label  = labels[ index ]
-				topics.rename( columns = { column:label }, inplace=True )
-
-			# pivot, output, plot, show, and done
-			topics = topics.pivot_table( list( topics.columns ), index=field )
-			click.echo( topics )
-			topics.plot( kind=chart )
-			plot.show()
+			summary = makeSummary( keys, KEYSHEADER )
+			click.echo( summary )
 
 		# top documents
-		elif output == 'topdocs' :
-		
+		if output == 'topdocs' :
+	
 			# output a summary
 			keys = makeSummary( keys, KEYSHEADER )
 			click.echo( keys )
 			click.echo()
-			
+		
 			# create dictionary of labels (map), for future use
 			map = keys[ 'labels' ].to_dict()
 
@@ -283,18 +268,70 @@ def tm( carrel, process, topics, words, iterations, output, field, chart ) :
 
 			# process each label (topic) to 
 			for id in map :
-	
+
 				# get the label and create a subset of documents
 				label = map[ id ]
 				files = documents.loc[ documents[ 'labels'] == label ]
-	
+
 				# re-initialize output
 				click.echo( label )
-	
+
 				# process each item in the subset; output matching files
 				for index, row in files.iterrows() : print( "  *", row[ 'files' ] )
-	
+
 				# delimit
 				click.echo()
 
+		# chart
+		if output == 'chart' :
+		
+			# pie chart
+			if type == 'pie' :
+			
+				# output a summary
+				summary = makeSummary( keys, KEYSHEADER )
+				click.echo( summary, err=True )
+
+				# visualize
+				keys[ 'topics' ] = keys[ 'weights' ].apply( lambda x : x * SCALE )
+				keys.plot( kind='pie', y='topics', autopct=PERCENTAGE, labels=keys[ 'labels' ], legend=False ) 
+				plot.show()
+
+			# bar, barh, or line
+			if type == 'line' or type == 'bar' or type == 'barh' :
+			
+				# sanity check
+				if not field :
+					click.echo( "Error: When using chart of types 'barh', 'bar', or 'line' you must specify a field (-f). See 'rdr tm --help' for more detail.", err=True )
+					exit()
+				
+				# output a summary
+				summary = makeSummary( keys, KEYSHEADER )
+				click.echo( summary, err=True )
+
+				# pivot the model on the given field
+				topics = pivot( localLibrary, carrel, field, keys )
+				
+				# configure plot and show
+				click.echo( topics, err=True )
+				topics.plot( kind=type )
+				plot.show()
+
+		# csv
+		if output == 'csv' :
+		
+			# sanity check
+			if not field :
+				click.echo( "Error: When specifying CSV output you must specify a field (-f). See 'rdr tm --help' for more detail.", err=True )
+				exit()
+			
+			# summarize and output
+			summary = makeSummary( keys, KEYSHEADER )
+			click.echo( summary, err=True )
+
+			# pivot the model on the given field
+			topics = pivot( localLibrary, carrel, field, keys )
+			
+			# configure plot and show
+			click.echo( topics.to_csv() )
 
