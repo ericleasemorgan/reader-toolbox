@@ -190,10 +190,10 @@ def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 		items = []
 		for feature in features :
 		
-			entity   = feature[ 0 ].text
-			cue      = feature[ 1 ].text
-			fragment = feature[ 2 ].text
-			items.append( '\t'.join( [ ''.join( entity ), ''.join( cue ), ''.join( fragment ) ] ) )
+			entity   = [ token.text for token in feature.entity ]
+			cue      = [ token.text for token in feature.cue ]
+			fragment = [ token.text for token in feature.fragment ]
+			items.append( '\t'.join( [ ''.join( entity ), ''.join( cue ), ' '.join( fragment ) ] ) )
 
 		# done
 		features = items
