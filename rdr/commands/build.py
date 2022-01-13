@@ -204,8 +204,9 @@ def txt2ent( carrel, file ) :
 	with open ( file ) as handle : text = normalize( handle.read() )
 
 	# model the text
-	nlp = spacy.load( MODEL, max_length=( len( text ) + 1 ) )
-	doc = nlp( text )
+	nlp            = spacy.load( MODEL )
+	nlp.max_length = ( len( text ) + 1 )
+	doc            = nlp( text )
 
 	# open output
 	output = localLibrary/carrel/ENT/( key + EXTENSION )
@@ -248,8 +249,9 @@ def txt2pos( carrel, file ) :
 	with open ( file ) as handle : text = normalize( handle.read() )
 
 	# model the text
-	nlp = spacy.load( MODEL, max_length=( len( text ) + 1 ) )
-	doc = nlp( text )
+	nlp            = spacy.load( MODEL )
+	nlp.max_length = ( len( text ) + 1 )
+	doc            = nlp( text )
 
 	# open output
 	output = localLibrary/carrel/POS/( key + EXTENSION )
@@ -337,7 +339,7 @@ def txt2wrd( carrel, file ) :
 	WINDOWSIZE = 5
 	
 	# require
-	from  textacy.ke import yake
+	from  textacy.extract.keyterms.yake import yake
 	import spacy
 	import os
 	
@@ -352,8 +354,9 @@ def txt2wrd( carrel, file ) :
 	with open ( file ) as handle : text = normalize( handle.read() )
 
 	# model the text and get the keywords
-	nlp = spacy.load( MODEL, max_length=( os.path.getsize( file ) + 1 ) )
-	doc = nlp( text )
+	nlp            = spacy.load( MODEL )
+	nlp.max_length = os.path.getsize( file ) + 1 
+	doc            = nlp( text )
 
 	# do the extraction
 	try    : records = ( yake( doc, ngrams=( 1, 2 ), window_size=WINDOWSIZE, topn=TOPN, normalize=NORMALIZE ) )
@@ -396,7 +399,7 @@ def file2bib( carrel, file, metadata=None ) :
 	from   tika import parser
 	import os
 	import spacy
-	import textacy
+	from textacy import text_stats
 	from   pathlib import Path
 	
 	# initialize
@@ -463,15 +466,15 @@ def file2bib( carrel, file, metadata=None ) :
 	except : summary = ''
 	
 	# model the text
-	nlp = spacy.load( MODEL, max_length=( len( text ) + 1 ) )
-	doc = nlp( text )
+	nlp            = spacy.load( MODEL )
+	nlp.max_length = ( len( text ) + 1 )
+	doc            = nlp( text )
 
 	# parse out only the desired statistics
-	statistics = textacy.text_stats.TextStats( doc )
-	words      = statistics.n_words 
-	sentences  = statistics.n_sents 
-	syllables  = statistics.n_syllables
-	flesch     = int( textacy.text_stats.readability.flesch_reading_ease( syllables, words, sentences ) )
+	words      = text_stats.n_words( doc )
+	sentences  = text_stats.n_sents( doc )
+	syllables  = text_stats.n_syllables( doc )
+	flesch     = int( text_stats.readability.flesch_reading_ease( doc ) )
 
 	# cache and text locations
 	txt   = Path( TXT )/( key + EXTENSION )
