@@ -159,9 +159,6 @@ def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 		for feature in features :
 		
 			# parse and stringify
-			#print( help( feature ) )
-			#exit()
-			
 			speaker = [ token.text for token in feature.speaker ]
 			cue     = [ token.text for token in feature.cue ]
 			content = feature.content.text
