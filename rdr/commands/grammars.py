@@ -137,9 +137,12 @@ def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 		items = []
 		for feature in features :
 		
-			subject = feature[ 0 ].text
-			verb    = feature[ 1 ].text
-			object  = feature[ 2 ].text	
+			#print( help(feature ) )
+			#exit()
+
+			subject = feature.subject[ 0 ].text			
+			verb    = feature.verb[ 0 ].text
+			object  = feature.object[ 0 ].text
 			items.append(' \t'.join( [ ''.join( subject ), ''.join( verb ), ''.join( object ) ] ) )
 
 		# done
@@ -156,9 +159,12 @@ def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 		for feature in features :
 		
 			# parse and stringify
-			speaker = feature[ 0 ].text
-			cue     = feature[ 1 ].text
-			content = feature[ 2 ].text
+			#print( help( feature ) )
+			#exit()
+			
+			speaker = [ token.text for token in feature.speaker ]
+			cue     = [ token.text for token in feature.cue ]
+			content = feature.content.text
 			items.append( '\t'.join( [ ''.join( speaker ), ''.join( cue ), content ] ) )
 
 		# done
