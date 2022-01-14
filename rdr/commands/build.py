@@ -546,7 +546,6 @@ def file2bib( carrel, file, metadata=None ) :
 
 	# summarize
 	summary = summarize( doc )
-	summary = ''
 	
 	# parse out only the desired statistics
 	words      = text_stats.n_words( doc )
