@@ -380,6 +380,82 @@ def txt2wrd( carrel, file ) :
 				if len( keyword ) < 3 : continue
 				handle.write( '\t'.join( ( key, keyword ) ) + '\n' )
 
+# given a spaCy doc which has been enhanced by pytextrank, return a summary
+def summarize( doc ) :
+
+	# see: https://derwen.ai/docs/ptr/explain_summ/
+	
+	# configure
+	PHRASELIMIT   = 4
+	SENTENCELIMIT = 2
+
+	# require
+	from   math       import sqrt
+	from   operator   import itemgetter
+	import pytextrank
+	import re
+	
+	boundries   = [ [ sentence.start, sentence.end, set( [] ) ] for sentence in doc.sents ]
+	phrase_id   = 0
+	unit_vector = []
+
+	# process each phrase
+	for phrase in doc._.phrases :
+
+		unit_vector.append( phrase.rank )
+
+		for chunk in phrase.chunks:
+
+			for start, end, vector in boundries :
+		
+				if chunk.start >= start and chunk.end <= end :
+
+					vector.add( phrase_id )
+					break
+				
+		phrase_id    += 1
+		if phrase_id == PHRASELIMIT : break
+
+	sum_ranks   = sum( unit_vector )
+	unit_vector = [ rank/sum_ranks for rank in unit_vector ]
+	rankings    = {}
+	sent_id     = 0
+
+	for start, end, vector in boundries:
+
+		# re-initialize
+		sum_sq = 0.0
+
+		for identifier in range( len( unit_vector ) ) :
+		
+			if identifier not in vector : sum_sq += unit_vector[ identifier ] ** 2.0
+
+		rankings[ sent_id ] =  sqrt( sum_sq )
+		sent_id             += 1
+
+	# create a dictionary of sentences
+	sentences = {}
+	for index, sentence in enumerate( doc.sents ) : sentences[ index ] = sentence.text
+
+	# process each ranking
+	summary = []
+	for index, sentence in enumerate( sorted( rankings.items(), key=itemgetter( 1 ) ) ) :
+
+		# output, and conditionally continue
+		summary.append( sentences[ sentence[ 0 ] ] )
+		if ( index + 1 ) == SENTENCELIMIT : break
+
+	# normalize
+	summary = ' '.join( summary )
+	summary = summary.replace( '"', '' )
+	summary = re.sub( '\n+', ' ', summary )
+	summary = re.sub( ' +', ' ',  summary )
+	summary = re.sub( '^\s', '',  summary )
+	summary = re.sub( '\s$', '',  summary )
+
+	# done
+	return summary
+
 
 # given a file, create some bibliographics and save plain text
 def file2bib( carrel, file, metadata=None ) :
@@ -392,16 +468,17 @@ def file2bib( carrel, file, metadata=None ) :
 	EXTENSION    = '.txt'
 	BIBEXTENSION = '.bib'
 	HEADER       = [ 'id', 'author', 'title', 'date', 'pages', 'extension', 'mime', 'words', 'sentence', 'flesch', 'summary', 'cache', 'txt' ]
+	PROCESS       = 'textrank'
 
 	# require
-	from   gensim.summarization import summarize
-	from   tika import detector
-	from   tika import parser
+	from   pathlib              import Path
+	from   textacy              import text_stats
+	from   tika                 import detector
+	from   tika                 import parser
 	import os
 	import spacy
-	from textacy import text_stats
-	from   pathlib import Path
-	
+	import pytextrank
+
 	# initialize
 	author       = ''
 	title        = name2key( file )
@@ -461,15 +538,15 @@ def file2bib( carrel, file, metadata=None ) :
 		pages = metadata[ 'xmpTPg:NPages' ]
 		if ( isinstance( pages, list ) ) : pages = pages[ 0 ]
 		
-	# summary
-	try    : summary = summarize( normalize( text ), word_count=COUNT, split=False )
-	except : summary = ''
-	
 	# model the text
 	nlp            = spacy.load( MODEL )
 	nlp.max_length = ( len( text ) + 1 )
+	nlp.add_pipe( PROCESS )
 	doc            = nlp( text )
 
+	# summarize
+	summary = summarize( doc )
+	
 	# parse out only the desired statistics
 	words      = text_stats.n_words( doc )
 	sentences  = text_stats.n_sents( doc )
