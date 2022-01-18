@@ -202,7 +202,7 @@ def search( query, output, carrel ) :
 			record = RECORD.replace( '##ID##', id )
 			record = record.replace( '##AUTHOR##', author )
 			record = record.replace( '##TITLE##', title )
-			record = record.replace( '##DATE##', date )
+			record = record.replace( '##DATE##', str( date ) )
 			record = record.replace( '##SUMMARY##', summary )
 			record = record.replace( '##KEYWORD##', keyword )
 			record = record.replace( '##WORDS##', str( words ) )

@@ -178,7 +178,7 @@ def pivot( localLibrary, carrel, field, keys ) :
 @click.option('-i', '--iterations', default=2400, help="number of times to cacluate" )
 @click.option('-o', '--output', default='summary', type=click.Choice( [ 'summary', 'chart', 'topdocs', 'csv' ] ), help="type of report" )
 @click.option('-f', '--field', type=click.Choice( [ 'author', 'title', 'date' ] ), help="field for pivoting" )
-@click.option('-y', '--type', default='pie', type=click.Choice( [ 'pie', 'bar', 'barh', 'line' ] ), help="type of chart" )
+@click.option('-y', '--type', default='pie', type=click.Choice( [ 'pie', 'bar', 'barh', 'line', 'scatter' ] ), help="type of chart" )
 @click.argument( 'carrel', metavar='<carrel>' )
 def tm( carrel, process, topics, words, iterations, output, field, type ) :
 
@@ -201,7 +201,8 @@ def tm( carrel, process, topics, words, iterations, output, field, type ) :
 	import os
 	import sys
 	import pandas as pd
-	
+	from   sklearn.manifold  import TSNE
+
 	# sanity checks
 	checkForCarrel( carrel )
 	checkForMallet( str( configuration( 'malletHome' ) ) + '/' + MALLETBIN )
@@ -295,6 +296,68 @@ def tm( carrel, process, topics, words, iterations, output, field, type ) :
 				# visualize
 				summary[ 'topics' ] = summary[ 'weights' ].apply( lambda x : x * SCALE )
 				summary.plot( kind='pie', y='topics', autopct=PERCENTAGE, labels=summary[ 'labels' ], legend=False ) 
+				plot.show()
+
+			# scatter
+			if type == 'scatter' :
+			
+				topics = str( localLibrary/carrel/MODELDIR/TOPICS )
+				topics = pd.read_csv( topics, sep='\t' )
+
+				# create generic labels
+				labels  = LABELS
+				columns = topics.shape[ 1 ]
+				for i in range( 0, columns - 2 ) :
+
+					# compute and update list of column names
+					i = str( i )
+					labels.append( i )
+				
+				# create more meaningful labels; initialize some more
+				keys = pd.read_csv( keys, sep='\t', names=KEYSHEADER )
+				keys.sort_values( by='weights', ascending=False, inplace=True )
+
+				# add labels, and drop docId and file
+				topics.columns = labels
+				topics         = topics.drop( [ 'docId', 'file' ], axis=1 )
+				
+				# create meaningful labels for each topic
+				ids    = []
+				labels = []
+				for index, row in keys.iterrows() :
+
+					# update the list of ids
+					ids.append( index )
+
+					# get and loop through each feature
+					features = row[ 'features' ].split()
+					for feature in features :
+
+						# build the list, conditionally
+						if feature in labels : continue
+						labels.append( feature )
+						break
+				
+				# process each id; update with more meaningful labels
+				for index, id in enumerate( ids ) :
+
+					column = str( id )
+					label  = labels[ index ]
+					topics.rename( columns = { column:label }, inplace=True )
+				
+				# rotate the topics and convert to array
+				topics = topics.T
+				topics = topics.to_numpy()
+				
+				# specify type of TSNE modeling, and then model
+				tsne   = TSNE( perplexity=1, init='pca', learning_rate='auto' )
+				model  = tsne.fit_transform( topics )
+				
+				# plot
+				x = model[ :, 0 ]
+				y = model[ :, 1 ]
+				plot.scatter( x, y )
+				for i, label in enumerate( labels ): plot.annotate( label, ( x[ i ], y[ i ] ) )
 				plot.show()
 
 			# bar, barh, or line
