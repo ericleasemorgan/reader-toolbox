@@ -601,7 +601,8 @@ def tsv2db( directory, extension, table, connection ) :
 	# debug
 	if VERBOSE : click.echo( '\tProcessing ' + table, err=True )
 	
-	flag = False
+	# initialize
+	found = False
 	
 	# process each file in the given directory
 	for index, file in enumerate( directory.glob( extension ) ) :
@@ -616,10 +617,11 @@ def tsv2db( directory, extension, table, connection ) :
 		if index == 0 : features = df
 		else          : features = pd.concat( [ features, df ], sort=False )
 
-		flag = True
+		# update
+		found = True
 		
-	# do the work; fill the database
-	if flag : features.to_sql( table, connection, if_exists='replace', index=False )
+	# fill the database, conditionally
+	if found : features.to_sql( table, connection, if_exists='replace', index=False )
 
 
 # config
