@@ -448,6 +448,7 @@ def summarize( doc ) :
 	# normalize
 	summary = ' '.join( summary )
 	summary = summary.replace( '"', '' )
+	summary = re.sub( '\t+', ' ', summary )
 	summary = re.sub( '\n+', ' ', summary )
 	summary = re.sub( ' +', ' ',  summary )
 	summary = re.sub( '^\s', '',  summary )
