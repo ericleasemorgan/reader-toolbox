@@ -5,7 +5,7 @@
 from rdr import *
 
 # configure
-VERBOSE = 3
+VERBOSE = 2
 
 # create carrel skeleton
 def initialize( carrel, directory ) :
@@ -601,6 +601,8 @@ def tsv2db( directory, extension, table, connection ) :
 	# debug
 	if VERBOSE : click.echo( '\tProcessing ' + table, err=True )
 	
+	flag = False
+	
 	# process each file in the given directory
 	for index, file in enumerate( directory.glob( extension ) ) :
 
@@ -614,8 +616,10 @@ def tsv2db( directory, extension, table, connection ) :
 		if index == 0 : features = df
 		else          : features = pd.concat( [ features, df ], sort=False )
 
-		# do the work; fill the database
-		features.to_sql( table, connection, if_exists='replace', index=False )
+		flag = True
+		
+	# do the work; fill the database
+	if flag : features.to_sql( table, connection, if_exists='replace', index=False )
 
 
 # config
