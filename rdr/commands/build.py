@@ -533,7 +533,6 @@ def file2bib( carrel, file, metadata=None ) :
 		if 'creator' in metadata :
 			author = metadata[ 'creator' ]
 			if ( isinstance( author, list ) ) : author = author[ 0 ]
-			author = str( author )
 			
 		else : author = ''
 		
@@ -605,7 +604,7 @@ def file2bib( carrel, file, metadata=None ) :
 		# output the header and the data
 		handle.write( '\t'.join( HEADER ) + '\n' )
 		handle.write( '\t'.join( [ key, str( author ), title, str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
-		
+			
 	# check for text, and it should exist; famous last words
 	if text : 
 
