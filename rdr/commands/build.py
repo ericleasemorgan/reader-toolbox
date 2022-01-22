@@ -601,9 +601,16 @@ def file2bib( carrel, file, metadata=None ) :
 	output = localLibrary/carrel/BIB/( key + BIBEXTENSION )
 	with open( output, 'w' ) as handle :
 	
-		# output the header and the data
-		handle.write( '\t'.join( HEADER ) + '\n' )
-		handle.write( '\t'.join( [ key, str( author ), title, str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
+		try :
+		
+			# output the header and the data
+			handle.write( '\t'.join( HEADER ) + '\n' )
+			handle.write( '\t'.join( [ key, author, title, str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
+		except TypeError :
+			click.echo( "ERROR!!!", err=True )
+			click.echo( key, err=True )
+			click.echo( type( author ), err=True )
+			click.echo( author, err=True )
 			
 	# check for text, and it should exist; famous last words
 	if text : 
