@@ -504,20 +504,24 @@ def file2bib( carrel, file, metadata=None ) :
 		
 		# parse
 		index = Path( file ).name
-		if 'author' in metadata :
 		
-			author      = metadata.loc[ index ][ 'author' ]
-			authorFound = True
+		# check to see if the index value exists
+		if index in metadata.index :
+		
+			if 'author' in metadata :
+		
+				author      = metadata.loc[ index ][ 'author' ]
+				authorFound = True
 			
-		if 'title'  in metadata : 
+			if 'title'  in metadata : 
 		
-			title  = metadata.loc[ index ][ 'title' ]
-			titleFound = True
+				title  = metadata.loc[ index ][ 'title' ]
+				titleFound = True
 			
-		if 'date'   in metadata : 
+			if 'date'   in metadata : 
 		
-			date      = str( metadata.loc[ index ][ 'date' ] )
-			dateFound = True
+				date      = str( metadata.loc[ index ][ 'date' ] )
+				dateFound = True
 		
 	# get metadata from the source file
 	metadata = parsed[ 'metadata' ] 
