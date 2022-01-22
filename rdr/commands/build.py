@@ -607,10 +607,10 @@ def file2bib( carrel, file, metadata=None ) :
 			handle.write( '\t'.join( HEADER ) + '\n' )
 			handle.write( '\t'.join( [ key, str( author ), title, str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
 		except :
+			click.echo( "ERROR", err=True )
 			click.echo( key, err=True )
 			click.echo( type( author ), err=True  )
 			click.echo( author, err=True  )
-			exit()
 		
 	# check for text, and it should exist; famous last words
 	if text : 
