@@ -606,11 +606,9 @@ def file2bib( carrel, file, metadata=None ) :
 			# output the header and the data
 			handle.write( '\t'.join( HEADER ) + '\n' )
 			handle.write( '\t'.join( [ key, author, title, str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
-		except TypeError :
-			click.echo( "ERROR!!!", err=True )
-			click.echo( key, err=True )
-			click.echo( type( author ), err=True )
-			click.echo( author, err=True )
+		
+		# trap weird TypeError
+		except TypeError : click.echo( ( "\nWARNING (TypeError): Probably weird author value extracted from PDF file (key: %s). Call Eric.\n" % key ), err=True )
 			
 	# check for text, and it should exist; famous last words
 	if text : 
