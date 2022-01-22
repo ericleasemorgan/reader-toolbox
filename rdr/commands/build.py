@@ -481,9 +481,10 @@ def file2bib( carrel, file, metadata=None ) :
 	import pytextrank
 
 	# initialize
-	author       = ''
+	authorFound  = False
+	dateFound    = False
+	titleFound   = False
 	title        = name2key( file )
-	date         = ''
 	extension    = os.path.splitext( os.path.basename( file ) )[ 1 ]
 	key          = name2key( file )
 	pages        = ''
@@ -503,23 +504,36 @@ def file2bib( carrel, file, metadata=None ) :
 		
 		# parse
 		index = Path( file ).name
-		if 'author' in metadata : author = metadata.loc[ index ][ 'author' ]
-		if 'title'  in metadata : title  = metadata.loc[ index ][ 'title' ]
-		if 'date'   in metadata : date   = str( metadata.loc[ index ][ 'date' ] )
+		if 'author' in metadata :
+		
+			author      = metadata.loc[ index ][ 'author' ]
+			authorFound = True
+			
+		if 'title'  in metadata : 
+		
+			title  = metadata.loc[ index ][ 'title' ]
+			titleFound = True
+			
+		if 'date'   in metadata : 
+		
+			date      = str( metadata.loc[ index ][ 'date' ] )
+			dateFound = True
 		
 	# get metadata from the source file
 	metadata = parsed[ 'metadata' ] 
 	mimetype = detector.from_file( file )
 
 	# author
-	if author != '' : 
+	if authorFound == False : 
 	
 		if 'creator' in metadata :
 			author = metadata[ 'creator' ]
 			if ( isinstance( author, list ) ) : author = author[ 0 ]
-
+		
+		else : author = ''
+		
 	# title
-	if title != '' : 
+	if titleFound == False : 
 	
 		if 'title' in metadata :
 			title = metadata[ 'title' ]
@@ -527,12 +541,14 @@ def file2bib( carrel, file, metadata=None ) :
 			title = ' '.join( title.split() )
 
 	# date
-	if date != '' : 
+	if dateFound == False : 
 	
 		if 'date' in metadata :
 			date = metadata[ 'date' ]
 			if ( isinstance( date, list ) ) : date = date[ 0 ]
 			date = date[:date.find( 'T' )]
+		
+		else : date = ''
 
 	# number of pages
 	if 'xmpTPg:NPages' in metadata :
