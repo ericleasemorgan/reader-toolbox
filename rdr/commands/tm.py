@@ -350,17 +350,16 @@ def tm( carrel, process, topics, words, iterations, output, field, type ) :
 				topics = topics.to_numpy()
 				
 				# specify type of TSNE modeling, and then model
-				tsne   = TSNE( perplexity=1, init='pca', learning_rate='auto' )
+				tsne   = TSNE( perplexity=1024, init='pca', learning_rate='auto' )
 				model  = tsne.fit_transform( topics )
 				
 				# plot
 				x = model[ :, 0 ]
 				y = model[ :, 1 ]
 				plot.scatter( x, y )
-				for i, label in enumerate( labels ): plot.annotate( label, ( x[ i ], y[ i ] ) )
+				for i, label in enumerate( labels ) : plot.annotate( label, ( x[ i ], y[ i ] ) )
 				plot.show()
-
-			# bar, barh, or line
+				
 			if type == 'line' or type == 'bar' or type == 'barh' :
 			
 				# sanity check

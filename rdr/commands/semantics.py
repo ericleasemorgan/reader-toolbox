@@ -64,7 +64,7 @@ def checkForSemanticIndex( carrel ) :
 
 @click.command( options_metavar='<options>' )
 @click.argument( 'carrel', metavar='<carrel>' )
-@click.option('-t', '--type', default='similarity', type=click.Choice( [ 'similarity', 'distance', 'analogy' ], case_sensitive=True ), help="query type")
+@click.option('-t', '--type', default='similarity', type=click.Choice( [ 'similarity', 'distance', 'analogy', 'scatter' ], case_sensitive=True ), help="query type")
 @click.option('-q', '--query', default='love', help='the word(s) to be used for search')
 @click.option('-s', '--size', default=10, help='number of results to return')
 def semantics( carrel, type, query, size ) :
@@ -86,6 +86,7 @@ def semantics( carrel, type, query, size ) :
 
 	# require
 	import word2vec
+	import matplotlib.pyplot as plot
 
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
@@ -118,6 +119,41 @@ def semantics( carrel, type, query, size ) :
 		# word not found
 		except KeyError as word : click.echo ( ( 'The word -- %s -- is not in the index.' % word ), err=True )
 
+	# scatter
+	elif type == 'scatter' :
+	
+		from sklearn.manifold import TSNE
+		import numpy as np
+
+		words              = ['love', 'horse', 'house', 'son', 'war', 'man', 'woman', 'spear', 'achilles' ]
+		embedding_clusters = []
+		word_clusters      = []
+		for word in words :
+			embeddings = []
+			words      = []
+			indexes, metrics = model.similar( word, n=20 )
+			similarities = model.generate_response( indexes, metrics ).tolist()
+			for similarity in similarities :
+			
+				words.append(similarity[ 0 ])
+				embeddings.append( ( similarity[ 0 ], similarity[ 1 ] ) )
+		
+			embedding_clusters.append( embeddings )
+			word_clusters.append( words )
+
+		clusters = np.array( embedding_clusters )	
+		print( clusters )
+		exit()
+					
+		tsne     = TSNE( perplexity=2, n_components=2, init='pca'  )
+		model    = tsne.fit_transform( clusters )
+
+		# plot
+		x = model[ :, 0 ]
+		y = model[ :, 1 ]
+		plot.scatter( x, y )
+		plot.show()
+
 	# distance
 	elif type == 'distance' :
 
@@ -145,7 +181,7 @@ def semantics( carrel, type, query, size ) :
 
 		# error
 		except KeyError as word : 
-			sys.stderr.write( ( 'A word in your query -- %s -- is not in the index. Please remove it.\n' % word ) )
+			click.echo( ( 'A word in your query -- %s -- is not in the index. Please remove it.' % word ), err=True )
 
 	# analogy
 	elif type == 'analogy' :
