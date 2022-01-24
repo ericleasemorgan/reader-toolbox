@@ -511,7 +511,7 @@ def file2bib( carrel, file, metadata=None ) :
 		
 			if 'author' in metadata :
 		
-				author      = metadata.loc[ index ][ 'author' ]
+				author      = str( metadata.loc[ index ][ 'author' ] )
 				authorFound = True
 			
 			if 'title'  in metadata : 
