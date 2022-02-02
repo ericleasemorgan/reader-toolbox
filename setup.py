@@ -6,6 +6,6 @@ setup(
     name='reader-toolbox',
     packages=find_packages(),
     include_package_data=True,
-	install_requires=[ 'catalogue', 'click', 'datasette', 'matplotlib', 'nltk', 'tika', 'pandas', 'requests', 'pytextrank', 'scikit-learn', 'scipy', 'srsly', 'textacy' ],
+	install_requires=[ 'catalogue', 'click', 'datasette', 'matplotlib', 'nltk', 'tika', 'pandas', 'requests', 'pytextrank', 'scikit-learn', 'scipy', 'srsly', 'textacy', 'pytextrank' ],
     entry_points={ 'console_scripts': [ 'rdr = rdr.rdr:rdr' ] }
 )
