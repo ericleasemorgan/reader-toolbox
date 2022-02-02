@@ -470,7 +470,7 @@ def file2bib( carrel, file, metadata=None ) :
 	EXTENSION    = '.txt'
 	BIBEXTENSION = '.bib'
 	HEADER       = [ 'id', 'author', 'title', 'date', 'pages', 'extension', 'mime', 'words', 'sentence', 'flesch', 'summary', 'cache', 'txt' ]
-	PROCESS       = 'textrank'
+	PROCESS      = 'textrank'
 
 	# require
 	from   pathlib              import Path
@@ -740,7 +740,6 @@ def build( carrel, directory, erase ) :
 	txt       = localLibrary/carrel/TXT
 	for filename in os.listdir( txt ) : filenames.append( os.path.join( txt, filename ) )
 
-	
 	# extract email addresses
 	click.echo( '(Step #4 of 9) Extracting (email) addresses', err=True )
 	pool.starmap( txt2adr, [ [ carrel, filename ] for filename in filenames ] )
