@@ -199,7 +199,7 @@ def search( query, output, carrel ) :
 			if not cache   : cache   = ' '
 			
 			# create a record
-			record = RECORD.replace( '##ID##', id )
+			record = RECORD.replace( '##ID##', str( id ) )
 			record = record.replace( '##AUTHOR##', author )
 			record = record.replace( '##TITLE##', title )
 			record = record.replace( '##DATE##', str( date ) )

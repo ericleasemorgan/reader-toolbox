@@ -7,6 +7,65 @@ from rdr import *
 # configure
 VERBOSE = 2
 
+# start tika
+def startTika() :
+
+	# configure
+	JAVA  = 'java'
+	JAR   = '-jar'
+	SLEEP = 20
+	
+	# require
+	import time
+	import subprocess
+	
+	# initialize
+	started = False
+	
+	# double check to see if we've already been here
+	if tikaIsRunning() : started = True
+	
+	# try to start tika
+	else :
+	
+		# get the location of tika-server.jar; needs validation
+		tikaHome = str( configuration( 'tikaHome' ) )	
+		
+		# run the server and conditionally ignore STDERR; set VERBOSE to choose
+		if VERBOSE == 3 : subprocess.Popen( [ JAVA, JAR, tikaHome ] )
+		else            : subprocess.Popen( [ JAVA, JAR, tikaHome ], stderr=subprocess.DEVNULL )	
+		
+		# hang out
+		time.sleep( SLEEP )
+		
+		# one last time, check again
+		if tikaIsRunning() : started = True
+		
+	# done
+	return( started )
+
+
+# check to see if tika is running
+def tikaIsRunning () :
+
+	# configure, require, and initialize
+	TIKA    = 'http://localhost:9998/'
+	import requests
+	running = False
+
+	# give it a go
+	try :
+
+		# check for success
+		if requests.get( TIKA ).ok : running = True
+	
+	# error
+	except requests.ConnectionError : pass
+	
+	# done
+	return( running )
+	
+	
 # create carrel skeleton
 def initialize( carrel, directory ) :
 	
@@ -656,7 +715,8 @@ def tsv2db( directory, extension, table, connection ) :
 @click.argument( 'carrel', metavar='<carrel>' )
 @click.argument( 'directory', metavar='<directory>' )
 @click.option('-e', '--erase', is_flag=True, help='delete pre-existing carrel')
-def build( carrel, directory, erase ) :
+@click.option('-s', '--start', is_flag=True, help='start Tika')
+def build( carrel, directory, erase, start ) :
 
 	"""Make <carrel> with files in <directory>"""
 
@@ -677,10 +737,38 @@ def build( carrel, directory, erase ) :
 	import shutil
 	import sqlite3
 	import pandas as pd
+	import spacy
 	
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
 	pool         = Pool()
+
+	# start tika; the toolbox's secret sauce
+	if start :
+	
+		# debug
+		click.echo( '(Step #-1 of 9) Starting Tika server at http://localhost:9998/; please be patient.', err=True )
+		
+		# go
+		if startTika() == False :
+		
+			# bummer
+			click.echo( "Can't start Tika. Call Eric.", err=True )
+			exit()
+
+	# check for tika
+	if not tikaIsRunning() :
+	
+		click.echo( 'WARNING: Tika server at http://localhost:9998/ is not running; please start Tika by hand, or add -s to this command.', err=True )
+		exit()
+	
+	
+	# check tika version here
+	
+	
+	# check to see if the language model has been installed
+	try            : nlp  = spacy.load( MODEL )
+	except OSError : modelNotFound()
 
 	# check for pre-existing carrel
 	if ( localLibrary/carrel ).is_dir() :
@@ -696,7 +784,7 @@ def build( carrel, directory, erase ) :
 		else :
 		
 			# warn and exit
-			click.echo( ( 'Carrel exists. Specify a name other than "%s" or add -e to erase it.' % carrel ), err=True )
+			click.echo( ( 'WARNING: Carrel exists; specify a name other than "%s" or add -e to erase it.' % carrel ), err=True )
 			exit()
 
 	# build skeleton

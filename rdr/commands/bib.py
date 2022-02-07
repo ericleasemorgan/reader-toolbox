@@ -44,7 +44,7 @@ def bib( carrel ) :
 	for item, row in enumerate( rows ) :
 	
 		# parse
-		id        = row[ 'id' ]
+		id        = str( row[ 'id' ] )
 		author    = row[ 'author' ]
 		title     = row[ 'title' ]
 		date      = row[ 'date' ]

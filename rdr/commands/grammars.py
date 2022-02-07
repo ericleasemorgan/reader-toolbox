@@ -5,36 +5,6 @@
 from rdr import *
 
 
-# handle model not found error
-def modelNotFound() :
-	
-	# notify
-	click.echo( "Error: Langauge model not found.", err=True )
-	click.echo()
-	click.echo( f"This functions requires a spaCy langauge model ({ MODEL}) to be installed. This only has to be done once, and after the model has been installed you can run the command again.", err=True )
-	click.echo()
-	click.echo( 'Do you want to install the model now? [yn] ', err=True, nl=False )
-	
-	# get input
-	c = click.getchar()
-	click.echo()
-	
-	# branch accordingly; yes
-	if c == 'y' :
-
-		# require and do the work
-		from os import system
-		system( 'python -m spacy download ' + MODEL )
-	
-	# no
-	elif c == 'n' : click.echo( "Okay, but installing the model is necessary for this function to work. You'll be asked again next time.", err=True )
-
-	# error
-	else : click.echo( '???' )
-	
-	# done
-	exit()
-
 
 # given a carrel, return a spacy doc
 def carrel2doc( carrel ) :

@@ -217,6 +217,9 @@ def tm( carrel, process, topics, words, iterations, output, field, type ) :
 	keys         = str( localLibrary/carrel/MODELDIR/KEYS )
 	documents    = str( localLibrary/carrel/MODELDIR/DOCUMENTS )
 	
+	# make sane for Windows
+	os.environ[ 'MALLET_HOME' ] = mallet
+	
 	# create a model
 	if process == 'model' :
 	

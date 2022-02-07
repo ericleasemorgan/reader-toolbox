@@ -39,7 +39,7 @@ def sizes( carrel, sort, output ) :
 	if output == 'list' :
 	
 		# process each row; output tab-delimited list
-		for row in rows : click.echo( '\t'.join( [ row[ 'id' ], str( row[ 'words' ] ) ]) )   
+		for row in rows : click.echo( '\t'.join( [ str( row[ 'id' ] ), str( row[ 'words' ] ) ]) )   
    
 	# output charts
 	else :

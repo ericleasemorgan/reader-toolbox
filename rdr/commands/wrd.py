@@ -51,7 +51,10 @@ def wrd( carrel, count ) :
 		# articulate sql, search, and output
 		sql  = 'SELECT LOWER( keyword ) AS keyword, COUNT( LOWER( keyword ) ) AS count FROM wrd GROUP BY LOWER( keyword ) ORDER BY count DESC, keyword;'
 		rows = connection.execute( sql )
-		for row in rows : click.echo( "\t".join( [ row[ 'keyword' ], str( row[ 'count' ] ) ] ) )			
+		for row in rows : 
+		
+			# output, conditionally; weird
+			if row[ 'keyword' ] : click.echo( "\t".join( [ row[ 'keyword' ], str( row[ 'count' ] ) ] ) )			
 			
 			
 	# clean up

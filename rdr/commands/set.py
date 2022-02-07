@@ -4,7 +4,7 @@ from rdr import *
 
 # config
 @click.command()
-@click.option('-s', '--setting', default='local', type=click.Choice( [ 'local', 'mallet' ] ), help='configure the given setting')
+@click.option('-s', '--setting', default='local', type=click.Choice( [ 'local', 'mallet', 'tika' ] ), help='configure the given setting')
 def set( setting ) :
 
 	"""Configure the location of study carrels and a subsystem called MALLET.
@@ -27,12 +27,14 @@ def set( setting ) :
 	configurations       = ConfigParser()
 	applicationDirectory = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
 	configurationFile    = applicationDirectory/CONFIGURATIONFILE
-
+	
 	# create configuration file, conditionally
 	if not configurationFile.exists() :
 		
 		# initialize
-		configurations[ "RDR" ] = { "localLibrary"  : Path.home()/READERLIBRARY, "malletHome" : '' }
+		configurations[ "RDR" ] = { "localLibrary"  : Path.home()/READERLIBRARY, 
+		                            "malletHome"    : '',
+		                            "tikaHome" : '' }
 
 		# create directory and save the file
 		applicationDirectory.mkdir( parents=False, exist_ok=True )
@@ -41,6 +43,7 @@ def set( setting ) :
 	# re-initialize
 	localLibrary  = configuration( 'localLibrary' )
 	malletHome    = configuration( 'malletHome' )
+	tikaHome      = configuration( 'tikaHome' )
 
 	# branch accordingly, local
 	if setting == 'local' :
@@ -61,8 +64,15 @@ def set( setting ) :
 		click.echo( 'What is the full path to your MALLET distribution?' )
 		malletHome = input( 'Directory [%s]: ' % malletHome ) or malletHome
 
+	# tika
+	elif setting == 'tika' :
+	
+		# get the desired library location
+		click.echo( 'What is the full path to tika-server.jar?' )
+		tikaHome = input( 'Directory [%s]: ' % tikaHome ) or tikaHome
+
 	# update the configuration file
-	configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome }
+	configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome , "tikaHome" : tikaHome }
 	with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
 
 
