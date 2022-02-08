@@ -659,7 +659,7 @@ def file2bib( carrel, file, metadata=None ) :
 	
 	# open output
 	output = localLibrary/carrel/BIB/( key + BIBEXTENSION )
-	with open( output, 'w' ) as handle :
+	with open( output, 'w', encoding='utf-8' ) as handle :
 	
 		try :
 		
@@ -675,7 +675,7 @@ def file2bib( carrel, file, metadata=None ) :
 
 		# configure output and output
 		output = localLibrary/carrel/TXT/( key + EXTENSION )
-		with open( output, 'w' ) as handle : handle.write( text )
+		with open( output, 'w', encoding='utf-8' ) as handle : handle.write( text )
 
 
 # given a few configurations, reduce extracted features to a database
