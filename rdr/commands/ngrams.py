@@ -42,8 +42,8 @@ def ngrams( carrel, size, query, count, location ) :
 		
 		# read local data
 		localLibrary = configuration( 'localLibrary' )
-		stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ) ).read().split()
-		text         = open( str( localLibrary/carrel/ETC/CORPUS ) ).read()
+		stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ), encoding='utf-8' ).read().split()
+		text         = open( str( localLibrary/carrel/ETC/CORPUS ), encoding='utf-8' ).read()
 	
 	# remote
 	elif location == 'remote' :
