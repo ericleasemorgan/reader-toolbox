@@ -111,7 +111,7 @@ def initialize( carrel, directory ) :
 	input       = directory
 	record      = [ PROCESS, originalID, dateCreated, timeCreated, creator, input ]
 	output      = localLibrary/carrel/PROVENANCE
-	with open( output, 'w' ) as handle : handle.write( '\t'.join( record ) + '\n' )
+	with open( output, 'w', encoding='utf-8' ) as handle : handle.write( '\t'.join( record ) + '\n' )
 	
 	# process each item in the given directory
 	directory = Path( directory )
@@ -132,7 +132,7 @@ def initialize( carrel, directory ) :
 
 	# add stop words; there is probably a better way
 	output = localLibrary/carrel/ETC/STOPWORDS
-	with open( output, 'w' ) as handle : handle.write( WORDS )
+	with open( output, 'w', encoding='utf-8' ) as handle : handle.write( WORDS )
 
 
 # create key from filename
@@ -191,7 +191,7 @@ def txt2bow( carrel ) :
 	
 	# configure output, output, and done
 	output = localLibrary/carrel/ETC/BOW
-	with open( output, 'w' ) as handle : handle.write( bow )
+	with open( output, 'w', encoding='utf-8' ) as handle : handle.write( bow )
 
 
 # extract email addresses
@@ -214,7 +214,7 @@ def txt2adr( carrel, file ) :
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
 
 	# slurp up the file
-	with open ( file ) as handle : text = normalize( handle.read() )
+	with open ( file, encoding='utf-8' ) as handle : text = normalize( handle.read() )
 	
 	# get and process each address, to the best of my ability
 	addresses = re.findall( PATTERN, text )
@@ -224,7 +224,7 @@ def txt2adr( carrel, file ) :
 
 		# open output
 		output = localLibrary/carrel/ADR/( key + EXTENSION )
-		with open( output, 'w' ) as handle :
+		with open( output, 'w', encoding='utf-8'  ) as handle :
 
 			# initialize the output
 			handle.write( '\t'.join( HEADER ) + '\n' )
@@ -260,7 +260,7 @@ def txt2ent( carrel, file ) :
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
 
 	# slurp up the file
-	with open ( file ) as handle : text = normalize( handle.read() )
+	with open( file, encoding='utf-8' ) as handle : text = normalize( handle.read() )
 
 	# model the text
 	nlp            = spacy.load( MODEL )
@@ -269,7 +269,7 @@ def txt2ent( carrel, file ) :
 
 	# open output
 	output = localLibrary/carrel/ENT/( key + EXTENSION )
-	with open( output, 'w' ) as handle :
+	with open( output, 'w', encoding='utf-8'   ) as handle :
 
 		# initialize the output
 		handle.write( '\t'.join( HEADER ) + '\n' )
@@ -305,7 +305,7 @@ def txt2pos( carrel, file ) :
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
 
 	# slurp up the file
-	with open ( file ) as handle : text = normalize( handle.read() )
+	with open( file, encoding='utf-8' ) as handle : text = normalize( handle.read() )
 
 	# model the text
 	nlp            = spacy.load( MODEL )
@@ -314,7 +314,7 @@ def txt2pos( carrel, file ) :
 
 	# open output
 	output = localLibrary/carrel/POS/( key + EXTENSION )
-	with open( output, 'w' ) as handle :
+	with open( output, 'w', encoding='utf-8' ) as handle :
 
 		# initialize the output
 		handle.write( '\t'.join( HEADER ) + '\n' )
@@ -355,7 +355,7 @@ def txt2url( carrel, file ) :
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
 
 	# slurp up the file
-	with open ( file ) as handle : text = normalize( handle.read() )
+	with open( file, encoding='utf-8' ) as handle : text = normalize( handle.read() )
 
 	# get and process each url, to the best of my ability
 	urls = re.findall( PATTERN, text )
@@ -365,7 +365,7 @@ def txt2url( carrel, file ) :
 
 		# open output
 		output = localLibrary/carrel/URLS/( key + EXTENSION )
-		with open( output, 'w' ) as handle :
+		with open( output, 'w', encoding='utf-8' ) as handle :
 
 			# initialize the output
 			handle.write( '\t'.join( HEADER ) + '\n' )
@@ -410,7 +410,7 @@ def txt2wrd( carrel, file ) :
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
 
 	# slurp up the file
-	with open ( file ) as handle : text = normalize( handle.read() )
+	with open( file, encoding='utf-8' ) as handle : text = normalize( handle.read() )
 
 	# model the text and get the keywords
 	nlp            = spacy.load( MODEL )
@@ -426,7 +426,7 @@ def txt2wrd( carrel, file ) :
 	
 		# open output
 		output = localLibrary/carrel/WRD/( key + EXTENSION )
-		with open( output, 'w' ) as handle :
+		with open( output, 'w', encoding='utf-8' ) as handle :
 
 			# initialize the output
 			handle.write( '\t'.join( HEADER ) + '\n' )
