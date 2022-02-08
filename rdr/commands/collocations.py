@@ -35,7 +35,8 @@ def collocations( carrel, window, filter, measure, limit, output ) :
 	import matplotlib.pyplot as plt
 	import networkx as nx
 	import nltk
-
+	import sys
+	
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
 	corpus       = str( localLibrary/carrel/ETC/CORPUS )
@@ -103,5 +104,5 @@ def collocations( carrel, window, filter, measure, limit, output ) :
 		plt.show()
 	
 	# output gml; will probably break under Windows
-	else: nx.write_gml(G, '/dev/stdout' )
+	else:  nx.write_gml( G, sys.stdout.buffer )
 	
