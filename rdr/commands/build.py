@@ -184,7 +184,7 @@ def txt2bow( carrel ) :
 	for file in txt.glob( PATTERN ) :
 	
 		# create/increment the bag of words
-		with open( file ) as handle : bow += handle.read()
+		with open( file, encoding='utf-8' ) as handle : bow += handle.read()
 	
 	# normalize
 	bow = normalize( bow )
