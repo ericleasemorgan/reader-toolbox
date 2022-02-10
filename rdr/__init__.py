@@ -53,6 +53,9 @@ MODEL = 'en_core_web_sm'
 MALLETZIP = 'http://library.distantreader.org/apps/mallet.zip'
 MALLETBIN = 'bin/mallet'
 
+# tika server
+TIKADOWNLOAD = 'http://library.distantreader.org/apps/tika-server.jar'
+
 
 # require
 import click

@@ -7,6 +7,43 @@ from rdr import *
 # configure
 VERBOSE = 2
 
+# make sure tika server has been downloaded
+def checkForTika( tika ) :
+	
+	# require
+	from configparser import ConfigParser
+	from pathlib      import Path
+	from requests     import get
+	
+	# install tika, conditionally
+	if not Path( tika ).exists() :
+	
+		click.echo( "Tika server not found. Downoading... ", err=True )
+		response = get( TIKADOWNLOAD )
+		file     = Path( tika ) 
+		with open( file, 'wb' ) as handle : handle.write( response.content )
+		click.echo( "Downloaded", err=True )
+
+		# initialize
+		click.echo( "Updating configurations... " )
+		configurations          = ConfigParser()
+		applicationDirectory    = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
+		configurationFile       = applicationDirectory/CONFIGURATIONFILE
+		localLibrary            = configuration( 'localLibrary' )
+		malletHome              = configuration( 'malletHome' )
+		tikaHome                = Path.home()/'tika-server.jar'
+		configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome, "tikaHome" : tikaHome }
+		with open( configurationFile, 'w' ) as handle : configurations.write( handle )
+
+		# done
+		click.echo( '''
+  Done. Tika server (tika-server.jar) has been downloaded to your
+  home directory and configured for future use. You can move Tika
+  server to another location but once you do so you will need to
+  run 'rdr set -s tika'.''', err=True )
+
+		startTika()
+		
 # start tika
 def startTika() :
 
@@ -269,7 +306,7 @@ def txt2ent( carrel, file ) :
 
 	# open output
 	output = localLibrary/carrel/ENT/( key + EXTENSION )
-	with open( output, 'w', encoding='utf-8'   ) as handle :
+	with open( output, 'w', encoding='utf-8' ) as handle :
 
 		# initialize the output
 		handle.write( '\t'.join( HEADER ) + '\n' )
@@ -743,6 +780,9 @@ def build( carrel, directory, erase, start ) :
 	localLibrary = configuration( 'localLibrary' )
 	pool         = Pool()
 
+	# make sure we have Tika Server
+	checkForTika( str( configuration( 'tikaHome' ) ) )
+	
 	# start tika; the toolbox's secret sauce
 	if start :
 	
@@ -759,7 +799,10 @@ def build( carrel, directory, erase, start ) :
 	# check for tika
 	if not tikaIsRunning() :
 	
-		click.echo( 'WARNING: Tika server at http://localhost:9998/ is not running; please start Tika by hand, or add -s to this command.', err=True )
+		click.echo( '''
+  WARNING: Tika server at http://localhost:9998/ is not running;
+  please start Tika by hand, or add -s to this command.
+''', err=True )
 		exit()
 	
 	
@@ -784,7 +827,9 @@ def build( carrel, directory, erase, start ) :
 		else :
 		
 			# warn and exit
-			click.echo( ( 'WARNING: Carrel exists; specify a name other than "%s" or add -e to erase it.' % carrel ), err=True )
+			click.echo( ( '''
+  WARNING: Carrel exists; specify a name other than "%s" or add -e
+  to erase it.''' % carrel ), err=True )
 			exit()
 
 	# build skeleton

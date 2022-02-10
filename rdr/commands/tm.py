@@ -92,7 +92,6 @@ def checkForMallet( mallet ) :
 		# make mallet executable
 		click.echo( "Making MALLET executable... " )
 		(malletHome/MALLETBIN).chmod( 0x755 )
-		
 
 		# done
 		click.echo('''Done. MALLET has been downloaded to your home directory and configured

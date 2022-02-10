@@ -103,6 +103,6 @@ def collocations( carrel, window, filter, measure, limit, output ) :
 		nx.draw( G, with_labels=True, node_size=10, font_size=9, edge_color='silver' )
 		plt.show()
 	
-	# output gml; will probably break under Windows
-	else:  nx.write_gml( G, sys.stdout.buffer )
+	# output gml
+	else: nx.write_gml( G, sys.stdout.buffer )
 	
