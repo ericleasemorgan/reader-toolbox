@@ -124,9 +124,11 @@ def configuration( name ) :
 
 	# initialize
 	applicationDirectory = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
-	configurationFile    = applicationDirectory / CONFIGURATIONFILE
+	configurationFile    = applicationDirectory / CONFIGURATIONFILE	
 	configurations       = ConfigParser()
 	
+	# click.echo( configurationFile, err=True )
+
 	# try to read configurations
 	configurations.read( str( configurationFile ) )
 	
