@@ -4,8 +4,9 @@ from rdr import *
 
 # config
 @click.command()
-@click.option('-s', '--setting', default='local', type=click.Choice( [ 'local', 'mallet', 'tika' ] ), help='configure the given setting')
-def set( setting ) :
+@click.option('-s', '--setting', type=click.Choice( [ 'local', 'mallet', 'tika' ] ), help='configure the given setting')
+@click.option('-e', '--erase', is_flag=True, help='erase/restore default settings')
+def set( setting, erase ) :
 
 	"""Configure the location of study carrels and a subsystem called MALLET.
 	
@@ -16,6 +17,7 @@ def set( setting ) :
 	\b
 	  rdr set
 	  rdr set -s mallet
+	  rdr set -e
 	
 	See also: rdr get --help"""
 	
@@ -25,54 +27,48 @@ def set( setting ) :
 	
 	# initialize
 	configurations       = ConfigParser()
-	applicationDirectory = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
+	applicationDirectory = Path.home()
 	configurationFile    = applicationDirectory/CONFIGURATIONFILE
-	
-	# create configuration file, conditionally
-	if not configurationFile.exists() :
-		
-		# initialize
-		configurations[ "RDR" ] = { "localLibrary"  : Path.home()/READERLIBRARY, 
-		                            "malletHome"    : '',
-		                            "tikaHome" : '' }
+					
+	# erase/restore configurations
+	if erase : initializeConfigurations()
 
-		# create directory and save the file
-		applicationDirectory.mkdir( parents=False, exist_ok=True )
+	# branch
+	if setting :
+	
+		# re-initialize
+		localLibrary = configuration( 'localLibrary' )
+		malletHome   = configuration( 'malletHome' )
+		tikaHome     = configuration( 'tikaHome' )
+
+		# branch accordingly, local
+		if setting == 'local' :
+	
+			# get the desired library location
+			click.echo( 'Where do you want to save your study carrels? Press enter to accept the default.' )
+			localLibrary = input( 'Directory [%s]: ' % localLibrary ) or localLibrary
+			localLibrary = Path( localLibrary )
+
+			# try to create the directory and save the configuration
+			try : localLibrary.mkdir( exist_ok=True )
+			except FileNotFoundError : click.echo( "Error: File not found. Are you sure you entered a valid path?", err=True )		
+
+		# mallet
+		elif setting == 'mallet' :
+	
+			# get the desired library location
+			click.echo( 'What is the full path to your MALLET distribution?' )
+			malletHome = input( 'Directory [%s]: ' % malletHome ) or malletHome
+
+		# tika
+		elif setting == 'tika' :
+	
+			# get the desired library location
+			click.echo( 'What is the full path to tika-server.jar?' )
+			tikaHome = input( 'File [%s]: ' % tikaHome ) or tikaHome
+
+		# update the configuration file
+		configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome , "tikaHome" : tikaHome }
 		with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
-		
-	# re-initialize
-	localLibrary  = configuration( 'localLibrary' )
-	malletHome    = configuration( 'malletHome' )
-	tikaHome      = configuration( 'tikaHome' )
-
-	# branch accordingly, local
-	if setting == 'local' :
-	
-		# get the desired library location
-		click.echo( 'Where do you want to save your study carrels? Press enter to accept the default.' )
-		localLibrary = input( 'Directory [%s]: ' % localLibrary ) or localLibrary
-		localLibrary = Path( localLibrary )
-
-		# try to create the directory and save the configuration
-		try : localLibrary.mkdir( exist_ok=True )
-		except FileNotFoundError : click.echo( "Error: File not found. Are you sure you entered a valid path?", err=True )		
-
-	# mallet
-	elif setting == 'mallet' :
-	
-		# get the desired library location
-		click.echo( 'What is the full path to your MALLET distribution?' )
-		malletHome = input( 'Directory [%s]: ' % malletHome ) or malletHome
-
-	# tika
-	elif setting == 'tika' :
-	
-		# get the desired library location
-		click.echo( 'What is the full path to tika-server.jar?' )
-		tikaHome = input( 'Directory [%s]: ' % tikaHome ) or tikaHome
-
-	# update the configuration file
-	configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome , "tikaHome" : tikaHome }
-	with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
 
 

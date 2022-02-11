@@ -18,32 +18,35 @@ def checkForTika( tika ) :
 	# install tika, conditionally
 	if not Path( tika ).exists() :
 	
-		click.echo( "Tika server not found. Downoading... ", err=True )
+		click.echo( "\n  WARNING: Tika server not found. Downoading... ", err=True )
 		response = get( TIKADOWNLOAD )
 		file     = Path( tika ) 
 		with open( file, 'wb' ) as handle : handle.write( response.content )
-		click.echo( "Downloaded", err=True )
+		click.echo( "\n  INFO: Downloaded", err=True )
 
 		# initialize
-		click.echo( "Updating configurations... " )
+		click.echo( "\n  INFO: Updating configurations... " )
 		configurations          = ConfigParser()
-		applicationDirectory    = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
+		applicationDirectory    = Path.home()
 		configurationFile       = applicationDirectory/CONFIGURATIONFILE
 		localLibrary            = configuration( 'localLibrary' )
 		malletHome              = configuration( 'malletHome' )
-		tikaHome                = Path.home()/'tika-server.jar'
+		tikaHome                = Path.home()/TIKAHOME
 		configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome, "tikaHome" : tikaHome }
 		with open( configurationFile, 'w' ) as handle : configurations.write( handle )
 
 		# done
 		click.echo( '''
-  Done. Tika server (tika-server.jar) has been downloaded to your
+  INFO: Tika server (tika-server.jar) has been downloaded to your
   home directory and configured for future use. You can move Tika
   server to another location but once you do so you will need to
-  run 'rdr set -s tika'.''', err=True )
+  run 'rdr set -s tika'.
+''', err=True )
 
+		# start tika server
 		startTika()
-		
+
+
 # start tika
 def startTika() :
 

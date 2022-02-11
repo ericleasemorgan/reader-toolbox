@@ -28,6 +28,8 @@ Eric Lease Morgan <emorgan@nd.edu>
 APPLICATIONDIRECTORY = 'rdr'
 CONFIGURATIONFILE    = '.rdrrc'
 READERLIBRARY        = 'reader-library'
+MALLETHOME           = 'mallet'
+TIKAHOME             = 'tika-server.jar'
 
 # remote library
 REMOTELIBRARY = 'http://library.distantreader.org'
@@ -60,6 +62,61 @@ TIKADOWNLOAD = 'http://library.distantreader.org/apps/tika-server.jar'
 # require
 import click
 
+
+# create or re-create the preferences/settings
+def initializeConfigurations() :
+
+	# require
+	from configparser import ConfigParser
+	from pathlib      import Path
+
+	# initialize
+	configurations       = ConfigParser()
+	applicationDirectory = Path.home()
+	configurationFile    = applicationDirectory/CONFIGURATIONFILE
+
+	# define defaults, and...
+	configurations[ "RDR" ] = { "localLibrary" : Path.home()/READERLIBRARY, 
+								"malletHome"   : Path.home()/MALLETHOME,
+								"tikaHome"     : Path.home()/TIKAHOME }
+
+	# save them
+	with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
+
+	# create the library directory
+	( Path.home()/READERLIBRARY ).mkdir( exist_ok=True )
+
+
+# read configurations
+def configuration( name ) :
+
+	# require
+	from configparser import ConfigParser
+	from pathlib      import Path
+
+	# initialize
+	applicationDirectory = Path.home()
+	configurationFile    = applicationDirectory/CONFIGURATIONFILE	
+	configurations       = ConfigParser()
+	
+	# read configurations file
+	configurations.read( str( configurationFile ) )
+	
+	# get configurations
+	localLibrary = configurations[ 'RDR' ][ 'localLibrary' ]
+	malletHome   = configurations[ 'RDR' ][ 'malletHome' ] 
+	tikaHome     = configurations[ 'RDR' ][ 'tikaHome' ] 
+	
+	# done
+	if   name == 'localLibrary' : return( Path( localLibrary ) )
+	elif name == 'malletHome'   : return( Path( malletHome ) )
+	elif name == 'tikaHome'     : return( Path( tikaHome ) )
+	else :
+	
+		# unknown configuration
+		click.echo( f"Error: Unknown value for configuration name: { name }. Call Eric.", err=True )
+		exit()
+		
 
 # handle model not found error
 def modelNotFound() :
@@ -111,46 +168,17 @@ def checkForCarrel( carrel ) :
 	if not directory.is_dir() :
 		
 		# error
-		click.echo( f"The carrel, { carrel }, does not seem to be in your local library. Are you sure you entered its name correctly? Try 'rdr catalog' to make sure.", err=True )
+		click.echo( ('''
+  WARNING: The carrel, %s, does not seem to be in your local
+  library. Are you sure you entered its name correctly? Try 'rdr
+  catalog' to make sure.
+
+  Alternatively, maybe you have moved the library and your settings
+  are not up-to-date. If so, then use 'rdr get -s local' and/or
+  'rdr set -s local' to rectify the issue.
+''' % carrel ), err=True )
 		exit()
 
 	
-# read configurations
-def configuration( name ) :
-
-	# require
-	from configparser import ConfigParser
-	from pathlib      import Path
-
-	# initialize
-	applicationDirectory = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
-	configurationFile    = applicationDirectory / CONFIGURATIONFILE	
-	configurations       = ConfigParser()
-	
-	# click.echo( configurationFile, err=True )
-
-	# try to read configurations
-	configurations.read( str( configurationFile ) )
-	
-	# try to get localLibrary
-	try : localLibrary = configurations[ 'RDR' ][ 'localLibrary' ]
-	except KeyError :
-		click.echo( "Error: Key error. The location of your local study carrels has not been set. Please run 'rdr set local'.", err=True )
-		exit()
-		
-	# try to get MALLET's home
-	malletHome = configurations[ 'RDR' ][ 'malletHome' ] 
-	
-	# try to get Tika's home
-	tikaHome = configurations[ 'RDR' ][ 'tikaHome' ] 
-	
-	# done
-	if   name == 'localLibrary' : return( Path( localLibrary ) )
-	elif name == 'malletHome'   : return( Path( malletHome ) )
-	elif name == 'tikaHome'     : return( Path( tikaHome ) )
-	else :
-		click.echo( f"Error: Unknown value for configuration name: { name }. Call Eric.", err=True )
-		exit()
-		
 
 

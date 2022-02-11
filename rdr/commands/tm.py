@@ -9,7 +9,6 @@ MODELDIR        = 'etc/topic-model'
 VECTORS         = 'model.vec'
 TXT2VEC         = "%s/bin/mallet import-dir --input %s --output %s --keep-sequence TRUE --stoplist-file %s"
 VEC2MODEL       = "%s/bin/mallet train-topics --input %s --num-topics %s --num-top-words %s --num-top-docs %s --num-iterations %s --num-threads 8 --optimize-interval 10 --output-doc-topics %s/topics.tsv --output-state %s/model-state.gz --output-topic-docs %s/documents.txt --output-topic-keys %s/keys.tsv --topic-word-weights-file %s/weights.tsv --word-topic-counts-file %s/counts.txt --xml-topic-phrase-report %s/phrases.xml --xml-topic-report %s/topics.xml"
-#VEC2MODEL       = "%s/bin/mallet train-topics --input %s --num-topics %s --num-top-words %s --num-top-docs %s --num-iterations %s --num-threads 8 --optimize-interval 10 --output-doc-topics %s/topics.tsv --output-state %s/model-state.gz --output-topic-docs %s/documents.txt --output-topic-keys %s/keys.tsv --random-seed 0 --topic-word-weights-file %s/weights.tsv --word-topic-counts-file %s/counts.txt --xml-topic-phrase-report %s/phrases.xml --xml-topic-report %s/topics.xml"
 KEYS            = 'keys.tsv'
 KEYSHEADER      = [ 'ids', 'weights', 'features' ]
 DOCUMENTS       = 'documents.txt'
@@ -67,22 +66,22 @@ def checkForMallet( mallet ) :
 	# install mallet, conditionally
 	if not Path( mallet ).exists() :
 	
-		click.echo( "MALLET not found. Downoading MALLET... ", err=True )
+		click.echo( "\n  WARNING: MALLET not found. Downoading... ", err=True )
 		response = get( MALLETZIP )
 
 		# initialize a temporary file and write to it
-		click.echo( "Saving zip file... ", err=True )
+		click.echo( "\n  INFO: Saving zip file... ", err=True )
 		handle = TemporaryFile()
 		handle.write( response.content )
 
 		# unzip the temporary file and close it, which also deletes it
-		click.echo( "Unziping zip file... " )
+		click.echo( "\n  INFO: Unziping zip file... " )
 		with ZipFile( handle, 'r' ) as zip : zip.extractall( Path.home() )
 		
 		# initialize
-		click.echo( "Updating configurations... " )
+		click.echo( "\n  INFO: Updating configurations... " )
 		configurations          = ConfigParser()
-		applicationDirectory    = Path( click.get_app_dir( APPLICATIONDIRECTORY ) )
+		applicationDirectory    = Path.home()
 		configurationFile       = applicationDirectory/CONFIGURATIONFILE
 		localLibrary            = configuration( 'localLibrary' )
 		tikaHome                = configuration( 'tikaHome' )
@@ -91,13 +90,16 @@ def checkForMallet( mallet ) :
 		with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
 
 		# make mallet executable
-		click.echo( "Making MALLET executable... " )
+		click.echo( "\n  INFO: Making MALLET executable... " )
 		(malletHome/MALLETBIN).chmod( 0x755 )
 
 		# done
-		click.echo('''Done. MALLET has been downloaded to your home directory and configured
-for future use. You can move MALLET to another location but once you do
-so you will need to run 'rdr set -s mallet'.''', err=True )
+		click.echo('''
+  INFO: MALLET has been downloaded to your home directory and
+  configured for future use. You can move MALLET to another
+  location but once you do so you will need to run 'rdr set -s
+  mallet'.
+''', err=True )
 
 
 def pivot( localLibrary, carrel, field, keys ) :
