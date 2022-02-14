@@ -31,7 +31,15 @@ def set( setting, erase ) :
 	configurationFile    = applicationDirectory/CONFIGURATIONFILE
 					
 	# erase/restore configurations
-	if erase : initializeConfigurations()
+	if erase : 
+	
+		# do the work and report
+		initializeConfigurations()
+		click.echo( '''
+  INFO: Your settings have been restored to their defaults. If
+  needed, use the 'rdr get' and 'rdr set' commands to customize
+  them.
+''', err=True )
 
 	# branch
 	if setting :
