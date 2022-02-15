@@ -180,7 +180,7 @@ def name2key( file ) :
 
 	# require, do the work, and done; inefficient
 	import os
-	key = os.path.splitext( os.path.basename( file ) )[ 0 ]
+	key = str( os.path.splitext( os.path.basename( file ) )[ 0 ] )
 	return key
 
 
@@ -675,8 +675,8 @@ def file2bib( carrel, file, metadata=None ) :
 	flesch     = int( text_stats.readability.flesch_reading_ease( doc ) )
 
 	# cache and text locations
-	txt   = Path( TXT )/( key + EXTENSION )
-	cache = Path( CACHE )/( key + extension )
+	txt   = Path( TXT )/( str( key ) + EXTENSION )
+	cache = Path( CACHE )/( str( key ) + extension )
 
 	# debug
 	if VERBOSE == 2 :
@@ -705,7 +705,7 @@ def file2bib( carrel, file, metadata=None ) :
 		
 			# output the header and the data
 			handle.write( '\t'.join( HEADER ) + '\n' )
-			handle.write( '\t'.join( [ key, author, title, str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
+			handle.write( '\t'.join( [ str( key ), author, title, str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
 		
 		# trap weird TypeError
 		except TypeError : click.echo( ( "\nWARNING (TypeError): Probably weird author value extracted from PDF file (key: %s). Call Eric.\n" % key ), err=True )
@@ -737,8 +737,8 @@ def tsv2db( directory, extension, table, connection ) :
 		if VERBOSE == 2 : click.echo( '\t' + str( file ), err=True )
 		
 		# read the file
-		df = pd.read_csv( file, sep='\t', header=0, low_memory=False, on_bad_lines='warn', quoting=3 )
-
+		df = pd.read_csv( file, sep='\t', header=0, low_memory=False, on_bad_lines='warn', quoting=3, dtype='string' )
+			
 		# initialize the features or append to it
 		if index == 0 : features = df
 		else          : features = pd.concat( [ features, df ], sort=False )

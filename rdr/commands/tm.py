@@ -16,7 +16,7 @@ DOCUMENTSHEADER = [ 'ids', 'dids', 'files', 'proportions' ]
 TOPDOCS         = 5
 SCALE           = 100
 PERCENTAGE      = '%1.0f%%'
-SQL             = 'SELECT "file:%s/%s/txt/" || id || ".txt" AS file, %s FROM bib order by %s;'
+SQL             = 'SELECT "file:%s/%s/txt/" || cast( id AS text ) || ".txt" AS file, %s FROM bib order by %s;'
 METADATA        = 'metadata.csv'
 TOPICS          = 'topics.tsv'
 LABELS          = [ 'docId', 'file' ]
@@ -107,7 +107,7 @@ def pivot( localLibrary, carrel, field, keys ) :
 	# require
 	import sqlite3
 	import pandas as pd
-
+	
 	# initialize
 	db         = str( localLibrary/carrel/ETC/DATABASE )
 	sql        = ( SQL % ( str( localLibrary ), carrel, field, field ) )
@@ -122,7 +122,7 @@ def pivot( localLibrary, carrel, field, keys ) :
 	# read saved files
 	topics   = pd.read_csv( topics, sep='\t' )
 	metadata = pd.read_csv( metadata )
-
+	
 	# create generic labels
 	labels  = LABELS
 	columns = topics.shape[ 1 ]
@@ -131,16 +131,17 @@ def pivot( localLibrary, carrel, field, keys ) :
 		# compute and update list of column names
 		i = str( i )
 		labels.append( i )
-
+	
 	# create more meaningful labels; initialize some more
 	keys = pd.read_csv( keys, sep='\t', names=KEYSHEADER )
 	keys.sort_values( by='weights', ascending=False, inplace=True )
-
+	
 	# add labels, drop docId, and merge with metadata
 	topics.columns = labels
 	topics         = topics.drop( [ 'docId' ], axis=1 )
 	topics         = pd.merge( topics, metadata )
 
+	
 	# create meaningful labels for each topic
 	ids    = []
 	labels = []
