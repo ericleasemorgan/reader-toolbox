@@ -46,8 +46,8 @@ def collocations( carrel, window, filter, measure, limit, output ) :
 	checkForCarrel( carrel )
 		
 	# read the stop words and the carrel
-	with open( stopwords ) as handle : stopwords = handle.read().split( '\n' )
-	with open( corpus )    as handle : corpus    = handle.read()
+	with open( stopwords, encoding='utf-8' ) as handle : stopwords = handle.read().split( '\n' )
+	with open( corpus, encoding='utf-8' )    as handle : corpus    = handle.read()
 
 	# featurize the carrel
 	features = nltk.word_tokenize( corpus )
