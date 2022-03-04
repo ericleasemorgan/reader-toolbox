@@ -54,7 +54,7 @@ def checkForIndex( carrel ) :
 			id = id.replace( "'", "''" )
 	
 			# get full text
-			with open( file ) as handle : fulltext = handle.read()
+			with open( file, encoding='utf-8' ) as handle : fulltext = handle.read()
 			fulltext = fulltext.replace( '\r', '\n' )
 			fulltext = fulltext.replace( '\n', ' ' )
 			fulltext = fulltext.replace( "'",  "''")
