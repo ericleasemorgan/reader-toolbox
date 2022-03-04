@@ -4,6 +4,13 @@
 # require
 from rdr import *
 
+# elaborate about the lack of word2vec
+def word2vecwarning() :
+
+	click.echo( "Word2vec not installed.", err=True )
+	exit()
+
+
 # make sure the carrel has been indexed; word2vec++
 def checkForSemanticIndex( carrel ) :
 
@@ -84,9 +91,13 @@ def semantics( carrel, type, query, size ) :
 	MODEL    = 'reader.bin'
 	DISTANCE = 'model.distance( ##QUERY## )'
 
+	# try to import word2vec
+	try    : import word2vec
+	except : word2vecwarning()
+	
 	# require
-	import word2vec
 	import matplotlib.pyplot as plot
+
 
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
