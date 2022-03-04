@@ -121,7 +121,7 @@ def ngrams( carrel, size, query, count, location ) :
 		for ngram in ngrams :
 			
 			# create a record and output
-			record = str( ngram[ 1 ] ) + '\t' + '\t'.join( list( ngram[ 0 ] ) )
+			record = '\t'.join( list( ngram[ 0 ] ) ) + '\t' + str( ngram[ 1 ] )
 			click.echo( record )
 		
 	# power user
