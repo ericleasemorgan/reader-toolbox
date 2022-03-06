@@ -9,7 +9,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def bib( carrel ) :
 
-	"""Output rudimentary bibliographics from <carrel>.
+	"""Output rudimentary bibliographics from <carrel>
 
 	Use this subcommand to output metadata regarding the specific items in <carrel>. Metadata on the items includes: identifier, author, title, date, size in words, readability (Flesch) score, summary, keywords, location of cached original, and location of derived plain text. Because of the characteristics of the original input used to create <carrel>, some metadata fields may not have values. Author and date are the best examples. Moreover, the value for title be derived. The combined use of the info command and the bib command will garaner you a good understanding of <carrel>'s breadth and depth.
 

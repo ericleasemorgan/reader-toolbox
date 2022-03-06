@@ -8,15 +8,16 @@ from rdr import *
 @click.option('-e', '--erase', is_flag=True, help='erase/restore default settings')
 def set( setting, erase ) :
 
-	"""Configure the location of study carrels and a subsystem called MALLET.
+	"""Configure the location of study carrels, the subsystem called MALLET, and Tika
 	
-	You need to run this command before you are able to download carrels.
+	In order to read study carrels, they need to be saved on your computer, and the primary purpose of this subcommand is to denote where that will be. By default, study carrels will be saved in your home directory under a subdirectory named reader-library. Trust me. This is a good starting point; run 'rdr set -s local', and accept the default. When you use the build command, the Toolbox will download a file named Tika, save it on your home directory, and update your configurations. You can use this subcommand to denote a location other than your home directory for Tika. The same thing is true for a subsystem called MALLET, which is used by the tm command.
 	
 	Examples:
 	
 	\b
-	  rdr set
+	  rdr set -s local
 	  rdr set -s mallet
+	  rdr set -s tika
 	  rdr set -e
 	
 	See also: rdr get --help"""

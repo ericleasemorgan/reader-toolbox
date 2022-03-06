@@ -13,9 +13,9 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def ngrams( carrel, size, query, count, location ) :
 
-	"""Output and list words or phrases found in <carrel>.
+	"""Output and list words or phrases found in <carrel>
 
-	This is almost always the first place to start when doing your analysis.
+	This is almost always one of the first places to start when doing your analysis, and it can be applied to local as well as remote study carrels. Ngrams with sizes (-s) greater than 2 will include stopwords because ngrams of three or more words often do not make sense without them. Use the -c option to count and tabulate the result. Use the query (-q) to filter the result with a regular expression. 
 
 	Examples:
 

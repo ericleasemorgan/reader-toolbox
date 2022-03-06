@@ -9,9 +9,9 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def info( carrel ) :
 
-	"""Output metadata describing <carrel>.
+	"""Output metadata describing <carrel>
 
-	Use this subcommand to output very low-level metadata regarding <carrel>. Metadata includes values for identifiers, a possible title, name and date of publisher and publication, Reader process and input used for carrel creation, various extents, and most common keywords. This subcommand is useful for garnering the most rudimentary information about <carrel>.
+	Use this subcommand to output very low-level metadata regarding <carrel>. Metadata includes values for identifiers, a possible title, name and date of publisher and publication, Reader process and input used for carrel creation, various extents, and the most common keywords. This subcommand is useful for garnering the most rudimentary information about <carrel>.
 
 	Example: rdr info homer
 

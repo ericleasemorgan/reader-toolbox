@@ -11,7 +11,11 @@ from rdr import *
 @click.option('-o', '--output', default='list', type=click.Choice( [ 'list', 'histogram', 'boxplot' ] ), help='type of output')
 def readability( carrel, sort, output ) :
 
-	"""Report on the readability (Flesch score) of items in <carrel>."""
+	"""Report on the readability (Flesch score) of items in <carrel>
+	
+	It is possible to denote how difficult a text is to read by measuring things like number of words, density of the vocabulary, the length of a document, etc. Such calculations have been done against <carrel>, and this subcommand will output the results. If the returned values are wide-ranging, then this will tell you one thing about <carrel>. For example, some of the documents are either difficult to read, very long, or poorly transcribed ("OCR'ed"). If the measurements are homogeneous, then your carrel is more sane than not.
+	
+	Example: rdr readability homer -o boxplot"""
 
 	# configure
 	SCORE   = 'SELECT id, flesch FROM bib ORDER BY flesch DESC'

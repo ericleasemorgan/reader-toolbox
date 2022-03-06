@@ -10,9 +10,9 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def read( carrel, location ) :
 
-	"""Open <carrel> in your Web browser.
+	"""Open <carrel> in your Web browser
 	
-	Use this subcommand to peruse the narrative texts and interactive reports found in <carrel>; use this command to become familiar with the content of <carrel>.
+	Use this subcommand to peruse the narrative texts and interactive reports found in <carrel>; use this command to become familiar with the content of <carrel>. As of this writing, carrels created with the build command do not create the narrative reports, and consequently this command will fail ungracefully.
 	
 	Examples:
 	

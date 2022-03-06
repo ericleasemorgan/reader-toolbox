@@ -185,18 +185,16 @@ def pivot( localLibrary, carrel, field, keys ) :
 @click.argument( 'carrel', metavar='<carrel>' )
 def tm( carrel, process, topics, words, iterations, output, field, type ) :
 
-	"""Apply topic modeling against <carrel>.
+	"""Apply topic modeling against <carrel>
 	
-	Topic modeling is the process of enumerating latent themes from a corpus, and it is yet another way to describe a corpus's aboutness. It is suggested you start out small when it comes to the values for -t and -w. Repeat the modeling process and gradually increase the values. Increase the value of -i as the size of your carrel increases. 
-	
-	Remember, there is no such thing as the correct value of -t. After all, exactly how many things is the sum of Shakespeare's works about?
+	Topic modeling is the process of enumerating latent themes from a corpus, and it is yet another way to describe a corpus's aboutness. It is suggested you start out small when it comes to the values for -t and -w. Repeat the modeling process and gradually increase the values. Increase the value of -i as the size of your carrel increases. Remember, there is no such thing as the correct value of -t. After all, exactly how many things are the sum of Shakespeare's works about?
 	
 	Examples:
 	
 	\b
 	  rdr tm homer
 	  rdr tm homer -p read
-	  rdr tm homer -p read -o pivot -f title -c line"""
+	  rdr tm homer -p read -o chart -y line -f title"""
 
 	# require
 	from pathlib import Path

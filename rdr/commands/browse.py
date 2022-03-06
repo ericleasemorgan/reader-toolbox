@@ -9,7 +9,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def browse( carrel, location ) :
 
-	"""Peruse <carrel> as a file system.
+	"""Peruse <carrel> as a file system
 	
 	Study carrels are sets of HTML files, other plain text files, a whole lot of tab-delimited files, and an SQLite database file all organized in a file system -- a data set. This command uses a two different techniques for browsing the file systems. If the study carrel is saved locally, then it will try to use a terminal-based Web browser call Lynx. If the carrel is remote, then you will be directed to a dynamically generated HTML page. Because all study carrels have the same layout, this subcommand is useful for learning how many files and of what type are contained in <carrel>.
 	

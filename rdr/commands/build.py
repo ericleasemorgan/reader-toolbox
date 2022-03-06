@@ -758,7 +758,9 @@ def tsv2db( directory, extension, table, connection ) :
 @click.option('-s', '--start', is_flag=True, help='start Tika')
 def build( carrel, directory, erase, start ) :
 
-	"""Make <carrel> with files in <directory>"""
+	"""Create <carrel> from files in <directory>
+
+Use this command to build a data set ("study carrel") based on the files saved in a directory. Once the data set is created the other Toolbox commands can be applied to the result. The files can be of any type (PDF, Microsoft Word, HTML, etc.), and they can be of any kind (books, articles, reports, etc.), and they can be of any number (1, 2, 12, a few dozen, hundreds, etc.). The Toolbox is designed to read about a dozen journal articles in the form of PDF files. This command requires a Java tool called Tika, and it is used to convert the input files into plain text as well as extract authors, titles, and dates. If the Toolbox has not been configured and/or Tika is not installed, then the Toolbox will try to install it on your behalf. If the given directory contains a file named 'metadata.csv', then this command will use the file as the source of author, title, and date metadata values. This is often very helpful because sans metadata it is very difficult to make comparison between documents. Please see the full-blown documentation for details."""
 
 	# configure
 	CACHE  = 'cache'

@@ -74,10 +74,10 @@ def grammars( carrel, grammar, query, noun, lemma, sort, count ) :
 	  quotes - things people say
 	  svo - fragments in the form of subject-verb-object (the default)
 	  sss - a more advanced version of svo; fragments beginning
-	    with an entity, are co-occur with a verb, and are followed
+	    with an entity, co-occur with a verb, and are followed
 	    by a phrase
 	
-	This is very useful for the purposes of listing more complete ideas from a text.
+	This is very useful for the purposes of listing more complete ideas from a text; the default output will list bunches o' snippets listing what things do to what. Sort the result to more easily identify patterns and anomalies.
 	
 	Examples:
 	

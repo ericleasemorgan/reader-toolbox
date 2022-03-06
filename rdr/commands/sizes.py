@@ -11,7 +11,7 @@ from rdr import *
 @click.option('-o', '--output', default='list', type=click.Choice( [ 'list', 'histogram', 'boxplot' ] ), help='type of output')
 def sizes( carrel, sort, output ) :
 
-	"""Report on the sizes (in words) of items in <carrel>."""
+	"""Report on the sizes (in words) of items in <carrel>"""
 
 	# configure
 	WORDS   = 'SELECT id, words FROM bib ORDER BY words DESC'

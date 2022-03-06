@@ -11,7 +11,7 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 def adr( carrel, count, like ) :
 
-	"""Filter email addresses from <carrel>.
+	"""Filter email addresses from <carrel>
 
 	Who are you gonna call? 
 
