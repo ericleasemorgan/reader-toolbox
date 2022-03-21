@@ -6,9 +6,11 @@ from rdr import *
 
 # ngrams
 @click.command( options_metavar='<options>' )
-@click.option('-c', '--count', is_flag=True, help='count and tabulate the result')
+@click.option('-c', '--count',     is_flag=True, help='count and tabulate the result')
+@click.option('-w', '--wordcloud', is_flag=True, help='given -c, visualize as word cloud')
+@click.option('-v', '--save',      is_flag=True, help='given -c and -w, save result in defaul location')
 @click.argument( 'carrel', metavar='<carrel>' )
-def wrd( carrel, count ) :
+def wrd( carrel, count, wordcloud, save ) :
 
 	"""Filter statistically computed keywords from <carrel>
 
@@ -51,12 +53,30 @@ def wrd( carrel, count ) :
 		# articulate sql, search, and output
 		sql  = 'SELECT LOWER( keyword ) AS keyword, COUNT( LOWER( keyword ) ) AS count FROM wrd GROUP BY LOWER( keyword ) ORDER BY count DESC, keyword;'
 		rows = connection.execute( sql )
-		for row in rows : 
 		
-			# output, conditionally; weird
-			if row[ 'keyword' ] : click.echo( "\t".join( [ row[ 'keyword' ], str( row[ 'count' ] ) ] ) )			
+		# output a simple list
+		if not wordcloud :
 			
+			for row in rows : 
+		
+				# output, conditionally; weird
+				if row[ 'keyword' ] : click.echo( "\t".join( [ row[ 'keyword' ], str( row[ 'count' ] ) ] ) )			
+
+		# output a word cloud
+		else :
 			
+			# create a list of frequencies
+			frequencies = {}
+			for row in rows :
+			
+				if row[ 'keyword' ] : frequencies[ row[ 'keyword' ] ] = row[ 'count' ]
+			
+			if not save : cloud( frequencies )
+			else :
+			
+				file = locallibrary/carrel/FIGURES/KEYWORDSCLOUD
+				cloud( frequencies, file=file )
+
 	# clean up
 	connection.close()
 

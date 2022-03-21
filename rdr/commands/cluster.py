@@ -8,7 +8,8 @@ from rdr import *
 @click.command( options_metavar='[<options>]' )
 @click.argument( 'carrel', metavar='<carrel>' )
 @click.option('-t', '--type', default='dendrogram', type=click.Choice( [ 'dendrogram', 'cube' ] ), help='denote the shape of the output')
-def cluster( carrel, type ) :
+@click.option('-v', '--save', is_flag=True, help='save result in default location')
+def cluster( carrel, type, save ) :
 
 	"""Apply dimension reduction to <carrel> and visualize the result
 	
@@ -59,13 +60,13 @@ def cluster( carrel, type ) :
 		ax.scatter( pos[ :, 0 ], pos[ :, 1 ], pos[ :, 2 ] )
 		for x, y, z, s in zip( pos[ :, 0 ], pos[ :, 1 ], pos[ :, 2 ], keys ) : ax.text( x, y, z, s )
 
-	# error
-	else : 
-		click.echo( f"Error: Unknown value for TYPE: { type }" )
-		system( 'rdr cluster --help' )		
-
-	# output
-	plt.show()
+	# save, or not
+	if save :
+	
+		if type == 'dendrogram' : plt.savefig( localLibrary/carrel/FIGURES/CLUSTERDENDROGRAM )
+		else                    : plt.savefig( localLibrary/carrel/FIGURES/CLUSTERCUBE )
+		
+	else : plt.show()
 
 
 

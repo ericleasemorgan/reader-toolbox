@@ -9,7 +9,8 @@ from rdr import *
 @click.argument( 'carrel', metavar='<carrel>' )
 @click.option('-s', '--sort', default='score', type=click.Choice( [ 'id', 'score' ] ), help='order result')
 @click.option('-o', '--output', default='list', type=click.Choice( [ 'list', 'histogram', 'boxplot' ] ), help='type of output')
-def readability( carrel, sort, output ) :
+@click.option('-v', '--save', is_flag=True, help='save result in default location')
+def readability( carrel, sort, output, save ) :
 
 	"""Report on the readability (Flesch score) of items in <carrel>
 	
@@ -50,18 +51,24 @@ def readability( carrel, sort, output ) :
 			
 		# create a simple list of words, and store it in a dataframe
 		records = []
-		for row in rows : records.append( row[ 'flesch' ] )
+		for row in rows : records.append( int( row[ 'flesch' ] ) )
 		df = pd.DataFrame( records, columns=COLUMNS )
 
 		# initialize the plot
 		figure, axis = plt.subplots()
 
 		# plot
-		if output == 'histogram' : df.hist( ax=axis )
-		else                     : df.boxplot( ax=axis )		
+		if output == 'histogram' : 
+		
+			df.hist( ax=axis )
+			if save : plt.savefig( locallibrary/carrel/FIGURES/READABILITYHISTOGRAM )
+			else    : plt.show()
 
-		# output
-		plt.show()
+		else :
+		
+			df.boxplot( ax=axis )		
+			if save : plt.savefig( locallibrary/carrel/FIGURES/READABILITYBOXPLOT )
+			else    : plt.show()
 
 	# clean up
 	connection.close()

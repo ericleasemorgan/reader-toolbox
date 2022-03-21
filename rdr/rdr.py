@@ -36,6 +36,7 @@ import rdr.commands.sql          as sql
 import rdr.commands.tm           as tm
 import rdr.commands.url          as url
 import rdr.commands.wrd          as wrd
+import rdr.commands.summarize    as summarize
 
 # initialize 
 @click.group()
@@ -85,6 +86,7 @@ rdr.add_command( sql.sql )
 rdr.add_command( tm.tm )
 rdr.add_command( url.url )
 rdr.add_command( wrd.wrd )
+rdr.add_command( summarize.summarize )
 
 
 # do the work

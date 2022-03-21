@@ -36,17 +36,30 @@ REMOTELIBRARY = 'http://library.distantreader.org'
 CARRELS       = 'carrels'
 
 # file system mappings
-CORPUS     = 'reader.txt'
-DATABASE   = 'reader.db'
-ETC        = 'etc'
-HTM        = 'htm'
-INDEX      = 'index.htm'
-MANIFEST   = 'MANIFEST.xml'
-STOPWORDS  = 'stopwords.txt'
-TXT        = 'txt'
-CACHE      = 'cache'
-PROVENANCE = 'provenance.tsv'
-METADATA   = 'metadata.csv'
+CORPUS              = 'reader.txt'
+DATABASE             = 'reader.db'
+ETC                  = 'etc'
+HTM                  = 'htm'
+INDEX                = 'index.htm'
+MANIFEST             = 'MANIFEST.xml'
+STOPWORDS            = 'stopwords.txt'
+TXT                  = 'txt'
+CACHE                = 'cache'
+PROVENANCE           = 'provenance.tsv'
+METADATA             = 'metadata.csv'
+INDEX                = 'index.htm'
+BIBLIOGRAPHY         = 'bibliography.txt'
+SIZESBOXPLOT         = 'sizes-boxplot.png'
+SIZESHISTOGRAM       = 'sizes-histogram.png'
+READABILITYHISTOGRAM = 'readability-histogram.png'
+READABILITYBOXPLOT   = 'readability-boxplot.png'
+CLUSTERDENDROGRAM    = 'cluster-dendrogram.png'
+CLUSTERCUBE          = 'cluster-cube.png'
+FIGURES              = 'figures'
+KEYWORDSCLOUD        = 'keywords-cloud.png'
+UNIGRAMSCLOUD        = 'unigrams-cloud.png'
+BIGRAMSCLOUD         = 'bigrams-cloud.png'
+
 
 # spacy langauge model
 MODEL = 'en_core_web_sm'
@@ -180,5 +193,40 @@ def checkForCarrel( carrel ) :
 		exit()
 
 	
+# create a word cloud
+def cloud( frequencies, **kwargs ) :
+
+	# configure
+	HEIGHT = 960
+	WIDTH  = 1280
+	COLOR  = 'white'
+	
+	# require
+	from wordcloud           import WordCloud
+	import matplotlib.pyplot as plt
+
+	# read optional arguments
+	file = kwargs.get( 'file', None )
+
+	# build the cloud
+	wordcloud = WordCloud( width=WIDTH, height=HEIGHT, background_color=COLOR )
+	wordcloud.generate_from_frequencies( frequencies )
+
+	# save
+	if file : wordcloud.to_file( file )
+		
+	# display
+	else :
+	
+		# plot
+		plt.figure()
+		plt.imshow( wordcloud )
+		plt.axis( "off" )
+		plt.show()
+
+	# done
+	return True
+
+
 
 

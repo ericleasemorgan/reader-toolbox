@@ -6,12 +6,14 @@ from rdr import *
 
 # ngrams
 @click.command( options_metavar='<options>' )
-@click.option('-q', '--query', type=click.STRING, help="filter results to include the given regular expression")
-@click.option('-c', '--count', is_flag=True, help='count and tabulate the result')
-@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='where is the study carrel')
-@click.option('-s', '--size', default=1, help='denote unigrams, bigrams, trigrams, etc')
+@click.option('-q', '--query',      type=click.STRING, help="filter results to include the given regular expression")
+@click.option('-c', '--count',     is_flag=True, help='count and tabulate the result')
+@click.option('-l', '--location',  default='local', type=click.Choice( [ 'local', 'remote' ] ), help='where is the study carrel')
+@click.option('-s', '--size',      default=1, help='denote unigrams, bigrams, trigrams, etc')
+@click.option('-w', '--wordcloud', is_flag=True, help='given -c, output a wordcloud')
+@click.option('-v', '--save',      is_flag=True, help='given -c and -w, save cloud to default location')
 @click.argument( 'carrel', metavar='<carrel>' )
-def ngrams( carrel, size, query, count, location ) :
+def ngrams( carrel, size, query, count, location, wordcloud, save ) :
 
 	"""Output and list words or phrases found in <carrel>
 
@@ -29,6 +31,9 @@ def ngrams( carrel, size, query, count, location ) :
 
 	See also: rdr concordance --help"""
 
+	# configure
+	LIMIT = 200
+	
 	# require
 	from re       import search
 	from requests import get
@@ -107,23 +112,59 @@ def ngrams( carrel, size, query, count, location ) :
 	if count :
 	
 		# initialize a dictionary and process each ngram
-		items = {}
+		frequencies = {}
 		for ngram in ngrams :
 
 			# update the dictionary
-			if ngram in items : items[ ngram ] += 1
-			else              : items[ ngram ]  = 1
+			if ngram in frequencies : frequencies[ ngram ] += 1
+			else                    : frequencies[ ngram ]  = 1
 
-		# sort the dictionary; return the ngrams
-		ngrams = sorted( items.items(), key=lambda x:x[ 1 ], reverse=True )
+		# sort the dictionary
+		ngrams = sorted( frequencies.items(), key=lambda x:x[ 1 ], reverse=True )
 		
-		# process each ngram
-		for ngram in ngrams :
+		if not wordcloud :
+		
+			# process each ngram
+			for ngram in ngrams :
 			
-			# create a record and output
-			record = '\t'.join( list( ngram[ 0 ] ) ) + '\t' + str( ngram[ 1 ] )
-			click.echo( record )
+				# create a record and output
+				record = '\t'.join( list( ngram[ 0 ] ) ) + '\t' + str( ngram[ 1 ] )
+				click.echo( record )
+				
+		else :
 		
+			# limit the number of ngrams; we can't visualize a huge number
+			ngrams = ngrams[ :LIMIT ]
+			
+			# coerce the result into a dictionary of frequencies
+			frequencies = {}
+			for ngram in ngrams : frequencies[ ' '.join( ngram[ 0 ] ) ] = ngram[ 1 ]
+			
+			# simply output
+			if not save : cloud( frequencies )
+
+			# save to the corresponding figures directory
+			else :
+			
+				# unigrams
+				if size == 1 :
+				
+					# configure and save
+					file = localLibrary/carrel/FIGURES/UNIGRAMSCLOUD
+					cloud( frequencies, file=file )
+					
+				# bigrams
+				elif size == 2 :
+				
+					# configure and save
+					file = localLibrary/carrel/FIGURES/BIGRAMSCLOUD
+					cloud( frequencies, file=file )
+				
+				# unsupported
+				else : click.echo( "The save option is only valid for unigrams and bigrams; there is no default location for anything else.", err=True )
+				
+				
+			
 	# power user
 	else :
 	

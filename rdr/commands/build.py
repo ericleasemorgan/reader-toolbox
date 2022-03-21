@@ -130,17 +130,18 @@ def initialize( carrel, directory ) :
 	
 	# create the library, the carrel, and the carrel's sub-directories
 	localLibrary = configuration( 'localLibrary' )
-	Path.mkdir( localLibrary,              exist_ok=True )
-	Path.mkdir( localLibrary/carrel,       exist_ok=True )
-	Path.mkdir( localLibrary/carrel/ADR,   exist_ok=True )
-	Path.mkdir( localLibrary/carrel/BIB,   exist_ok=True )
-	Path.mkdir( localLibrary/carrel/CACHE, exist_ok=True )
-	Path.mkdir( localLibrary/carrel/ENT,   exist_ok=True )
-	Path.mkdir( localLibrary/carrel/ETC,   exist_ok=True )
-	Path.mkdir( localLibrary/carrel/POS,   exist_ok=True )
-	Path.mkdir( localLibrary/carrel/TXT,   exist_ok=True )
-	Path.mkdir( localLibrary/carrel/URLS,  exist_ok=True )
-	Path.mkdir( localLibrary/carrel/WRD,   exist_ok=True )
+	Path.mkdir( localLibrary,                exist_ok=True )
+	Path.mkdir( localLibrary/carrel,         exist_ok=True )
+	Path.mkdir( localLibrary/carrel/ADR,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/BIB,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/CACHE,   exist_ok=True )
+	Path.mkdir( localLibrary/carrel/ENT,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/ETC,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/FIGURES, exist_ok=True )
+	Path.mkdir( localLibrary/carrel/POS,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/TXT,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/URLS,    exist_ok=True )
+	Path.mkdir( localLibrary/carrel/WRD,     exist_ok=True )
 
 	# configure provenance and output it
 	process     = PROCESS
