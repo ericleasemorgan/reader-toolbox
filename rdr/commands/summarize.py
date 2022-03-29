@@ -4,48 +4,57 @@
 TEMPLATE = '''
 <html>
 <head>
-<title>Summary of ##CARREL##</title>
+<title>Index of ##CARREL##</title>
 </head>
 <body style='margin: 7%'>
 
-	<h1>Summary of ##CARREL##</h1>
+	<h1>Index of ##CARREL##</h1>
 
-	<h2>Introduction</h2>
+	<h2>Contents</h2>
+	
+		<ul>
+		<li>Preface</li>
+		<li><a href="./MANIFEST.htm">Manifest</a></li>
+		<li>Standard reports: 1) <a href="./standard-output.txt">summary</a>, 2) <a href="./standard-error.txt">error log</a></li>
+		<li>Basic characteristics</li>
+		</ul>
 
-	<ol>
-		<li>Creator</li>
-		<li>Title</li>
-		<li>Date</li>
-		<li>Number of items</li>
-		<li>Number of words</li>
-		<li>Average readability score</li>
-		<li><a href="./etc/bibliography.txt">Bibliography</a></li>
-	</ol>
+	<h2>Basic characteristics</h2>
 
-	<h2>Sizes</h2>
-		<p style='text-align: center'>
-		<img src='./figures/sizes-boxplot.png' width='49%' /> <img src='./figures/sizes-histogram.png' width='49%' />
-		</p>
+		<ol>
+			<li>Creator</li>
+			<li>Title</li>
+			<li>Date</li>
+			<li>Number of items</li>
+			<li>Number of words</li>
+			<li>Average readability score</li>
+			<li><a href="./etc/bibliography.txt">Bibliography</a></li>
+		</ol>
 
-	<h2>Readability</h2>
-		<p style='text-align: center'>
-		<img src='./figures/readability-boxplot.png' width='49%' /> <img src='./figures/readability-histogram.png' width='49%' />
-		</p>
+		<h3>Sizes</h3>
+			<p style='text-align: center'>
+			<img src='./figures/sizes-boxplot.png' width='49%' /> <img src='./figures/sizes-histogram.png' width='49%' />
+			</p>
 
-	<h2>Clusters</h2>
-		<p style='text-align: center'>
-		<img src='./figures/cluster-dendrogram.png' width='49%' /> <img src='./figures/cluster-cube.png' width='49%' />
-		</p>
+		<h3>Readability</h3>
+			<p style='text-align: center'>
+			<img src='./figures/readability-boxplot.png' width='49%' /> <img src='./figures/readability-histogram.png' width='49%' />
+			</p>
 
-	<h2>Ngrams</h2>
-		<p style='text-align: center'>
-		<img src='./figures/unigrams-cloud.png' width='49%' /> <img src='./figures/bigrams-cloud.png' width='49%' />
-		</p>
+		<h3>Clusters</h3>
+			<p style='text-align: center'>
+			<img src='./figures/cluster-dendrogram.png' width='49%' /> <img src='./figures/cluster-cube.png' width='49%' />
+			</p>
 
-	<h2>Keywords</h2>
-		<p style='text-align: center'>
-		<img src='./figures/keywords-cloud.png' width='66%' />
-		</p>
+		<h3>Ngrams</h3>
+			<p style='text-align: center'>
+			<img src='./figures/unigrams-cloud.png' width='49%' /> <img src='./figures/bigrams-cloud.png' width='49%' />
+			</p>
+
+		<h3>Keywords</h3>
+			<p style='text-align: center'>
+			<img src='./figures/keywords-cloud.png' width='66%' />
+			</p>
 
 </body>
 </html>
