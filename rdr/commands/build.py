@@ -685,7 +685,7 @@ def file2bib( carrel, file, metadata=None ) :
 		# provide a review
 		click.echo( '        key: ' + key,              err=True )
 		click.echo( '     author: ' + author,           err=True )
-		click.echo( '      title: ' + title,            err=True )
+		click.echo( '      title: ' + str( title ),     err=True )
 		click.echo( '       date: ' + date,             err=True )
 		click.echo( '  extension: ' + extension,        err=True )
 		click.echo( '      pages: ' + pages,            err=True )
@@ -706,7 +706,7 @@ def file2bib( carrel, file, metadata=None ) :
 		
 			# output the header and the data
 			handle.write( '\t'.join( HEADER ) + '\n' )
-			handle.write( '\t'.join( [ str( key ), author, title, str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
+			handle.write( '\t'.join( [ str( key ), author, str( title ), str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
 		
 		# trap weird TypeError
 		except TypeError : click.echo( ( "\nWARNING (TypeError): Probably weird author value extracted from PDF file (key: %s). Call Eric.\n" % key ), err=True )

@@ -14,8 +14,6 @@ TEMPLATE = '''
 	
 		<ul>
 		<li>Preface</li>
-		<li><a href="./MANIFEST.htm">Manifest</a></li>
-		<li>Standard reports: 1) <a href="./standard-output.txt">summary</a>, 2) <a href="./standard-error.txt">error log</a></li>
 		<li>Basic characteristics</li>
 		</ul>
 
