@@ -153,6 +153,18 @@ There are many different ways the output of ``bib`` can be used. One of the quic
 Additionally, the student, researcher, or scholar may observe the values in the keyword field, and then use the ``search`` subcommand (described below), to identify other documents about the same topic.
 
 
+sizes
+-----
+
+Report on the sizes (in words) of items in <carrel>
+
+
+readability
+-----------
+
+Report on the readability (Flesch score) of items in <carrel>
+
+
 cluster
 -------
 
@@ -390,6 +402,12 @@ The larger the study carrel, the more important it is to allow the underlying su
   rdr tm homer -t 5 -w 24 -i 4800
 
 Knowing the correct value for ``-i`` is determined by the size of your carrel, the size of your computer, and your patience.
+
+
+collocations
+------------
+
+Output network graph based on bigram collocations in...
 
 
 semantics
@@ -667,6 +685,12 @@ Then query the database in a number of different ways: ::
 The different types of queries are almost limitless, and the key to using the database is less about knowing SQL and more about being able to articulate the type of information one wants to extract. 
 
 For more ideas of how to exploit the database see ``etc/queries.sql`` found in every study carrel. That file is used to create ``etc/report.txt``.
+
+
+build
+-----
+
+Create <carrel> from files in <directory>
 
 
 play

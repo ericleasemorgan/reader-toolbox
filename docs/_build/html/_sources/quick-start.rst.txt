@@ -7,7 +7,7 @@ This is a quick start for using the Toolbox, sans very much elaboration: ::
   pip install reader-toolbox --upgrade
   
   # configure; accept the default
-  rdr set local
+  rdr set -s local
   
   # add an item to your library
   rdr download homer
