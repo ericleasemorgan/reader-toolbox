@@ -165,26 +165,6 @@ readability
 Report on the readability (Flesch score) of items in <carrel>
 
 
-cluster
--------
-
-Use the ``cluster`` subcommand to get an idea of a given carrel's homogeneity. 
-
-The Toolbox supports two types of clustering. The first (and default) is ``dendrogram`` where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example: ::
-
-  rdr cluster homer
-
-The following command is equivalent: ::
-
-  rdr cluster -t dendrogram homer
-
-The second type of clustering (``cube``) reduces the carrel to three dimensions and plots the results in a space: ::
-
-  rdr cluster -t cube homer
-
-If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the ``cluster`` subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The ``cluster`` subcommand is also useful when using the ``tm`` (topic modeling) subcommand, because ``cluster`` will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result of ``cluster`` most likely not be very readable.
-
-
 ngrams
 ------
 
@@ -287,6 +267,72 @@ Like many of the other subcommands, the output of ``concordance`` is designed to
 Initially, the cloud will be dominated by the value of ``-q``, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.
 
 
+adr
+---
+
+The ``adr`` subcommand is used to output email addresses.
+
+As a study carrel is created, the Distant Reader will look for email addresses in the content. Use this command to enumerate and filter those addresses. But alas, the works of Homer include zero email addresses. Consequently, download a different carrel which does, for example, part of a run of an electronic journal named Information Technology and Libraries: ::
+
+  rdr download ital-urls
+
+You can now list email addresses: ::
+
+  rdr adr ital-urls
+
+The ``adr`` subcommand does not echo the same address multiple times, but an address may very well occur more than once. To see how many times addresses occur, use the ``-c`` flag: ::
+
+  rdr adr ital-urls -c 
+
+The student, researcher, or scholar can filter the addresses with ``-l`` which is short for the LIKE operator in SQL. For example, to list all the addresses like ".com", use this: ::
+
+  rdr adr ital-urls -l .com
+
+And/or count the result: ::
+
+  rdr adr ital-urls -c -l .com
+
+Use the output of ``adr`` responsibly. You know what I mean.
+
+
+url
+---
+
+Use ``url`` to list, enumerate, and filter URLs.
+
+Like the listing of words, persons, or keywords, the listing of URLs can be quite telling when it comes to learning the content of a study carrel. The ``url`` subcommand facilitates this. Again, Homer's works include zero URLs, so download a carrel named ital-urls, which includes many: ::
+
+  rdr download ital-urls
+
+List all the URLs and pipe them through a pager. They will be sorted alphabetically: ::
+
+  rdr url ital-urls | more
+  
+Many times the domain for a URL is telling, so you can list just those instead: ::
+
+  rdr url ital-urls -s domain | more
+  
+There will quite likely be duplicates, so you may want to count and tabulate the result: ::
+
+  rdr url ital-urls -s domain -c | more
+
+You can also filter the results with ``-l``. So, to count and tabulate URLs like pdf, try: ::
+
+  rdr url ital-urls -l pdf -c | more
+
+Besides using the URLs to help you learn about your carrel, you can also use ``url`` to assist you in acquiring additional content. For example, first filter the URLs for "pdf" and output the result to a file:
+
+  rdr url ital-urls -l pdf > pdfs.txt
+
+Then use pdfs.txt as input to a mass downloader to actually get the content. For example, use the venerable wget command ::
+
+  wget -i pdfs.txt
+
+Consider also using the output of ``urls`` as input to the Distant Reader; create a new study carrel using the URLs identified in a carrel.
+
+Finally, some of the URLs extracted from the underlying plain text are quite ugly, if not down-right invalid. Please remember, "Do not let the perfect be the enemy of the good." Moreover, keep in mind that URLs very frequently break, go stale, or require authentication. Such is not uncommon. Also, increasingly, URLs pointing to scholarly journal articles do not really point to journal articles. Instead, they point to "splash" or "landing" pages which then force you to find the link to the article, and even then the student, researcher, or scholar may not get the item in question, but a viewer instead. Your milage may vary.
+
+
 wrd
 ---
 
@@ -374,136 +420,6 @@ Use the output of ``ent`` as input to ``concordance`` to see how entities of int
 For extra credit, export things like people or places to a file. Programmatically look up those values in an encyclopedia or gazateer to get birth dates, death dates, or geographic coordinates. From the results, create a timeline or map. The results will illustrate characteristics of your carrel not immediately apparent. 
 
 
-tm
---
-
-Use ``tm`` to do topic modeling.
-
-Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, "What N things is the carrel about, and how might each N thing be described?" But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare's works about?
-
-This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.
-
-When using the ``tm`` command, start with a small number of topics, say seven, which is the default: ::
-
-  rdr tm homer
-
-If there are many overlapping circles in the results, then consider reducing the number of topics: ::
-
-  rdr tm homer -t 5
-
-Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating: ::
-
-  rdr tm homer -t 5 -w 24
-
-If you observe words in the output which you deem as useless, then consider using the ``edit`` subcommand to denote those words as stop words. When running ``tm`` again, those words ought not be in the output.
-
-The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example: ::
-
-  rdr tm homer -t 5 -w 24 -i 4800
-
-Knowing the correct value for ``-i`` is determined by the size of your carrel, the size of your computer, and your patience.
-
-
-collocations
-------------
-
-Output network graph based on bigram collocations in...
-
-
-semantics
----------
-
-The use of ``semantics`` is to do semantic indexing and word embedding.
-
-Similar to concordancing and topic modeling, this subcommand is useful for learning what words are related in meaning to other words. It is an implementation of "semantic indexing" or sometimes called "word embedding". It is based on a tool called word2vec.
-
-This subcommand -- ``semantics`` -- understands three different semantics. The first is ``similarity``. Given a word, ``semantics`` will return a list, and each item will include a word and a score. The closer the score is to 1 the more similar the listed words are considered. This does not mean the words are synonyms. Instead it means they are more likely mentioned "in the same breath" as the given word. For example, the following command will return words close -- in the same semantic space -- to the word love: ::
-
-  rdr semantics homer
-
-Alternatively, the query, the type of query, and the size of the result can be explicitly stated: ::
-
-  rdr semantics homer -q love
-  rdr semantics homer -q hector
-  rdr semantics homer -t similarity -q ajax
-  rdr semantics homer -s 25 -t similarity -q ajax
-
-The semantic called ``distance`` take two or more words as input. Like the ``similarity`` measure, it will return a list but each item will include three fields: one of the given words, another of the given words, and a distance measure. The list will be sorted by the distance measure between the two words. Given a longer rather than shorter list of words, the student, researcher, or scholar can begin to see patterns, themes, or trends in the study carrel. For example: ::
-
-  rdr semantics homer -t distance -q "love hector ajax son ship"
-  
-Note, the ``distance`` semantic returns a set of graphs -- a node, another node, and an edge. Consider outputing the result of the distance measure to a file, and then importing the file into something like Gephi to visualize the relationships. 
-
-The last semantic is analogy, and it takes three words as input. The first two words are expected to have some sort of pre-conceived relationship. The third is the query in the hopes of identifying other words which have a similar relationship to the first two words. The canonical example is father, queen, and prince, in the hopes of returning words like princess. Try: ::
-
-  rdr semantics homer -t analogy -q 'king queen prince'
-  rdr semantics homer -t analogy -q 'king queen prince' -s 25
-  
-Think of semantic indexing this way. When this word, that word, or the other word is used in the corpus, what other words are also used, or what other words are not used.
-
-Finally, and very importantly, semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than one million words ought to be considered dubious at best. (Melville's Moby Dick is often considered a long book, and it is only .2 million words long.) Corpora measuring 1.5 million words begins to be amenable. Corpora greater than two million words long ought to be good to go. The larger, the better. 
-
-
-search
-------
-
-This subcommand -- ``search`` -- is an implementation of the traditional full text, bibliographic query.
-
-Given an expression ranging from the simple to the complex, this subcommand will return a list of items from the carrel, and each item will be include authors, titles, summaries, keywords, etc.
-
-The expression can be quite... expressive. It can be a single word, a phrase, a fielded search, a Boolean operation, and even a nested query. Rudimentary examples follow: ::
-
-  # single word search
-  rdr search -q love homer
-  
-  # phrase search
-  rdr search -q '"floods of rain"' homer
-  
-  # implicit Boolean intersection (AND)
-  rdr search -q 'love justice' homer
-  
-  # explicit Boolean intersection
-  rdr search -q 'love AND justice' homer
-  
-  # Boolean union (OR)
-  rdr search -q 'love OR justice' homer
-  
-  # Boolean negation (NOT)
-  rdr search -q 'love NOT justice' homer
-  
-Each bibliographic record is made up of many fields, and those fields include:
-
-1. id - a unique identifier
-2. author - the creator of the work
-3. title - the title of of the work
-4. date - the date when the item was created
-5. summary - a computed narative describing the work
-6. keyword - a statistically significant word; akin to a subject heading
-7. words - an integer denoting the size of the document measured in words
-8. sentences - an integer denoting the size of the document measured in sentences
-9. flesch - an integer denoting the work's reading difficulty; values closer to 100 are easier to read
-
-Each one of these fields can be used in a query, but not all fields will necessarily have values. Additional query examples include: ::
-
-  # keyword search
-  rdr search -q keyword:trojans homer
-  
-  # keyword search with Boolean intersection (AND)
-  rdr search -q 'keyword:trojans AND keyword:hector' homer
-  
-  # summary search
-  rdr search -q summary:war homer
-  
-Queries can also be nested, thus allowing you to override the presidence of Boolean operations: ::
-
-  # nested query
-  rdr search -q '(keyword:trojans AND keyword:hector) OR (love AND justice)' homer
-
-The words, sentences, and flesch fields are searchable, but their values have been normalized into strings, and therefore mathematical operations are not possible. 
-
-Search results are always returned in a relevancy ranked order. If you need or want to sort, group, or filter the results in some other way, then export the results as a comma-separated value (CSV) file and use your favorite spreadsheet application accordingly.
-
-
 grammars
 --------
 
@@ -572,70 +488,154 @@ Similarly, the ``-c`` option counts and tabulates the results, and this is quite
   rdr grammars -g nouns -c homer | more
   
 
-adr
----
+cluster
+-------
 
-The ``adr`` subcommand is used to output email addresses.
+Use the ``cluster`` subcommand to get an idea of a given carrel's homogeneity. 
 
-As a study carrel is created, the Distant Reader will look for email addresses in the content. Use this command to enumerate and filter those addresses. But alas, the works of Homer include zero email addresses. Consequently, download a different carrel which does, for example, part of a run of an electronic journal named Information Technology and Libraries: ::
+The Toolbox supports two types of clustering. The first (and default) is ``dendrogram`` where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example: ::
 
-  rdr download ital-urls
+  rdr cluster homer
 
-You can now list email addresses: ::
+The following command is equivalent: ::
 
-  rdr adr ital-urls
+  rdr cluster -t dendrogram homer
 
-The ``adr`` subcommand does not echo the same address multiple times, but an address may very well occur more than once. To see how many times addresses occur, use the ``-c`` flag: ::
+The second type of clustering (``cube``) reduces the carrel to three dimensions and plots the results in a space: ::
 
-  rdr adr ital-urls -c 
+  rdr cluster -t cube homer
 
-The student, researcher, or scholar can filter the addresses with ``-l`` which is short for the LIKE operator in SQL. For example, to list all the addresses like ".com", use this: ::
-
-  rdr adr ital-urls -l .com
-
-And/or count the result: ::
-
-  rdr adr ital-urls -c -l .com
-
-Use the output of ``adr`` responsibly. You know what I mean.
+If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the ``cluster`` subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The ``cluster`` subcommand is also useful when using the ``tm`` (topic modeling) subcommand, because ``cluster`` will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result of ``cluster`` most likely not be very readable.
 
 
-url
----
+tm
+--
 
-Use ``url`` to list, enumerate, and filter URLs.
+Use ``tm`` to do topic modeling.
 
-Like the listing of words, persons, or keywords, the listing of URLs can be quite telling when it comes to learning the content of a study carrel. The ``url`` subcommand facilitates this. Again, Homer's works include zero URLs, so download a carrel named ital-urls, which includes many: ::
+Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, "What N things is the carrel about, and how might each N thing be described?" But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare's works about?
 
-  rdr download ital-urls
+This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.
 
-List all the URLs and pipe them through a pager. They will be sorted alphabetically: ::
+When using the ``tm`` command, start with a small number of topics, say seven, which is the default: ::
 
-  rdr url ital-urls | more
+  rdr tm homer
+
+If there are many overlapping circles in the results, then consider reducing the number of topics: ::
+
+  rdr tm homer -t 5
+
+Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating: ::
+
+  rdr tm homer -t 5 -w 24
+
+If you observe words in the output which you deem as useless, then consider using the ``edit`` subcommand to denote those words as stop words. When running ``tm`` again, those words ought not be in the output.
+
+The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example: ::
+
+  rdr tm homer -t 5 -w 24 -i 4800
+
+Knowing the correct value for ``-i`` is determined by the size of your carrel, the size of your computer, and your patience.
+
+
+search
+------
+
+This subcommand -- ``search`` -- is an implementation of the traditional full text, bibliographic query.
+
+Given an expression ranging from the simple to the complex, this subcommand will return a list of items from the carrel, and each item will be include authors, titles, summaries, keywords, etc.
+
+The expression can be quite... expressive. It can be a single word, a phrase, a fielded search, a Boolean operation, and even a nested query. Rudimentary examples follow: ::
+
+  # single word search
+  rdr search -q love homer
   
-Many times the domain for a URL is telling, so you can list just those instead: ::
-
-  rdr url ital-urls -s domain | more
+  # phrase search
+  rdr search -q '"floods of rain"' homer
   
-There will quite likely be duplicates, so you may want to count and tabulate the result: ::
+  # implicit Boolean intersection (AND)
+  rdr search -q 'love justice' homer
+  
+  # explicit Boolean intersection
+  rdr search -q 'love AND justice' homer
+  
+  # Boolean union (OR)
+  rdr search -q 'love OR justice' homer
+  
+  # Boolean negation (NOT)
+  rdr search -q 'love NOT justice' homer
+  
+Each bibliographic record is made up of many fields, and those fields include:
 
-  rdr url ital-urls -s domain -c | more
+1. id - a unique identifier
+2. author - the creator of the work
+3. title - the title of of the work
+4. date - the date when the item was created
+5. summary - a computed narative describing the work
+6. keyword - a statistically significant word; akin to a subject heading
+7. words - an integer denoting the size of the document measured in words
+8. sentences - an integer denoting the size of the document measured in sentences
+9. flesch - an integer denoting the work's reading difficulty; values closer to 100 are easier to read
 
-You can also filter the results with ``-l``. So, to count and tabulate URLs like pdf, try: ::
+Each one of these fields can be used in a query, but not all fields will necessarily have values. Additional query examples include: ::
 
-  rdr url ital-urls -l pdf -c | more
+  # keyword search
+  rdr search -q keyword:trojans homer
+  
+  # keyword search with Boolean intersection (AND)
+  rdr search -q 'keyword:trojans AND keyword:hector' homer
+  
+  # summary search
+  rdr search -q summary:war homer
+  
+Queries can also be nested, thus allowing you to override the presidence of Boolean operations: ::
 
-Besides using the URLs to help you learn about your carrel, you can also use ``url`` to assist you in acquiring additional content. For example, first filter the URLs for "pdf" and output the result to a file:
+  # nested query
+  rdr search -q '(keyword:trojans AND keyword:hector) OR (love AND justice)' homer
 
-  rdr url ital-urls -l pdf > pdfs.txt
+The words, sentences, and flesch fields are searchable, but their values have been normalized into strings, and therefore mathematical operations are not possible. 
 
-Then use pdfs.txt as input to a mass downloader to actually get the content. For example, use the venerable wget command ::
+Search results are always returned in a relevancy ranked order. If you need or want to sort, group, or filter the results in some other way, then export the results as a comma-separated value (CSV) file and use your favorite spreadsheet application accordingly.
 
-  wget -i pdfs.txt
 
-Consider also using the output of ``urls`` as input to the Distant Reader; create a new study carrel using the URLs identified in a carrel.
+collocations
+------------
 
-Finally, some of the URLs extracted from the underlying plain text are quite ugly, if not down-right invalid. Please remember, "Do not let the perfect be the enemy of the good." Moreover, keep in mind that URLs very frequently break, go stale, or require authentication. Such is not uncommon. Also, increasingly, URLs pointing to scholarly journal articles do not really point to journal articles. Instead, they point to "splash" or "landing" pages which then force you to find the link to the article, and even then the student, researcher, or scholar may not get the item in question, but a viewer instead. Your milage may vary.
+Output network graph based on bigram collocations in <carrel>
+
+
+semantics
+---------
+
+The use of ``semantics`` is to do semantic indexing and word embedding.
+
+Similar to concordancing and topic modeling, this subcommand is useful for learning what words are related in meaning to other words. It is an implementation of "semantic indexing" or sometimes called "word embedding". It is based on a tool called word2vec.
+
+This subcommand -- ``semantics`` -- understands three different semantics. The first is ``similarity``. Given a word, ``semantics`` will return a list, and each item will include a word and a score. The closer the score is to 1 the more similar the listed words are considered. This does not mean the words are synonyms. Instead it means they are more likely mentioned "in the same breath" as the given word. For example, the following command will return words close -- in the same semantic space -- to the word love: ::
+
+  rdr semantics homer
+
+Alternatively, the query, the type of query, and the size of the result can be explicitly stated: ::
+
+  rdr semantics homer -q love
+  rdr semantics homer -q hector
+  rdr semantics homer -t similarity -q ajax
+  rdr semantics homer -s 25 -t similarity -q ajax
+
+The semantic called ``distance`` take two or more words as input. Like the ``similarity`` measure, it will return a list but each item will include three fields: one of the given words, another of the given words, and a distance measure. The list will be sorted by the distance measure between the two words. Given a longer rather than shorter list of words, the student, researcher, or scholar can begin to see patterns, themes, or trends in the study carrel. For example: ::
+
+  rdr semantics homer -t distance -q "love hector ajax son ship"
+  
+Note, the ``distance`` semantic returns a set of graphs -- a node, another node, and an edge. Consider outputing the result of the distance measure to a file, and then importing the file into something like Gephi to visualize the relationships. 
+
+The last semantic is analogy, and it takes three words as input. The first two words are expected to have some sort of pre-conceived relationship. The third is the query in the hopes of identifying other words which have a similar relationship to the first two words. The canonical example is father, queen, and prince, in the hopes of returning words like princess. Try: ::
+
+  rdr semantics homer -t analogy -q 'king queen prince'
+  rdr semantics homer -t analogy -q 'king queen prince' -s 25
+  
+Think of semantic indexing this way. When this word, that word, or the other word is used in the corpus, what other words are also used, or what other words are not used.
+
+Finally, and very importantly, semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than one million words ought to be considered dubious at best. (Melville's Moby Dick is often considered a long book, and it is only .2 million words long.) Corpora measuring 1.5 million words begins to be amenable. Corpora greater than two million words long ought to be good to go. The larger, the better. 
 
 
 sql
