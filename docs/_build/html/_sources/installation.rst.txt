@@ -3,8 +3,14 @@ Installation
 
 The Reader Toolbox is a suite of Python scripts integrated into a single command-line interface. It ought to run on any computer with Python 3 or above installed. From the command line, installation is as simple as: ::
 
-  pip install reader-toolbox --upgrade
+  pip install reader-toolbox
 
+You can also install the development version of the Toolbox with the following commands: ::
+
+  git clone https://github.com/ericleasemorgan/reader-toolbox.git
+  cd reader-toolbox
+  pip install -e .
+  
 Once you get this far, you ought to be able to run the Toolbox command -- ``rdr`` -- which is short for "reader": ::
 
   rdr
