@@ -116,6 +116,8 @@ Use the ``info`` subcommand to get the broadest of views describing the carrel a
 
 The result will be a human-readable snippet of text listing the name(s) of the carrel as it appears on your file system, who published (created) the carrel and when, the Distant Reader process used to create the carrel and the associated input, a number of extents (sizes) describing the carrel, and the most frequent statistically significant computed keywords.
 
+When it comes to the number of words, some context is beneficial. A carrel of 1 million words begins to be large. The Bible is about .8 million words long. Herman Melville's Moby Dick is about .2 million words long. The typical scholarly journal article is about .005 (5,000) words long. Depending on the size of the carrel, different modeling techniques are apropos.
+
 Think of the output of the ``info`` command akin to a traditional library catalog card. Remember those? For most of us, probably not.
 
 
@@ -156,14 +158,46 @@ Additionally, the student, researcher, or scholar may observe the values in the 
 sizes
 -----
 
-Report on the sizes (in words) of items in <carrel>
+Use this command to learn about the sizes -- measured in words -- of each item in your carrel. Sizes is a type of extent. 
+
+By default, the ``sizes`` command outputs a tab-delimited list of carrel identifiers and number of words in descending order: ::
+
+  rdr sizes homer
+
+This will give you an idea of what items are larger as opposed to smaller. 
+
+You can also output the list sorted by identifier: ::
+
+  rdr sizes homer -s id
+  
+This is useful if you need/want to know how large a specific item is. 
+
+You can output the result as a boxplot or a histogram, and this is a good way to compare & contrast the sizes of the items as a whole. For example: ::
+
+  rdr sizes homer -o boxplot
+
+As points of reference, the Bible is about .8 million words long. Herman Melville's Moby Dick is about .2 million words long. Many scholary journal articles and book chapters are about .005 million (5,000) words long. 
 
 
 readability
 -----------
 
-Report on the readability (Flesch score) of items in <carrel>
+Readability is another type of extent, and use the ``readability`` subcommand to learn how difficult an item may (or may not) be easy to comprehend. By default, this command will output a tab-delimited list of identifiers and readability scores in descending order: ::
 
+  rdr readability homer
+
+Each score ought to be an integer between 0 and 100, where 0 means nobody can read the item and 100 means anybody can read the item. Readability (Flesch) scores takes into account things like: number of words, number of sentences, lengths of sentences, and lengths of words.
+
+You change the output so it is sorted by identifier: ::
+
+  rdr readability homer -s id
+
+Visualize the whole as a boxplot or histogram, for example: ::
+
+  rdr readability homer -o histogram
+
+As points of reference, Shakespeare's Sonnets have a high readability score in the 90's. Based on my experience, many classic novels have readability scores in the 80's. Scholarly journal articles seem to be in the 70's. Many blog postings and OCR'ed (optical character recognition) files have lower scores because: 1) blogs come along with all sorts of HTML navigation, and 2) OCR files have a large number of unique (nonsense) words. 
+  
 
 ngrams
 ------
@@ -320,7 +354,7 @@ You can also filter the results with ``-l``. So, to count and tabulate URLs like
 
   rdr url ital-urls -l pdf -c | more
 
-Besides using the URLs to help you learn about your carrel, you can also use ``url`` to assist you in acquiring additional content. For example, first filter the URLs for "pdf" and output the result to a file:
+Besides using the URLs to help you learn about your carrel, you can also use ``url`` to assist you in acquiring additional content. For example, first filter the URLs for "pdf" and output the result to a file: ::
 
   rdr url ital-urls -l pdf > pdfs.txt
 
@@ -378,11 +412,11 @@ What are those values? Well, for the most part all you need to know is that diff
   rdr pos -s parts -l V -c homer | more
   rdr pos -s parts -l J -c homer | more
 
-So, what is a count and tabulation of all the nouns? To answer the question, use this:
+So, what is a count and tabulation of all the nouns? To answer the question, use this: ::
 
   rdr pos -s words -l N -c homer | more
   
-You might want to normalize (lowercase) the values to get a more accurate count:
+You might want to normalize (lowercase) the values to get a more accurate count: ::
 
   rdr pos -s words -l N -c -n homer | more
   
@@ -515,7 +549,7 @@ Use ``tm`` to do topic modeling.
 
 Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, "What N things is the carrel about, and how might each N thing be described?" But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare's works about?
 
-This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.
+This subcommand builds on the good work venerable MALLET suite of software. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly.
 
 When using the ``tm`` command, start with a small number of topics, say seven, which is the default: ::
 
@@ -601,7 +635,19 @@ Search results are always returned in a relevancy ranked order. If you need or w
 collocations
 ------------
 
-Output network graph based on bigram collocations in <carrel>
+Use ``collocations`` to identify pairs of co-occuring words, measure their weights, and output the result as a network graph. To paraphrase John Rupert Firth, "You shall know a word by the company it keeps." This command is yet another way manifest this concept. For example: ::
+
+  rdr collocations homer
+
+After a bit of time, the result will be a little report echoing the input, the size of the resulting graph, and a visualization of said graph. The visualization is merely intended to be a sketch. The student, researcher, or scholar is expected to output the results of this command to a file, open the file into some other application (like Gephi), and create a visualization (enhance the model) from there. For example: ::
+
+  rdr collocations homer -o gml > homer.gml
+
+Just like topic modeling, there is no such thing as the perfect set of inputs; there is no one correct way to collocate a carrel. Instead, play with the input until the output tells a compelling story. I have found that when the number of edges is about 1.5 or 2 times greater than the number of nodes, then the resulting graph can tell an interesting story. As a rule of thumb, for every 200,000 words in a carrel, limit the number of collocations to 1000. Consequently, if your carrel is 400,000 words long, then denote an ``-l`` (limit) value of 2000. 
+
+Increasing the ``-w`` (window) value will increase the number of nodes but not necessarily the number of edges. Denoting different ``-m`` (measure) values will strengthen or weaken the edges between the nodes. 
+
+Of all the subcommands in the Toolbox, this one requires the most finesse. Practices makes perfect.
 
 
 semantics
@@ -690,7 +736,29 @@ For more ideas of how to exploit the database see ``etc/queries.sql`` found in e
 build
 -----
 
-Create <carrel> from files in <directory>
+Use the ``build`` subcommand to create your own study carrels.
+
+Study carrels can be created from just about any number, type, or format of file, as long as the files are narrative in nature. The Toolbox works well when the number of files is greater than 1 and less than a few thousand. The Toolbox is intended to process scholarly journal articles, books, reports, email messages, etc. The Toolbox exploits a tool called Tika, and Tika makes it possible to extract the underlying text from file formats such as PDF, Word, HTML, PowerPoint, CSV, plain text files, etc. Now-a-days, most people have many PDF files. 
+
+Create a folder/directory on your computer, and put the files you want to read in the folder. It is better if the files have zero spaces in their names. It is best if the file names only contain letters, numbers, dashes (-), underbars (_) and a single dot (.) delimiting a file's extension. But the files' names do not really matter.
+
+When you are ready, build your carrel with the following command: ::
+
+  rdr build <carrel> <directory>
+
+Where <carrel> is the name you are giving your study carrel, and <directory> is the location of the folder you just created. 
+
+If this is your first time through, you will have to specify the ``-s`` (start) option to get Tika up and running, and if the location of Tika has not been configured, then you will prompted to download it.
+
+It is not uncommon for you to want <carrel> to be recreated. No problem. Use the ``-e`` (erase) option to delete the existing carrel and put a new one in its place.
+
+The ``build`` process is complicated, and depending on many things, the ``build`` process can take less than a minute to more than hour to complete. Most of my carrels, which are usually bigger rather than smaller, finish in less than five minutes. 
+
+Metadata
+
+Enhance the context of your study carrel by supplementing it with metadata. Believe me, this will make your analysis so much more meaningful. This is accomplished by adding a file named metadata.csv to <directory>. This comma-separated value (CSV) must include at least two columns and one of them must to be named "file". The Toolbox knows about three other columns: author, title, and date. Use your favorite spreadsheet program to create a table with a column named "file". In each row, enter the name of a file saved in <directory>. Add additional columns named author, title, and/or date. For each file, add author, title, and/or date values. When done, save the table as a CSV file named metadata.csv, and save it in <directory>. If a metadata.csv file exists in <directory>, then the ``build`` process will read metadata.csv and associate each of the given files with the associated metadata value(s). Later on, when you are doing your analysis ("reading"), you will be better able to compare & contrast items in <carrel>. For example, you will be able to visualize how different author's write or how ideas ebb and flow over time. Finally, because is is tedious, creating metadata.csv files can be difficult; learn how to automate the process of creating metadata.csv files. 
+
+Once <carrel> is created, you ought to be able to use any of the other ``rdr`` commands.
 
 
 play

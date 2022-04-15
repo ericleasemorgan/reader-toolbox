@@ -129,6 +129,7 @@ cd $(rdr get)
 </pre></div>
 </div>
 <p>The result will be a human-readable snippet of text listing the name(s) of the carrel as it appears on your file system, who published (created) the carrel and when, the Distant Reader process used to create the carrel and the associated input, a number of extents (sizes) describing the carrel, and the most frequent statistically significant computed keywords.</p>
+<p>When it comes to the number of words, some context is beneficial. A carrel of 1 million words begins to be large. The Bible is about .8 million words long. Herman Melville’s Moby Dick is about .2 million words long. The typical scholarly journal article is about .005 (5,000) words long. Depending on the size of the carrel, different modeling techniques are apropos.</p>
 <p>Think of the output of the <code class="docutils literal notranslate"><span class="pre">info</span></code> command akin to a traditional library catalog card. Remember those? For most of us, probably not.</p>
 </section>
 <section id="bib">
@@ -164,11 +165,39 @@ cd $(rdr get)
 </section>
 <section id="sizes">
 <h2>sizes<a class="headerlink" href="#sizes" title="Permalink to this headline">¶</a></h2>
-<p>Report on the sizes (in words) of items in &lt;carrel&gt;</p>
+<p>Use this command to learn about the sizes – measured in words – of each item in your carrel. Sizes is a type of extent.</p>
+<p>By default, the <code class="docutils literal notranslate"><span class="pre">sizes</span></code> command outputs a tab-delimited list of carrel identifiers and number of words in descending order:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sizes</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>This will give you an idea of what items are larger as opposed to smaller.</p>
+<p>You can also output the list sorted by identifier:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sizes</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="nb">id</span>
+</pre></div>
+</div>
+<p>This is useful if you need/want to know how large a specific item is.</p>
+<p>You can output the result as a boxplot or a histogram, and this is a good way to compare &amp; contrast the sizes of the items as a whole. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sizes</span> <span class="n">homer</span> <span class="o">-</span><span class="n">o</span> <span class="n">boxplot</span>
+</pre></div>
+</div>
+<p>As points of reference, the Bible is about .8 million words long. Herman Melville’s Moby Dick is about .2 million words long. Many scholary journal articles and book chapters are about .005 million (5,000) words long.</p>
 </section>
 <section id="readability">
 <h2>readability<a class="headerlink" href="#readability" title="Permalink to this headline">¶</a></h2>
-<p>Report on the readability (Flesch score) of items in &lt;carrel&gt;</p>
+<p>Readability is another type of extent, and use the <code class="docutils literal notranslate"><span class="pre">readability</span></code> subcommand to learn how difficult an item may (or may not) be easy to comprehend. By default, this command will output a tab-delimited list of identifiers and readability scores in descending order:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">readability</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Each score ought to be an integer between 0 and 100, where 0 means nobody can read the item and 100 means anybody can read the item. Readability (Flesch) scores takes into account things like: number of words, number of sentences, lengths of sentences, and lengths of words.</p>
+<p>You change the output so it is sorted by identifier:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">readability</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="nb">id</span>
+</pre></div>
+</div>
+<p>Visualize the whole as a boxplot or histogram, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">readability</span> <span class="n">homer</span> <span class="o">-</span><span class="n">o</span> <span class="n">histogram</span>
+</pre></div>
+</div>
+<p>As points of reference, Shakespeare’s Sonnets have a high readability score in the 90’s. Based on my experience, many classic novels have readability scores in the 80’s. Scholarly journal articles seem to be in the 70’s. Many blog postings and OCR’ed (optical character recognition) files have lower scores because: 1) blogs come along with all sorts of HTML navigation, and 2) OCR files have a large number of unique (nonsense) words.</p>
 </section>
 <section id="ngrams">
 <h2>ngrams<a class="headerlink" href="#ngrams" title="Permalink to this headline">¶</a></h2>
@@ -311,9 +340,9 @@ cd $(rdr get)
 </pre></div>
 </div>
 <p>Besides using the URLs to help you learn about your carrel, you can also use <code class="docutils literal notranslate"><span class="pre">url</span></code> to assist you in acquiring additional content. For example, first filter the URLs for “pdf” and output the result to a file:</p>
-<blockquote>
-<div><p>rdr url ital-urls -l pdf &gt; pdfs.txt</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">l</span> <span class="n">pdf</span> <span class="o">&gt;</span> <span class="n">pdfs</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
 <p>Then use pdfs.txt as input to a mass downloader to actually get the content. For example, use the venerable wget command</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="o">-</span><span class="n">i</span> <span class="n">pdfs</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
@@ -361,13 +390,13 @@ cd $(rdr get)
 </pre></div>
 </div>
 <p>So, what is a count and tabulation of all the nouns? To answer the question, use this:</p>
-<blockquote>
-<div><p>rdr pos -s words -l N -c homer | more</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">words</span> <span class="o">-</span><span class="n">l</span> <span class="n">N</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
 <p>You might want to normalize (lowercase) the values to get a more accurate count:</p>
-<blockquote>
-<div><p>rdr pos -s words -l N -c -n homer | more</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">words</span> <span class="o">-</span><span class="n">l</span> <span class="n">N</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">n</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
 <p>A count and tabulation of verbs addresses the question, “What do the things in the text do?” In this case it is often useful to count and tabulate the verbs’ lemma (root) values:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">lemmas</span> <span class="o">-</span><span class="n">l</span> <span class="n">V</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">n</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
@@ -480,7 +509,7 @@ cd $(rdr get)
 <h2>tm<a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
 <p>Use <code class="docutils literal notranslate"><span class="pre">tm</span></code> to do topic modeling.</p>
 <p>Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, “What N things is the carrel about, and how might each N thing be described?” But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare’s works about?</p>
-<p>This subcommand builds on the good work of three different subsystems. The first is the venerable MALLET system. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly. The second is Gensim, a Python library which includes a front-end to MALLET. The third is pyLDAvis which takes the output of MALLET to visualize the results.</p>
+<p>This subcommand builds on the good work venerable MALLET suite of software. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly.</p>
 <p>When using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, start with a small number of topics, say seven, which is the default:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span>
 </pre></div>
@@ -557,7 +586,17 @@ cd $(rdr get)
 </section>
 <section id="collocations">
 <h2>collocations<a class="headerlink" href="#collocations" title="Permalink to this headline">¶</a></h2>
-<p>Output network graph based on bigram collocations in &lt;carrel&gt;</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">collocations</span></code> to identify pairs of co-occuring words, measure their weights, and output the result as a network graph. To paraphrase John Rupert Firth, “You shall know a word by the company it keeps.” This command is yet another way manifest this concept. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">collocations</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>After a bit of time, the result will be a little report echoing the input, the size of the resulting graph, and a visualization of said graph. The visualization is merely intended to be a sketch. The student, researcher, or scholar is expected to output the results of this command to a file, open the file into some other application (like Gephi), and create a visualization (enhance the model) from there. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">collocations</span> <span class="n">homer</span> <span class="o">-</span><span class="n">o</span> <span class="n">gml</span> <span class="o">&gt;</span> <span class="n">homer</span><span class="o">.</span><span class="n">gml</span>
+</pre></div>
+</div>
+<p>Just like topic modeling, there is no such thing as the perfect set of inputs; there is no one correct way to collocate a carrel. Instead, play with the input until the output tells a compelling story. I have found that when the number of edges is about 1.5 or 2 times greater than the number of nodes, then the resulting graph can tell an interesting story. As a rule of thumb, for every 200,000 words in a carrel, limit the number of collocations to 1000. Consequently, if your carrel is 400,000 words long, then denote an <code class="docutils literal notranslate"><span class="pre">-l</span></code> (limit) value of 2000.</p>
+<p>Increasing the <code class="docutils literal notranslate"><span class="pre">-w</span></code> (window) value will increase the number of nodes but not necessarily the number of edges. Denoting different <code class="docutils literal notranslate"><span class="pre">-m</span></code> (measure) values will strengthen or weaken the edges between the nodes.</p>
+<p>Of all the subcommands in the Toolbox, this one requires the most finesse. Practices makes perfect.</p>
 </section>
 <section id="semantics">
 <h2>semantics<a class="headerlink" href="#semantics" title="Permalink to this headline">¶</a></h2>
@@ -633,7 +672,20 @@ SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE &#39
 </section>
 <section id="build">
 <h2>build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h2>
-<p>Create &lt;carrel&gt; from files in &lt;directory&gt;</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">build</span></code> subcommand to create your own study carrels.</p>
+<p>Study carrels can be created from just about any number, type, or format of file, as long as the files are narrative in nature. The Toolbox works well when the number of files is greater than 1 and less than a few thousand. The Toolbox is intended to process scholarly journal articles, books, reports, email messages, etc. The Toolbox exploits a tool called Tika, and Tika makes it possible to extract the underlying text from file formats such as PDF, Word, HTML, PowerPoint, CSV, plain text files, etc. Now-a-days, most people have many PDF files.</p>
+<p>Create a folder/directory on your computer, and put the files you want to read in the folder. It is better if the files have zero spaces in their names. It is best if the file names only contain letters, numbers, dashes (-), underbars (_) and a single dot (.) delimiting a file’s extension. But the files’ names do not really matter.</p>
+<p>When you are ready, build your carrel with the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">build</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">directory</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Where &lt;carrel&gt; is the name you are giving your study carrel, and &lt;directory&gt; is the location of the folder you just created.</p>
+<p>If this is your first time through, you will have to specify the <code class="docutils literal notranslate"><span class="pre">-s</span></code> (start) option to get Tika up and running, and if the location of Tika has not been configured, then you will prompted to download it.</p>
+<p>It is not uncommon for you to want &lt;carrel&gt; to be recreated. No problem. Use the <code class="docutils literal notranslate"><span class="pre">-e</span></code> (erase) option to delete the existing carrel and put a new one in its place.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">build</span></code> process is complicated, and depending on many things, the <code class="docutils literal notranslate"><span class="pre">build</span></code> process can take less than a minute to more than hour to complete. Most of my carrels, which are usually bigger rather than smaller, finish in less than five minutes.</p>
+<p>Metadata</p>
+<p>Enhance the context of your study carrel by supplementing it with metadata. Believe me, this will make your analysis so much more meaningful. This is accomplished by adding a file named metadata.csv to &lt;directory&gt;. This comma-separated value (CSV) must include at least two columns and one of them must to be named “file”. The Toolbox knows about three other columns: author, title, and date. Use your favorite spreadsheet program to create a table with a column named “file”. In each row, enter the name of a file saved in &lt;directory&gt;. Add additional columns named author, title, and/or date. For each file, add author, title, and/or date values. When done, save the table as a CSV file named metadata.csv, and save it in &lt;directory&gt;. If a metadata.csv file exists in &lt;directory&gt;, then the <code class="docutils literal notranslate"><span class="pre">build</span></code> process will read metadata.csv and associate each of the given files with the associated metadata value(s). Later on, when you are doing your analysis (“reading”), you will be better able to compare &amp; contrast items in &lt;carrel&gt;. For example, you will be able to visualize how different author’s write or how ideas ebb and flow over time. Finally, because is is tedious, creating metadata.csv files can be difficult; learn how to automate the process of creating metadata.csv files.</p>
+<p>Once &lt;carrel&gt; is created, you ought to be able to use any of the other <code class="docutils literal notranslate"><span class="pre">rdr</span></code> commands.</p>
 </section>
 <section id="play">
 <h2>play<a class="headerlink" href="#play" title="Permalink to this headline">¶</a></h2>

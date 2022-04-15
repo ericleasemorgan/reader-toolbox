@@ -68,7 +68,9 @@ from rdr.commands import *
 @click.pass_context
 def summarize( ctx, carrel, look ) :
 
-	'Summarize <carrel>'
+	'''Summarize <carrel>
+	
+	The use of this command will generate a set of reports and save them in specific locations in <carrel>'s file system. If you specify the -l (look) option, then <carrel>'s index.htm file will be opened in your Web browser. You can subsequently use rdr read <carrel> to open the index.htm file.'''
 
 	# sanity check
 	checkForCarrel( carrel )

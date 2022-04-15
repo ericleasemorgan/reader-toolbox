@@ -15,7 +15,7 @@ A command-line interface for interacting with [Distant Reader](https://distantre
 
 ```  
   # configure; accept the default
-  rdr set local
+  rdr set -s local
 
   # add an item to your library
   rdr download homer
@@ -84,4 +84,4 @@ The Reader Toolbox -- run from the command-line as ``rdr`` -- is designed to int
 
 ---
 Eric Lease Morgan &lt;emorgan@nd.edu&gt;  
-September 4, 2021
+April 15, 2022
