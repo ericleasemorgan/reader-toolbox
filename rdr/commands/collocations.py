@@ -6,10 +6,10 @@ from rdr import *
 
 @click.command( options_metavar='<options>' )
 @click.argument( 'carrel', metavar='<carrel>' )
-@click.option('-f', '--filter', default=8, help="least number of occurances of bigram")
+@click.option('-f', '--filter', default=4, help="least number of occurances of bigram")
 @click.option('-m', '--measure', default='chisqr', type=click.Choice( [ 'fisher', 'chisqr', 'jaccard', 'likelihood', 'raw' ], case_sensitive=True ), help="type of measure")
-@click.option('-l', '--limit', default=1000, help="number of features")
-@click.option('-w', '--window', default=5, help="size of window")
+@click.option('-l', '--limit', default=4000, help="number of features")
+@click.option('-w', '--window', default=4, help="size of window")
 @click.option('-o', '--output', default='image', type=click.Choice( [ 'image', 'gml' ], case_sensitive=True ), help="type of output")
 def collocations( carrel, window, filter, measure, limit, output ) :
 

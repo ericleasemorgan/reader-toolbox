@@ -17,6 +17,8 @@ A command-line tool for interacting with Distant Reader study carrels
    tutorial
    commands
    usecase-tm
+   usecase-collocations
+   helpers
    software
    more
    author
