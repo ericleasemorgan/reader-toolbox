@@ -108,7 +108,7 @@ def summarize( ctx, carrel, look ) :
 	
 	# save html
 	locallibrary = configuration( 'localLibrary' )
-	with open( locallibrary/carrel/INDEX, 'w' ) as handle : handle.write( html )
+	with open( locallibrary/carrel/INDEX, 'w', encoding='utf-8' ) as handle : handle.write( html )
 	
 	# read, 
 	if look : ctx.invoke( read.read, carrel=carrel )

@@ -48,7 +48,7 @@ def bib( carrel, save ) :
 	if save :
 
 		bibliography = locallibrary/carrel/ETC/BIBLIOGRAPHY
-		with open( bibliography, 'w' ) as handle :
+		with open( bibliography, 'w', encoding='utf-8' ) as handle :
 		
 			for item, row in enumerate( rows ) :
 
