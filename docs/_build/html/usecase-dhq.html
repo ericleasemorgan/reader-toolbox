@@ -37,7 +37,12 @@
 <h1>Use case: Reading DHQ<a class="headerlink" href="#use-case-reading-dhq" title="Permalink to this headline">¶</a></h1>
 <p>I did some rudimentary analysis (“reading”) against the whole of Digital Humanities Quarterly (DHQ), and this use case outlines what I’ve learned so far.</p>
 <p>First of all, extents. The corpus numbers about 400 articles, for a total of 3.3 million words. Moby Dick is .2 million words long, and consequently the whole of DHQ is equal to about sixteen Moby Dicks. The average readability (Flesh) score for the corpus is 47. Shakespeare’s sonnets measure about 90 (easy). Most scholarly journal articles – in my experience – have a score around 70. Something is unusual here.</p>
-<p>Second, I created a rudimentary <a class="reference external" href="./etc/dhq-bibliography.txt">bibliography</a>, and it is complete with computed summaries and computed keywords. The frequencies of the keywords can be illustrated as a word cloud. After removing dominate keywords like “digital”, and “humanties”, the cloud is interesting.</p>
+<img alt="_images/dhq-sizes-histogram.png" src="_images/dhq-sizes-histogram.png" />
+<img alt="_images/dhq-sizes-boxplot.png" src="_images/dhq-sizes-boxplot.png" />
+<img alt="_images/dhq-readability-histogram.png" src="_images/dhq-readability-histogram.png" />
+<img alt="_images/dhq-readability-boxplot.png" src="_images/dhq-readability-boxplot.png" />
+<p>Second, I created a rudimentary bibliography, and it is complete with computed summaries and computed keywords. The frequencies of the keywords can be illustrated as a word cloud. After removing dominate keywords like “digital”, and “humanties”, the cloud is interesting.</p>
+<img alt="_images/dhq-keywords.png" src="_images/dhq-keywords.png" />
 <p>Third, after doing quick &amp; dirty topic modeling with seven topics, the topics come out to be the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">topics</span>  <span class="n">weights</span>                                           <span class="n">features</span>
  <span class="n">digital</span>  <span class="mf">0.52049</span>  <span class="n">digital</span> <span class="n">humanities</span> <span class="n">research</span> <span class="n">students</span> <span class="n">work</span> <span class="n">proj</span><span class="o">...</span>
@@ -49,8 +54,13 @@
      <span class="n">que</span>  <span class="mf">0.01266</span>                 <span class="n">que</span> <span class="n">los</span> <span class="n">las</span> <span class="k">del</span> <span class="n">una</span> <span class="n">para</span> <span class="n">por</span> <span class="n">como</span>
 </pre></div>
 </div>
-<p>Transforming the result into a pie chart illustrates how no theme dominates. Plotting the two most significant topics (“digital” and “reading”) over time emphasizes the point; themes ebb &amp; flow to a great degree; the journal does not manifest a single, over-arching theme. Compare this with Pride And Prejudice, and one can see how the theme “Elizabeth” (the red line) is an over-arching theme.</p>
+<p>Transforming the result into a pie chart illustrates how no theme dominates. Plotting the two most significant topics (“digital” and “reading”) over time emphasizes the point; themes ebb &amp; flow to a great degree; the journal does not manifest a single, over-arching theme.</p>
+<img alt="_images/dhq-topics.png" src="_images/dhq-topics.png" />
+<img alt="_images/dhq-topics-over-time.jpg" src="_images/dhq-topics-over-time.jpg" />
+<p>Compare this with Pride And Prejudice, and one can see how the theme “Elizabeth” (the red line) is an over-arching theme.</p>
+<img alt="_images/dhq-pride.png" src="_images/dhq-pride.png" />
 <p>I tried to model collocations in the form of a network graph, but the model did not turn out very well, but the result – just like the topic modeling – illustrates the existence of non-English words and a number of TEI elements in the texts. This needs to be improved.</p>
+<img alt="_images/dhq-collocations.png" src="_images/dhq-collocations.png" />
 <p>I could have done some semantic indexing analysis, but I don’t know how to visualize the result, yet.</p>
 <p>Such is what I learned so far, and further investigation would require more specific questions from domain experts – people who have a vested interest in the Quarterly. ‘Got questions?</p>
 <p>Fun with text mining.</p>
