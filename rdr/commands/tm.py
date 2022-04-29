@@ -120,7 +120,7 @@ def pivot( localLibrary, carrel, field, keys ) :
 	results.to_csv( metadata, index=False )
 
 	# read saved files
-	topics   = pd.read_csv( topics, sep='\t' )
+	topics   = pd.read_csv( topics, sep='\t' )	
 	metadata = pd.read_csv( metadata )
 	
 	# create generic labels
@@ -137,11 +137,10 @@ def pivot( localLibrary, carrel, field, keys ) :
 	keys.sort_values( by='weights', ascending=False, inplace=True )
 	
 	# add labels, drop docId, and merge with metadata
-	topics.columns = labels
+	topics   = pd.read_csv( str( localLibrary/carrel/MODELDIR/TOPICS ), sep='\t', names=labels )	
 	topics         = topics.drop( [ 'docId' ], axis=1 )
 	topics         = pd.merge( topics, metadata )
 
-	
 	# create meaningful labels for each topic
 	ids    = []
 	labels = []

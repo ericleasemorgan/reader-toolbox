@@ -517,7 +517,11 @@ def summarize( doc ) :
 		if phrase_id == PHRASELIMIT : break
 
 	sum_ranks   = sum( unit_vector )
-	unit_vector = [ rank/sum_ranks for rank in unit_vector ]
+
+	# trap for a document that is too small
+	try : unit_vector = [ rank/sum_ranks for rank in unit_vector ]
+	except ZeroDivisionError : return doc.text
+	
 	rankings    = {}
 	sent_id     = 0
 
