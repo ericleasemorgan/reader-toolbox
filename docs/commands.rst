@@ -8,7 +8,7 @@ set
 
 Use the ``set`` subcommand to tell the Toolbox two things: 1) the location of your locally cached study carrels, and 2) the location of an external tool called MALLET. For example, to set the location of your local cache of study carrels, enter: ::
 
-  rdr set
+  rdr set -s local
 
 By default, the location of your study carrels is set to ``reader-library`` in your home directory, but this setting does not take effect until you run ``set``. You can move your collection of carrels anywhere you desire. In fact, you might consider having more than one collection. Just tell the Toolbox which cache you want to use.
 
@@ -76,7 +76,7 @@ read
 Use the ``read`` subcommand to look through and peruse the contents of a local or remote study carrel. Two examples include: ::
 
   rdr read homer
-  rdr read -l remote homer
+  rdr read homer -l remote 
 
 Study carrels are data sets. A subset of the datasets are HTML files intended for traditional reading purposes. These HTML files are narrative in nature but there are a number of interactive tables as well. The use of the ``read`` subcommand is a great way to become familiar with a study carrel's provenance, breadth, depth, and content. 
 

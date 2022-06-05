@@ -4,7 +4,7 @@ from rdr import *
 
 # config
 @click.command()
-@click.option('-s', '--setting', type=click.Choice( [ 'local', 'mallet', 'tika' ] ), help='configure the given setting')
+@click.option('-s', '--setting', type=click.Choice( [ 'local', 'mallet', 'tika', 'notebooks' ] ), help='configure the given setting')
 @click.option('-e', '--erase', is_flag=True, help='erase/restore default settings')
 def set( setting, erase ) :
 
@@ -18,6 +18,7 @@ def set( setting, erase ) :
 	  rdr set -s local
 	  rdr set -s mallet
 	  rdr set -s tika
+	  rdr set -s notebooks
 	  rdr set -e
 	
 	See also: rdr get --help"""
@@ -46,9 +47,10 @@ def set( setting, erase ) :
 	if setting :
 	
 		# re-initialize
-		localLibrary = configuration( 'localLibrary' )
-		malletHome   = configuration( 'malletHome' )
-		tikaHome     = configuration( 'tikaHome' )
+		localLibrary  = configuration( 'localLibrary' )
+		malletHome    = configuration( 'malletHome' )
+		tikaHome      = configuration( 'tikaHome' )
+		notebooksHome = configuration( 'notebooksHome' )
 
 		# branch accordingly, local
 		if setting == 'local' :
@@ -69,6 +71,18 @@ def set( setting, erase ) :
 			click.echo( 'What is the full path to your MALLET distribution?' )
 			malletHome = input( 'Directory [%s]: ' % malletHome ) or malletHome
 
+		# notebooks
+		elif setting == 'notebooks' :
+	
+			# get the desired notebook location
+			click.echo( 'Where do you want to save the notebooks? Press enter to accept the default.' )
+			notebooksHome = input( 'Directory [%s]: ' % notebooksHome ) or notebooksHome
+			notebooksHome = Path( notebooksHome )
+
+			# try to create the directory and save the configuration
+			try : notebooksHome.mkdir( exist_ok=True )
+			except FileNotFoundError : click.echo( "Error: File not found. Are you sure you entered a valid path?", err=True )		
+
 		# tika
 		elif setting == 'tika' :
 	
@@ -77,7 +91,10 @@ def set( setting, erase ) :
 			tikaHome = input( 'File [%s]: ' % tikaHome ) or tikaHome
 
 		# update the configuration file
-		configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome , "tikaHome" : tikaHome }
+		configurations[ "RDR" ] = { "localLibrary"  : localLibrary,
+		                            "malletHome"    : malletHome ,
+		                            "tikaHome"      : tikaHome,
+		                            "notebooksHome" : notebooksHome }
 		with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
 
 

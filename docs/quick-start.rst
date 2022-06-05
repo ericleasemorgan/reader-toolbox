@@ -19,34 +19,34 @@ This is a quick start for using the Toolbox, sans very much elaboration: ::
   rdr ngrams homer
   
   # list all bigrams
-  rdr ngrams -s 2 homer
+  rdr ngrams homer -s 2 
   
   # list all bigrams and count them
-  rdr ngrams -s 2 -c homer
+  rdr ngrams homer -s 2 -c 
   
   # list all bigrams, count them, and filter the results
-  rdr ngrams -s 2 -c -q love homer
+  rdr ngrams homer -s 2 -c -q love 
   
   # same as the above, but pipe the result through a pager
-  rdr ngrams -s 2 -c -q love homer | more
+  rdr ngrams homer -s 2 -c -q love | more
   
   # search
   rdr concordance homer
     
   # search again, but specify a query
-  rdr concordance -q war homer
+  rdr concordance homer -q war 
     
   # same as the above, but pipe the result through a pager
-  rdr concordance -q war homer | more
+  rdr concordance homer -q war | more
     
   # list subject-verb-object fragments; please be patient
   rdr grammars homer
   
   # list noun phrases
-  rdr grammars -g nouns homer
+  rdr grammars homer -g nouns 
   
   # same as the above, but tabulate the results, look for love, and page the results
-  rdr grammars -g nouns -c -q love homer | more
+  rdr grammars homer -g nouns -c -q love | more
   
   # cluster; do the items in the carrel group themselves?
   rdr cluster homer
@@ -61,10 +61,10 @@ This is a quick start for using the Toolbox, sans very much elaboration: ::
   rdr catalog -l remote -h
   
   # read a remote study carrel
-  rdr read -l remote pride
+  rdr read pride -l remote 
   
   # browse the content of a remote study carrel
-  rdr browse -l remote pride
+  rdr browse pride -l remote 
 
   # download another carrel
   rdr download pride
@@ -76,10 +76,10 @@ This is a quick start for using the Toolbox, sans very much elaboration: ::
   rdr catalog
     
   # search for love
-  rdr concordance -q love pride
+  rdr concordance pride -q love 
 
   # find a lot of love
-  rdr concordance -q love sonnets
+  rdr concordance sonnets -q love 
 
 
 

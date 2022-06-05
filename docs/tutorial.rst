@@ -52,11 +52,11 @@ List words
 
 List of all the words (unigrams) from a study carrel in the remote library: ::
 
-  rdr ngrams -l remote homer
+  rdr ngrams homer -l remote 
 
 Do the same thing, but this time request bigrams (two-word phrases): ::
 
-  rdr ngrams -l remote -s 2 homer
+  rdr ngrams homer -l remote -s 2 
 
 There are many more options, including the ability to count and tabulate the results, filter (query) the results using regular expressions, and more importantly, apply these same techniques to study carrels saved locally.
 
@@ -82,7 +82,7 @@ Build your library
 
 When you create a local collection of study carrels -- your library, then there are many more things you can do. To configure the location of your local collection, use the ``set`` command, and you will be prompted for the name of a folder/directory: ::
 
-  rdr set local
+  rdr set -s local
 
 Now you can download a study carrel from the remote library and add it to your local collection: ::
 
@@ -106,13 +106,13 @@ Now that you have created a local library, you can apply the ``ngrams`` function
   rdr ngrams homer
   
   # all bigrams
-  rdr ngrams -s2 homer
+  rdr ngrams homer -s2 
   
   # count and tabulate bigrams
-  rdr ngrams -s 2 -c homer | more
+  rdr ngrams homer -s 2 -c | more
   
   # just like above, but filter with the word "love"
-  rdr ngrams -s 2 -c -q love homer | more
+  rdr ngrams homer -s 2 -c -q love | more
   
 
 Search
@@ -138,15 +138,15 @@ Many times sentences are written using well-understood grammars, and it is easy 
 
 You can also list the noun phrases in a carrel: ::
 
-  rdr grammars -g nouns homer
+  rdr grammars homer -g nouns 
   
 You can also count such things: ::
 
-  rdr grammars -g nouns -c homer
+  rdr grammars homer -g nouns -c 
 
 The list of grammars may be long, so you might want to pipe the result through a pager: ::
 
-  rdr grammars -g nouns -c homer | more
+  rdr grammars homer -g nouns -c | more
 
 
 Next steps

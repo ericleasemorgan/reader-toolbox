@@ -175,8 +175,8 @@ def pivot( localLibrary, carrel, field, keys ) :
 
 @click.command( options_metavar='<options>' )
 @click.option('-p', '--process', default='model', type=click.Choice( [ 'model', 'read' ] ), help="type of work to do" )
-@click.option('-t', '--topics', default=7, help="number of topics to generate" )
-@click.option('-w', '--words', default=7, help="number of words used to describe topic" )
+@click.option('-t', '--topics', default=8, help="number of topics to generate" )
+@click.option('-w', '--words', default=8, help="number of words used to describe topic" )
 @click.option('-i', '--iterations', default=2400, help="number of times to cacluate" )
 @click.option('-o', '--output', default='summary', type=click.Choice( [ 'summary', 'chart', 'topdocs', 'csv' ] ), help="type of report" )
 @click.option('-f', '--field', type=click.Choice( [ 'author', 'title', 'date' ] ), help="field for pivoting" )

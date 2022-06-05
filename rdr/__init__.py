@@ -30,10 +30,14 @@ CONFIGURATIONFILE    = '.rdrrc'
 READERLIBRARY        = 'reader-library'
 MALLETHOME           = 'mallet'
 TIKAHOME             = 'tika-server.jar'
+NOTEBOOKSHOME        = 'reader-notebooks'
 
 # remote library
 REMOTELIBRARY = 'http://library.distantreader.org'
 CARRELS       = 'carrels'
+
+# documentation
+DOCUMENTATION = 'https://reader-toolbox.readthedocs.io'
 
 # file system mappings
 CORPUS              = 'reader.txt'
@@ -62,7 +66,7 @@ BIGRAMSCLOUD         = 'bigrams-cloud.png'
 
 
 # spacy langauge model
-MODEL = 'en_core_web_sm'
+MODEL = 'en_core_web_md'
 
 # mallet
 MALLETZIP = 'http://library.distantreader.org/apps/mallet.zip'
@@ -89,9 +93,10 @@ def initializeConfigurations() :
 	configurationFile    = applicationDirectory/CONFIGURATIONFILE
 
 	# define defaults, and...
-	configurations[ "RDR" ] = { "localLibrary" : Path.home()/READERLIBRARY, 
-								"malletHome"   : Path.home()/MALLETHOME,
-								"tikaHome"     : Path.home()/TIKAHOME }
+	configurations[ "RDR" ] = { "localLibrary"  : Path.home()/READERLIBRARY, 
+								"malletHome"    : Path.home()/MALLETHOME,
+								"notebooksHome" : Path.home()/NOTEBOOKSHOME,
+								"tikaHome"      : Path.home()/TIKAHOME }
 
 	# save them
 	with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
@@ -116,14 +121,16 @@ def configuration( name ) :
 	configurations.read( str( configurationFile ) )
 	
 	# get configurations
-	localLibrary = configurations[ 'RDR' ][ 'localLibrary' ]
-	malletHome   = configurations[ 'RDR' ][ 'malletHome' ] 
-	tikaHome     = configurations[ 'RDR' ][ 'tikaHome' ] 
+	localLibrary  = configurations[ 'RDR' ][ 'localLibrary' ]
+	malletHome    = configurations[ 'RDR' ][ 'malletHome' ] 
+	tikaHome      = configurations[ 'RDR' ][ 'tikaHome' ] 
+	notebooksHome = configurations[ 'RDR' ][ 'notebooksHome' ] 
 	
 	# done
-	if   name == 'localLibrary' : return( Path( localLibrary ) )
-	elif name == 'malletHome'   : return( Path( malletHome ) )
-	elif name == 'tikaHome'     : return( Path( tikaHome ) )
+	if   name == 'localLibrary'  : return( Path( localLibrary ) )
+	elif name == 'malletHome'    : return( Path( malletHome ) )
+	elif name == 'tikaHome'      : return( Path( tikaHome ) )
+	elif name == 'notebooksHome' : return( Path( notebooksHome ) )
 	else :
 	
 		# unknown configuration

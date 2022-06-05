@@ -9,34 +9,37 @@
 
 # require
 from rdr import *
-import rdr.commands.adr          as adr
-import rdr.commands.bib          as bib
-import rdr.commands.browse       as browse
-import rdr.commands.build        as build
-import rdr.commands.catalog      as catalog
-import rdr.commands.cluster      as cluster
-import rdr.commands.collocations as collocations
-import rdr.commands.concordance  as concordance
-import rdr.commands.download     as download
-import rdr.commands.edit         as edit
-import rdr.commands.ent          as ent
-import rdr.commands.get          as get
-import rdr.commands.grammars     as grammars
-import rdr.commands.info         as info
-import rdr.commands.ngrams       as ngrams
-import rdr.commands.play         as play
-import rdr.commands.pos          as pos
-import rdr.commands.read         as read
-import rdr.commands.readability  as readability
-import rdr.commands.search       as search
-import rdr.commands.semantics    as semantics
-import rdr.commands.set          as set
-import rdr.commands.sizes        as sizes
-import rdr.commands.sql          as sql
-import rdr.commands.tm           as tm
-import rdr.commands.url          as url
-import rdr.commands.wrd          as wrd
-import rdr.commands.summarize    as summarize
+import rdr.commands.about         as about
+import rdr.commands.adr           as adr
+import rdr.commands.bib           as bib
+import rdr.commands.browse        as browse
+import rdr.commands.build         as build
+import rdr.commands.catalog       as catalog
+import rdr.commands.cluster       as cluster
+import rdr.commands.collocations  as collocations
+import rdr.commands.concordance   as concordance
+import rdr.commands.download      as download
+import rdr.commands.documentation as documentation
+import rdr.commands.edit          as edit
+import rdr.commands.ent           as ent
+import rdr.commands.get           as get
+import rdr.commands.grammars      as grammars
+import rdr.commands.info          as info
+import rdr.commands.ngrams        as ngrams
+import rdr.commands.play          as play
+import rdr.commands.pos           as pos
+import rdr.commands.notebooks     as notebooks
+import rdr.commands.read          as read
+import rdr.commands.readability   as readability
+import rdr.commands.search        as search
+import rdr.commands.semantics     as semantics
+import rdr.commands.set           as set
+import rdr.commands.sizes         as sizes
+import rdr.commands.sql           as sql
+import rdr.commands.tm            as tm
+import rdr.commands.url           as url
+import rdr.commands.wrd           as wrd
+import rdr.commands.summarize     as summarize
 
 # initialize 
 @click.group()
@@ -59,12 +62,14 @@ def rdr() :
 	
 
 # update the list of commands
+rdr.add_command( about.about )
 rdr.add_command( adr.adr )
 rdr.add_command( bib.bib )
 rdr.add_command( browse.browse )
 rdr.add_command( build.build )
 rdr.add_command( catalog.catalog )
 rdr.add_command( cluster.cluster )
+rdr.add_command( documentation.documentation )
 rdr.add_command( collocations.collocations )
 rdr.add_command( concordance.concordance )
 rdr.add_command( download.download )
@@ -75,6 +80,7 @@ rdr.add_command( grammars.grammars )
 rdr.add_command( info.info )
 rdr.add_command( ngrams.ngrams )
 rdr.add_command( play.play )
+rdr.add_command( notebooks.notebooks )
 rdr.add_command( pos.pos )
 rdr.add_command( read.read )
 rdr.add_command( readability.readability )
