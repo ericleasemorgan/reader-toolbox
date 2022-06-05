@@ -54,6 +54,14 @@ TEMPLATE = '''
 			<img src='./figures/keywords-cloud.png' width='66%' />
 			</p>
 
+		<h3>Entities</h3>
+			<p style='text-align: center'>
+			<img src='./figures/entities-any.png' width='49%' /> <img src='./figures/entities-person.png' width='49%' />
+			</p>
+			<p style='text-align: center'>
+			<img src='./figures/entities-gpe.png' width='49%' /> <img src='./figures/entities-org.png' width='49%' />
+			</p>
+
 </body>
 </html>
 '''
@@ -98,6 +106,13 @@ def summarize( ctx, carrel, look ) :
 	click.echo( "Graphing ngrams", err=True )
 	ctx.invoke( ngrams.ngrams, carrel=carrel, count=True, size=1, wordcloud=True, save=True )
 	ctx.invoke( ngrams.ngrams, carrel=carrel, count=True, size=2, wordcloud=True, save=True )
+	
+	# save entities	
+	click.echo( "Graphing entities", err=True )
+	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='any', wordcloud=True, save=True )
+	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='PERSON', wordcloud=True, save=True )
+	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='GPE', wordcloud=True, save=True )
+	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='ORG', wordcloud=True, save=True )
 	
 	# save keywords	
 	click.echo( "Graphing keywords", err=True )

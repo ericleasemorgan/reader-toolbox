@@ -6,11 +6,13 @@ from rdr import *
 
 # ngrams
 @click.command( options_metavar='<options>' )
-@click.option('-s', '--select', default='type', type=click.Choice( [ 'type', 'entity' ] ), help='the type of output')
-@click.option('-l', '--like', default='any', help='the type of enity')
-@click.option('-c', '--count', is_flag=True, help='count and tabulate the result')
 @click.argument( 'carrel', metavar='<carrel>' )
-def ent( carrel, select, like, count ) :
+@click.option('-s', '--select',    default='type', type=click.Choice( [ 'type', 'entity' ] ), help='the type of output')
+@click.option('-l', '--like',      default='any', help='the type of enity')
+@click.option('-c', '--count',     is_flag=True, help='count and tabulate the result')
+@click.option('-w', '--wordcloud', is_flag=True, help='given -c, output a wordcloud')
+@click.option('-v', '--save',      is_flag=True, help='given -c and -w, save cloud to default location')
+def ent( carrel, select, like, count, wordcloud, save ) :
 
 	"""Filter named entities and types of entities found in <carrel>
 
@@ -77,8 +79,62 @@ def ent( carrel, select, like, count ) :
 			# build sql, search, and output
 			sql  = ( 'SELECT entity, COUNT( entity ) AS count FROM ent WHERE type LIKE "%s" GROUP BY entity ORDER BY count DESC;' % ( like ) )
 			rows = connection.execute( sql )
-			for row in rows : click.echo( "\t".join( [ row[ select ], str( row[ 'count' ] ) ] ) )
 			
+			# output simple tabulation
+			if not wordcloud :
+			
+				# dump
+				for row in rows : click.echo( "\t".join( [ row[ select ], str( row[ 'count' ] ) ] ) )
+			
+			# output word cloud
+			else :
+			
+				# create a dictionary of frequencies
+				frequencies = {}
+				for row in rows : frequencies[ row[ select ] ] = row[ 'count' ]
+
+				# simply output
+				if not save : cloud( frequencies )
+			
+				# save to the corresponding figures directory
+				else :
+			
+					# configure
+					localLibrary = configuration( 'localLibrary' )
+
+					# any
+					if like == '%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/ENTITIESANY
+						cloud( frequencies, file=file )
+					
+					# persons
+					elif like == 'PERSON' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/ENTITIESPERSON
+						cloud( frequencies, file=file )
+				
+					# org
+					elif like == 'ORG' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/ENTITIESORG
+						cloud( frequencies, file=file )
+				
+					# geo-political entities (places)
+					elif like == 'GPE' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/ENTITIESGPE
+						cloud( frequencies, file=file )
+				
+					# unsupported
+					else : click.echo( "The save option is only valid for entities of type any, PERSON, ORG, or GPE; there is no default location for anything else.", err=True )
+
+
+
 	# clean up
 	connection.close()
 

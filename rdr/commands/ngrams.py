@@ -6,7 +6,7 @@ from rdr import *
 
 # ngrams
 @click.command( options_metavar='<options>' )
-@click.option('-q', '--query',      type=click.STRING, help="filter results to include the given regular expression")
+@click.option('-q', '--query',     type=click.STRING, help="filter results to include the given regular expression")
 @click.option('-c', '--count',     is_flag=True, help='count and tabulate the result')
 @click.option('-l', '--location',  default='local', type=click.Choice( [ 'local', 'remote' ] ), help='where is the study carrel')
 @click.option('-s', '--size',      default=1, help='denote unigrams, bigrams, trigrams, etc')

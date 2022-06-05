@@ -63,6 +63,10 @@ FIGURES              = 'figures'
 KEYWORDSCLOUD        = 'keywords-cloud.png'
 UNIGRAMSCLOUD        = 'unigrams-cloud.png'
 BIGRAMSCLOUD         = 'bigrams-cloud.png'
+ENTITIESANY          = 'entities-any.png'
+ENTITIESPERSON       = 'entities-person.png'
+ENTITIESGPE          = 'entities-gpe.png'
+ENTITIESORG          = 'entities-org.png'
 
 
 # spacy langauge model
