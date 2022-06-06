@@ -85,8 +85,9 @@ def checkForMallet( mallet ) :
 		configurationFile       = applicationDirectory/CONFIGURATIONFILE
 		localLibrary            = configuration( 'localLibrary' )
 		tikaHome                = configuration( 'tikaHome' )
+		notebooksHome           = configuration( 'notebooksHome' )
 		malletHome              = Path.home()/'mallet'
-		configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome, "tikaHome" : tikaHome }
+		configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome, "tikaHome" : tikaHome, 'notebooksHome' : notebooksHome }
 		with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
 
 		# make mallet executable
