@@ -6,12 +6,14 @@ from rdr import *
 
 # ngrams
 @click.command( options_metavar='<options>' )
-@click.option('-s', '--select', default='parts', type=click.Choice( [ 'parts', 'words', 'lemmas' ] ), help='the type of output')
-@click.option('-l', '--like', default='any', help='the part-of-speech')
-@click.option('-c', '--count', is_flag=True, help='count and tabulate the result')
+@click.option('-s', '--select',    default='parts', type=click.Choice( [ 'parts', 'words', 'lemmas' ] ), help='the type of output')
+@click.option('-l', '--like',      default='any', help='the part-of-speech')
+@click.option('-c', '--count',     is_flag=True, help='count and tabulate the result')
 @click.option('-n', '--normalize', is_flag=True, help='lower-case the words or lemmas')
+@click.option('-w', '--wordcloud', is_flag=True, help='given -c, output a wordcloud')
+@click.option('-v', '--save',      is_flag=True, help='given -c and -w, save cloud to default location')
 @click.argument( 'carrel', metavar='<carrel>' )
-def pos( carrel, select, like, count, normalize ) :
+def pos( carrel, select, like, count, normalize, wordcloud, save ) :
 
 	"""Filter parts-of-speech, words, and lemmas found in <carrel>
 
@@ -107,7 +109,74 @@ def pos( carrel, select, like, count, normalize ) :
 				
 			# search and process each resulting row
 			rows = connection.execute( sql )
-			for row in rows : click.echo( "\t".join( [ row[ select ], str( row[ 'count' ] ) ] ) )
+
+			# output simple tabulation
+			if not wordcloud :
+			
+				# dump
+				for row in rows : click.echo( "\t".join( [ row[ select ], str( row[ 'count' ] ) ] ) )
+			
+			# output word cloud
+			else :
+			
+				# create a dictionary of frequencies
+				frequencies = {}
+				for row in rows : frequencies[ row[ select ] ] = row[ 'count' ]
+
+				# simply output
+				if not save : cloud( frequencies )
+			
+				# save to the corresponding figures directory
+				else :
+			
+					# configure
+					localLibrary = configuration( 'localLibrary' )
+
+					# nouns
+					if like == 'NOUN%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSNOUN
+						cloud( frequencies, file=file )
+				
+					# org
+					elif like == 'VERB%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSVERB
+						cloud( frequencies, file=file )
+				
+					# geo-political entities (places)
+					elif like == 'PRON%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSPRON
+						cloud( frequencies, file=file )
+				
+					# geo-political entities (places)
+					elif like == 'ADJ%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSADJ
+						cloud( frequencies, file=file )
+				
+					# geo-political entities (places)
+					elif like == 'PROPN%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSPROPN
+						cloud( frequencies, file=file )
+				
+					# geo-political entities (places)
+					elif like == 'ADV%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSADV
+						cloud( frequencies, file=file )
+				
+					# unsupported
+					else : click.echo( "The save option is only valid for types NOUN, VERB, PRON, ADJ, PROPN, and ADV; there is no default location for anything else.", err=True )
+
 		
 	# clean up
 	connection.close()

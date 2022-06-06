@@ -40,7 +40,8 @@ CARRELS       = 'carrels'
 DOCUMENTATION = 'https://reader-toolbox.readthedocs.io'
 
 # file system mappings
-CORPUS              = 'reader.txt'
+CORPUS               = 'reader.txt'
+COLLOCATIONS         = 'reader.gml'
 DATABASE             = 'reader.db'
 ETC                  = 'etc'
 HTM                  = 'htm'
@@ -67,6 +68,12 @@ ENTITIESANY          = 'entities-any.png'
 ENTITIESPERSON       = 'entities-person.png'
 ENTITIESGPE          = 'entities-gpe.png'
 ENTITIESORG          = 'entities-org.png'
+POSNOUN              = 'pos-noun.png'
+POSVERB              = 'pos-verb.png'
+POSPRON              = 'pos-pronoun.png'
+POSADJ               = 'pos-adjective.png'
+POSADV               = 'pos-adverb.png'
+POSPROPN             = 'pos-propernoun.png'
 
 
 # spacy langauge model

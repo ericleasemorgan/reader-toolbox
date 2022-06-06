@@ -49,9 +49,15 @@ TEMPLATE = '''
 			<img src='./figures/unigrams-cloud.png' width='49%' /> <img src='./figures/bigrams-cloud.png' width='49%' />
 			</p>
 
-		<h3>Keywords</h3>
+		<h3>Parts-of-speech</h3>
 			<p style='text-align: center'>
-			<img src='./figures/keywords-cloud.png' width='66%' />
+			<img src='./figures/pos-noun.png' width='49%' /> <img src='./figures/pos-propernoun.png' width='49%' />
+			</p>
+			<p style='text-align: center'>
+			<img src='./figures/pos-pronoun.png' width='49%' /> <img src='./figures/pos-verb.png' width='49%' />
+			</p>
+			<p style='text-align: center'>
+			<img src='./figures/pos-adjective.png' width='49%' /> <img src='./figures/pos-adverb.png' width='49%' />
 			</p>
 
 		<h3>Entities</h3>
@@ -61,6 +67,13 @@ TEMPLATE = '''
 			<p style='text-align: center'>
 			<img src='./figures/entities-gpe.png' width='49%' /> <img src='./figures/entities-org.png' width='49%' />
 			</p>
+
+		<h3>Keywords</h3>
+			<p style='text-align: center'>
+			<img src='./figures/keywords-cloud.png' width='66%' />
+			</p>
+
+
 
 </body>
 </html>
@@ -113,6 +126,15 @@ def summarize( ctx, carrel, look ) :
 	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='PERSON', wordcloud=True, save=True )
 	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='GPE', wordcloud=True, save=True )
 	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='ORG', wordcloud=True, save=True )
+	
+	# save pos	
+	click.echo( "Graphing parts-of-speach", err=True )
+	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='NOUN', wordcloud=True, save=True )
+	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='VERB', wordcloud=True, save=True )
+	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='ADJ', wordcloud=True, save=True )
+	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='ADV', wordcloud=True, save=True )
+	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='PRON', wordcloud=True, save=True )
+	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='PROPN', wordcloud=True, save=True )
 	
 	# save keywords	
 	click.echo( "Graphing keywords", err=True )

@@ -6,12 +6,13 @@ from rdr import *
 
 @click.command( options_metavar='<options>' )
 @click.argument( 'carrel', metavar='<carrel>' )
-@click.option('-f', '--filter', default=4, help="least number of occurances of bigram")
+@click.option('-f', '--filter',  default=4, help="least number of occurances of bigram")
 @click.option('-m', '--measure', default='chisqr', type=click.Choice( [ 'fisher', 'chisqr', 'jaccard', 'likelihood', 'raw' ], case_sensitive=True ), help="type of measure")
-@click.option('-l', '--limit', default=4000, help="number of features")
-@click.option('-w', '--window', default=4, help="size of window")
-@click.option('-o', '--output', default='image', type=click.Choice( [ 'image', 'gml' ], case_sensitive=True ), help="type of output")
-def collocations( carrel, window, filter, measure, limit, output ) :
+@click.option('-l', '--limit',   default=4000, help="number of features")
+@click.option('-w', '--window',  default=4, help="size of window")
+@click.option('-o', '--output',  default='image', type=click.Choice( [ 'image', 'gml' ], case_sensitive=True ), help="type of output")
+@click.option('-v', '--save',    is_flag=True, help='save graph to default location')
+def collocations( carrel, window, filter, measure, limit, output, save ) :
 
 	'''Output network graph based on bigram collocations in <carrel>
 
@@ -98,7 +99,17 @@ def collocations( carrel, window, filter, measure, limit, output ) :
 		plt.figure()
 		nx.draw( G, with_labels=True, node_size=10, font_size=9, edge_color='silver' )
 		plt.show()
+		
+	# standard out
+	else: 
 	
-	# output gml
-	else: nx.write_gml( G, sys.stdout.buffer )
+		# save
+		if save :
+
+			# configure and save
+			file = localLibrary/carrel/ETC/COLLOCATIONS
+			nx.write_gml( G, file )
+
+		# standard output
+		else : nx.write_gml( G, sys.stdout.buffer )
 	

@@ -39,7 +39,7 @@ def catalog( directory, pattern ) :
 		note  = data[ 'cells' ][ 1 ][ 'source' ][ 0 ].replace( '\n', ' ' )
 		
 		# output
-		print( "  * %s (%s) - %s\n" % ( title, name, note ) )
+		print( "  *%s (%s) - %s\n" % ( title, name, note ) )
 
 
 # define; download
