@@ -246,5 +246,32 @@ def cloud( frequencies, **kwargs ) :
 	return True
 
 
+# return various extents
+def extents( carrel, type ) :
 
+	# require
+	import sqlite3
 
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	locallibrary           = configuration( 'localLibrary' )
+	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection.row_factory = sqlite3.Row
+
+	# get extents
+	sql = 'SELECT COUNT( id ) AS items, SUM( words ) AS words, AVG( flesch ) AS flesch FROM bib;'
+	rows = connection.execute( sql )
+	for row in rows :
+
+		items  = row[ 'items' ]
+		words  = row[ 'words' ]
+		flesch = str( int( row[ 'flesch' ] ) )
+
+	if type == 'items' : value = items
+	elif type == 'words' : value = words
+	elif type == 'flesch' : value = flesch
+	
+	return value
+	

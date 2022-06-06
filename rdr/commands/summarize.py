@@ -23,9 +23,9 @@ TEMPLATE = '''
 			<li>Creator</li>
 			<li>Title</li>
 			<li>Date</li>
-			<li>Number of items</li>
-			<li>Number of words</li>
-			<li>Average readability score</li>
+			<li>Number of items: ##ITEMS##</li>
+			<li>Number of words: ##WORDS##</li>
+			<li>Average readability score: ##FLESCH##</li>
 			<li><a href="./etc/bibliography.txt">Bibliography</a></li>
 		</ol>
 
@@ -141,7 +141,11 @@ def summarize( ctx, carrel, look ) :
 	ctx.invoke( wrd.wrd, carrel=carrel, count=True, wordcloud=True, save=True )
 	
 	# create html
+	click.echo( "Building HTML page", err=True )
 	html = TEMPLATE.replace( '##CARREL##', carrel )
+	html = html.replace( '##ITEMS##', str( extents( carrel, 'items' ) ) )
+	html = html.replace( '##WORDS##', str( extents( carrel, 'words' ) ) )
+	html = html.replace( '##FLESCH##', str( extents( carrel, 'flesch' ) ) )
 	
 	# save html
 	locallibrary = configuration( 'localLibrary' )

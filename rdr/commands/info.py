@@ -63,13 +63,9 @@ def info( carrel ) :
 
 
 	# get extents
-	sql = 'SELECT COUNT( id ) AS items, SUM( words ) AS words, AVG( flesch ) AS flesch FROM bib;'
-	rows = connection.execute( sql )
-	for row in rows :
-
-		items  = row[ 'items' ]
-		words  = row[ 'words' ]
-		flesch = str( int( row[ 'flesch' ] ) )
+	items  = extents( carrel, 'items' )
+	words  = extents( carrel, 'words' )
+	flesch = extents( carrel, 'flesch' )
 
  	# get keywords
 	keywords = []
