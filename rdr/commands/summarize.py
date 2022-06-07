@@ -19,16 +19,15 @@ TEMPLATE = '''
 
 	<h2>Basic characteristics</h2>
 
-		<ol>
-			<li>Creator</li>
-			<li>Title</li>
-			<li>Date</li>
-			<li>Number of items: ##ITEMS##</li>
-			<li>Number of words: ##WORDS##</li>
-			<li>Average readability score: ##FLESCH##</li>
-			<li><a href="./etc/bibliography.txt">Bibliography</a></li>
-		</ol>
-
+		<table>
+		<tr><td>Creator</td><td>##CREATOR##</td></tr>
+		<tr><td>Date created</td><td>##DATECREATED##</td></tr>
+		<tr><td>Number of items</td><td>##ITEMS##</td></tr>
+		<tr><td>Number of words</td><td>##WORDS##</td></tr>
+		<tr><td>Average readability score</td><td>##FLESCH##</td></tr>
+		<tr><td>Bibliography</td><td><a href="./etc/bibliography.txt">plain text</a>; <a href="./etc/bibliography.htm">HTML</a>; <a href="./etc/bibliography.json">JSON</a></td></tr>
+		</table>
+		
 		<h3>Sizes</h3>
 			<p style='text-align: center'>
 			<img src='./figures/sizes-boxplot.png' width='49%' /> <img src='./figures/sizes-histogram.png' width='49%' />
@@ -98,8 +97,10 @@ def summarize( ctx, carrel, look ) :
 	
 	# save bibliography
 	click.echo( "Creating bibliography", err=True )
-	ctx.invoke( bib.bib, carrel=carrel, save=True )
-		
+	bibliography( carrel, 'text', save=True )
+	bibliography( carrel, 'html', save=True )
+	bibliography( carrel, 'json', save=True )
+			
 	# save sizes	
 	click.echo( "Graphing sizes", err=True )
 	ctx.invoke( sizes.sizes, carrel=carrel, output='boxplot',   save=True )
@@ -146,6 +147,8 @@ def summarize( ctx, carrel, look ) :
 	html = html.replace( '##ITEMS##', str( extents( carrel, 'items' ) ) )
 	html = html.replace( '##WORDS##', str( extents( carrel, 'words' ) ) )
 	html = html.replace( '##FLESCH##', str( extents( carrel, 'flesch' ) ) )
+	html = html.replace( '##DATECREATED##', str( provenance( carrel, 'dateCreated' ) ) )
+	html = html.replace( '##CREATOR##', str( provenance( carrel, 'creator' ) ) )
 	
 	# save html
 	locallibrary = configuration( 'localLibrary' )

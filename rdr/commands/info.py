@@ -29,14 +29,13 @@ def info( carrel ) :
 	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
 	connection.row_factory = sqlite3.Row
 
-	# parse provenance
-	with open( locallibrary/carrel/PROVENANCE ) as handle : provenance = handle.read().split( '\t' )
-	process     = provenance[ 0 ]
-	originalID  = provenance[ 1 ]
-	dateCreated = provenance[ 2 ]
-	timeCreated = provenance[ 3 ]
-	creator     = provenance[ 4 ]
-	input       = provenance[ 5 ][:-1]
+	# get provenance data
+	process     = provenance( carrel, 'process' )
+	originalID  = provenance( carrel, 'originalID' )
+	dateCreated = provenance( carrel, 'dateCreated' )
+	timeCreated = provenance( carrel, 'timeCreated' )
+	creator     = provenance( carrel, 'creator' )
+	input       = provenance( carrel, 'input' )
 	
 	# parse identifier; extract type, title, and source
 	parts = carrel.split( '-' )

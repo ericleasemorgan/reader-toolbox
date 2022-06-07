@@ -53,7 +53,9 @@ CACHE                = 'cache'
 PROVENANCE           = 'provenance.tsv'
 METADATA             = 'metadata.csv'
 INDEX                = 'index.htm'
-BIBLIOGRAPHY         = 'bibliography.txt'
+BIBLIOGRAPHYTEXT     = 'bibliography.txt'
+BIBLIOGRAPHYHTML     = 'bibliography.htm'
+BIBLIOGRAPHYJSON     = 'bibliography.json'
 SIZESBOXPLOT         = 'sizes-boxplot.png'
 SIZESHISTOGRAM       = 'sizes-histogram.png'
 READABILITYHISTOGRAM = 'readability-histogram.png'
@@ -246,6 +248,38 @@ def cloud( frequencies, **kwargs ) :
 	return True
 
 
+# read and parse provenance data
+def provenance( carrel, field ) :
+
+	# initialize
+	locallibrary = configuration( 'localLibrary' )
+	
+	# sanity check
+	checkForCarrel( carrel )
+
+	# read provenance file
+	with open( locallibrary/carrel/PROVENANCE ) as handle : provenance = handle.read().split( '\t' )
+	
+	# parse it
+	process     = provenance[ 0 ]
+	originalID  = provenance[ 1 ]
+	dateCreated = provenance[ 2 ]
+	timeCreated = provenance[ 3 ]
+	creator     = provenance[ 4 ]
+	input       = provenance[ 5 ][:-1]
+
+	# map
+	if field   == 'process'     : value = process
+	elif field == 'originalID'  : value = originalID
+	elif field == 'dateCreated' : value = dateCreated
+	elif field == 'timeCreated' : value = timeCreated
+	elif field == 'creator'     : value = creator
+	elif field == 'input'       : value = input
+	
+	# done
+	return value
+	
+	
 # return various extents
 def extents( carrel, type ) :
 
@@ -269,9 +303,112 @@ def extents( carrel, type ) :
 		words  = row[ 'words' ]
 		flesch = str( int( row[ 'flesch' ] ) )
 
-	if type == 'items' : value = items
-	elif type == 'words' : value = words
+	if type == 'items'    : value = items
+	elif type == 'words'  : value = words
 	elif type == 'flesch' : value = flesch
 	
 	return value
+
+
+# output a rudimentary bibliography
+def bibliography( carrel, format='text', save=False ) :
+
+	# require
+	import sqlite3
+	from pathlib import Path
+	import json
+	
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	locallibrary           = configuration( 'localLibrary' )
+	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection.row_factory = sqlite3.Row
+
+	# query database
+	sql  = '''SELECT b.id, b.words, b.extension, b.flesch, b.author, b.title, b.date, GROUP_CONCAT( LOWER( w.keyword ), '; ') AS keywords, b.summary
+			  FROM bib AS b, wrd AS w
+			  WHERE b.id = w.id
+			  GROUP BY b.id
+			  ORDER BY b.id, LOWER( b.author );'''
+	rows  = connection.execute( sql )
+	rows  = rows.fetchall()
+	connection.close()
+
+	# branch according to format
+	if format   == 'json' : bibliography = json.dumps( [ dict( row ) for row in rows ] )
+		
+	elif format == 'text' or format == 'html' :
+	
+		# initialize
+		total = len( rows )
+		bibliography = ''
+		items = ''
+		template = "<html><head><title>Bibliography</title></head><body style='margin:7%'><h1>Bibliography</h1><ol>##ITEMS##</ol></body></html>"
+		
+		# process each row
+		for item, row in enumerate( rows ) :
+
+			# parse
+			id        = str( row[ 'id' ] )
+			author    = row[ 'author' ]
+			title     = row[ 'title' ]
+			date      = row[ 'date' ]
+			words     = row[ 'words' ]
+			flesch    = row[ 'flesch' ]
+			summary   = row[ 'summary' ]
+			keywords  = row[ 'keywords' ]
+
+			# normalize; unescape
+			if summary : summary = summary.replace( "''", "'" )
+	
+			# build cache and plain text
+			cache = str( locallibrary/carrel/CACHE/id ) + row[ 'extension' ]
+			text  = str( locallibrary/carrel/TXT/id )   + '.txt'
+	
+			if format == 'text' :
+			
+				# build the bibliography
+				bibliography = bibliography + ( '        item: #%s of %s\n' % ( str( item + 1 ), total ) )
+				bibliography = bibliography + ( '          id: %s\n' % id )
+				bibliography = bibliography + ( '      author: %s\n' % author )
+				bibliography = bibliography + ( '       title: %s\n' % title )
+				bibliography = bibliography + ( '        date: %s\n' % date )
+				bibliography = bibliography + ( '       words: %s\n' % words )
+				bibliography = bibliography + ( '      flesch: %s\n' % flesch )
+				bibliography = bibliography + ( '     summary: %s\n' % summary )
+				bibliography = bibliography + ( '    keywords: %s\n' % keywords )
+				bibliography = bibliography + ( '       cache: %s\n' % cache )
+				bibliography = bibliography + ( '  plain text: %s\n' % text )
+				bibliography = bibliography + '\n'
+	
+			else :
+			
+				item = '<ul>'
+				item = item + '<li>' + ( 'author: %s'    % author )   + '</li>'
+				item = item + '<li>' + ( 'title: %s'     % title )    + '</li>'
+				item = item + '<li>' + ( 'date: %s'      % date )     + '</li>'
+				item = item + '<li>' + ( 'words: %s'     % words )    + '</li>'
+				item = item + '<li>' + ( 'flesch: %s'    % flesch )   + '</li>'
+				item = item + '<li>' + ( 'summary: %s'   % summary )  + '</li>'
+				item = item + '<li>' + ( 'keywords: %s'  % keywords ) + '</li>'
+				item = item + '<li>' + ( 'cache: %s'      % cache )   + '</li>'
+				item = item + '<li>' + ( 'plain text: %s' % text )    + '</li>'
+				item = item + '</ul>'
+				
+				items = items + "<li>" + id + item + "</li>"
+				
+	if format == 'html' : bibliography = template.replace( '##ITEMS##', items )
+	
+	if save :
+
+		if format == 'text' : file = locallibrary/carrel/ETC/BIBLIOGRAPHYTEXT
+		if format == 'html' : file = locallibrary/carrel/ETC/BIBLIOGRAPHYHTML
+		if format == 'json' : file = locallibrary/carrel/ETC/BIBLIOGRAPHYJSON
+		
+		with open( file, 'w', encoding='utf-8' ) as handle : handle.write( bibliography )
+		
+	else : return bibliography
+	
 	
