@@ -28,55 +28,6 @@ def wrd( carrel, count, wordcloud, save ) :
 	  rdr concordance --help
 	  rdr search --help"""
 
-	# require
-	import sqlite3
-
-	# sanity check
-	checkForCarrel( carrel )
-
-	# initialize
-	locallibrary           = configuration( 'localLibrary' )
-	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
-	connection.row_factory = sqlite3.Row
-	
-	# dump a sorted list of all keywords
-	if not count :
-
-		# articulate sql, search, and output
-		sql  = 'SELECT DISTINCT( LOWER( keyword ) ) AS keyword FROM wrd ORDER BY LOWER( keyword );'
-		rows = connection.execute( sql )
-		for row in rows : click.echo( row[ 'keyword' ] )
-
-	# count and tabulate the dump
-	else :
-	
-		# articulate sql, search, and output
-		sql  = 'SELECT LOWER( keyword ) AS keyword, COUNT( LOWER( keyword ) ) AS count FROM wrd GROUP BY LOWER( keyword ) ORDER BY count DESC, keyword;'
-		rows = connection.execute( sql )
-		
-		# output a simple list
-		if not wordcloud :
-			
-			for row in rows : 
-		
-				# output, conditionally; weird
-				if row[ 'keyword' ] : click.echo( "\t".join( [ row[ 'keyword' ], str( row[ 'count' ] ) ] ) )			
-
-		# output a word cloud
-		else :
-			
-			# create a list of frequencies
-			frequencies = {}
-			for row in rows :
-			
-				if row[ 'keyword' ] : frequencies[ row[ 'keyword' ] ] = row[ 'count' ]
-			
-			if not save : cloud( frequencies )
-			else :
-			
-				file = locallibrary/carrel/FIGURES/KEYWORDSCLOUD
-				cloud( frequencies, file=file )
-
-	# clean up
-	connection.close()
-
+	# do the work and conditionally output
+	if not wordcloud : click.echo( keywords( carrel, count ) )
+	else             : keywords( carrel, count, wordcloud, save )

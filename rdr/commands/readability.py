@@ -18,58 +18,6 @@ def readability( carrel, sort, output, save ) :
 	
 	Example: rdr readability homer -o boxplot"""
 
-	# configure
-	SCORE   = 'SELECT id, flesch FROM bib ORDER BY flesch DESC'
-	ID      = 'SELECT id, flesch FROM bib ORDER BY id ASC'
-	COLUMNS = [ 'readability' ]
-	
-	# require
-	import matplotlib.pyplot as plt
-	import pandas as pd
-	import sqlite3
-
-	# sanity check
-	checkForCarrel( carrel )
-
-	# initialize
-	locallibrary           = configuration( 'localLibrary' )
-	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
-	connection.row_factory = sqlite3.Row
-	
-	# find all rows
-	if sort == 'score' : rows = connection.execute( SCORE )
-	else               : rows = connection.execute( ID )
-		
-	# branch according to given output; simple list
-	if output == 'list' :
-	
-		# process each row; output tab-delimited list
-		for row in rows : click.echo( '\t'.join( [ row[ 'id' ], str( row[ 'flesch' ] ) ]) )   
-   
-	# output charts
-	else :
-			
-		# create a simple list of words, and store it in a dataframe
-		records = []
-		for row in rows : records.append( int( row[ 'flesch' ] ) )
-		df = pd.DataFrame( records, columns=COLUMNS )
-
-		# initialize the plot
-		figure, axis = plt.subplots()
-
-		# plot
-		if output == 'histogram' : 
-		
-			df.hist( ax=axis )
-			if save : plt.savefig( locallibrary/carrel/FIGURES/READABILITYHISTOGRAM )
-			else    : plt.show()
-
-		else :
-		
-			df.boxplot( ax=axis )		
-			if save : plt.savefig( locallibrary/carrel/FIGURES/READABILITYBOXPLOT )
-			else    : plt.show()
-
-	# clean up
-	connection.close()
-
+	# do the work
+	if not save : click.echo( flesch( carrel, sort, output ) )
+	else        : flesch( carrel, sort, output, save )

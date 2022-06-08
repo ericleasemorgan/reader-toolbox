@@ -411,4 +411,567 @@ def bibliography( carrel, format='text', save=False ) :
 		
 	else : return bibliography
 	
+
+# get email addresses
+def addresses( carrel, count=False, like=None ) :
+
+	# require
+	import sqlite3
+
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	locallibrary           = configuration( 'localLibrary' )
+	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection.row_factory = sqlite3.Row
+	items                  = []
 	
+	# dump a sorted list of all email addresses
+	if not count :
+
+		# articulate sql
+		if like :
+		
+			sql = ( '''SELECT DISTINCT( LOWER( address ) ) AS address
+			           FROM adr
+			           WHERE address LIKE "%s"
+			           ORDER BY address;''' % ('%' + like + '%' ) )
+			
+		else :
+		
+			sql  = '''SELECT DISTINCT( LOWER( address ) ) AS address
+			          FROM adr
+			          ORDER BY address;'''
+
+		# do the work and build the result
+		rows = connection.execute( sql )
+		for row in rows : items.append( row[ 'address' ]  )
+
+	# count and tabulate the dump
+	else :
+	
+		# articulate sql
+		if like :
+		
+			sql = ( '''SELECT LOWER( address ) AS address, COUNT( LOWER( address ) ) AS count
+			           FROM adr
+			           WHERE address LIKE "%s"
+			           GROUP BY LOWER( address )
+			           ORDER BY count DESC, address;''' % ('%' + like + '%' ) )
+			
+		else :
+		
+			sql  = '''SELECT LOWER( address ) AS address, COUNT( LOWER( address ) ) AS count
+			          FROM adr
+			          GROUP BY LOWER( address )
+			          ORDER BY count DESC, address;'''
+
+		# do the work and build the result
+		rows = connection.execute( sql )
+		for row in rows : items.append( "\t".join( [ row[ 'address' ], str( row[ 'count' ] ) ] ) )		
+
+	# clean up and done
+	connection.close()
+	return '\n'.join( items )
+
+
+def urls( carrel, select='url', count=False, like=None ) :
+
+	# require
+	import sqlite3
+
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	locallibrary           = configuration( 'localLibrary' )
+	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection.row_factory = sqlite3.Row
+	items                  = []
+	
+	# dump a sorted list of all urls
+	if select == 'url' :
+	
+		# don't count
+		if not count :
+		
+			# simple filter
+			if like :
+			
+				# articulate sql
+				sql = ( '''SELECT DISTINCT( url ) AS url
+				           FROM url
+				           WHERE url LIKE "%s"
+				           ORDER BY url;''' % ( '%' + like + '%' ) )
+
+			# just dump; articulate sql
+			else : sql = 'SELECT DISTINCT( url ) AS url FROM url ORDER BY url;'
+
+			# do the work and output
+			rows = connection.execute( sql )
+			for row in rows : items.append( row[ 'url' ] )
+
+		# count
+		else :
+		
+			# simple filtering
+			if like :
+			
+				# articulate sql
+				sql = ( '''SELECT DISTINCT( url ) AS url, COUNT( DISTINCT( url ) ) AS count
+				           FROM url
+				           WHERE url LIKE '%s'
+				           GROUP BY url
+				           ORDER BY count DESC;''' % ( '%' + like + '%' ) )
+				            
+			# no filtering
+			else :
+
+				# articulate sql
+				sql = '''SELECT DISTINCT( url ) AS url, COUNT( DISTINCT( url ) ) As count
+				         FROM url
+				         GROUP BY url
+				         ORDER BY count DESC;'''
+
+			# do the work and output
+			rows = connection.execute( sql )
+			for row in rows : items.append( "\t".join( [ row[ 'url' ], str( row[ 'count' ] ) ] ) )
+			
+	# domains; count and tabulate the dump
+	else :
+	
+		# no counting
+		if not count :
+		
+			# filter
+			if like :
+			
+				# articulate sql, search, and output
+				sql = ( '''SELECT LOWER( DISTINCT( domain ) ) AS domain
+				           FROM url
+				           WHERE url LIKE '%s'
+				           ORDER BY domain;''' % ( '%' + like + '%' ) )
+
+			# no filtering
+			else : sql = 'SELECT LOWER( DISTINCT( domain ) ) AS domain FROM url ORDER BY domain;'
+
+			# do the work and output
+			rows = connection.execute( sql )
+			for row in rows : item.append( row[ 'domain' ] )
+		
+		# count and tabulate
+		else :
+		
+			# filter
+			if like :
+			
+				# articulate sql, search, and output
+				sql = ( '''SELECT LOWER( DISTINCT( domain ) ) AS domain, COUNT( LOWER( DISTINCT( domain ) ) ) AS count
+				           FROM url
+				           WHERE domain LIKE '%s'
+				           GROUP BY domain
+				           ORDER BY count DESC, domain;''' % ( '%' + like + '%' ) )
+
+			# no filtering
+			else :
+			
+				# articulate sql, search, and output
+				sql = '''SELECT LOWER( DISTINCT( domain ) ) AS domain, COUNT( LOWER( DISTINCT( domain ) ) ) AS count
+				         FROM url
+				         GROUP BY domain
+				         ORDER BY count DESC, domain;'''
+				         
+			# do the work and output
+			rows = connection.execute( sql )
+			for row in rows : items.append( "\t".join( [ row[ 'domain' ], str( row[ 'count' ] ) ] ) )
+			
+	# clean up and done
+	connection.close()
+	return '\n'.join( items )
+
+
+def keywords( carrel, count=False, wordcloud=False, save=False ) :
+
+	# require
+	import sqlite3
+
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	locallibrary           = configuration( 'localLibrary' )
+	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection.row_factory = sqlite3.Row
+	items                  = []
+	
+	# dump a sorted list of all keywords
+	if not count :
+
+		# articulate sql, search, and output
+		sql  = 'SELECT DISTINCT( LOWER( keyword ) ) AS keyword FROM wrd ORDER BY LOWER( keyword );'
+		rows = connection.execute( sql )
+		for row in rows : items.append( row[ 'keyword' ] )
+
+	# count and tabulate the dump
+	else :
+	
+		# articulate sql, search, and output
+		sql  = 'SELECT LOWER( keyword ) AS keyword, COUNT( LOWER( keyword ) ) AS count FROM wrd GROUP BY LOWER( keyword ) ORDER BY count DESC, keyword;'
+		rows = connection.execute( sql )
+		
+		# output a simple list
+		if not wordcloud :
+			
+			for row in rows : 
+		
+				# output, conditionally; weird
+				if row[ 'keyword' ] : items.append( "\t".join( [ row[ 'keyword' ], str( row[ 'count' ] ) ] ) )			
+
+		# output a word cloud
+		else :
+			
+			# create a list of frequencies
+			frequencies = {}
+			for row in rows :
+			
+				if row[ 'keyword' ] : frequencies[ row[ 'keyword' ] ] = row[ 'count' ]
+			
+			if not save : cloud( frequencies )
+			else :
+			
+				file = locallibrary/carrel/FIGURES/KEYWORDSCLOUD
+				cloud( frequencies, file=file )
+
+	# clean up and done; the result might be empty, which is sort of bogus
+	connection.close()
+	return '\n'.join( items )
+
+
+# create and/or get the NTTK model
+def getNLTKText( carrel ) :
+
+	# configure
+	MODEL = 'reader.nltk'
+
+	# require
+	from nltk import Text, word_tokenize
+	from os   import path, stat
+	import    pickle
+	
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+	file         = localLibrary/carrel/ETC/MODEL
+
+	# check to see if we've previously been here
+	if path.exists( file ) :
+	
+		# read the model
+		with open( file, 'rb' ) as handle : model = pickle.load( handle )	
+			
+	else :
+
+		# create the model and save it for future use
+		corpus = localLibrary/carrel/ETC/CORPUS
+		model  = Text( word_tokenize( open( corpus ).read( ) ) )
+		with open( file, 'wb' ) as handle : pickle.dump( model, handle )
+
+	# return the model
+	return( model )
+
+
+# poor man's search engine
+def concordancing( carrel, query='love', width=80, lines=999 ) :
+
+	# require
+	from nltk import Text, word_tokenize
+
+	# sanity checks
+	checkForCarrel( carrel )
+	checkForPunkt()
+	
+	# initialize, read, and normalize; ought to save the result for future use
+	model = getNLTKText( carrel )
+	items = []			
+			
+	# split query into a list, conditionally
+	if ' ' in query : query = query.split( ' ' )
+		
+	# do the work and output
+	lines = model.concordance_list( query, width=width, lines=lines )
+	for line in lines : items.append( line.line )
+	
+	# done
+	return '\n'.join( items )
+
+
+# get sizes (measured in words) of documents
+def size( carrel, sort='words', output='list', save=False ) :
+
+	# configure
+	WORDS   = 'SELECT id, words FROM bib ORDER BY words DESC'
+	ID      = 'SELECT id, words FROM bib ORDER BY id ASC'
+	COLUMNS = [ 'sizes in words' ]
+	
+	# require
+	import matplotlib.pyplot as plt
+	import pandas as pd
+	import sqlite3
+
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	locallibrary           = configuration( 'localLibrary' )
+	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection.row_factory = sqlite3.Row
+	items                  = []
+	
+	# find all rows
+	if sort == 'words' : rows = connection.execute( WORDS )
+	else               : rows = connection.execute( ID )
+		
+	# branch according to given output; simple list
+	if output == 'list' :
+	
+		# process each row; output tab-delimited list
+		for row in rows : items.append( '\t'.join( [ str( row[ 'id' ] ), str( row[ 'words' ] ) ]) )   
+   
+	# output charts
+	else :
+			
+		# create a simple list of words, and store it in a dataframe
+		records = []
+		for row in rows : records.append( int( row[ 'words' ] ) )
+		df = pd.DataFrame( records, columns=COLUMNS )
+
+		# initialize the plot
+		figure, axis = plt.subplots()
+		
+		# plot
+		if output == 'histogram' : 
+		
+			df.hist( ax=axis )
+			if save : plt.savefig( locallibrary/carrel/FIGURES/SIZESHISTOGRAM )
+			else    : plt.show()
+
+		else :
+		
+			df.boxplot( ax=axis )		
+			if save : plt.savefig( locallibrary/carrel/FIGURES/SIZESBOXPLOT )
+			else    : plt.show()
+		
+	# clean up
+	connection.close()
+	return '\n'.join( items )
+
+
+# get readability scores
+def flesch( carrel, sort='score', output='list', save=False) :
+
+	# configure
+	SCORE   = 'SELECT id, flesch FROM bib ORDER BY flesch DESC'
+	ID      = 'SELECT id, flesch FROM bib ORDER BY id ASC'
+	COLUMNS = [ 'readability' ]
+	
+	# require
+	import matplotlib.pyplot as plt
+	import pandas as pd
+	import sqlite3
+
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	locallibrary           = configuration( 'localLibrary' )
+	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection.row_factory = sqlite3.Row
+	items                  = []
+	
+	# find all rows
+	if sort == 'score' : rows = connection.execute( SCORE )
+	else               : rows = connection.execute( ID )
+		
+	# branch according to given output; simple list
+	if output == 'list' :
+	
+		# process each row; output tab-delimited list
+		for row in rows : items.append( '\t'.join( [ row[ 'id' ], str( row[ 'flesch' ] ) ] ) )   
+   
+	# output charts
+	else :
+			
+		# create a simple list of words, and store it in a dataframe
+		records = []
+		for row in rows : records.append( int( row[ 'flesch' ] ) )
+		df = pd.DataFrame( records, columns=COLUMNS )
+
+		# initialize the plot
+		figure, axis = plt.subplots()
+
+		# plot
+		if output == 'histogram' : 
+		
+			df.hist( ax=axis )
+			if save : plt.savefig( locallibrary/carrel/FIGURES/READABILITYHISTOGRAM )
+			else    : plt.show()
+
+		else :
+		
+			df.boxplot( ax=axis )		
+			if save : plt.savefig( locallibrary/carrel/FIGURES/READABILITYBOXPLOT )
+			else    : plt.show()
+
+	# clean up
+	connection.close()
+	return '\n'.join( items )
+
+
+# compute ngrams
+def ngramss( carrel, size=1, query=None, count=False, location='local', wordcloud=False, save=False ) :
+
+	# configure
+	LIMIT = 200
+	
+	# require
+	from re       import search
+	from requests import get
+	import nltk
+
+	# branch according to location; local
+	if location == 'local' :
+	
+		# sanity check
+		checkForCarrel( carrel )
+		
+		# read local data
+		localLibrary = configuration( 'localLibrary' )
+		stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ), encoding='utf-8' ).read().split()
+		text         = open( str( localLibrary/carrel/ETC/CORPUS ), encoding='utf-8' ).read()
+	
+	# remote
+	elif location == 'remote' :
+	
+		# read remote data; needs error checking
+		stopwords = get( '/'.join ( [ REMOTELIBRARY, CARRELS, carrel, ETC, STOPWORDS ] ) ).text.split()
+		text      = get( '/'.join ( [ REMOTELIBRARY, CARRELS, carrel, ETC, CORPUS ] ) ).text
+		
+	# error
+	else :
+	
+		# click ought to prevent this, but just in case
+		click.echo( "Error: Unknown value for location: { location }. Call Eric.", err=True )
+		exit()
+			
+	# read, tokenize, and normalize the text
+	tokens = nltk.word_tokenize( text, preserve_line=True )
+	tokens = [ token.lower() for token in tokens if token.isalpha() ]
+	
+	# create the set of ngrams
+	ngrams = list( nltk.ngrams( tokens, size ) )
+	
+	# filter, conditionally
+	if query :
+	
+		# initialize and process each ngram
+		filtered = []
+		for ngram in ngrams :
+			
+			# check and update
+			if search( query, ' '.join( ngram ) ) : filtered.append( ngram )
+		
+		# done
+		ngrams = filtered
+
+	# remove stopwords from unigrams or bigrams
+	if size < 3 :
+	
+		# initialize
+		results = []
+		
+		# process each ngram
+		for ngram in ngrams :
+
+			# re-initialize
+			found = False
+			
+			# process each token in the ngram
+			for token in ngram :
+
+				# check for stopword
+				if token in stopwords : found = True
+	
+			# conditionally update the results
+			if not found : results.append( ngram )
+
+		# done; make it read pretty
+		ngrams = results
+		
+	# output; human
+	if count :
+	
+		# initialize a dictionary and process each ngram
+		frequencies = {}
+		for ngram in ngrams :
+
+			# update the dictionary
+			if ngram in frequencies : frequencies[ ngram ] += 1
+			else                    : frequencies[ ngram ]  = 1
+
+		# sort the dictionary
+		ngrams = sorted( frequencies.items(), key=lambda x:x[ 1 ], reverse=True )
+		
+		if not wordcloud :
+		
+			results = []
+			
+			# process each ngram
+			for ngram in ngrams :
+			
+				# create a record and output
+				results.append( '\t'.join( list( ngram[ 0 ] ) ) + '\t' + str( ngram[ 1 ] ) )
+				
+			return '\n'.join( results )
+							
+		else :
+		
+			# limit the number of ngrams; we can't visualize a huge number
+			ngrams = ngrams[ :LIMIT ]
+			
+			# coerce the result into a dictionary of frequencies
+			frequencies = {}
+			for ngram in ngrams : frequencies[ ' '.join( ngram[ 0 ] ) ] = ngram[ 1 ]
+			
+			# simply output
+			if not save : cloud( frequencies )
+
+			# save to the corresponding figures directory
+			else :
+			
+				# unigrams
+				if size == 1 :
+				
+					# configure and save
+					file = localLibrary/carrel/FIGURES/UNIGRAMSCLOUD
+					cloud( frequencies, file=file )
+					
+				# bigrams
+				elif size == 2 :
+				
+					# configure and save
+					file = localLibrary/carrel/FIGURES/BIGRAMSCLOUD
+					cloud( frequencies, file=file )
+				
+				# unsupported
+				else : click.echo( "The save option is only valid for unigrams and bigrams; there is no default location for anything else.", err=True )
+				
+	# power user
+	else :
+		
+		results = []
+	
+		# output raw data, and hope sort, uniq, grep, and less are used
+		for ngram in ngrams : results.append( "\t".join( list( ngram ) ) )
+		return '\n'.join( results )
+
+
