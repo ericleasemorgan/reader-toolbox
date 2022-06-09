@@ -181,6 +181,7 @@ def modelNotFound() :
 	# done
 	exit()
 
+
 # make sure the NLTK is sane
 def checkForPunkt() :
 
@@ -1243,3 +1244,327 @@ def entities( carrel, select='type', like='any', count=False, wordcloud=False, s
 	connection.close()
 	return '\n'.join( items )
 
+
+# do feature reduction and visualize
+def clusters( carrel, type='dendrogram', save=False ) :
+
+	# configure
+	MAXIMUM   = 0.95
+	MINIMUM   = 2
+	EXTENSION = '.txt'
+
+	# require
+	from os                              import path, system, listdir
+	from scipy.cluster.hierarchy         import ward, dendrogram
+	from sklearn.feature_extraction.text import TfidfVectorizer
+	from sklearn.manifold                import MDS
+	from sklearn.metrics.pairwise        import cosine_similarity
+	import matplotlib.pyplot             as     plt
+	
+	# ignore warnings; probably not the greatest idea
+	import warnings
+	warnings.filterwarnings("ignore")
+
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+	stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ), encoding='utf-8' ).read().split()
+	directory    = localLibrary/carrel/TXT
+	filenames    = [ path.join( directory, filename ) for filename in listdir( directory ) ]
+	vectorizer   = TfidfVectorizer( input='filename', max_df=MAXIMUM, min_df=MINIMUM, stop_words=stopwords )
+	matrix       = vectorizer.fit_transform( filenames ).toarray()
+	distance     = 1 - cosine_similarity( matrix )
+	keys         = [ path.basename( filename ).replace( EXTENSION, '' ) for filename in filenames ] 
+
+	# branch according to type; dendrogram
+	if type == 'dendrogram' :
+		linkage_matrix = ward( distance )
+		dendrogram( linkage_matrix, orientation="right", labels=keys )
+		plt.tight_layout() 
+
+	# cube
+	elif type == 'cube' :
+		mds = MDS( n_components=3, dissimilarity="precomputed", random_state=1 )
+		pos = mds.fit_transform( distance )
+		fig = plt.figure()
+		ax  = fig.add_subplot( 111, projection='3d' )
+		ax.scatter( pos[ :, 0 ], pos[ :, 1 ], pos[ :, 2 ] )
+		for x, y, z, s in zip( pos[ :, 0 ], pos[ :, 1 ], pos[ :, 2 ], keys ) : ax.text( x, y, z, s )
+
+	# save, or not
+	if save :
+	
+		if type == 'dendrogram' : plt.savefig( localLibrary/carrel/FIGURES/CLUSTERDENDROGRAM )
+		else                    : plt.savefig( localLibrary/carrel/FIGURES/CLUSTERCUBE )
+		
+	else : plt.show()
+
+	# done
+	return
+	
+# process collocations
+def collocate( carrel, window=4, filter=4, measure='chisqr', limit=4000, output='image', save=False ) :
+
+	# require
+	from   nltk.collocations import BigramAssocMeasures
+	import matplotlib.pyplot as plt
+	import networkx as nx
+	import nltk
+	import sys
+	
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+	corpus       = str( localLibrary/carrel/ETC/CORPUS )
+	stopwords    = str( localLibrary/carrel/ETC/STOPWORDS )
+
+	# sanity checks
+	checkForCarrel( carrel )
+		
+	# read the stop words and the carrel
+	with open( stopwords, encoding='utf-8' ) as handle : stopwords = handle.read().split( '\n' )
+	with open( corpus, encoding='utf-8' )    as handle : corpus    = handle.read()
+
+	# featurize the carrel
+	features = nltk.word_tokenize( corpus )
+	features = [ feature for feature in features if feature.isalpha() ]
+	features = [ feature.lower() for feature in features ]
+	features = [ feature for feature in features if feature not in stopwords ]
+
+	# collocate
+	finder = nltk.BigramCollocationFinder.from_words( features, window_size=window )
+	
+	# filter
+	if filter > 0 : finder.apply_freq_filter( filter )
+	
+	# measure
+	if   measure == 'chisqr'     : records = finder.score_ngrams( BigramAssocMeasures.chi_sq )
+	elif measure == 'jaccard'    : records = finder.score_ngrams( BigramAssocMeasures.jaccard )
+	elif measure == 'likelihood' : records = finder.score_ngrams( BigramAssocMeasures.likelihood_ratio )
+	elif measure == 'raw'        : records = finder.score_ngrams( BigramAssocMeasures.raw_freq )
+	elif measure == 'fisher'     : records = finder.score_ngrams( BigramAssocMeasures.fisher )
+	
+	# create a network from the scores
+	G = nx.Graph()
+	for index, record in enumerate( records ) :
+	
+		# parse
+		source = record[ 0 ][ 0 ]
+		target = record[ 0 ][ 1 ]
+		weight = record[ 1 ]
+	
+		# update
+		G.add_edge( source, target, weight=weight )
+	
+		# continue, conditionally
+		if index > limit : break
+	
+	# debug
+	sys.stderr.write( 'Parameters:' + '\n' )
+	sys.stderr.write( '  * carrel: '  + carrel + '\n' )
+	sys.stderr.write( '  * limit: '   + str( limit ) + '\n' )
+	sys.stderr.write( '  * measure: ' + measure + '\n' )
+	sys.stderr.write( '  * filter: '  + str( filter ) + '\n' )
+	sys.stderr.write( '  * window: '  + str( window) + '\n' )
+	sys.stderr.write( '\n' )
+	sys.stderr.write( 'Result:' + '\n' )
+	sys.stderr.write( '  * number of nodes: ' + str( G.number_of_nodes() ) + '\n' )
+	sys.stderr.write( '  * number of edges: ' + str( G.number_of_edges() ) + '\n' )
+	
+	# output image
+	if output == 'image' :
+	
+		# visualize
+		plt.figure()
+		nx.draw( G, with_labels=True, node_size=10, font_size=9, edge_color='silver' )
+		plt.show()
+		
+	# standard out
+	else: 
+	
+		# save
+		if save :
+
+			# configure and save
+			file = localLibrary/carrel/ETC/COLLOCATIONS
+			nx.write_gml( G, file )
+
+		# standard output
+		else : nx.write_gml( G, sys.stdout.buffer )
+		
+	# done
+	return
+
+# given a carrel, return a spacy doc
+def _carrel2doc( carrel ) :
+
+	# configure
+	PICKLE = 'reader.spacy'
+
+	# require
+	from os        import path, stat
+	from spacy     import load
+	import                textacy
+	import sys
+	
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+	pickle       = localLibrary/carrel/ETC/PICKLE
+
+	# check to see if we've previously been here
+	if path.exists( pickle ) :
+		
+		# read the pickle file
+		try            : doc = next( textacy.io.spacy.read_spacy_docs( pickle, lang=MODEL ) )
+		except OSError : modelNotFound()
+			
+	# otherwise
+	else :
+	
+		# warn
+		sys.stderr.write( '''Modeling study carrel data for future use. This may take many
+minutes, but it will only have to be done once. In the meantime,
+ask yourself, "Self, what is justice?"\n''' )
+
+		# initialize 
+		file           = localLibrary/carrel/ETC/CORPUS
+		text           = open( str( file ) ).read()
+		size           = ( stat( file ).st_size ) + 1
+		
+		# initialize some more
+		try            : nlp  = load( MODEL )
+		except OSError : modelNotFound()
+		
+		# do the work
+		nlp.max_length = size
+		doc            = nlp( text )
+
+		# save it for future use
+		textacy.io.spacy.write_spacy_docs( doc, filepath=pickle )
+
+	# done
+	return doc
+
+
+# process grammars
+def grammarss( carrel, grammar='svo', query=None, noun=None, lemma='be', sort=False, count=False ) :
+
+	# require
+	from textacy import extract
+	from os      import system
+	from re      import search
+	
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	doc = _carrel2doc( carrel )
+
+	# get the features; svo
+	if grammar == 'svo' :
+			
+		# do the work
+		features = list( extract.subject_verb_object_triples( doc ) )
+				
+		# simplify the result
+		items = []
+		for feature in features :
+		
+			#print( help(feature ) )
+			#exit()
+
+			subject = feature.subject[ 0 ].text			
+			verb    = feature.verb[ 0 ].text
+			object  = feature.object[ 0 ].text
+			items.append(' \t'.join( [ ''.join( subject ), ''.join( verb ), ''.join( object ) ] ) )
+
+		# done
+		features = items
+				
+	# quotes
+	elif grammar == 'quotes' :
+	
+		# do the work
+		features = list( extract.direct_quotations( doc ) )
+		
+		# simplify the result
+		items = []
+		for feature in features :
+		
+			# parse and stringify
+			speaker = [ token.text for token in feature.speaker ]
+			cue     = [ token.text for token in feature.cue ]
+			content = feature.content.text
+			items.append( '\t'.join( [ ''.join( speaker ), ''.join( cue ), content ] ) )
+
+		# done
+		features = items
+
+	# noun chunks
+	elif grammar == 'nouns' :
+	
+		# do the work and simplify the result
+		features = list( extract.noun_chunks( doc ) )
+		features = [ feature.text for feature in features ]
+		
+	# semi-structured sentences
+	elif grammar == 'sss' :
+
+		# sanity check
+		if not noun :
+		
+			sy.stderr.write( "Error: When specifying sss, the -n option is required. See 'rdr grammars --help'\n" )
+			exit()
+			
+		# do the work
+		features = list( extract.semistructured_statements( doc, entity=noun, cue=lemma ) )
+
+		# simplify the result
+		items = []
+		for feature in features :
+		
+			entity   = [ token.text for token in feature.entity ]
+			cue      = [ token.text for token in feature.cue ]
+			fragment = [ token.text for token in feature.fragment ]
+			items.append( '\t'.join( [ ''.join( entity ), ''.join( cue ), ' '.join( fragment ) ] ) )
+
+		# done
+		features = items
+
+	# filter, conditionally
+	if query : features = [ feature for feature in features if ( search( query, feature ) ) ]
+	
+	# sort, conditionally
+	if sort : features.sort()
+	
+	# count, conditionally
+	if count :
+	
+		# initialize a dictionary and process each feature
+		items = {}
+		for feature in features :
+
+			# update the dictionary
+			if feature in items : items[ feature ] += 1
+			else                : items[ feature ]  = 1
+
+		# sort the dictionary; return the features
+		features = sorted( items.items(), key=lambda x:x[ 1 ], reverse=True )
+		
+		# process each feature, again
+		items = []
+		for feature in features :
+			
+			# create a record and update
+			record = str( feature[ 1 ] ) + '\t' + feature[ 0 ]
+			items.append( record )
+		
+		# done
+		features = items
+	
+	# done
+	return '\n'.join( features )
+	
+
+	
