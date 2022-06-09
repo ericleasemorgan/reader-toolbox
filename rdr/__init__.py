@@ -79,7 +79,7 @@ POSPROPN             = 'pos-propernoun.png'
 
 
 # spacy langauge model
-MODEL = 'en_core_web_md'
+MODEL = 'en_core_web_sm'
 
 # mallet
 MALLETZIP = 'http://library.distantreader.org/apps/mallet.zip'
@@ -974,4 +974,272 @@ def ngramss( carrel, size=1, query=None, count=False, location='local', wordclou
 		for ngram in ngrams : results.append( "\t".join( list( ngram ) ) )
 		return '\n'.join( results )
 
+
+# process parts-of-speech
+def partsofspeech( carrel, select='parts', like='any', count=False, normalize=True, wordcloud=False, save=False ) :
+
+	# require
+	import sqlite3
+
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	locallibrary           = configuration( 'localLibrary' )
+	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection.row_factory = sqlite3.Row
+	items                  = []
+	
+	# branch accordingly; parts-of-speech
+	if select == 'parts' :
+	
+		# initialize like
+		if like == 'any' : like = '%'
+		else             : like = like.upper() + '%'
+		
+		# dump parts-of-speech tags
+		if not count :
+
+			# articulate sql, search, and output
+			sql  = ( "SELECT pos FROM pos WHERE pos LIKE '%s';" % like )
+			rows = connection.execute( sql )
+			for row in rows : items.append( row[ 'pos' ] )
+
+		# count and tabulate the dump
+		else :
+		
+			# articulate sql, search, and output
+			sql  = ( "SELECT pos, COUNT( pos ) AS count FROM pos WHERE pos LIKE '%s' GROUP BY pos ORDER BY count DESC;" % like )
+			rows = connection.execute( sql )
+			for row in rows : items.append( "\t".join( [ row[ 'pos' ], str( row[ 'count' ] ) ] ) )			
+			
+	# words or lemmas
+	else : 
+	
+		# initialize select
+		if select == 'words' : select = 'token'
+		else                 : select = 'lemma'
+		
+		# initialize like
+		if like == 'any' : like = '%'
+		else             : like = like.upper() + '%'
+		
+		# simply dump the desired content
+		if not count :
+		
+			# build sql
+			if not normalize : sql = ( 'SELECT %s FROM pos WHERE pos LIKE "%s";' % ( select, like ) )
+			else : sql = ( 'SELECT LOWER( %s ) AS %s FROM pos WHERE pos LIKE "%s";' % ( select, select, like ) )
+						
+			# search and process each resulting row
+			rows = connection.execute( sql )
+			for row in rows : items.append( row[ select ] )
+		
+		# count and tabulate the result
+		else:
+
+			# do not lower-case words or lemmas
+			if not normalize : sql = ( '''SELECT %s AS %s, COUNT( %s ) AS count
+			                              FROM pos
+			                              WHERE pos LIKE "%s"
+			                              GROUP BY %s
+			                              ORDER BY count DESC;''' % ( select, select, select, like, select ) )
+				
+			# lower-case words or lemmas
+			else: sql = ( '''SELECT LOWER( %s ) AS %s, COUNT( %s ) AS count
+			                 FROM pos
+			                 WHERE pos LIKE "%s"
+			                 GROUP BY LOWER( %s )
+			                 ORDER BY count DESC;''' % ( select, select, select, like, select ) )
+				
+			# search and process each resulting row
+			rows = connection.execute( sql )
+
+			# output simple tabulation
+			if not wordcloud :
+			
+				# dump
+				for row in rows : items.append( "\t".join( [ row[ select ], str( row[ 'count' ] ) ] ) )
+			
+			# output word cloud
+			else :
+			
+				# create a dictionary of frequencies
+				frequencies = {}
+				for row in rows : frequencies[ row[ select ] ] = row[ 'count' ]
+
+				# simply output
+				if not save : cloud( frequencies )
+			
+				# save to the corresponding figures directory
+				else :
+			
+					# configure
+					localLibrary = configuration( 'localLibrary' )
+
+					# nouns
+					if like == 'NOUN%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSNOUN
+						cloud( frequencies, file=file )
+				
+					# org
+					elif like == 'VERB%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSVERB
+						cloud( frequencies, file=file )
+				
+					# geo-political entities (places)
+					elif like == 'PRON%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSPRON
+						cloud( frequencies, file=file )
+				
+					# geo-political entities (places)
+					elif like == 'ADJ%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSADJ
+						cloud( frequencies, file=file )
+				
+					# geo-political entities (places)
+					elif like == 'PROPN%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSPROPN
+						cloud( frequencies, file=file )
+				
+					# geo-political entities (places)
+					elif like == 'ADV%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/POSADV
+						cloud( frequencies, file=file )
+				
+					# unsupported
+					else : click.echo( "The save option is only valid for types NOUN, VERB, PRON, ADJ, PROPN, and ADV; there is no default location for anything else.", err=True )
+
+				# return nothing when wordclouding
+				return
+		
+	# clean up and done
+	connection.close()
+	return '\n'.join( items )
+
+
+# process named entities
+def entities( carrel, select='type', like='any', count=False, wordcloud=False, save=False ) :
+
+	# require
+	import sqlite3
+
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	localLibrary           = configuration( 'localLibrary' )
+	connection             = sqlite3.connect( str( localLibrary/carrel/ETC/DATABASE )  )
+	connection.row_factory = sqlite3.Row
+	items                  = []
+	
+	# branch accordingly; types of entities
+	if select == 'type' :
+	
+		# dump
+		if not count :
+
+			# articulate sql, search, and output
+			sql  = 'SELECT type FROM ent;'
+			rows = connection.execute( sql )
+			for row in rows : items.append( row[ 'type' ] )
+
+		# count and tabulate the dump
+		else :
+		
+			# articulate sql, search, and output
+			sql  = 'SELECT type, COUNT( type ) AS count FROM ent GROUP BY type ORDER BY count DESC;'
+			rows = connection.execute( sql )
+			for row in rows : items.append( "\t".join( [ row[ 'type' ], str( row[ 'count' ] ) ] ) )			
+			
+	# entities
+	else : 
+			
+		# initialize like
+		if like == 'any' : like = '%'
+		else             : like == like.upper()
+		
+		# simply dump the desired content
+		if not count :
+		
+			# build sql, search, and output
+			sql  = ( 'SELECT entity FROM ent WHERE type LIKE "%s";' % ( like ) )
+			rows = connection.execute( sql )
+			for row in rows : items.append( row[ select ] )
+		
+		# count and tabulate the result
+		else:
+
+			# build sql, search, and output
+			sql  = ( 'SELECT entity, COUNT( entity ) AS count FROM ent WHERE type LIKE "%s" GROUP BY entity ORDER BY count DESC;' % ( like ) )
+			rows = connection.execute( sql )
+			
+			# output simple tabulation
+			if not wordcloud :
+			
+				# dump
+				for row in rows : items.append( "\t".join( [ row[ select ], str( row[ 'count' ] ) ] ) )
+			
+			# output word cloud
+			else :
+			
+				# create a dictionary of frequencies
+				frequencies = {}
+				for row in rows : frequencies[ row[ select ] ] = row[ 'count' ]
+
+				# simply output
+				if not save : cloud( frequencies )
+			
+				# save to the corresponding figures directory
+				else :
+			
+					# any
+					if like == '%' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/ENTITIESANY
+						cloud( frequencies, file=file )
+					
+					# persons
+					elif like == 'PERSON' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/ENTITIESPERSON
+						cloud( frequencies, file=file )
+				
+					# org
+					elif like == 'ORG' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/ENTITIESORG
+						cloud( frequencies, file=file )
+				
+					# geo-political entities (places)
+					elif like == 'GPE' :
+				
+						# configure and save
+						file = localLibrary/carrel/FIGURES/ENTITIESGPE
+						cloud( frequencies, file=file )
+				
+					# unsupported
+					else : click.echo( "The save option is only valid for entities of type any, PERSON, ORG, or GPE; there is no default location for anything else.", err=True )
+
+				# when wordclouding, return nothing
+				return
+				
+	# clean up
+	connection.close()
+	return '\n'.join( items )
 
