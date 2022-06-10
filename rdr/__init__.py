@@ -79,7 +79,7 @@ POSPROPN             = 'pos-propernoun.png'
 
 
 # spacy langauge model
-MODEL = 'en_core_web_sm'
+MODEL = 'en_core_web_md'
 
 # mallet
 MALLETZIP = 'http://library.distantreader.org/apps/mallet.zip'
@@ -1784,4 +1784,315 @@ def word2vec( carrel, type='similarity', query='love', size=10 ) :
 		except KeyError as word : sys.stderr.write( ( 'A word in your query -- %s -- is not in the index. Please remove it.\n' % word ) )
 
 
+# make sure the carrel has been indexed; sqlite++
+def _checkForIndex( carrel ) :
+
+	# configure
+	SANITYCHECK    = "SELECT * FROM sqlite_master WHERE type='table' AND name='fulltext';"
+	DROPFULLTEXT   = 'DROP TABLE IF EXISTS fulltext;'
+	CREATEFULLTEXT = 'CREATE TABLE fulltext ( id TEXT, fulltext TEXT );\n'
+	TEMPLATE       = "INSERT INTO fulltext ( id, fulltext ) VALUES ( '##ID##', '##FULLTEXT##' );\n"
+	DROPINDX       = 'DROP TABLE IF EXISTS indx;'
+	CREATEINDX     = 'CREATE VIRTUAL TABLE indx USING FTS5( id, author, title, date, summary, keyword, words, sentence, flesch, cache, txt, fulltext );'
+	INDEX          = 'INSERT INTO indx SELECT b.id, b.author, b.title, b.date, b.summary, group_concat( LOWER( w.keyword ), "; " ), b.words, b.sentence, b.flesch, b.id || b.extension, b.id || ".txt", f.fulltext FROM bib AS b, fulltext AS f, wrd AS w WHERE b.id IS f.id AND b.id IS w.id GROUP BY w.id;';
+
+	# require
+	import os
+	import re
+	import sqlite3
+	import tempfile
+	import sys
 	
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+	db           = str( localLibrary/carrel/ETC/DATABASE )
+	txt          = localLibrary/carrel/TXT
+	transaction  = tempfile.NamedTemporaryFile( delete=False ).name
+	
+	# connect to database
+	connection                 = sqlite3.connect( db )
+	connection.isolation_level = None
+	cursor                     = connection.cursor()
+		
+	# check to see if we've been here previously
+	results = cursor.execute( SANITYCHECK ).fetchall()
+	if results == [] :
+		
+		# nope; create full text table
+		sys.stderr.write( 'Indexing; the carrel must be set up for full text searching.\n' )
+		sys.stderr.write( 'Step #1 of 4: Creating table to contain full text...\n' )
+		connection.execute( DROPFULLTEXT )
+		connection.execute( CREATEFULLTEXT )
+
+		# read full text
+		sys.stderr.write( 'Step #2 of 4: Reading full text; please be patient...\n' )
+		with open( transaction, 'w' ) as handle : handle.write( 'BEGIN TRANSACTION;\n' )
+		files = txt.glob( '*.txt' )
+		for file in files :
+
+			# get identifier
+			id = file.stem
+			id = id.replace( "'", "''" )
+	
+			# get full text
+			with open( file, encoding='utf-8' ) as handle : fulltext = handle.read()
+			fulltext = fulltext.replace( '\r', '\n' )
+			fulltext = fulltext.replace( '\n', ' ' )
+			fulltext = fulltext.replace( "'",  "''")
+			fulltext = re.sub( ' +' , ' ', fulltext )
+	
+			# sql
+			sql = TEMPLATE
+			sql = sql.replace( '##ID##', id )
+			sql = sql.replace( '##FULLTEXT##', fulltext )
+
+			# debug
+			#click.echo( '  file: ' + str( file ), err=True )
+			#click.echo( '    id: ' + id, err=True )
+			#click.echo( err=True )
+	
+			# update
+			with open( transaction, 'a' ) as handle : handle.write( sql )
+
+		# close the transaction
+		with open( transaction, 'a' ) as handle : handle.write( 'END TRANSACTION;\n' )
+
+		# write full text
+		sys.stderr.write( 'Step #3 of 4: Writing full text to database...\n' )
+		with open( transaction ) as handle :
+
+			# repeat forever, almost
+			while True :
+				sql = handle.readline()
+				if not sql : break
+				connection.execute( sql )
+
+
+		# clean up
+		os.remove( transaction )
+		
+		# index; do the actual work
+		sys.stderr.write( 'Step #4 of 4: Indexing; please be patient...\n' )
+		connection.execute( DROPINDX )
+		connection.execute( CREATEINDX )
+		connection.execute( INDEX )
+
+		# done
+		sys.stderr.write( 'Done. Happy searching!\n' )
+		return
+		
+# do full text indexing and search
+def searching( carrel, query='love', output='human' ) :
+	'''output = csv|tsv|json|human|count'''
+
+	# configure
+	SQL = "SELECT id, author, title, date, summary, keyword, words, sentence, flesch, '##CACHE##' || cache AS cache, '##TXT##' || txt AS txt FROM indx WHERE indx MATCH '##QUERY##' ORDER BY RANK;"
+
+	# configure
+	RESULTS = '\nYour search (##QUERY##) against the study carrel named "##CARREL##" returned ##COUNT## record(s):\n\n##RECORDS##'
+	RECORD  = '          id: ##ID##\n      author: ##AUTHOR##\n       title: ##TITLE##\n        date: ##DATE##\n     summary: ##SUMMARY##\n  keyword(s): ##KEYWORD##\n       words: ##WORDS##\n    sentence: ##SENTENCE##\n      flesch: ##FLESCH##\n       cache: ##CACHE##\n         txt: ##TXT##\n\n'
+	COUNT   = '##CARREL##\t##QUERY##\t##COUNT##'
+
+	# require
+	import sqlite3
+	import pandas as pd
+	import sys
+	
+	# sanity checks
+	checkForCarrel( carrel )
+	_checkForIndex( carrel )
+	
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+	txt          = str( localLibrary/carrel/TXT ) + '/'
+	cache        = str( localLibrary/carrel/CACHE ) + '/'
+	db           = str( localLibrary/carrel/ETC/DATABASE )
+	connection   = sqlite3.connect( db )
+
+	# build sql
+	sql = SQL.replace( '##CACHE##', cache )
+	sql = sql.replace( '##TXT##', txt )
+	sql = sql.replace( '##QUERY##', query )
+
+	# search
+	rows = pd.read_sql_query( sql, connection, index_col='id' )
+	
+	# output; csv
+	if output   == 'csv' : return( rows.to_csv() )
+	
+	# tsv
+	elif output == 'tsv' : return( rows.to_csv( header=False, sep='\t' ) )
+	
+	# json
+	elif output == 'json' : return( rows.to_json( orient='records' ) )
+	
+	# count; tsv stream of metadata
+	elif output == 'count' :
+	
+		# build
+		results = COUNT.replace( '##CARREL##', carrel )
+		results = results.replace( '##QUERY##', query )
+		results = results.replace( '##COUNT##', str( rows.shape[ 0 ] ) )
+		
+		# output
+		return( results )
+	
+	# paged
+	elif output == 'human' : 
+			
+		# initialize the results
+		results = RESULTS.replace( '##QUERY##', query )
+		results = results.replace( '##CARREL##', carrel )
+		results = results.replace( '##COUNT##', str( rows.shape[ 0 ] ) )
+		
+		# process each row
+		records = ''
+		for id, row in rows.iterrows() :
+								
+			# parse
+			author   = row[ 'author' ]
+			if not author : author = ''
+			title    = row[ 'title' ]
+			if not title : title = ''
+			date     = row[ 'date' ]
+			if not date : date = ''
+			summary  = row[ 'summary' ]
+			keyword  = row[ 'keyword' ]
+			words    = row[ 'words' ]
+			sentence = row[ 'sentence' ]
+			flesch   = row[ 'flesch' ]
+			cache    = row[ 'cache' ]
+			txt      = row[ 'txt' ]
+			
+			if not summary : summary = ' '
+			if not cache   : cache   = ' '
+			
+			# create a record
+			record = RECORD.replace( '##ID##', str( id ) )
+			record = record.replace( '##AUTHOR##', author )
+			record = record.replace( '##TITLE##', title )
+			record = record.replace( '##DATE##', str( date ) )
+			record = record.replace( '##SUMMARY##', summary )
+			record = record.replace( '##KEYWORD##', keyword )
+			record = record.replace( '##WORDS##', str( words ) )
+			record = record.replace( '##SENTENCE##', str( sentence ) )
+			record = record.replace( '##FLESCH##', str( flesch ) )
+			record = record.replace( '##CACHE##', cache )
+			record = record.replace( '##TXT##', txt )
+		
+			# update
+			records += record
+		
+		results = results.replace( '##RECORDS##', records )
+		return( results )
+
+
+# get an inventory of available study carrels
+def catalogs( location='local', human=True ) :
+	'''location = local|remote'''
+
+	# configure
+	TSV    = 'catalog/catalog.tsv'
+	RECORD = "      item: ##ITEM##\n      name: ##NAME##\n      date: ##DATE##\n  keywords: ##KEYWORDS##\n     items: ##ITEMS##\n     words: ##WORDS##\n     score: ##SCORE##\n     bytes: ##BYTES##\n\n"
+	HEADER = "\nThe catalog includes ##COUNT## items, and each is listed below:\n\n"
+
+	# require
+	from requests import get
+		
+	# branch accordingly; local
+	if location == 'local' :
+		
+		# initialize
+		localLibrary = configuration( 'localLibrary' )
+		items        = []
+		
+		# read, sort, and output
+		carrels = [ carrel.name for carrel in localLibrary.iterdir() if carrel.is_dir() ]
+		carrels.sort()
+		for carrel in carrels : items.append( carrel )
+	
+		return '\n'.join( items )
+		
+	# remote
+	elif location == 'remote' :
+	
+		# create person-amenable output
+		if human :
+		
+			# create a rudimentary catalog
+			catalog = ''
+			count   = 0
+			
+			records = get( REMOTELIBRARY + '/' + TSV ).text 
+			for item, record in enumerate( records.split( '\n' ) ) :
+			
+				# delimit and sanity check
+				fields = record.split( '\t' )
+				if len( fields ) != 7 : break
+			
+				# parse
+				name     = fields[ 0 ]
+				date     = fields[ 1 ]
+				keywords = fields[ 2 ]
+				items    = fields[ 3 ]
+				words    = fields[ 4 ]
+				score    = fields[ 5 ]
+				bytes    = fields[ 6 ]
+			
+				# increment
+				count += 1
+				item  += 1
+				
+				# update
+				record   = RECORD.replace( '##ITEM##', str( item ) )
+				record   = record.replace( '##NAME##', name )
+				record   = record.replace( '##DATE##', date )
+				record   = record.replace( '##KEYWORDS##', keywords )
+				record   = record.replace( '##ITEMS##', items )
+				record   = record.replace( '##WORDS##', words )
+				record   = record.replace( '##SCORE##', score )
+				record   = record.replace( '##BYTES##', bytes )
+				catalog += record
+				
+			# add the header and output
+			header  = HEADER.replace( '##COUNT##', str( count ) )
+			catalog = header + catalog
+			return( catalog )
+				
+		# get the raw data and hope the results get piped to utilities like sort, grep, cut, less, etc.
+		else : return( get( REMOTELIBRARY + '/' + TSV ).text  )
+
+	
+# locally cache a carrel from the public library
+def downloads( carrel ) :
+			
+	# configure
+	ZIPFILE = 'study-carrel.zip'
+	CARRELS = 'carrels'
+
+	# require
+	from requests import get
+	from tempfile import TemporaryFile
+	from zipfile  import ZipFile
+	import sys
+	
+	# initialize
+	localLibrary  = configuration( 'localLibrary' )
+
+	# get the remote zip file; needs error checking
+	sys.stderr.write( "\n  INFO: Downloading remote study carrel...\n" )
+	response = get( REMOTELIBRARY + '/' + CARRELS + '/' + carrel + '/' + ZIPFILE )
+	
+	# initialize a temporary file and write to it
+	sys.stderr.write( "  INFO: Saving study carrel...\n" )
+	handle = TemporaryFile()
+	handle.write( response.content )
+	
+	# unzip the temporary file and close it, which also deletes it
+	sys.stderr.write( "  INFO: Unziping study carrel...\n" )
+	with ZipFile( handle, 'r' ) as zip : zip.extractall( str( localLibrary ) )
+	handle.close()
+
+	# done
+	sys.stderr.write( ( '''  INFO: Done.\n''' ) )
+	return
