@@ -251,7 +251,7 @@ def cloud( frequencies, **kwargs ) :
 
 # read and parse provenance data
 def provenance( carrel, field ) :
-
+	'''fields = process|originalID|dateCreated|timeCreated|creator|input'''
 	# initialize
 	locallibrary = configuration( 'localLibrary' )
 	
@@ -283,7 +283,8 @@ def provenance( carrel, field ) :
 	
 # return various extents
 def extents( carrel, type ) :
-
+	'''Types = items|words|flesch'''
+	
 	# require
 	import sqlite3
 
@@ -1566,5 +1567,221 @@ def grammarss( carrel, grammar='svo', query=None, noun=None, lemma='be', sort=Fa
 	# done
 	return '\n'.join( features )
 	
+
+# elaborate about the lack of word2vec
+def word2vecwarning() :
+
+	import sys
+	
+	sys.stderr.write( "By default, Word2vec not installed, which is required for this subcommand. Linux and Macintosh users can probably run 'pip install word2vec' and then give this subcommand another go. Windows users will have to go through many hoops because the underling word2vec software needs to be compiled. Please see the word2vec home page for more detail: https://github.com/danielfrg/word2vec\n" )
+	exit()
+
+
+# make sure the carrel has been indexed; word2vec++
+def checkForSemanticIndex( carrel ) :
+
+	# configure
+	MODEL   = 'reader.bin'
+	TXT     = 'model.txt'
+	PHRASES = 'model.phrases'
+	
+	# require
+	from pathlib  import Path
+	from word2vec import word2vec, word2phrase
+	import               os
+	import sys
+	
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+	model        = localLibrary/carrel/ETC/MODEL
+	
+	# see if we have been here previously
+	if not model.exists() :
+
+		# initialize some more
+		stopwords = localLibrary/carrel/ETC/STOPWORDS
+		corpus    = localLibrary/carrel/ETC/CORPUS
+		txt       = str( Path.home()/TXT )
+		phrases   = str( Path.home()/PHRASES )
+		
+		# tokenize
+		sys.stderr.write( 'Indexing. This needs to be done only once.\n' )
+		sys.stderr.write( 'Step #1 of 6: Tokenizing corpus....\n' )
+		tokens = open( corpus ).read().split()
+
+		# normalize
+		sys.stderr.write( 'Step #2 of 6: Normalizing tokens...\n' )
+		tokens = [ token.lower() for token in tokens if token.isalpha() ]
+
+		# remove stop words
+		sys.stderr.write( 'Step #3 of 6: Removing stop words...\n' )
+		stopwords = open( stopwords ).read().split()
+		tokens    = [ token for token in tokens if token not in stopwords ]
+
+		# save
+		sys.stderr.write( 'Step #4 of 6: Saving tokens...\n' )
+		with open( txt, 'w' ) as handle : handle.write( ' '.join( tokens ) )
+		
+		# create phrases
+		sys.stderr.write( 'Step #5 of 6: Creating phrases...\n' )
+		word2phrase( txt, phrases, verbose=True )
+
+		# do the work
+		sys.stderr.write( 'Step #6 of 6: Indexing....\n' )
+		word2vec( phrases, str( model ), size=100, binary=True, verbose=True)
+
+		# clean up and done
+		os.remove( txt )
+		os.remove( phrases )
+		sys.stderr.write( '\nDone. Happy searching!\n' )
+
+
+# implement semantic (word2vec) indexing
+def word2vec( carrel, type='similarity', query='love', size=10 ) :
+	'''types = similarity|distance|analogy|scatter'''
+
+	# configure
+	MODEL    = 'reader.bin'
+	DISTANCE = 'model.distance( ##QUERY## )'
+
+	# try to import word2vec
+	try    : import word2vec
+	except : word2vecwarning()
+	
+	# require
+	import matplotlib.pyplot as plot
+	import sys
+
+	# initialize
+	localLibrary = configuration( 'localLibrary' )
+	model        = str( localLibrary/carrel/ETC/MODEL )
+
+	# sanity checks
+	checkForCarrel( carrel )
+	checkForSemanticIndex( carrel )
+		
+	# load model
+	model = word2vec.load( model )
+
+	# similarity
+	if type == 'similarity' :
+	
+		# sanity check
+		if len( query.split() ) != 1 :
+		
+			# error
+			sys.stderr.write( "The query for similarity requires exactly one word.\n" )
+			exit()
+
+		# search and output
+		try :
+	
+			items = []
+			
+			indexes, metrics = model.similar( query, n=size )
+			similarities = model.generate_response( indexes, metrics ).tolist()
+			for similarity in similarities : items.append( '\t'.join( [ similarity[ 0 ], str( similarity[ 1 ] ) ] ) )
+		
+			return '\n'.join( items )
+			
+		# word not found
+		except KeyError as word : sys.stderr.write ( ( 'The word -- %s -- is not in the index.\n' % word ) )
+
+	# scatter
+	elif type == 'scatter' :
+	
+		from sklearn.manifold import TSNE
+		import numpy as np
+
+		words              = ['love', 'horse', 'house', 'son', 'war', 'man', 'woman', 'spear', 'achilles' ]
+		embedding_clusters = []
+		word_clusters      = []
+		for word in words :
+			embeddings = []
+			words      = []
+			indexes, metrics = model.similar( word, n=20 )
+			similarities = model.generate_response( indexes, metrics ).tolist()
+			for similarity in similarities :
+			
+				words.append(similarity[ 0 ])
+				embeddings.append( ( similarity[ 0 ], similarity[ 1 ] ) )
+		
+			embedding_clusters.append( embeddings )
+			word_clusters.append( words )
+
+		clusters = np.array( embedding_clusters )	
+		print( clusters )
+		exit()
+					
+		tsne     = TSNE( perplexity=2, n_components=2, init='pca'  )
+		model    = tsne.fit_transform( clusters )
+
+		# plot
+		x = model[ :, 0 ]
+		y = model[ :, 1 ]
+		plot.scatter( x, y )
+		plot.show()
+
+	# distance
+	elif type == 'distance' :
+
+		# get the query words
+		words = query.split()
+
+		# sanity check
+		if len( words ) < 2 :
+		
+			# error
+			sys.stderr.write( "The query for distance requires at least two words.\n" )
+			exit()
+
+		# create a distance command; hacky!
+		queries = [ ( "'%s'" % word ) for word in words ]
+		command = DISTANCE.replace( '##QUERY##', ', '.join( queries ) )
+		
+		# try to compute
+		try :
+		
+			items = []
+			
+			# search, sort, output, and done
+			distances = eval( command )
+			distances.sort( key=lambda i: i[ 2 ], reverse=True )
+			for distance in distances : items.append( '\t'.join( [ distance[ 0 ], distance[ 1 ], str( distance[ 2 ] ) ] ) )
+
+			return '\n'.join( items )
+			
+		# error
+		except KeyError as word : 
+			sys.stderr.write( ( 'A word in your query -- %s -- is not in the index. Please remove it.\n' % word ) )
+
+	# analogy
+	elif type == 'analogy' :
+	
+		# get the query words
+		words = query.split()
+		
+		# sanity check
+		if len( words ) != 3 :
+		
+			# error
+			sys.stderr.write( "The query for analogy requires exactly three words.\n" )
+			exit()
+		
+		# try to compute
+		try :
+		
+			items = []
+			
+			# search, sort, output, and done
+			indexes, metrics = model.analogy( pos=[ words[ 0 ], words[ 1 ] ], neg=[ words[ 2 ] ], n=size )
+			analogies = model.generate_response( indexes, metrics ).tolist()
+			for analogy in analogies : items.append( '\t'.join( [ analogy[ 0 ], str( analogy[ 1 ] ) ] ) )
+
+			return '\n'.join( items )
+			
+		# error
+		except KeyError as word : sys.stderr.write( ( 'A word in your query -- %s -- is not in the index. Please remove it.\n' % word ) )
+
 
 	
