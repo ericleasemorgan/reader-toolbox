@@ -79,8 +79,8 @@ TEMPLATE = '''
 '''
 
 # require
-from rdr          import *
 from rdr.commands import *
+from rdr          import *
 
 @click.command( options_metavar='<options>' )
 @click.argument( 'carrel', metavar='<carrel>' )
@@ -103,43 +103,43 @@ def summarize( ctx, carrel, look ) :
 			
 	# save sizes	
 	click.echo( "Graphing sizes", err=True )
-	ctx.invoke( sizes.sizes, carrel=carrel, output='boxplot',   save=True )
-	ctx.invoke( sizes.sizes, carrel=carrel, output='histogram', save=True )
+	size( carrel, output='boxplot',   save=True )
+	size( carrel, output='histogram', save=True )
 		
 	# save readability	
 	click.echo( "Graphing readability", err=True )
-	ctx.invoke( readability.readability, carrel=carrel, output='boxplot',   save=True )
-	ctx.invoke( readability.readability, carrel=carrel, output='histogram', save=True )
+	flesch( carrel, output='boxplot',   save=True )
+	flesch( carrel, output='histogram', save=True )
 	
 	# save cluster	
 	click.echo( "Graphing clusters", err=True )
-	ctx.invoke( cluster.cluster, carrel=carrel, type='cube',       save=True )
+	clusters( carrel, type='cube',       save=True )
 	#ctx.invoke( cluster.cluster, carrel=carrel, type='dendrogram', save=True )
 	
 	# save ngrams	
 	click.echo( "Graphing ngrams", err=True )
-	ctx.invoke( ngrams.ngrams, carrel=carrel, count=True, size=1, wordcloud=True, save=True )
-	ctx.invoke( ngrams.ngrams, carrel=carrel, count=True, size=2, wordcloud=True, save=True )
+	ngramss( carrel, count=True, size=1, wordcloud=True, save=True )
+	ngramss( carrel, count=True, size=2, wordcloud=True, save=True )
 	
 	# save entities	
 	click.echo( "Graphing entities", err=True )
-	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='any', wordcloud=True, save=True )
-	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='PERSON', wordcloud=True, save=True )
-	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='GPE', wordcloud=True, save=True )
-	ctx.invoke( ent.ent, carrel=carrel, count=True, select='entity', like='ORG', wordcloud=True, save=True )
+	entities( carrel, count=True, select='entity', like='any',    wordcloud=True, save=True )
+	entities( carrel, count=True, select='entity', like='PERSON', wordcloud=True, save=True )
+	entities( carrel, count=True, select='entity', like='GPE',    wordcloud=True, save=True )
+	entities( carrel, count=True, select='entity', like='ORG',    wordcloud=True, save=True )
 	
 	# save pos	
 	click.echo( "Graphing parts-of-speach", err=True )
-	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='NOUN', wordcloud=True, save=True )
-	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='VERB', wordcloud=True, save=True )
-	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='ADJ', wordcloud=True, save=True )
-	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='ADV', wordcloud=True, save=True )
-	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='PRON', wordcloud=True, save=True )
-	ctx.invoke( pos.pos, carrel=carrel, count=True, select='lemmas', like='PROPN', wordcloud=True, save=True )
+	partsofspeech( carrel, count=True, select='lemmas', like='NOUN',  wordcloud=True, save=True )
+	partsofspeech( carrel, count=True, select='lemmas', like='VERB',  wordcloud=True, save=True )
+	partsofspeech( carrel, count=True, select='lemmas', like='ADJ',   wordcloud=True, save=True )
+	partsofspeech( carrel, count=True, select='lemmas', like='ADV',   wordcloud=True, save=True )
+	partsofspeech( carrel, count=True, select='lemmas', like='PRON',  wordcloud=True, save=True )
+	partsofspeech( carrel, count=True, select='lemmas', like='PROPN', wordcloud=True, save=True )
 	
 	# save keywords	
 	click.echo( "Graphing keywords", err=True )
-	ctx.invoke( wrd.wrd, carrel=carrel, count=True, wordcloud=True, save=True )
+	keywords( carrel, count=True, wordcloud=True, save=True )
 	
 	# create html
 	click.echo( "Building HTML page", err=True )
@@ -155,5 +155,5 @@ def summarize( ctx, carrel, look ) :
 	with open( locallibrary/carrel/INDEX, 'w', encoding='utf-8' ) as handle : handle.write( html )
 	
 	# read, 
-	if look : ctx.invoke( read.read, carrel=carrel )
+	if look : reads( carrel )
 	

@@ -35,7 +35,7 @@ import rdr.commands.get           as get
 import rdr.commands.info          as info
 import rdr.commands.notebooks     as notebooks
 import rdr.commands.play          as play
-import rdr.commands.read          as read
+#import rdr.commands.read          as read
 import rdr.commands.set           as set
 import rdr.commands.sql           as sql
 import rdr.commands.summarize     as summarize
@@ -514,6 +514,29 @@ def url( carrel, select, count, like ) :
 	click.echo( urls( carrel, select, count, like ) )
 
 
+# read
+@click.command( options_metavar='<options>' )
+@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='where is the carrel')
+@click.argument( 'carrel', metavar='<carrel>' )
+def read( carrel, location ) :
+	"""Open <carrel> in your Web browser
+	
+	Use this subcommand to peruse the narrative texts and interactive reports found in <carrel>; use this command to become familiar with the content of <carrel>. As of this writing, carrels created with the build command do not create the narrative reports, and consequently this command will fail ungracefully.
+	
+	Examples:
+	
+	\b
+	  rdr read homer
+	  rdr read -l remote homer
+	  rdr read -l remote sonnets
+	  rdr read -l remote pride
+	
+	See also: rdr browse --help"""
+
+	reads( carrel, location )
+
+
+
 # update the list of commands
 rdr.add_command( about )
 rdr.add_command( adr )
@@ -535,7 +558,7 @@ rdr.add_command( ngrams )
 rdr.add_command( play.play )
 rdr.add_command( notebooks.notebooks )
 rdr.add_command( pos )
-rdr.add_command( read.read )
+rdr.add_command( read )
 rdr.add_command( readability )
 rdr.add_command( search )
 rdr.add_command( semantics )

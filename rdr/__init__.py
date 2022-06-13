@@ -2096,3 +2096,26 @@ def downloads( carrel ) :
 	# done
 	sys.stderr.write( ( '''  INFO: Done.\n''' ) )
 	return
+
+
+# open the html root of a study carrel
+def reads( carrel, location='local' ) :
+
+	# require
+	from webbrowser import open
+	import sys
+	
+	if location == 'local' :
+	
+		# sanity check
+		checkForCarrel( carrel )
+
+		localLibrary  = configuration( 'localLibrary' )
+		url = 'file://' + str( localLibrary/carrel/INDEX )
+		sys.stderr.write( url + '\n' )
+		open( url )
+		
+	elif location == 'remote' :
+	
+		url = REMOTELIBRARY + '/' + CARRELS + '/' + carrel
+		open( url )
