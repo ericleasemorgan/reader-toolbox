@@ -1,6 +1,4 @@
-
-
-# rdr.py - a command-line interface for using Distant Reader study carrels
+# rdr.py - a command-line interface for building and modeling Distant Reader study carrels
 
 # Eric Lease Morgan <emorgan@nd.edu>
 # (c) University of Notre Dame; distributed under a GNU Public License
@@ -8,6 +6,8 @@
 # July 30, 2021 - in Three Oaks with Pat; first real working version
 # June 14, 2022 - trying to consolidate everything into a single file
 
+
+# verbosity setting for the build process
 VERBOSE = 2
 
 # constants for topic modeling
@@ -98,9 +98,7 @@ TEMPLATE = '''
 
 # require
 from rdr import *
-#import rdr.commands.build as build
 
-#####
 
 # make sure tika server has been downloaded
 def _checkForTika( tika ) :
@@ -298,6 +296,7 @@ def _normalize( text ) :
 
 	# done
 	return text
+
 
 # create bag of words
 def _txt2bow( carrel ) :
@@ -575,6 +574,7 @@ def _txt2wrd( carrel, file ) :
 				if len( keyword ) < 3 : continue
 				handle.write( '\t'.join( ( key, keyword ) ) + '\n' )
 
+
 # given a spaCy doc which has been enhanced by pytextrank, return a summary
 def _summarize( doc ) :
 
@@ -848,176 +848,6 @@ def _tsv2db( directory, extension, table, connection ) :
 		
 	# fill the database, conditionally
 	if found : features.to_sql( table, connection, if_exists='replace', index=False )
-
-# config
-@click.command( options_metavar='[<options>]' )
-@click.argument( 'carrel', metavar='<carrel>' )
-@click.argument( 'directory', metavar='<directory>' )
-@click.option('-e', '--erase', is_flag=True, help='delete pre-existing carrel')
-@click.option('-s', '--start', is_flag=True, help='start Tika')
-def build( carrel, directory, erase, start ) :
-
-	"""Create <carrel> from files in <directory>
-
-Use this command to build a data set ("study carrel") based on the files saved in a directory. Once the data set is created the other Toolbox commands can be applied to the result. The files can be of any type (PDF, Microsoft Word, HTML, etc.), and they can be of any kind (books, articles, reports, etc.), and they can be of any number (1, 2, 12, a few dozen, hundreds, etc.). The Toolbox is designed to read about a dozen journal articles in the form of PDF files. This command requires a Java tool called Tika, and it is used to convert the input files into plain text as well as extract authors, titles, and dates. If the Toolbox has not been configured and/or Tika is not installed, then the Toolbox will try to install it on your behalf. If the given directory contains a file named 'metadata.csv', then this command will use the file as the source of author, title, and date metadata values. This is often very helpful because sans metadata it is very difficult to make comparison between documents. Please see the full-blown documentation for details."""
-
-	# configure
-	CACHE  = 'cache'
-	TXT    = 'txt'
-	SCHEMA = '''-- parts-of-speech\ncreate table pos (\n    id    TEXT,\n    sid   INT,\n    tid   INT,\n    token TEXT,\n    lemma TEXT,\n    pos   TEXT\n);\n\n-- name entitites\ncreate table ent (\n    id     TEXT,\n    sid    INT,\n    eid    INT,\n    entity TEXT,\n    type   TEXT\n);\n\n-- keywords\ncreate table wrd (\n    id      TEXT,\n    keyword TEXT\n);\n\n-- email addresses\ncreate table adr (\n    id      TEXT,\n    address TEXT\n);\n\n-- questions\ncreate table questions (\n    id       TEXT,\n    question TEXT\n);\n\n-- urls\ncreate table url (\n    id     TEXT,\n    domain TEXT,\n    url    TEXT\n);\n\n-- bibliographics, such as they are\ncreate table bib (\n    id        TEXT,\n    words     INT,\n    sentence  INT,\n    flesch    INT,\n    summary   TEXT,\n    title     TEXT,\n    author    TEXT,\n    date      TEXT,\n    txt       TEXT,\n    cache     TEXT,\n    pages     INT,\n    extension TEXT,\n    mime      TEXT,\n    genre     TEXT\n);'''
-	POS    = 'pos'
-	ENT    = 'ent'
-	WRD    = 'wrd'
-	ADR    = 'adr'
-	URL    = 'urls'
-	BIB    = 'bib'
-	
-	# require
-	from   multiprocessing import Pool
-	import os
-	import shutil
-	import sqlite3
-	import pandas as pd
-	import spacy
-	
-	# _initialize
-	localLibrary = configuration( 'localLibrary' )
-	pool         = Pool()
-
-	# make sure we have Tika Server
-	_checkForTika( str( configuration( 'tikaHome' ) ) )
-	
-	# start tika; the toolbox's secret sauce
-	if start :
-	
-		# debug
-		click.echo( '(Step #-1 of 9) Starting Tika server at http://localhost:9998/; please be patient.', err=True )
-		
-		# go
-		if _startTika() == False :
-		
-			# bummer
-			click.echo( "Can't start Tika. Call Eric.", err=True )
-			exit()
-
-	# check for tika
-	if not _tikaIsRunning() :
-	
-		click.echo( '''
-  WARNING: Tika server at http://localhost:9998/ is not running;
-  please start Tika by hand, or add -s to this command.
-''', err=True )
-		exit()
-	
-	
-	# check tika version here
-	
-	
-	# check to see if the language model has been installed
-	try            : nlp  = spacy.load( MODEL )
-	except OSError : modelNotFound()
-
-	# check for pre-existing carrel
-	if ( localLibrary/carrel ).is_dir() :
-	
-		# check for erase
-		if erase :
-		
-			# debug and do the work
-			click.echo( ( '(Step #0 of 9) Deleting %s' % ( localLibrary/carrel ) ), err=True )
-			shutil.rmtree( localLibrary/carrel )
-			
-		# carrel exists and erasing was not specified
-		else :
-		
-			# warn and exit
-			click.echo( ( '''
-  WARNING: Carrel exists; specify a name other than "%s" or add -e
-  to erase it.''' % carrel ), err=True )
-			exit()
-
-	# build skeleton
-	click.echo( '(Step #1 of 9) Initializing %s with %s and stop words' % ( carrel, directory ), err=True )
-	_initialize( carrel, directory )
-		
-	# create a list of filenames to process
-	filenames = []
-	cache     = localLibrary/carrel/CACHE
-	for filename in os.listdir( cache ) :
-	
-		# update list, conditionally
-		if filename[ 0 ] == '.' : continue
-		else                    : filenames.append( os.path.join( cache, filename ) )
-	
-	# conditionally slurp up the metadata file and submit 
-	click.echo( '(Step #2 of 9) Extracting bibliographics and converting documents to plain text', err=True )
-	
-	# check for metadata file
-	if ( localLibrary/carrel/METADATA ).exists() :
-	
-		try : metadata = pd.read_csv( localLibrary/carrel/METADATA, index_col='file' )
-		except ValueError :
-			click.echo( ( '\n  Error: The metadata file (metadata.csv) does not have a\n  column named "file". Remove metadata.csv from the original\n  input directory:\n\n    %s\n\n  Alternatively, edit the metadata file accordingly. Exiting.\n' % directory ), err=True )
-			exit()
-
-		pool.starmap( _file2bib, [ [ carrel, filename, metadata ] for filename in filenames ] )
-		
-	# no metadata file; just do the work
-	else : pool.starmap( _file2bib, [ [ carrel, filename ] for filename in filenames ] )
-		
-	# bag of words
-	click.echo( '(Step #3 of 9) Creating bag-of-words', err=True )
-	_txt2bow( carrel )
-	
-	# output hint
-	click.echo( ( "\n  Hint: Now that the bag-of-words has been created, you can begin\n  to use many of the other Reader Toolbox commands while the\n  building process continues. This is especially true for larger\n  carrels. Open a new terminal window and try:\n\n    rdr cluster %s\n    rdr ngrams %s -c | more\n    rdr concordance %s\n    rdr collocations %s\n" % ( carrel, carrel, carrel, carrel ) ), err=True )
-	
-	# re-create a list of filenames to process
-	filenames = []
-	txt       = localLibrary/carrel/TXT
-	for filename in os.listdir( txt ) : filenames.append( os.path.join( txt, filename ) )
-
-	# extract email addresses
-	click.echo( '(Step #4 of 9) Extracting (email) addresses', err=True )
-	pool.starmap( _txt2adr, [ [ carrel, filename ] for filename in filenames ] )
-	
-	# extract named entities
-	click.echo( '(Step #5 of 9) Extracting (named) entities', err=True )
-	pool.starmap( _txt2ent, [ [ carrel, filename ] for filename in filenames ] )
-	
-	# extract parts-of-speech
-	click.echo( '(Step #6 of 9) Extracting parts-of-speech', err=True )
-	pool.starmap( _txt2pos, [ [ carrel, filename ] for filename in filenames ] )
-
-	# extract urls
-	click.echo( '(Step #7 of 9) Extracting URLs', err=True )
-	pool.starmap( _txt2url, [ [ carrel, filename ] for filename in filenames ] )
-
-	# extract keywords
-	click.echo( '(Step #8 of 9) Extracting (key) words', err=True )
-	pool.starmap( _txt2wrd, [ [ carrel, filename ] for filename in filenames ] )
-
-	# clean up
-	pool.close()
-
-	# create database
-	click.echo( '(Step #9 of 9) Creating and filling database (reducing)', err=True )
-	database   = str( localLibrary/carrel/ETC/DATABASE )
-	connection = sqlite3.connect( database )
-	cursor     = connection.cursor()
-	cursor.executescript( SCHEMA )
-	
-	# reduce; fill it with content
-	_tsv2db( localLibrary/carrel/POS, '*.pos', 'pos', connection )
-	_tsv2db( localLibrary/carrel/ENT, '*.ent', 'ent', connection )
-	_tsv2db( localLibrary/carrel/WRD, '*.wrd', 'wrd', connection )
-	_tsv2db( localLibrary/carrel/ADR, '*.adr', 'adr', connection )
-	_tsv2db( localLibrary/carrel/URL, '*.url', 'url', connection )
-	_tsv2db( localLibrary/carrel/BIB, '*.bib', 'bib', connection )
-
-	# output another hint
-	# out hint
-	click.echo( ( '\n  Another hint: The build process is done, and now you ought to\n  be able to use any Toolbox command. For example:\n\n    rdr info %s\n    rdr bib %s | more\n    rdr tm %s\n' % ( carrel, carrel, carrel ) ), err=True )
 
 
 
@@ -2521,39 +2351,210 @@ def cmdTm( carrel, process, topics, words, iterations, output, field, type ) :
 			# configure plot and show
 			click.echo( topics.to_csv() )
 
+# config
+@click.command( options_metavar='[<options>]' )
+@click.argument( 'carrel', metavar='<carrel>' )
+@click.argument( 'directory', metavar='<directory>' )
+@click.option('-e', '--erase', is_flag=True, help='delete pre-existing carrel')
+@click.option('-s', '--start', is_flag=True, help='start Tika')
+def cmdBuild( carrel, directory, erase, start ) :
+
+	"""Create <carrel> from files in <directory>
+
+Use this command to build a data set ("study carrel") based on the files saved in a directory. Once the data set is created the other Toolbox commands can be applied to the result. The files can be of any type (PDF, Microsoft Word, HTML, etc.), and they can be of any kind (books, articles, reports, etc.), and they can be of any number (1, 2, 12, a few dozen, hundreds, etc.). The Toolbox is designed to read about a dozen journal articles in the form of PDF files. This command requires a Java tool called Tika, and it is used to convert the input files into plain text as well as extract authors, titles, and dates. If the Toolbox has not been configured and/or Tika is not installed, then the Toolbox will try to install it on your behalf. If the given directory contains a file named 'metadata.csv', then this command will use the file as the source of author, title, and date metadata values. This is often very helpful because sans metadata it is very difficult to make comparison between documents. Please see the full-blown documentation for details."""
+
+	# configure
+	CACHE  = 'cache'
+	TXT    = 'txt'
+	SCHEMA = '''-- parts-of-speech\ncreate table pos (\n    id    TEXT,\n    sid   INT,\n    tid   INT,\n    token TEXT,\n    lemma TEXT,\n    pos   TEXT\n);\n\n-- name entitites\ncreate table ent (\n    id     TEXT,\n    sid    INT,\n    eid    INT,\n    entity TEXT,\n    type   TEXT\n);\n\n-- keywords\ncreate table wrd (\n    id      TEXT,\n    keyword TEXT\n);\n\n-- email addresses\ncreate table adr (\n    id      TEXT,\n    address TEXT\n);\n\n-- questions\ncreate table questions (\n    id       TEXT,\n    question TEXT\n);\n\n-- urls\ncreate table url (\n    id     TEXT,\n    domain TEXT,\n    url    TEXT\n);\n\n-- bibliographics, such as they are\ncreate table bib (\n    id        TEXT,\n    words     INT,\n    sentence  INT,\n    flesch    INT,\n    summary   TEXT,\n    title     TEXT,\n    author    TEXT,\n    date      TEXT,\n    txt       TEXT,\n    cache     TEXT,\n    pages     INT,\n    extension TEXT,\n    mime      TEXT,\n    genre     TEXT\n);'''
+	POS    = 'pos'
+	ENT    = 'ent'
+	WRD    = 'wrd'
+	ADR    = 'adr'
+	URL    = 'urls'
+	BIB    = 'bib'
+	
+	# require
+	from   multiprocessing import Pool
+	import os
+	import shutil
+	import sqlite3
+	import pandas as pd
+	import spacy
+	
+	# _initialize
+	localLibrary = configuration( 'localLibrary' )
+	pool         = Pool()
+
+	# make sure we have Tika Server
+	_checkForTika( str( configuration( 'tikaHome' ) ) )
+	
+	# start tika; the toolbox's secret sauce
+	if start :
+	
+		# debug
+		click.echo( '(Step #-1 of 9) Starting Tika server at http://localhost:9998/; please be patient.', err=True )
+		
+		# go
+		if _startTika() == False :
+		
+			# bummer
+			click.echo( "Can't start Tika. Call Eric.", err=True )
+			exit()
+
+	# check for tika
+	if not _tikaIsRunning() :
+	
+		click.echo( '''
+  WARNING: Tika server at http://localhost:9998/ is not running;
+  please start Tika by hand, or add -s to this command.
+''', err=True )
+		exit()
+	
+	
+	# check tika version here
+	
+	
+	# check to see if the language model has been installed
+	try            : nlp  = spacy.load( MODEL )
+	except OSError : modelNotFound()
+
+	# check for pre-existing carrel
+	if ( localLibrary/carrel ).is_dir() :
+	
+		# check for erase
+		if erase :
+		
+			# debug and do the work
+			click.echo( ( '(Step #0 of 9) Deleting %s' % ( localLibrary/carrel ) ), err=True )
+			shutil.rmtree( localLibrary/carrel )
+			
+		# carrel exists and erasing was not specified
+		else :
+		
+			# warn and exit
+			click.echo( ( '''
+  WARNING: Carrel exists; specify a name other than "%s" or add -e
+  to erase it.''' % carrel ), err=True )
+			exit()
+
+	# build skeleton
+	click.echo( '(Step #1 of 9) Initializing %s with %s and stop words' % ( carrel, directory ), err=True )
+	_initialize( carrel, directory )
+		
+	# create a list of filenames to process
+	filenames = []
+	cache     = localLibrary/carrel/CACHE
+	for filename in os.listdir( cache ) :
+	
+		# update list, conditionally
+		if filename[ 0 ] == '.' : continue
+		else                    : filenames.append( os.path.join( cache, filename ) )
+	
+	# conditionally slurp up the metadata file and submit 
+	click.echo( '(Step #2 of 9) Extracting bibliographics and converting documents to plain text', err=True )
+	
+	# check for metadata file
+	if ( localLibrary/carrel/METADATA ).exists() :
+	
+		try : metadata = pd.read_csv( localLibrary/carrel/METADATA, index_col='file' )
+		except ValueError :
+			click.echo( ( '\n  Error: The metadata file (metadata.csv) does not have a\n  column named "file". Remove metadata.csv from the original\n  input directory:\n\n    %s\n\n  Alternatively, edit the metadata file accordingly. Exiting.\n' % directory ), err=True )
+			exit()
+
+		pool.starmap( _file2bib, [ [ carrel, filename, metadata ] for filename in filenames ] )
+		
+	# no metadata file; just do the work
+	else : pool.starmap( _file2bib, [ [ carrel, filename ] for filename in filenames ] )
+		
+	# bag of words
+	click.echo( '(Step #3 of 9) Creating bag-of-words', err=True )
+	_txt2bow( carrel )
+	
+	# output hint
+	click.echo( ( "\n  Hint: Now that the bag-of-words has been created, you can begin\n  to use many of the other Reader Toolbox commands while the\n  building process continues. This is especially true for larger\n  carrels. Open a new terminal window and try:\n\n    rdr cluster %s\n    rdr ngrams %s -c | more\n    rdr concordance %s\n    rdr collocations %s\n" % ( carrel, carrel, carrel, carrel ) ), err=True )
+	
+	# re-create a list of filenames to process
+	filenames = []
+	txt       = localLibrary/carrel/TXT
+	for filename in os.listdir( txt ) : filenames.append( os.path.join( txt, filename ) )
+
+	# extract email addresses
+	click.echo( '(Step #4 of 9) Extracting (email) addresses', err=True )
+	pool.starmap( _txt2adr, [ [ carrel, filename ] for filename in filenames ] )
+	
+	# extract named entities
+	click.echo( '(Step #5 of 9) Extracting (named) entities', err=True )
+	pool.starmap( _txt2ent, [ [ carrel, filename ] for filename in filenames ] )
+	
+	# extract parts-of-speech
+	click.echo( '(Step #6 of 9) Extracting parts-of-speech', err=True )
+	pool.starmap( _txt2pos, [ [ carrel, filename ] for filename in filenames ] )
+
+	# extract urls
+	click.echo( '(Step #7 of 9) Extracting URLs', err=True )
+	pool.starmap( _txt2url, [ [ carrel, filename ] for filename in filenames ] )
+
+	# extract keywords
+	click.echo( '(Step #8 of 9) Extracting (key) words', err=True )
+	pool.starmap( _txt2wrd, [ [ carrel, filename ] for filename in filenames ] )
+
+	# clean up
+	pool.close()
+
+	# create database
+	click.echo( '(Step #9 of 9) Creating and filling database (reducing)', err=True )
+	database   = str( localLibrary/carrel/ETC/DATABASE )
+	connection = sqlite3.connect( database )
+	cursor     = connection.cursor()
+	cursor.executescript( SCHEMA )
+	
+	# reduce; fill it with content
+	_tsv2db( localLibrary/carrel/POS, '*.pos', 'pos', connection )
+	_tsv2db( localLibrary/carrel/ENT, '*.ent', 'ent', connection )
+	_tsv2db( localLibrary/carrel/WRD, '*.wrd', 'wrd', connection )
+	_tsv2db( localLibrary/carrel/ADR, '*.adr', 'adr', connection )
+	_tsv2db( localLibrary/carrel/URL, '*.url', 'url', connection )
+	_tsv2db( localLibrary/carrel/BIB, '*.bib', 'bib', connection )
+
+	# output another hint
+	# out hint
+	click.echo( ( '\n  Another hint: The build process is done, and now you ought to\n  be able to use any Toolbox command. For example:\n\n    rdr info %s\n    rdr bib %s | more\n    rdr tm %s\n' % ( carrel, carrel, carrel ) ), err=True )
+
+
 
 # create a list of commands
-rdr.add_command( build )
-rdr.add_command( cmdAbout, name='about' )
-rdr.add_command( cmdAdr, name='adr' )
-rdr.add_command( cmdBib, name='bib' )
-rdr.add_command( cmdBrowse, name='browse' )
-rdr.add_command( cmdCatalog, name='catalog' )
-rdr.add_command( cmdCluster, name='cluster' )
-rdr.add_command( cmdCollocations, name='collocations' )
-rdr.add_command( cmdConcordance, name='concordance' )
+rdr.add_command( cmdAbout,         name='about' )
+rdr.add_command( cmdAdr,           name='adr' )
+rdr.add_command( cmdBib,           name='bib' )
+rdr.add_command( cmdBrowse,        name='browse' )
+rdr.add_command( cmdBuild,         name='build' )
+rdr.add_command( cmdCatalog,       name='catalog' )
+rdr.add_command( cmdCluster,       name='cluster' )
+rdr.add_command( cmdCollocations,  name='collocations' )
+rdr.add_command( cmdConcordance,   name='concordance' )
 rdr.add_command( cmdDocumentation, name='documentation' )
-rdr.add_command( cmdDownload, name='download' )
-rdr.add_command( cmdEdit, name='edit' )
-rdr.add_command( cmdEnt, name='ent' )
-rdr.add_command( cmdGet, name='get' )
-rdr.add_command( cmdGrammars, name='grammars' )
-rdr.add_command( cmdInfo, name='info' )
-rdr.add_command( cmdNgrams, name='ngrams' )
-rdr.add_command( cmdNotebooks, name='notebooks' )
-rdr.add_command( cmdPlay, name='play' )
-rdr.add_command( cmdPos, name='pos' )
-rdr.add_command( cmdRead, name='read' )
-rdr.add_command( cmdReadability, name='readability' )
-rdr.add_command( cmdSearch, name='search' )
-rdr.add_command( cmdSemantics, name='semantics' )
-rdr.add_command( cmdSet, name='set' )
-rdr.add_command( cmdSizes, name='sizes' )
-rdr.add_command( cmdSql, name='sql' )
-rdr.add_command( cmdSummarize, name='summarize' )
-rdr.add_command( cmdTm, name='tm' )
-rdr.add_command( cmdUrl, name='url' )
-rdr.add_command( cmdWrd, name='wrd' )
+rdr.add_command( cmdDownload,      name='download' )
+rdr.add_command( cmdEdit,          name='edit' )
+rdr.add_command( cmdEnt,           name='ent' )
+rdr.add_command( cmdGet,           name='get' )
+rdr.add_command( cmdGrammars,      name='grammars' )
+rdr.add_command( cmdInfo,          name='info' )
+rdr.add_command( cmdNgrams,        name='ngrams' )
+rdr.add_command( cmdNotebooks,     name='notebooks' )
+rdr.add_command( cmdPlay,          name='play' )
+rdr.add_command( cmdPos,           name='pos' )
+rdr.add_command( cmdRead,          name='read' )
+rdr.add_command( cmdReadability,   name='readability' )
+rdr.add_command( cmdSearch,        name='search' )
+rdr.add_command( cmdSemantics,     name='semantics' )
+rdr.add_command( cmdSet,           name='set' )
+rdr.add_command( cmdSizes,         name='sizes' )
+rdr.add_command( cmdSql,           name='sql' )
+rdr.add_command( cmdSummarize,     name='summarize' )
+rdr.add_command( cmdTm,            name='tm' )
+rdr.add_command( cmdUrl,           name='url' )
+rdr.add_command( cmdWrd,           name='wrd' )
 
 # do the work
 if __name__ == '__main__' : rdr()
