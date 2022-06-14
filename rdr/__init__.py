@@ -92,7 +92,6 @@ TIKADOWNLOAD = 'http://library.distantreader.org/apps/tika-server.jar'
 # require
 import click
 
-
 # create or re-create the preferences/settings
 def initializeConfigurations() :
 
@@ -683,7 +682,7 @@ def getNLTKText( carrel ) :
 
 
 # poor man's search engine
-def concordancing( carrel, query='love', width=80, lines=999 ) :
+def concordance( carrel, query='love', width=80, lines=999 ) :
 
 	# require
 	from nltk import Text, word_tokenize
@@ -708,7 +707,7 @@ def concordancing( carrel, query='love', width=80, lines=999 ) :
 
 
 # get sizes (measured in words) of documents
-def size( carrel, sort='words', output='list', save=False ) :
+def sizes( carrel, sort='words', output='list', save=False ) :
 
 	# configure
 	WORDS   = 'SELECT id, words FROM bib ORDER BY words DESC'
@@ -830,7 +829,7 @@ def flesch( carrel, sort='score', output='list', save=False) :
 
 
 # compute ngrams
-def ngramss( carrel, size=1, query=None, count=False, location='local', wordcloud=False, save=False ) :
+def ngrams( carrel, size=1, query=None, count=False, location='local', wordcloud=False, save=False ) :
 
 	# configure
 	LIMIT = 200
@@ -978,7 +977,7 @@ def ngramss( carrel, size=1, query=None, count=False, location='local', wordclou
 
 
 # process parts-of-speech
-def partsofspeech( carrel, select='parts', like='any', count=False, normalize=True, wordcloud=False, save=False ) :
+def pos( carrel, select='parts', like='any', count=False, normalize=True, wordcloud=False, save=False ) :
 
 	# require
 	import sqlite3
@@ -1247,7 +1246,7 @@ def entities( carrel, select='type', like='any', count=False, wordcloud=False, s
 
 
 # do feature reduction and visualize
-def clusters( carrel, type='dendrogram', save=False ) :
+def cluster( carrel, type='dendrogram', save=False ) :
 
 	# configure
 	MAXIMUM   = 0.95
@@ -1449,7 +1448,7 @@ ask yourself, "Self, what is justice?"\n''' )
 
 
 # process grammars
-def grammarss( carrel, grammar='svo', query=None, noun=None, lemma='be', sort=False, count=False ) :
+def grammars( carrel, grammar='svo', query=None, noun=None, lemma='be', sort=False, count=False ) :
 
 	# require
 	from textacy import extract
@@ -1882,7 +1881,7 @@ def _checkForIndex( carrel ) :
 		return
 		
 # do full text indexing and search
-def searching( carrel, query='love', output='human' ) :
+def search( carrel, query='love', output='human' ) :
 	'''output = csv|tsv|json|human|count'''
 
 	# configure
@@ -1988,7 +1987,7 @@ def searching( carrel, query='love', output='human' ) :
 
 
 # get an inventory of available study carrels
-def catalogs( location='local', human=True ) :
+def catalog( location='local', human=True ) :
 	'''location = local|remote'''
 
 	# configure
@@ -2064,7 +2063,7 @@ def catalogs( location='local', human=True ) :
 
 	
 # locally cache a carrel from the public library
-def downloads( carrel ) :
+def download( carrel ) :
 			
 	# configure
 	ZIPFILE = 'study-carrel.zip'
@@ -2099,7 +2098,7 @@ def downloads( carrel ) :
 
 
 # open the html root of a study carrel
-def reads( carrel, location='local' ) :
+def read( carrel, location='local' ) :
 
 	# require
 	from webbrowser import open

@@ -8,7 +8,7 @@ from rdr import *
 VERBOSE = 2
 
 # make sure tika server has been downloaded
-def checkForTika( tika ) :
+def _checkForTika( tika ) :
 	
 	# require
 	from configparser import ConfigParser
@@ -24,7 +24,7 @@ def checkForTika( tika ) :
 		with open( file, 'wb' ) as handle : handle.write( response.content )
 		click.echo( "\n  INFO: Downloaded", err=True )
 
-		# initialize
+		# _initialize
 		click.echo( "\n  INFO: Updating configurations... " )
 		configurations          = ConfigParser()
 		applicationDirectory    = Path.home()
@@ -44,11 +44,11 @@ def checkForTika( tika ) :
 ''', err=True )
 
 		# start tika server
-		startTika()
+		_startTika()
 
 
 # start tika
-def startTika() :
+def _startTika() :
 
 	# configure
 	JAVA  = 'java'
@@ -59,11 +59,11 @@ def startTika() :
 	import time
 	import subprocess
 	
-	# initialize
+	# _initialize
 	started = False
 	
 	# double check to see if we've already been here
-	if tikaIsRunning() : started = True
+	if _tikaIsRunning() : started = True
 	
 	# try to start tika
 	else :
@@ -79,16 +79,16 @@ def startTika() :
 		time.sleep( SLEEP )
 		
 		# one last time, check again
-		if tikaIsRunning() : started = True
+		if _tikaIsRunning() : started = True
 		
 	# done
 	return( started )
 
 
 # check to see if tika is running
-def tikaIsRunning () :
+def _tikaIsRunning () :
 
-	# configure, require, and initialize
+	# configure, require, and _initialize
 	TIKA    = 'http://localhost:9998/'
 	import requests
 	running = False
@@ -107,7 +107,7 @@ def tikaIsRunning () :
 	
 	
 # create carrel skeleton
-def initialize( carrel, directory ) :
+def _initialize( carrel, directory ) :
 	
 	# configure
 	ADR      = 'adr'
@@ -177,7 +177,7 @@ def initialize( carrel, directory ) :
 
 
 # create key from filename
-def name2key( file ) :
+def _name2key( file ) :
 
 	# require, do the work, and done; inefficient
 	import os
@@ -185,13 +185,13 @@ def name2key( file ) :
 	return key
 
 
-# normalize text, a poor man's version
-def normalize( text ) :
+# _normalize text, a poor man's version
+def _normalize( text ) :
 
 	# require
 	import re
 	
-	# normalize the text in the bag-of-words
+	# _normalize the text in the bag-of-words
 	text = text.lower()
 	text = re.sub( '\r', '\n', text )
 	text = re.sub( '\n+', ' ', text )
@@ -205,7 +205,7 @@ def normalize( text ) :
 	return text
 
 # create bag of words
-def txt2bow( carrel ) :
+def _txt2bow( carrel ) :
 
 	# configure
 	PATTERN = '*.txt'
@@ -216,7 +216,7 @@ def txt2bow( carrel ) :
 	# require
 	from pathlib import Path
 
-	# initialize
+	# _initialize
 	localLibrary = configuration( 'localLibrary' )
 
 	# process each text file in the given directory
@@ -227,8 +227,8 @@ def txt2bow( carrel ) :
 		# create/increment the bag of words
 		with open( file, encoding='utf-8' ) as handle : bow += handle.read()
 	
-	# normalize
-	bow = normalize( bow )
+	# _normalize
+	bow = _normalize( bow )
 	
 	# configure output, output, and done
 	output = localLibrary/carrel/ETC/BOW
@@ -236,7 +236,7 @@ def txt2bow( carrel ) :
 
 
 # extract email addresses
-def txt2adr( carrel, file ) :
+def _txt2adr( carrel, file ) :
 	
 	# configure
 	ADR       = 'adr'
@@ -247,15 +247,15 @@ def txt2adr( carrel, file ) :
 	# require
 	import re
 	
-	# initialize
-	key          = name2key( file )
+	# _initialize
+	key          = _name2key( file )
 	localLibrary = configuration( 'localLibrary' )
 
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
 
 	# slurp up the file
-	with open ( file, encoding='utf-8' ) as handle : text = normalize( handle.read() )
+	with open ( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
 	
 	# get and process each address, to the best of my ability
 	addresses = re.findall( PATTERN, text )
@@ -267,7 +267,7 @@ def txt2adr( carrel, file ) :
 		output = localLibrary/carrel/ADR/( key + EXTENSION )
 		with open( output, 'w', encoding='utf-8'  ) as handle :
 
-			# initialize the output
+			# _initialize the output
 			handle.write( '\t'.join( HEADER ) + '\n' )
 
 			# process each address
@@ -283,7 +283,7 @@ def txt2adr( carrel, file ) :
 
 
 # extract named entities
-def txt2ent( carrel, file ) :
+def _txt2ent( carrel, file ) :
 
 	# configure
 	EXTENSION = '.ent'
@@ -293,15 +293,15 @@ def txt2ent( carrel, file ) :
 	# require
 	import spacy
 
-	# initialize
-	key          = name2key( file )
+	# _initialize
+	key          = _name2key( file )
 	localLibrary = configuration( 'localLibrary' )
 	
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
 
 	# slurp up the file
-	with open( file, encoding='utf-8' ) as handle : text = normalize( handle.read() )
+	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
 
 	# model the text
 	nlp            = spacy.load( MODEL )
@@ -312,7 +312,7 @@ def txt2ent( carrel, file ) :
 	output = localLibrary/carrel/ENT/( key + EXTENSION )
 	with open( output, 'w', encoding='utf-8' ) as handle :
 
-		# initialize the output
+		# _initialize the output
 		handle.write( '\t'.join( HEADER ) + '\n' )
 
 		# process each sentence
@@ -328,7 +328,7 @@ def txt2ent( carrel, file ) :
 
 
 # extract parts-of-speech
-def txt2pos( carrel, file ) :
+def _txt2pos( carrel, file ) :
 
 	# configure
 	EXTENSION = '.pos'
@@ -338,15 +338,15 @@ def txt2pos( carrel, file ) :
 	# require
 	import spacy
 
-	# initialize
-	key          = name2key( file )
+	# _initialize
+	key          = _name2key( file )
 	localLibrary = configuration( 'localLibrary' )
 	
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
 
 	# slurp up the file
-	with open( file, encoding='utf-8' ) as handle : text = normalize( handle.read() )
+	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
 
 	# model the text
 	nlp            = spacy.load( MODEL )
@@ -357,7 +357,7 @@ def txt2pos( carrel, file ) :
 	output = localLibrary/carrel/POS/( key + EXTENSION )
 	with open( output, 'w', encoding='utf-8' ) as handle :
 
-		# initialize the output
+		# _initialize the output
 		handle.write( '\t'.join( HEADER ) + '\n' )
 		
 		# process each sentence
@@ -377,7 +377,7 @@ def txt2pos( carrel, file ) :
 
 
 # given a file, extract domains and urls
-def txt2url( carrel, file ) :
+def _txt2url( carrel, file ) :
 
 	# configure
 	EXTENSION = '.url'
@@ -388,15 +388,15 @@ def txt2url( carrel, file ) :
 	# require
 	import re
 	
-	# initialize
-	key          = name2key( file )
+	# _initialize
+	key          = _name2key( file )
 	localLibrary = configuration( 'localLibrary' )
 	
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
 
 	# slurp up the file
-	with open( file, encoding='utf-8' ) as handle : text = normalize( handle.read() )
+	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
 
 	# get and process each url, to the best of my ability
 	urls = re.findall( PATTERN, text )
@@ -408,7 +408,7 @@ def txt2url( carrel, file ) :
 		output = localLibrary/carrel/URLS/( key + EXTENSION )
 		with open( output, 'w', encoding='utf-8' ) as handle :
 
-			# initialize the output
+			# _initialize the output
 			handle.write( '\t'.join( HEADER ) + '\n' )
 
 			# process each url
@@ -427,7 +427,7 @@ def txt2url( carrel, file ) :
 
 
 # given a file, output keywords
-def txt2wrd( carrel, file ) :
+def _txt2wrd( carrel, file ) :
 
 	# configure
 	EXTENSION  = '.wrd'
@@ -443,15 +443,15 @@ def txt2wrd( carrel, file ) :
 	import spacy
 	import os
 	
-	# initialize
-	key          = name2key( file )
+	# _initialize
+	key          = _name2key( file )
 	localLibrary = configuration( 'localLibrary' )
 	
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
 
 	# slurp up the file
-	with open( file, encoding='utf-8' ) as handle : text = normalize( handle.read() )
+	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
 
 	# model the text and get the keywords
 	nlp            = spacy.load( MODEL )
@@ -469,7 +469,7 @@ def txt2wrd( carrel, file ) :
 		output = localLibrary/carrel/WRD/( key + EXTENSION )
 		with open( output, 'w', encoding='utf-8' ) as handle :
 
-			# initialize the output
+			# _initialize the output
 			handle.write( '\t'.join( HEADER ) + '\n' )
 
 			# process each record
@@ -481,7 +481,7 @@ def txt2wrd( carrel, file ) :
 				handle.write( '\t'.join( ( key, keyword ) ) + '\n' )
 
 # given a spaCy doc which has been enhanced by pytextrank, return a summary
-def summarize( doc ) :
+def _summarize( doc ) :
 
 	# see: https://derwen.ai/docs/ptr/explain_summ/
 	
@@ -527,7 +527,7 @@ def summarize( doc ) :
 
 	for start, end, vector in boundries:
 
-		# re-initialize
+		# re-_initialize
 		sum_sq = 0.0
 
 		for identifier in range( len( unit_vector ) ) :
@@ -549,7 +549,7 @@ def summarize( doc ) :
 		summary.append( sentences[ sentence[ 0 ] ] )
 		if ( index + 1 ) == SENTENCELIMIT : break
 
-	# normalize
+	# _normalize
 	summary = ' '.join( summary )
 	summary = summary.replace( '"', '' )
 	summary = re.sub( '\r', ' ', summary )
@@ -564,7 +564,7 @@ def summarize( doc ) :
 
 
 # given a file, create some bibliographics and save plain text
-def file2bib( carrel, file, metadata=None ) :
+def _file2bib( carrel, file, metadata=None ) :
 		
 	# configure
 	BIB          = 'bib'
@@ -585,13 +585,13 @@ def file2bib( carrel, file, metadata=None ) :
 	import spacy
 	import pytextrank
 
-	# initialize
+	# _initialize
 	authorFound  = False
 	dateFound    = False
 	titleFound   = False
-	title        = name2key( file )
+	title        = _name2key( file )
 	extension    = os.path.splitext( os.path.basename( file ) )[ 1 ]
-	key          = name2key( file )
+	key          = _name2key( file )
 	pages        = ''
 	summary      = ''
 	localLibrary = configuration( 'localLibrary' )
@@ -670,8 +670,8 @@ def file2bib( carrel, file, metadata=None ) :
 	nlp.add_pipe( PROCESS )
 	doc            = nlp( text )
 
-	# summarize
-	summary = summarize( doc )
+	# _summarize
+	summary = _summarize( doc )
 	
 	# parse out only the desired statistics
 	words      = text_stats.n_words( doc )
@@ -724,7 +724,7 @@ def file2bib( carrel, file, metadata=None ) :
 
 
 # given a few configurations, reduce extracted features to a database
-def tsv2db( directory, extension, table, connection ) :
+def _tsv2db( directory, extension, table, connection ) :
 
 	# require
 	import pandas as pd
@@ -732,7 +732,7 @@ def tsv2db( directory, extension, table, connection ) :
 	# debug
 	if VERBOSE : click.echo( '\tProcessing ' + table, err=True )
 	
-	# initialize
+	# _initialize
 	found = False
 	
 	# process each file in the given directory
@@ -744,7 +744,7 @@ def tsv2db( directory, extension, table, connection ) :
 		# read the file
 		df = pd.read_csv( file, sep='\t', header=0, low_memory=False, on_bad_lines='warn', quoting=3, dtype='string' )
 			
-		# initialize the features or append to it
+		# _initialize the features or append to it
 		if index == 0 : features = df
 		else          : features = pd.concat( [ features, df ], sort=False )
 
@@ -786,12 +786,12 @@ Use this command to build a data set ("study carrel") based on the files saved i
 	import pandas as pd
 	import spacy
 	
-	# initialize
+	# _initialize
 	localLibrary = configuration( 'localLibrary' )
 	pool         = Pool()
 
 	# make sure we have Tika Server
-	checkForTika( str( configuration( 'tikaHome' ) ) )
+	_checkForTika( str( configuration( 'tikaHome' ) ) )
 	
 	# start tika; the toolbox's secret sauce
 	if start :
@@ -800,14 +800,14 @@ Use this command to build a data set ("study carrel") based on the files saved i
 		click.echo( '(Step #-1 of 9) Starting Tika server at http://localhost:9998/; please be patient.', err=True )
 		
 		# go
-		if startTika() == False :
+		if _startTika() == False :
 		
 			# bummer
 			click.echo( "Can't start Tika. Call Eric.", err=True )
 			exit()
 
 	# check for tika
-	if not tikaIsRunning() :
+	if not _tikaIsRunning() :
 	
 		click.echo( '''
   WARNING: Tika server at http://localhost:9998/ is not running;
@@ -844,7 +844,7 @@ Use this command to build a data set ("study carrel") based on the files saved i
 
 	# build skeleton
 	click.echo( '(Step #1 of 9) Initializing %s with %s and stop words' % ( carrel, directory ), err=True )
-	initialize( carrel, directory )
+	_initialize( carrel, directory )
 		
 	# create a list of filenames to process
 	filenames = []
@@ -866,14 +866,14 @@ Use this command to build a data set ("study carrel") based on the files saved i
 			click.echo( ( '\n  Error: The metadata file (metadata.csv) does not have a\n  column named "file". Remove metadata.csv from the original\n  input directory:\n\n    %s\n\n  Alternatively, edit the metadata file accordingly. Exiting.\n' % directory ), err=True )
 			exit()
 
-		pool.starmap( file2bib, [ [ carrel, filename, metadata ] for filename in filenames ] )
+		pool.starmap( _file2bib, [ [ carrel, filename, metadata ] for filename in filenames ] )
 		
 	# no metadata file; just do the work
-	else : pool.starmap( file2bib, [ [ carrel, filename ] for filename in filenames ] )
+	else : pool.starmap( _file2bib, [ [ carrel, filename ] for filename in filenames ] )
 		
 	# bag of words
 	click.echo( '(Step #3 of 9) Creating bag-of-words', err=True )
-	txt2bow( carrel )
+	_txt2bow( carrel )
 	
 	# output hint
 	click.echo( ( "\n  Hint: Now that the bag-of-words has been created, you can begin\n  to use many of the other Reader Toolbox commands while the\n  building process continues. This is especially true for larger\n  carrels. Open a new terminal window and try:\n\n    rdr cluster %s\n    rdr ngrams %s -c | more\n    rdr concordance %s\n    rdr collocations %s\n" % ( carrel, carrel, carrel, carrel ) ), err=True )
@@ -885,23 +885,23 @@ Use this command to build a data set ("study carrel") based on the files saved i
 
 	# extract email addresses
 	click.echo( '(Step #4 of 9) Extracting (email) addresses', err=True )
-	pool.starmap( txt2adr, [ [ carrel, filename ] for filename in filenames ] )
+	pool.starmap( _txt2adr, [ [ carrel, filename ] for filename in filenames ] )
 	
 	# extract named entities
 	click.echo( '(Step #5 of 9) Extracting (named) entities', err=True )
-	pool.starmap( txt2ent, [ [ carrel, filename ] for filename in filenames ] )
+	pool.starmap( _txt2ent, [ [ carrel, filename ] for filename in filenames ] )
 	
 	# extract parts-of-speech
 	click.echo( '(Step #6 of 9) Extracting parts-of-speech', err=True )
-	pool.starmap( txt2pos, [ [ carrel, filename ] for filename in filenames ] )
+	pool.starmap( _txt2pos, [ [ carrel, filename ] for filename in filenames ] )
 
 	# extract urls
 	click.echo( '(Step #7 of 9) Extracting URLs', err=True )
-	pool.starmap( txt2url, [ [ carrel, filename ] for filename in filenames ] )
+	pool.starmap( _txt2url, [ [ carrel, filename ] for filename in filenames ] )
 
 	# extract keywords
 	click.echo( '(Step #8 of 9) Extracting (key) words', err=True )
-	pool.starmap( txt2wrd, [ [ carrel, filename ] for filename in filenames ] )
+	pool.starmap( _txt2wrd, [ [ carrel, filename ] for filename in filenames ] )
 
 	# clean up
 	pool.close()
@@ -914,12 +914,12 @@ Use this command to build a data set ("study carrel") based on the files saved i
 	cursor.executescript( SCHEMA )
 	
 	# reduce; fill it with content
-	tsv2db( localLibrary/carrel/POS, '*.pos', 'pos', connection )
-	tsv2db( localLibrary/carrel/ENT, '*.ent', 'ent', connection )
-	tsv2db( localLibrary/carrel/WRD, '*.wrd', 'wrd', connection )
-	tsv2db( localLibrary/carrel/ADR, '*.adr', 'adr', connection )
-	tsv2db( localLibrary/carrel/URL, '*.url', 'url', connection )
-	tsv2db( localLibrary/carrel/BIB, '*.bib', 'bib', connection )
+	_tsv2db( localLibrary/carrel/POS, '*.pos', 'pos', connection )
+	_tsv2db( localLibrary/carrel/ENT, '*.ent', 'ent', connection )
+	_tsv2db( localLibrary/carrel/WRD, '*.wrd', 'wrd', connection )
+	_tsv2db( localLibrary/carrel/ADR, '*.adr', 'adr', connection )
+	_tsv2db( localLibrary/carrel/URL, '*.url', 'url', connection )
+	_tsv2db( localLibrary/carrel/BIB, '*.bib', 'bib', connection )
 
 	# output another hint
 	# out hint
