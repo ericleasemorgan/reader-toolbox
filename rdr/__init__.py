@@ -24,6 +24,8 @@ Eric Lease Morgan <emorgan@nd.edu>
 (c) University of Notre Dame; distributed under a GNU Public License
 """
 
+VERBOSE   = 2
+
 # configure; name of application, basename of configuration file, and default basename of local library
 APPLICATIONDIRECTORY = 'rdr'
 CONFIGURATIONFILE    = '.rdrrc'
@@ -88,6 +90,74 @@ MALLETBIN = 'bin/mallet'
 # tika server
 TIKADOWNLOAD = 'http://library.distantreader.org/apps/tika-server.jar'
 
+# html template for summarize command
+TEMPLATE = '''
+<html>
+<head>
+<title>Index of ##CARREL##</title>
+</head>
+<body style='margin: 7%'>
+
+	<h1>Index of ##CARREL##</h1>
+
+	<h2>Basic characteristics</h2>
+
+		<table>
+		<tr><td>Creator</td><td>##CREATOR##</td></tr>
+		<tr><td>Date created</td><td>##DATECREATED##</td></tr>
+		<tr><td>Number of items</td><td>##ITEMS##</td></tr>
+		<tr><td>Number of words</td><td>##WORDS##</td></tr>
+		<tr><td>Average readability score</td><td>##FLESCH##</td></tr>
+		<tr><td>Bibliography</td><td><a href="./etc/bibliography.txt">plain text</a>; <a href="./etc/bibliography.htm">HTML</a>; <a href="./etc/bibliography.json">JSON</a></td></tr>
+		</table>
+		
+		<h3>Sizes</h3>
+			<p style='text-align: center'>
+			<img src='./figures/sizes-boxplot.png' width='49%' /> <img src='./figures/sizes-histogram.png' width='49%' />
+			</p>
+
+		<h3>Readability</h3>
+			<p style='text-align: center'>
+			<img src='./figures/readability-boxplot.png' width='49%' /> <img src='./figures/readability-histogram.png' width='49%' />
+			</p>
+
+		<h3>Clusters</h3>
+			<p style='text-align: center'>
+			<img src='./figures/cluster-dendrogram.png' width='49%' /> <img src='./figures/cluster-cube.png' width='49%' />
+			</p>
+
+		<h3>Ngrams</h3>
+			<p style='text-align: center'>
+			<img src='./figures/unigrams-cloud.png' width='49%' /> <img src='./figures/bigrams-cloud.png' width='49%' />
+			</p>
+
+		<h3>Parts-of-speech</h3>
+			<p style='text-align: center'>
+			<img src='./figures/pos-noun.png' width='49%' /> <img src='./figures/pos-propernoun.png' width='49%' />
+			</p>
+			<p style='text-align: center'>
+			<img src='./figures/pos-pronoun.png' width='49%' /> <img src='./figures/pos-verb.png' width='49%' />
+			</p>
+			<p style='text-align: center'>
+			<img src='./figures/pos-adjective.png' width='49%' /> <img src='./figures/pos-adverb.png' width='49%' />
+			</p>
+
+		<h3>Entities</h3>
+			<p style='text-align: center'>
+			<img src='./figures/entities-any.png' width='49%' /> <img src='./figures/entities-person.png' width='49%' />
+			</p>
+			<p style='text-align: center'>
+			<img src='./figures/entities-gpe.png' width='49%' /> <img src='./figures/entities-org.png' width='49%' />
+			</p>
+
+		<h3>Keywords</h3>
+			<p style='text-align: center'>
+			<img src='./figures/keywords-cloud.png' width='66%' />
+			</p>
+			
+</body>
+</html>
+'''
 
 # require
 import click
@@ -2118,3 +2188,989 @@ def read( carrel, location='local' ) :
 	
 		url = REMOTELIBRARY + '/' + CARRELS + '/' + carrel
 		open( url )
+
+# make sure tika server has been downloaded
+def _checkForTika( tika ) :
+	
+	# require
+	from configparser import ConfigParser
+	from pathlib      import Path
+	from requests     import get
+	
+	# install tika, conditionally
+	if not Path( tika ).exists() :
+	
+		click.echo( "\n  WARNING: Tika server not found. Downoading... ", err=True )
+		response = get( TIKADOWNLOAD )
+		file     = Path( tika ) 
+		with open( file, 'wb' ) as handle : handle.write( response.content )
+		click.echo( "\n  INFO: Downloaded", err=True )
+
+		# _initialize
+		click.echo( "\n  INFO: Updating configurations... " )
+		configurations          = ConfigParser()
+		applicationDirectory    = Path.home()
+		configurationFile       = applicationDirectory/CONFIGURATIONFILE
+		localLibrary            = configuration( 'localLibrary' )
+		malletHome              = configuration( 'malletHome' )
+		tikaHome                = Path.home()/TIKAHOME
+		configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome, "tikaHome" : tikaHome }
+		with open( configurationFile, 'w' ) as handle : configurations.write( handle )
+
+		# done
+		click.echo( '''
+  INFO: Tika server (tika-server.jar) has been downloaded to your
+  home directory and configured for future use. You can move Tika
+  server to another location but once you do so you will need to
+  run 'rdr set -s tika'.
+''', err=True )
+
+		# start tika server
+		_startTika()
+
+
+# check to see if tika is running
+def _tikaIsRunning () :
+
+	# configure, require, and _initialize
+	TIKA    = 'http://localhost:9998/'
+	import requests
+	running = False
+
+	# give it a go
+	try :
+
+		# check for success
+		if requests.get( TIKA ).ok : running = True
+	
+	# error
+	except requests.ConnectionError : pass
+	
+	# done
+	return( running )
+	
+	
+# create carrel skeleton
+def _initialize( carrel, directory ) :
+	
+	# configure
+	ADR      = 'adr'
+	BIB      = 'bib'
+	CACHE    = 'cache'
+	ENT      = 'ent'
+	ETC      = 'etc'
+	POS      = 'pos'
+	TXT      = 'txt'
+	URLS     = 'urls'
+	WRD      = 'wrd'
+	WORDS    = '''0\n1\n2\n3\n4\n5\n6\n7\n8\n9\na\na\nabout\nabove\nafter\nagain\nagainst\nall\nam\nan\nand\nany\nare\naren't\nas\nat\nb\nbe\nbecause\nbeen\nbefore\nbeing\nbelow\nbetween\nboth\nbut\nby\nc\ncan\ncan't\ncannot\ncould\ncouldn't\nd\ndid\ndidn't\ndo\ndoes\ndoesn't\ndoing\ndon't\ndown\nduring\ne\neach\nf\nfew\nfor\nfrom\nfurther\ng\nh\nhad\nhadn't\nhas\nhasn't\nhast\nhath\nhave\nhaven't\nhaving\nhe\nhe'd\nhe'll\nhe's\nher\nhere\nhere's\nhers\nherself\nhim\nhimself\nhis\nhow\nhow's\ni\ni'd\ni'll\ni'm\ni've\nif\nin\ninto\nis\nisn't\nit\nit's\nits\nitself\nj\nk\nl\nlet's\nm\nme\nmore\nmost\nmustn't\nmy\nmyself\nn\nno\nnor\nnot\no\nof\noff\non\nonce\none\nonly\nor\nother\nought\nour\nours\nourselves\nout\nover\nown\np\nq\nr\ns\nsaid\nsame\nshan't\nshe\nshe'd\nshe'll\nshe's\nshould\nshouldn't\nso\nsome\nsuch\nt\nthan\nthat\nthat's\nthe\nthee\ntheir\ntheirs\nthem\nthemselves\nthen\nthere\nthere's\nthese\nthey\nthey'd\nthey'll\nthey're\nthey've\nthis\nthose\nthou\nthrough\nthus\nthy\nto\ntoo\nu\nunder\nuntil\nunto\nup\nupon\nv\nvery\nw\nwas\nwasn't\nwe\nwe'd\nwe'll\nwe're\nwe've\nwere\nweren't\nwhat\nwhat's\nwhen\nwhen's\nwhere\nwhere's\nwhich\nwhile\nwho\nwho's\nwhom\nwhy\nwhy's\nwill\nwith\nwon't\nwould\nwouldn't\nx\ny\nyou\nyou'd\nyou'll\nyou're\nyou've\nyour\nyours\nyourself\nyourselves\nz\n'''
+	PROCESS  = 'toolbox'
+
+	# require
+	from   datetime import datetime
+	from   getpass  import getuser
+	from   pathlib  import Path
+	import shutil
+	
+	# create the library, the carrel, and the carrel's sub-directories
+	localLibrary = configuration( 'localLibrary' )
+	Path.mkdir( localLibrary,                exist_ok=True )
+	Path.mkdir( localLibrary/carrel,         exist_ok=True )
+	Path.mkdir( localLibrary/carrel/ADR,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/BIB,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/CACHE,   exist_ok=True )
+	Path.mkdir( localLibrary/carrel/ENT,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/ETC,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/FIGURES, exist_ok=True )
+	Path.mkdir( localLibrary/carrel/POS,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/TXT,     exist_ok=True )
+	Path.mkdir( localLibrary/carrel/URLS,    exist_ok=True )
+	Path.mkdir( localLibrary/carrel/WRD,     exist_ok=True )
+
+	# configure provenance and output it
+	process     = PROCESS
+	originalID  = carrel
+	dateCreated = datetime.today().strftime( '%Y-%m-%d' )
+	timeCreated = datetime.now().strftime("%H:%M")
+	creator     = getuser()
+	input       = directory
+	record      = [ PROCESS, originalID, dateCreated, timeCreated, creator, input ]
+	output      = localLibrary/carrel/PROVENANCE
+	with open( output, 'w', encoding='utf-8' ) as handle : handle.write( '\t'.join( record ) + '\n' )
+	
+	# process each item in the given directory
+	directory = Path( directory )
+	for source in directory.glob( '*' ) :
+
+		# check for metadata file
+		if source.name == METADATA :
+		
+			# copy the metadata file to the root of the carrel
+			destination = localLibrary/carrel/( source.name )
+			shutil.copyfile( source, destination )
+
+		else :
+		
+			# copy the file to the cache directory
+			destination = localLibrary/carrel/CACHE/( source.name )
+			shutil.copyfile( source, destination )
+
+	# add stop words; there is probably a better way
+	output = localLibrary/carrel/ETC/STOPWORDS
+	with open( output, 'w', encoding='utf-8' ) as handle : handle.write( WORDS )
+
+
+# given a file, create some bibliographics and save plain text
+def _file2bib( carrel, file, metadata=None ) :
+		
+	# configure
+	BIB          = 'bib'
+	TXT          = 'txt'
+	CACHE        = 'cache'
+	COUNT        = 24
+	EXTENSION    = '.txt'
+	BIBEXTENSION = '.bib'
+	HEADER       = [ 'id', 'author', 'title', 'date', 'pages', 'extension', 'mime', 'words', 'sentence', 'flesch', 'summary', 'cache', 'txt' ]
+	PROCESS      = 'textrank'
+
+	# require
+	from   pathlib              import Path
+	from   textacy              import text_stats
+	from   tika                 import detector
+	from   tika                 import parser
+	import os
+	import spacy
+	import pytextrank
+
+	# _initialize
+	authorFound  = False
+	dateFound    = False
+	titleFound   = False
+	title        = _name2key( file )
+	extension    = os.path.splitext( os.path.basename( file ) )[ 1 ]
+	key          = _name2key( file )
+	pages        = ''
+	summary      = ''
+	localLibrary = configuration( 'localLibrary' )
+
+	# debug 
+	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
+
+	# get the text, and if not, then return; the whole point is to have content to read!
+	parsed = parser.from_file( file )
+	text   = parsed[ 'content' ]	
+	if not text : return
+	
+	# get metadata from the metadata file	
+	if str( type( metadata ) ) == "<class 'pandas.core.frame.DataFrame'>" :
+		
+		# parse
+		index = Path( file ).name
+		
+		# check to see if the index value exists
+		if index in metadata.index :
+		
+			if 'author' in metadata :
+		
+				author      = str( metadata.loc[ index ][ 'author' ] )
+				authorFound = True
+			
+			if 'title'  in metadata : 
+		
+				title  = metadata.loc[ index ][ 'title' ]
+				titleFound = True
+			
+			if 'date'   in metadata : 
+		
+				date      = str( metadata.loc[ index ][ 'date' ] )
+				dateFound = True
+		
+	# get metadata from the source file
+	metadata = parsed[ 'metadata' ] 
+	mimetype = detector.from_file( file )
+
+	# author
+	if authorFound == False : 
+	
+		if 'creator' in metadata :
+			author = metadata[ 'creator' ]
+			if ( isinstance( author, list ) ) : author = author[ 0 ]
+			
+		else : author = ''
+		
+	# title
+	if titleFound == False : 
+	
+		if 'title' in metadata :
+			title = metadata[ 'title' ]
+			if ( isinstance( title, list ) ) : title = title[ 0 ]
+			title = ' '.join( title.split() )
+
+	# date
+	if dateFound == False : 
+	
+		if 'date' in metadata :
+			date = metadata[ 'date' ]
+			if ( isinstance( date, list ) ) : date = date[ 0 ]
+			date = date[:date.find( 'T' )]
+		
+		else : date = ''
+
+	# number of pages
+	if 'xmpTPg:NPages' in metadata :
+		pages = metadata[ 'xmpTPg:NPages' ]
+		if ( isinstance( pages, list ) ) : pages = pages[ 0 ]
+		
+	# model the text
+	nlp            = spacy.load( MODEL )
+	nlp.max_length = ( len( text ) + 1 )
+	nlp.add_pipe( PROCESS )
+	doc            = nlp( text )
+
+	# _summarize
+	summary = _summarize( doc )
+	
+	# parse out only the desired statistics
+	words      = text_stats.n_words( doc )
+	sentences  = text_stats.n_sents( doc )
+	syllables  = text_stats.n_syllables( doc )
+	flesch     = int( text_stats.readability.flesch_reading_ease( doc ) )
+
+	# cache and text locations
+	txt   = Path( TXT )/( str( key ) + EXTENSION )
+	cache = Path( CACHE )/( str( key ) + extension )
+
+	# debug
+	if VERBOSE == 2 :
+	
+		# provide a review
+		click.echo( '        key: ' + key,              err=True )
+		click.echo( '     author: ' + author,           err=True )
+		click.echo( '      title: ' + str( title ),     err=True )
+		click.echo( '       date: ' + date,             err=True )
+		click.echo( '  extension: ' + extension,        err=True )
+		click.echo( '      pages: ' + pages,            err=True )
+		click.echo( '  mime-type: ' + mimetype,         err=True )
+		click.echo( '    summary: ' + summary,          err=True )
+		click.echo( '      words: ' + str( words ),     err=True )
+		click.echo( '  sentences: ' + str( sentences ), err=True )
+		click.echo( '     flesch: ' + str( flesch ),    err=True )
+		click.echo( '      cache: ' + str( cache ),     err=True )
+		click.echo( '        txt: ' + str( txt ),       err=True )
+		click.echo( '',                                 err=True )
+	
+	# open output
+	output = localLibrary/carrel/BIB/( key + BIBEXTENSION )
+	with open( output, 'w', encoding='utf-8' ) as handle :
+	
+		try :
+		
+			# output the header and the data
+			handle.write( '\t'.join( HEADER ) + '\n' )
+			handle.write( '\t'.join( [ str( key ), author, str( title ), str( date ), pages, extension, mimetype, str( words ), str( sentences ), str( flesch ), summary, str( cache ), str( txt ) ] ) + '\n' )
+		
+		# trap weird TypeError
+		except TypeError : click.echo( ( "\nWARNING (TypeError): Probably weird author value extracted from PDF file (key: %s). Call Eric.\n" % key ), err=True )
+			
+	# check for text, and it should exist; famous last words
+	if text : 
+
+		# configure output and output
+		output = localLibrary/carrel/TXT/( key + EXTENSION )
+		with open( output, 'w', encoding='utf-8' ) as handle : handle.write( text )
+
+
+# create key from filename
+def _name2key( file ) :
+
+	# require, do the work, and done; inefficient
+	import os
+	key = str( os.path.splitext( os.path.basename( file ) )[ 0 ] )
+	return key
+
+
+# given a spaCy doc which has been enhanced by pytextrank, return a summary
+def _summarize( doc ) :
+
+	# see: https://derwen.ai/docs/ptr/explain_summ/
+	
+	# configure
+	PHRASELIMIT   = 4
+	SENTENCELIMIT = 2
+
+	# require
+	from   math       import sqrt
+	from   operator   import itemgetter
+	import pytextrank
+	import re
+	
+	boundries   = [ [ sentence.start, sentence.end, set( [] ) ] for sentence in doc.sents ]
+	phrase_id   = 0
+	unit_vector = []
+
+	# process each phrase
+	for phrase in doc._.phrases :
+
+		unit_vector.append( phrase.rank )
+
+		for chunk in phrase.chunks:
+
+			for start, end, vector in boundries :
+		
+				if chunk.start >= start and chunk.end <= end :
+
+					vector.add( phrase_id )
+					break
+				
+		phrase_id    += 1
+		if phrase_id == PHRASELIMIT : break
+
+	sum_ranks   = sum( unit_vector )
+
+	# trap for a document that is too small
+	try : unit_vector = [ rank/sum_ranks for rank in unit_vector ]
+	except ZeroDivisionError : return doc.text
+	
+	rankings    = {}
+	sent_id     = 0
+
+	for start, end, vector in boundries:
+
+		# re-_initialize
+		sum_sq = 0.0
+
+		for identifier in range( len( unit_vector ) ) :
+		
+			if identifier not in vector : sum_sq += unit_vector[ identifier ] ** 2.0
+
+		rankings[ sent_id ] =  sqrt( sum_sq )
+		sent_id             += 1
+
+	# create a dictionary of sentences
+	sentences = {}
+	for index, sentence in enumerate( doc.sents ) : sentences[ index ] = sentence.text
+
+	# process each ranking
+	summary = []
+	for index, sentence in enumerate( sorted( rankings.items(), key=itemgetter( 1 ) ) ) :
+
+		# output, and conditionally continue
+		summary.append( sentences[ sentence[ 0 ] ] )
+		if ( index + 1 ) == SENTENCELIMIT : break
+
+	# _normalize
+	summary = ' '.join( summary )
+	summary = summary.replace( '"', '' )
+	summary = re.sub( '\r', ' ', summary )
+	summary = re.sub( '\t+', ' ', summary )
+	summary = re.sub( '\n+', ' ', summary )
+	summary = re.sub( ' +', ' ',  summary )
+	summary = re.sub( '^\s', '',  summary )
+	summary = re.sub( '\s$', '',  summary )
+
+	# done
+	return summary
+
+# create bag of words
+def _txt2bow( carrel ) :
+
+	# configure
+	PATTERN = '*.txt'
+	BOW     = 'reader.txt'
+	TXT     = 'txt'
+	ETC     = 'etc'
+	
+	# require
+	from pathlib import Path
+
+	# _initialize
+	localLibrary = configuration( 'localLibrary' )
+
+	# process each text file in the given directory
+	txt = localLibrary/carrel/TXT
+	bow = ''
+	for file in txt.glob( PATTERN ) :
+	
+		# create/increment the bag of words
+		with open( file, encoding='utf-8' ) as handle : bow += handle.read()
+	
+	# _normalize
+	bow = _normalize( bow )
+	
+	# configure output, output, and done
+	output = localLibrary/carrel/ETC/BOW
+	with open( output, 'w', encoding='utf-8' ) as handle : handle.write( bow )
+
+
+
+# _normalize text, a poor man's version
+def _normalize( text ) :
+
+	# require
+	import re
+	
+	# _normalize the text in the bag-of-words
+	text = text.lower()
+	text = re.sub( '\r', '\n', text )
+	text = re.sub( '\n+', ' ', text )
+	text = re.sub( '^\W+', '', text )
+	text = re.sub( '\t', ' ',  text )
+	text = re.sub( '- ', '',   text )
+	text = re.sub( ' +', ' ',  text )
+	text = re.sub( '\t', ' ',  text )
+
+	# done
+	return text
+
+
+# extract email addresses
+def _txt2adr( carrel, file ) :
+	
+	# configure
+	ADR       = 'adr'
+	EXTENSION = '.adr'
+	HEADER    = [ 'id', 'address' ]
+	PATTERN   = '''(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])'''
+
+	# require
+	import re
+	
+	# _initialize
+	key          = _name2key( file )
+	localLibrary = configuration( 'localLibrary' )
+
+	# debug 
+	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
+
+	# slurp up the file
+	with open ( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
+	
+	# get and process each address, to the best of my ability
+	addresses = re.findall( PATTERN, text )
+
+	# check for addresses
+	if len( addresses ) > 0 :
+
+		# open output
+		output = localLibrary/carrel/ADR/( key + EXTENSION )
+		with open( output, 'w', encoding='utf-8'  ) as handle :
+
+			# _initialize the output
+			handle.write( '\t'.join( HEADER ) + '\n' )
+
+			# process each address
+			for address in addresses : 
+			
+				# clean up some more
+				address = re.sub( '\/', '', address )
+				address = re.sub( '{',  '', address )
+				address = re.sub( '}',  '', address )
+				
+				# output
+				handle.write( '\t'.join( [ key, address ] ) + '\n' )
+
+
+# extract named entities
+def _txt2ent( carrel, file ) :
+
+	# configure
+	EXTENSION = '.ent'
+	ENT       = 'ent'
+	HEADER    = [ 'id', 'sid', 'eid', 'entity', 'type' ]
+
+	# require
+	import spacy
+
+	# _initialize
+	key          = _name2key( file )
+	localLibrary = configuration( 'localLibrary' )
+	
+	# debug 
+	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
+
+	# slurp up the file
+	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
+
+	# model the text
+	nlp            = spacy.load( MODEL )
+	nlp.max_length = ( len( text ) + 1 )
+	doc            = nlp( text )
+
+	# open output
+	output = localLibrary/carrel/ENT/( key + EXTENSION )
+	with open( output, 'w', encoding='utf-8' ) as handle :
+
+		# _initialize the output
+		handle.write( '\t'.join( HEADER ) + '\n' )
+
+		# process each sentence
+		for s, sentence in enumerate( doc.sents ) :
+		
+			# process each entity
+			for e, entity in enumerate( sentence.ents ) :
+			
+				# parse and output
+				value = entity.text
+				type  = entity.label_
+				handle.write( '\t'.join( [ key, str( s + 1 ), str( e + 1 ), value, type ] ) + '\n' )
+
+
+# extract parts-of-speech
+def _txt2pos( carrel, file ) :
+
+	# configure
+	EXTENSION = '.pos'
+	POS       = 'pos'
+	HEADER    = [ 'id', 'sid', 'tid', 'token', 'lemma', 'pos' ]
+
+	# require
+	import spacy
+
+	# _initialize
+	key          = _name2key( file )
+	localLibrary = configuration( 'localLibrary' )
+	
+	# debug 
+	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
+
+	# slurp up the file
+	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
+
+	# model the text
+	nlp            = spacy.load( MODEL )
+	nlp.max_length = ( len( text ) + 1 )
+	doc            = nlp( text )
+
+	# open output
+	output = localLibrary/carrel/POS/( key + EXTENSION )
+	with open( output, 'w', encoding='utf-8' ) as handle :
+
+		# _initialize the output
+		handle.write( '\t'.join( HEADER ) + '\n' )
+		
+		# process each sentence
+		for s, sentence in enumerate( doc.sents ) :
+			
+			# process each token
+			for t, token in enumerate( sentence ) :
+
+				# process non-spaces
+				if token.text > ' ' :
+	
+					# parse and output
+					feature = str( token.text )
+					lemma   = str( token.lemma_.lower() )
+					pos     = token.pos_
+					handle.write( '\t'.join( [  key, str( s + 1 ), str( t + 1 ), feature, lemma, pos ] ) + '\n' )
+
+
+# given a file, extract domains and urls
+def _txt2url( carrel, file ) :
+
+	# configure
+	EXTENSION = '.url'
+	URLS      = 'urls'
+	HEADER    = [ 'id', 'domain', 'url']
+	PATTERN   = '(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})'
+
+	# require
+	import re
+	
+	# _initialize
+	key          = _name2key( file )
+	localLibrary = configuration( 'localLibrary' )
+	
+	# debug 
+	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
+
+	# slurp up the file
+	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
+
+	# get and process each url, to the best of my ability
+	urls = re.findall( PATTERN, text )
+	
+	# check for addresses
+	if len( urls ) > 0 :
+
+		# open output
+		output = localLibrary/carrel/URLS/( key + EXTENSION )
+		with open( output, 'w', encoding='utf-8' ) as handle :
+
+			# _initialize the output
+			handle.write( '\t'.join( HEADER ) + '\n' )
+
+			# process each url
+			for url in urls :
+
+				# remove white space from end of url
+				url = re.sub( '\W$', '', url )
+	
+				# parse out the domain, to the best of my ability
+				domain = re.sub( '.*:\/\/', '', url )
+				domain = re.sub( '\/.*',    '', domain )
+				domain = re.sub( '\W$',     '', domain )
+	
+				# output
+				handle.write( '\t'.join( [ key, domain, url ] ) + '\n' )
+
+
+# given a file, output keywords
+def _txt2wrd( carrel, file ) :
+
+	# configure
+	EXTENSION  = '.wrd'
+	WRD        = 'wrd'
+	NGRAMS     = 1
+	TOPN       = 0.005
+	HEADER     = [ 'id', 'keyword' ]
+	NORMALIZE  = 'lower'
+	WINDOWSIZE = 5
+	
+	# require
+	from  textacy.extract.keyterms.yake import yake
+	import spacy
+	import os
+	
+	# _initialize
+	key          = _name2key( file )
+	localLibrary = configuration( 'localLibrary' )
+	
+	# debug 
+	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
+
+	# slurp up the file
+	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
+
+	# model the text and get the keywords
+	nlp            = spacy.load( MODEL )
+	nlp.max_length = os.path.getsize( file ) + 1 
+	doc            = nlp( text )
+
+	# do the extraction
+	try    : records = ( yake( doc, ngrams=( 1, 2 ), window_size=WINDOWSIZE, topn=TOPN, normalize=NORMALIZE ) )
+	except : records = []
+	
+	# check for records
+	if len( records ) > 0 :
+	
+		# open output
+		output = localLibrary/carrel/WRD/( key + EXTENSION )
+		with open( output, 'w', encoding='utf-8' ) as handle :
+
+			# _initialize the output
+			handle.write( '\t'.join( HEADER ) + '\n' )
+
+			# process each record
+			for record in records :
+
+				# do the simplest of normalization and output
+				keyword = record[ 0 ]
+				if len( keyword ) < 3 : continue
+				handle.write( '\t'.join( ( key, keyword ) ) + '\n' )
+
+# start tika
+def _startTika() :
+
+	# configure
+	JAVA  = 'java'
+	JAR   = '-jar'
+	SLEEP = 20
+	
+	# require
+	import time
+	import subprocess
+	
+	# _initialize
+	started = False
+	
+	# double check to see if we've already been here
+	if _tikaIsRunning() : started = True
+	
+	# try to start tika
+	else :
+	
+		# get the location of tika-server.jar; needs validation
+		tikaHome = str( configuration( 'tikaHome' ) )	
+		
+		# run the server and conditionally ignore STDERR; set VERBOSE to choose
+		if VERBOSE == 3 : subprocess.Popen( [ JAVA, JAR, tikaHome ] )
+		else            : subprocess.Popen( [ JAVA, JAR, tikaHome ], stderr=subprocess.DEVNULL )	
+		
+		# hang out
+		time.sleep( SLEEP )
+		
+		# one last time, check again
+		if _tikaIsRunning() : started = True
+		
+	# done
+	return( started )
+
+
+
+# given a few configurations, reduce extracted features to a database
+def _tsv2db( directory, extension, table, connection ) :
+
+	# require
+	import pandas as pd
+	
+	# debug
+	if VERBOSE : click.echo( '\tProcessing ' + table, err=True )
+	
+	# _initialize
+	found = False
+	
+	# process each file in the given directory
+	for index, file in enumerate( directory.glob( extension ) ) :
+
+		# more debugging
+		if VERBOSE == 2 : click.echo( '\t' + str( file ), err=True )
+		
+		# read the file
+		df = pd.read_csv( file, sep='\t', header=0, low_memory=False, on_bad_lines='warn', quoting=3, dtype='string' )
+			
+		# _initialize the features or append to it
+		if index == 0 : features = df
+		else          : features = pd.concat( [ features, df ], sort=False )
+
+		# update
+		found = True
+		
+	# fill the database, conditionally
+	if found : features.to_sql( table, connection, if_exists='replace', index=False )
+
+
+def build( carrel, directory, erase=False, start=False ) :
+
+	"""Create <carrel> from files in <directory>
+
+Use this command to build a data set ("study carrel") based on the files saved in a directory. Once the data set is created the other Toolbox commands can be applied to the result. The files can be of any type (PDF, Microsoft Word, HTML, etc.), and they can be of any kind (books, articles, reports, etc.), and they can be of any number (1, 2, 12, a few dozen, hundreds, etc.). The Toolbox is designed to read about a dozen journal articles in the form of PDF files. This command requires a Java tool called Tika, and it is used to convert the input files into plain text as well as extract authors, titles, and dates. If the Toolbox has not been configured and/or Tika is not installed, then the Toolbox will try to install it on your behalf. If the given directory contains a file named 'metadata.csv', then this command will use the file as the source of author, title, and date metadata values. This is often very helpful because sans metadata it is very difficult to make comparison between documents. Please see the full-blown documentation for details."""
+
+	# configure
+	CACHE  = 'cache'
+	TXT    = 'txt'
+	SCHEMA = '''-- parts-of-speech\ncreate table pos (\n    id    TEXT,\n    sid   INT,\n    tid   INT,\n    token TEXT,\n    lemma TEXT,\n    pos   TEXT\n);\n\n-- name entitites\ncreate table ent (\n    id     TEXT,\n    sid    INT,\n    eid    INT,\n    entity TEXT,\n    type   TEXT\n);\n\n-- keywords\ncreate table wrd (\n    id      TEXT,\n    keyword TEXT\n);\n\n-- email addresses\ncreate table adr (\n    id      TEXT,\n    address TEXT\n);\n\n-- questions\ncreate table questions (\n    id       TEXT,\n    question TEXT\n);\n\n-- urls\ncreate table url (\n    id     TEXT,\n    domain TEXT,\n    url    TEXT\n);\n\n-- bibliographics, such as they are\ncreate table bib (\n    id        TEXT,\n    words     INT,\n    sentence  INT,\n    flesch    INT,\n    summary   TEXT,\n    title     TEXT,\n    author    TEXT,\n    date      TEXT,\n    txt       TEXT,\n    cache     TEXT,\n    pages     INT,\n    extension TEXT,\n    mime      TEXT,\n    genre     TEXT\n);'''
+	POS    = 'pos'
+	ENT    = 'ent'
+	WRD    = 'wrd'
+	ADR    = 'adr'
+	URL    = 'urls'
+	BIB    = 'bib'
+	
+	# require
+	from   multiprocessing import Pool
+	import os
+	import shutil
+	import sqlite3
+	import pandas as pd
+	import spacy
+	
+	# _initialize
+	localLibrary = configuration( 'localLibrary' )
+	pool         = Pool()
+
+	# make sure we have Tika Server
+	_checkForTika( str( configuration( 'tikaHome' ) ) )
+	
+	# start tika; the toolbox's secret sauce
+	if start :
+	
+		# debug
+		click.echo( '(Step #-1 of 9) Starting Tika server at http://localhost:9998/; please be patient.', err=True )
+		
+		# go
+		if _startTika() == False :
+		
+			# bummer
+			click.echo( "Can't start Tika. Call Eric.", err=True )
+			exit()
+
+	# check for tika
+	if not _tikaIsRunning() :
+	
+		click.echo( '''
+  WARNING: Tika server at http://localhost:9998/ is not running;
+  please start Tika by hand, or add -s to this command.
+''', err=True )
+		exit()
+	
+	
+	# check tika version here
+	
+	
+	# check to see if the language model has been installed
+	try            : nlp  = spacy.load( MODEL )
+	except OSError : modelNotFound()
+
+	# check for pre-existing carrel
+	if ( localLibrary/carrel ).is_dir() :
+	
+		# check for erase
+		if erase :
+		
+			# debug and do the work
+			click.echo( ( '(Step #0 of 9) Deleting %s' % ( localLibrary/carrel ) ), err=True )
+			shutil.rmtree( localLibrary/carrel )
+			
+		# carrel exists and erasing was not specified
+		else :
+		
+			# warn and exit
+			click.echo( ( '''
+  WARNING: Carrel exists; specify a name other than "%s" or add -e
+  to erase it.''' % carrel ), err=True )
+			exit()
+
+	# build skeleton
+	click.echo( '(Step #1 of 9) Initializing %s with %s and stop words' % ( carrel, directory ), err=True )
+	_initialize( carrel, directory )
+		
+	# create a list of filenames to process
+	filenames = []
+	cache     = localLibrary/carrel/CACHE
+	for filename in os.listdir( cache ) :
+	
+		# update list, conditionally
+		if filename[ 0 ] == '.' : continue
+		else                    : filenames.append( os.path.join( cache, filename ) )
+	
+	# conditionally slurp up the metadata file and submit 
+	click.echo( '(Step #2 of 9) Extracting bibliographics and converting documents to plain text', err=True )
+	
+	# check for metadata file
+	if ( localLibrary/carrel/METADATA ).exists() :
+	
+		try : metadata = pd.read_csv( localLibrary/carrel/METADATA, index_col='file' )
+		except ValueError :
+			click.echo( ( '\n  Error: The metadata file (metadata.csv) does not have a\n  column named "file". Remove metadata.csv from the original\n  input directory:\n\n    %s\n\n  Alternatively, edit the metadata file accordingly. Exiting.\n' % directory ), err=True )
+			exit()
+
+		pool.starmap( _file2bib, [ [ carrel, filename, metadata ] for filename in filenames ] )
+		
+	# no metadata file; just do the work
+	else : pool.starmap( _file2bib, [ [ carrel, filename ] for filename in filenames ] )
+		
+	# bag of words
+	click.echo( '(Step #3 of 9) Creating bag-of-words', err=True )
+	_txt2bow( carrel )
+	
+	# output hint
+	click.echo( ( "\n  Hint: Now that the bag-of-words has been created, you can begin\n  to use many of the other Reader Toolbox commands while the\n  building process continues. This is especially true for larger\n  carrels. Open a new terminal window and try:\n\n    rdr cluster %s\n    rdr ngrams %s -c | more\n    rdr concordance %s\n    rdr collocations %s\n" % ( carrel, carrel, carrel, carrel ) ), err=True )
+	
+	# re-create a list of filenames to process
+	filenames = []
+	txt       = localLibrary/carrel/TXT
+	for filename in os.listdir( txt ) : filenames.append( os.path.join( txt, filename ) )
+
+	# extract email addresses
+	click.echo( '(Step #4 of 9) Extracting (email) addresses', err=True )
+	pool.starmap( _txt2adr, [ [ carrel, filename ] for filename in filenames ] )
+	
+	# extract named entities
+	click.echo( '(Step #5 of 9) Extracting (named) entities', err=True )
+	pool.starmap( _txt2ent, [ [ carrel, filename ] for filename in filenames ] )
+	
+	# extract parts-of-speech
+	click.echo( '(Step #6 of 9) Extracting parts-of-speech', err=True )
+	pool.starmap( _txt2pos, [ [ carrel, filename ] for filename in filenames ] )
+
+	# extract urls
+	click.echo( '(Step #7 of 9) Extracting URLs', err=True )
+	pool.starmap( _txt2url, [ [ carrel, filename ] for filename in filenames ] )
+
+	# extract keywords
+	click.echo( '(Step #8 of 9) Extracting (key) words', err=True )
+	pool.starmap( _txt2wrd, [ [ carrel, filename ] for filename in filenames ] )
+
+	# clean up
+	pool.close()
+
+	# create database
+	click.echo( '(Step #9 of 9) Creating and filling database (reducing)', err=True )
+	database   = str( localLibrary/carrel/ETC/DATABASE )
+	connection = sqlite3.connect( database )
+	cursor     = connection.cursor()
+	cursor.executescript( SCHEMA )
+	
+	# reduce; fill it with content
+	_tsv2db( localLibrary/carrel/POS, '*.pos', 'pos', connection )
+	_tsv2db( localLibrary/carrel/ENT, '*.ent', 'ent', connection )
+	_tsv2db( localLibrary/carrel/WRD, '*.wrd', 'wrd', connection )
+	_tsv2db( localLibrary/carrel/ADR, '*.adr', 'adr', connection )
+	_tsv2db( localLibrary/carrel/URL, '*.url', 'url', connection )
+	_tsv2db( localLibrary/carrel/BIB, '*.bib', 'bib', connection )
+
+	# output another hint
+	# out hint
+	click.echo( ( '\n  Another hint: The build process is done, and now you ought to\n  be able to use any Toolbox command. For example:\n\n    rdr info %s\n    rdr bib %s | more\n    rdr tm %s\n' % ( carrel, carrel, carrel ) ), err=True )
+
+def summarize( carrel, look=False ) :
+
+	'''Summarize <carrel>
+	
+	The use of this command will generate a set of reports and save them in specific locations in <carrel>'s file system. If you specify the -l (look) option, then <carrel>'s index.htm file will be opened in your Web browser. You can subsequently use rdr read <carrel> to open the index.htm file.'''
+
+	# sanity check
+	checkForCarrel( carrel )
+	
+	# save bibliography
+	click.echo( "Creating bibliography", err=True )
+	bibliography( carrel, 'text', save=True )
+	bibliography( carrel, 'html', save=True )
+	bibliography( carrel, 'json', save=True )
+			
+	# save sizes	
+	click.echo( "Graphing sizes", err=True )
+	sizes( carrel, output='boxplot',   save=True )
+	sizes( carrel, output='histogram', save=True )
+		
+	# save readability	
+	click.echo( "Graphing readability", err=True )
+	flesch( carrel, output='boxplot',   save=True )
+	flesch( carrel, output='histogram', save=True )
+	
+	# save cluster	
+	click.echo( "Graphing clusters", err=True )
+	cluster( carrel, type='cube',       save=True )
+	#ctx.invoke( cluster.cluster, carrel=carrel, type='dendrogram', save=True )
+	
+	# save ngrams	
+	click.echo( "Graphing ngrams", err=True )
+	ngrams( carrel, count=True, size=1, wordcloud=True, save=True )
+	ngrams( carrel, count=True, size=2, wordcloud=True, save=True )
+	
+	# save entities	
+	click.echo( "Graphing entities", err=True )
+	entities( carrel, count=True, select='entity', like='any',    wordcloud=True, save=True )
+	entities( carrel, count=True, select='entity', like='PERSON', wordcloud=True, save=True )
+	entities( carrel, count=True, select='entity', like='GPE',    wordcloud=True, save=True )
+	entities( carrel, count=True, select='entity', like='ORG',    wordcloud=True, save=True )
+	
+	# save pos	
+	click.echo( "Graphing parts-of-speach", err=True )
+	pos( carrel, count=True, select='lemmas', like='NOUN',  wordcloud=True, save=True )
+	pos( carrel, count=True, select='lemmas', like='VERB',  wordcloud=True, save=True )
+	pos( carrel, count=True, select='lemmas', like='ADJ',   wordcloud=True, save=True )
+	pos( carrel, count=True, select='lemmas', like='ADV',   wordcloud=True, save=True )
+	pos( carrel, count=True, select='lemmas', like='PRON',  wordcloud=True, save=True )
+	pos( carrel, count=True, select='lemmas', like='PROPN', wordcloud=True, save=True )
+	
+	# save keywords	
+	click.echo( "Graphing keywords", err=True )
+	keywords( carrel, count=True, wordcloud=True, save=True )
+	
+	# create html
+	click.echo( "Building HTML page", err=True )
+	html = TEMPLATE.replace( '##CARREL##', carrel )
+	html = html.replace( '##ITEMS##', str( extents( carrel, 'items' ) ) )
+	html = html.replace( '##WORDS##', str( extents( carrel, 'words' ) ) )
+	html = html.replace( '##FLESCH##', str( extents( carrel, 'flesch' ) ) )
+	html = html.replace( '##DATECREATED##', str( provenance( carrel, 'dateCreated' ) ) )
+	html = html.replace( '##CREATOR##', str( provenance( carrel, 'creator' ) ) )
+	
+	# save html
+	locallibrary = configuration( 'localLibrary' )
+	with open( locallibrary/carrel/INDEX, 'w', encoding='utf-8' ) as handle : handle.write( html )
+	
+	# read, 
+	if look : read( carrel )
+
