@@ -81,7 +81,7 @@ POSPROPN             = 'pos-propernoun.png'
 
 
 # spacy langauge model
-MODEL = 'en_core_web_md'
+MODEL = 'en_core_web_sm'
 
 # mallet
 MALLETZIP = 'http://library.distantreader.org/apps/mallet.zip'
@@ -434,8 +434,12 @@ def bibliography( carrel, format='text', save=False ) :
 			# normalize; unescape
 			if summary : summary = summary.replace( "''", "'" )
 	
+			# a hack for the lack of an extension
+			if not row[ 'extension' ] : extension = ''
+			else                      : extension = row[ 'extension' ]
+			
 			# build cache and plain text
-			cache = str( locallibrary/carrel/CACHE/id ) + row[ 'extension' ]
+			cache = str( locallibrary/carrel/CACHE/id ) + extension
 			text  = str( locallibrary/carrel/TXT/id )   + '.txt'
 	
 			if format == 'text' :
@@ -813,7 +817,11 @@ def sizes( carrel, sort='words', output='list', save=False ) :
 			
 		# create a simple list of words, and store it in a dataframe
 		records = []
-		for row in rows : records.append( int( row[ 'words' ] ) )
+		for row in rows :
+		
+			if not row[ 'words' ] : words = 0
+			else                  : words = row[ 'words' ]
+			records.append( int( row[ 'words' ] ) )
 		df = pd.DataFrame( records, columns=COLUMNS )
 
 		# initialize the plot
@@ -874,7 +882,12 @@ def flesch( carrel, sort='score', output='list', save=False) :
 			
 		# create a simple list of words, and store it in a dataframe
 		records = []
-		for row in rows : records.append( int( row[ 'flesch' ] ) )
+		for row in rows : 
+		
+			# a hack for keough; be forewarned
+			try : records.append( int( row[ 'flesch' ] ) )
+			except ValueError : pass
+			
 		df = pd.DataFrame( records, columns=COLUMNS )
 
 		# initialize the plot

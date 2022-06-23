@@ -663,7 +663,7 @@ def cmdConcordance( carrel, query, width, lines ) :
 	See also: rdr ngrams --help"""
 	
 	# do the work
-	click.echo( concordance( carrel, query ) )
+	click.echo( concordance( carrel, query, width, lines ) )
 
 
 # keywords
