@@ -821,7 +821,8 @@ def sizes( carrel, sort='words', output='list', save=False ) :
 		
 			if not row[ 'words' ] : words = 0
 			else                  : words = row[ 'words' ]
-			records.append( int( row[ 'words' ] ) )
+			#records.append( int( row[ 'words' ] ) )
+			records.append( int( words ) )
 		df = pd.DataFrame( records, columns=COLUMNS )
 
 		# initialize the plot
@@ -887,6 +888,7 @@ def flesch( carrel, sort='score', output='list', save=False) :
 			# a hack for keough; be forewarned
 			try : records.append( int( row[ 'flesch' ] ) )
 			except ValueError : pass
+			except TypeError : pass
 			
 		df = pd.DataFrame( records, columns=COLUMNS )
 
