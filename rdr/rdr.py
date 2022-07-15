@@ -29,11 +29,6 @@ LABELS          = [ 'docId', 'file' ]
 # require
 from rdr import *
 
-
-
-
-
-
 #####
 
 def _makeSummary( keys, header ) :
@@ -1486,6 +1481,22 @@ Use this command to build a data set ("study carrel") based on the files saved i
 
 	build( carrel, directory, erase, start )
 
+@click.command()
+def cmdServer() :
+
+	'''A Web interface to your Distant Reader study carrels'''
+	
+	# configure; code for rdr
+	PORT = 18418
+	
+	# require
+	from .server import server
+	import os
+
+	# configure and go
+	os.environ[ 'FLASK_ENV' ] = 'development'
+	server.run( port=PORT, debug=True )
+
 
 # create a list of commands
 rdr.add_command( cmdAbout,         name='about' )
@@ -1512,6 +1523,7 @@ rdr.add_command( cmdRead,          name='read' )
 rdr.add_command( cmdReadability,   name='readability' )
 rdr.add_command( cmdSearch,        name='search' )
 rdr.add_command( cmdSemantics,     name='semantics' )
+rdr.add_command( cmdServer,        name='server' )
 rdr.add_command( cmdSet,           name='set' )
 rdr.add_command( cmdSizes,         name='sizes' )
 rdr.add_command( cmdSql,           name='sql' )
