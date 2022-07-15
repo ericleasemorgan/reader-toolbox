@@ -50,7 +50,7 @@ def concordance() :
 
 	# do the work and return it
 	result = rdr.concordance( carrel, query=query, width=int( width ) )
-	return( '<pre>%s</pre>' % result )
+	return render_template( 'concordance.htm', result=result, carrel=carrel )
 
 # ngrams
 @server.route( '/ngrams' )
@@ -70,7 +70,7 @@ def ngrams() :
 
 	# do the work and return it
 	result = rdr.ngrams( carrel, count=count, size=int( size ), query=query )
-	return( '<pre>%s</pre>' % result )
+	return render_template( 'ngrams.htm', result=result, carrel=carrel, size=size, count=count, query=query )
 
 
 @server.route('/<path:carrel>')

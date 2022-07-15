@@ -1,0 +1,18 @@
+<html>
+<head><title>ngrams</title></head>
+<body style='margin:5%'>
+<h1>Ngrams</h1>
+
+<form action='./ngrams' method='GET' style='text-align:center'>
+	<input type='text' name='carrel' value='{{ carrel }}' /><br />
+	<input type='text' name='size' value='{{ size }}' /><br />
+	<input type='text' name='count' value='{{ count }}' /><br />
+	<input type='text' name='query' value='{{ query }}' />
+	<input type='submit' name='ngrams' />
+</form>
+
+<p>
+	<pre style='text-align:center'>{{ result }}</pre>
+</p>
+</body>
+</html>

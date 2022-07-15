@@ -1,0 +1,16 @@
+<html>
+<head><title>concordance</title></head>
+<body style='margin:5%'>
+<h1>Concordance</h1>
+
+<form action='./concordance' method='GET' style='text-align:center'>
+	<input type='text' name='carrel' value='{{ carrel }}' />
+	<input type='text' name='query' value='love' />
+	<input type='submit' name='concordance' />
+</form>
+
+<p>
+	<pre style='text-align:center'>{{ result }}</pre>
+</p>
+</body>
+</html>

@@ -1496,8 +1496,7 @@ def cmdServer() :
 	# configure and go
 	os.environ[ 'FLASK_ENV' ] = 'development'
 	server.run( port=PORT, debug=True )
-
-
+	
 # create a list of commands
 rdr.add_command( cmdAbout,         name='about' )
 rdr.add_command( cmdAdr,           name='adr' )
@@ -1523,7 +1522,7 @@ rdr.add_command( cmdRead,          name='read' )
 rdr.add_command( cmdReadability,   name='readability' )
 rdr.add_command( cmdSearch,        name='search' )
 rdr.add_command( cmdSemantics,     name='semantics' )
-rdr.add_command( cmdServer,        name='server' )
+rdr.add_command( cmdServer,        name='web' )
 rdr.add_command( cmdSet,           name='set' )
 rdr.add_command( cmdSizes,         name='sizes' )
 rdr.add_command( cmdSql,           name='sql' )
