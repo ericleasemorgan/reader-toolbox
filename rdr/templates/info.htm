@@ -1,0 +1,25 @@
+<html>
+<head><meta charset="utf-8" />
+<title>info</title></head>
+<body style='margin:5%'>
+<h1>Info</h1>
+
+<form action='./info' method='GET' style='text-align:center'>
+	<input type='text' name='carrel' value='{{ carrel }}' />
+	<input type='submit' />
+</form>
+
+<table align="center">
+<tr><td style='text-align:right'><strong>process</strong>: </td><td>{{ process }}</td></tr>
+<tr><td style='text-align:right'><strong>original ID</strong>: </td><td>{{ originalID }}</td></tr>
+<tr><td style='text-align:right'><strong>date created</strong>: </td><td>{{ dateCreated }}</td></tr>
+<tr><td style='text-align:right'><strong>time created</strong>: </td><td>{{ timeCreated }}</td></tr>
+<tr><td style='text-align:right'><strong>creator</strong>: </td><td>{{ creator }}</td></tr>
+<tr><td style='text-align:right'><strong>input</strong>: </td><td>{{ input }}</td></tr>
+<tr><td style='text-align:right'><strong>items</strong>: </td><td>{{ items }}</td></tr>
+<tr><td style='text-align:right'><strong>words</strong>: </td><td>{{ words }}</td></tr>
+<tr><td style='text-align:right'><strong>flesch</strong>: </td><td>{{ flesch }}</td></tr>
+</table>
+
+</body>
+</html>
