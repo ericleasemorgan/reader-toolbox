@@ -148,15 +148,30 @@ def info() :
 def wrd() :
 
 	# configure
-	carrel = CARREL
-	cnt    = False
-
+	carrel    = CARREL
+	output    = 'count'
+	
 	# get input
 	carrel = request.args.get( 'carrel', carrel )
-	cnt    = request.args.get( 'cnt', cnt )
+	output = request.args.get( 'output', output )
 
 	# do the work and return it
-	result = rdr.keywords( carrel, count=cnt )
-	return render_template( 'keywords.htm', carrel=carrel, cnt=cnt, result=result )
+	results = rdr.keywords( carrel, count=True  )
+				
+	if output == 'count' : return render_template( 'keywords.htm', carrel=carrel, results=results )
+	else :
+			
+		results = results.split( '\n' )
+
+		# coerce the result into a dictionary of frequencies
+		frequencies = {}
+		for result in results :
+
+			keyword = result.split( '\t' )[ 0 ]
+			count   = int( result.split( '\t' )[ 1 ] )
+			frequencies[ keyword ] = count
+						
+		rdr.cloud( frequencies, file='/Users/eric/Desktop/image.jpeg' )
+		exit() 
 
 
