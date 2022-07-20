@@ -1484,7 +1484,7 @@ Use this command to build a data set ("study carrel") based on the files saved i
 @click.command()
 def cmdServer() :
 
-	'''A Web interface to your Distant Reader study carrels'''
+	'''Experimental Web interface to your Distant Reader study carrels'''
 	
 	# configure; code for rdr
 	PORT = 18418
