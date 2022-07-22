@@ -189,6 +189,7 @@ def initializeConfigurations() :
 
 # read configurations
 def configuration( name ) :
+	'''Given a configuration name (localLibrary, malletHome, tikaHome, or notebooksHome) return the configuration's value.'''
 
 	# require
 	from configparser import ConfigParser
@@ -265,7 +266,9 @@ def checkForPunkt() :
 
 # make sure a study carrel exists
 def checkForCarrel( carrel ) :
-	
+
+	'''Given the name of a study carrel, return True if it exists or False if it does not, but really, if the carrel does not exist, then execution is aborted.'''
+		
 	# initialize and do the work
 	directory = configuration( 'localLibrary' )/carrel
 	if not directory.is_dir() :
@@ -285,6 +288,8 @@ def checkForCarrel( carrel ) :
 	
 # create a word cloud
 def cloud( frequencies, **kwargs ) :
+
+	'''Given a dictionary of tokens and their frequencies, create a word cloud in the form of a PNG file. If the optional file argument is supplied, then save the image accordingly. If not, then return the image itself.'''
 
 	# configure
 	HEIGHT = 960
@@ -320,7 +325,9 @@ def cloud( frequencies, **kwargs ) :
 
 # read and parse provenance data
 def provenance( carrel, field ) :
-	'''fields = process|originalID|dateCreated|timeCreated|creator|input'''
+
+	'''Given the name of a study carrel and a provenance element (process, originalID, dateCreated, timeCreated, creator, or input), return the provenance value.'''
+	
 	# initialize
 	locallibrary = configuration( 'localLibrary' )
 	
@@ -352,7 +359,8 @@ def provenance( carrel, field ) :
 	
 # return various extents
 def extents( carrel, type ) :
-	'''Types = items|words|flesch'''
+
+	'''Given the name of a study carrel and a type of extent (items, words, or flesch) return the extent value.'''
 	
 	# require
 	import sqlite3
@@ -383,6 +391,8 @@ def extents( carrel, type ) :
 
 # output a rudimentary bibliography
 def bibliography( carrel, format='text', save=False ) :
+
+	'''Given the name of a study carrel, a format (text, html, or json), and a value for save (True or False), return a rudimentary bibliography.'''
 
 	# require
 	import sqlite3
@@ -490,6 +500,8 @@ def bibliography( carrel, format='text', save=False ) :
 # get email addresses
 def addresses( carrel, count=False, like=None ) :
 
+	'''Given the name of a study carrel, a value for count (True or False), and a like statement (a string), return a line-delimited list of email addresses. The like statement is expected to be something like .com or gmail, and it is intended as a filtering device. If the value for count is True, then the result will delimited by a tab character where the first column is an email address and the second column is the address's frequency.'''
+
 	# require
 	import sqlite3
 
@@ -553,6 +565,7 @@ def addresses( carrel, count=False, like=None ) :
 
 def urls( carrel, select='url', count=False, like=None ) :
 
+	'''Given the name of a study carrel, a select value (url or domain), a value for count (True or False), and a like statement (a string), return a line-delimited list of urls or domains.'''
 	# require
 	import sqlite3
 
