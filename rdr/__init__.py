@@ -45,11 +45,13 @@ DOCUMENTATION = 'https://reader-toolbox.readthedocs.io'
 CORPUS               = 'reader.txt'
 COLLOCATIONS         = 'reader.gml'
 DATABASE             = 'reader.db'
+SENTENCES            = 'reader.sents'
 ETC                  = 'etc'
 HTM                  = 'htm'
 INDEX                = 'index.htm'
 MANIFEST             = 'MANIFEST.xml'
 STOPWORDS            = 'stopwords.txt'
+LEXICON              = 'lexicon.txt'
 TXT                  = 'txt'
 CACHE                = 'cache'
 PROVENANCE           = 'provenance.tsv'
@@ -161,6 +163,56 @@ TEMPLATE = '''
 
 # require
 import click
+
+# create an Sentences iterator
+class Sentences( object ) :
+
+	'''Given a file name pointing to a line-delimited list of sentences, iterate over the sentences.'''
+	
+	# initialize
+	def __init__( self, file ) : self.file = file
+
+	# iterate
+	def __iter__( self ) :
+			
+		# return each sentence
+		for sentence in open( self.file ) : yield sentence
+
+
+# given a file, return a line-delimited set of sentences
+def extractSentences( file ) :
+
+	'''Given a file name, return a string in the form of a line-delimited list of sentences.'''
+
+	# require
+	import nltk
+	import re
+
+	# initialize
+	results = []
+	
+	# slurp up the given file; read the text
+	with open( file ) as handle : text = handle.read()
+
+	# get and process all sentences in the text
+	sentences = nltk.sent_tokenize( text )
+	for sentence in sentences : 
+	
+		# do rudimentary normalization and tokenization
+		sentence = re.sub( '\n', ' ', sentence )
+		sentence = re.sub( '\t', ' ', sentence )
+		sentence = re.sub( ' +$', '', sentence )
+		sentence = re.sub( '^ +', '', sentence )
+		sentence = re.sub( ' +', ' ', sentence )
+		sentence = re.sub( '- ', '',  sentence )
+		sentence = re.sub( '- ', '',  sentence )
+		
+		# output
+		results.append( sentence  )
+	
+	# done
+	return( results )
+
 
 # create or re-create the preferences/settings
 def initializeConfigurations() :
