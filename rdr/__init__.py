@@ -179,6 +179,68 @@ class Sentences( object ) :
 		for sentence in open( self.file ) : yield sentence
 
 
+# given a sentence, parser, and lexicon return matching sentences
+def matchModal( sentence, parser, lexicon ) :
+		
+	'''Given a sentence, an NLTK RegexpParser object (a grammar), and a lexicon (a set of strings), return the sentence if it matches the object's grammar, otherwise return None.'''
+	
+	# require
+	import nltk
+	
+	# normalize and tokenize
+	tokens = nltk.word_tokenize( sentence.lower() )
+
+	# check for given lexicon words
+	if lexicon.intersection( set( tokens ) ) :
+
+		# get parts-of-speech and create an NLTK tree
+		pos  = nltk.pos_tag( tokens )
+		tree = parser.parse( pos )
+	
+		# process matching branches of the tree
+		for branch in tree.subtrees( lambda t : t.label() == 'GRAMMAR' ) :
+		
+			# get all subject words; re-check for words
+			subjects = []
+			leaves   = branch[ 0 ].leaves()
+			for leaf in leaves : subjects.append( leaf[ 0 ] )
+			if lexicon.intersection( set( subjects ) ) : return( sentence )
+	
+
+# given a sentence, parser, return matching sentences
+def matchSVO( sentence, parser ) :
+			
+	'''Given a sentence and an NLTK RegexpParser parser object denoting a subject-verb-object grammar, return a list of subject-verb-object snippets if the grammar was found, otherwise return None.'''
+	
+	# require
+	import nltk
+
+	# initialize
+	results = []
+	
+	# normalize and tokenize
+	tokens = nltk.word_tokenize( sentence.lower() )
+
+	# get parts-of-speech and create an NLTK tree
+	pos  = nltk.pos_tag( tokens )
+	tree = parser.parse( pos )
+
+	# process each branch
+	for branch in tree.subtrees( lambda t : t.label() == 'GRAMMAR' ) : 
+			
+		# process each limb
+		for limb in [ branch[ 0 ], branch[ 1 ], branch[ 2 ] ] :
+		
+			# parse
+			words  = []
+			leaves = limb.leaves()
+			for leaf in leaves : words.append( leaf[ 0 ] )
+			results.append( ' '.join( words ) )
+			
+		# done
+		return( results )
+	
+
 # given a file, return a line-delimited set of sentences
 def extractSentences( file ) :
 
