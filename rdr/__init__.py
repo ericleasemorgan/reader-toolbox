@@ -1,5 +1,5 @@
 """
-a command-line tool for interacting with Distant Reader study carrels
+a library for the purposes of distant reading
 
 rdr -- shorthand for Reader Toolbox -- is a command-line tool for
 interacting with Distant Reader study carrels.
@@ -80,7 +80,6 @@ POSPRON              = 'pos-pronoun.png'
 POSADJ               = 'pos-adjective.png'
 POSADV               = 'pos-adverb.png'
 POSPROPN             = 'pos-propernoun.png'
-
 
 # spacy langauge model
 MODEL = 'en_core_web_sm'
@@ -164,10 +163,10 @@ TEMPLATE = '''
 # require
 import click
 
-# create an Sentences iterator
+# create a Sentences iterator
 class Sentences( object ) :
 
-	'''Given a file name pointing to a line-delimited list of sentences, iterate over the sentences.'''
+	'''Given a file name pointing to a line-delimited list of tokenized sentences, generate an iterator over the sentences.'''
 	
 	# initialize
 	def __init__( self, file ) : self.file = file
@@ -177,21 +176,6 @@ class Sentences( object ) :
 			
 		# return each sentence
 		for sentence in open( self.file ) : yield sentence
-
-
-# create an Sentences iterator
-class SentencesSplit( object ) :
-
-	'''Given a file name pointing to a line-delimited list of sentences, iterate over the sentences.'''
-	
-	# initialize
-	def __init__( self, file ) : self.file = file
-
-	# iterate
-	def __iter__( self ) :
-			
-		# return each sentence
-		for sentence in open( self.file ) : yield sentence.split()
 
 
 # given a sentence, parser, and lexicon return matching sentences
@@ -259,7 +243,7 @@ def matchSVO( sentence, parser ) :
 # given a file, return a line-delimited set of sentences
 def extractSentences( file ) :
 
-	'''Given a file name, return a string in the form of a line-delimited list of sentences.'''
+	'''Given a file name, return a list of strings where each string is a sentence.'''
 
 	# require
 	import nltk
@@ -316,8 +300,8 @@ def initializeConfigurations() :
 	( Path.home()/READERLIBRARY ).mkdir( exist_ok=True )
 
 
-# read configurations
 def configuration( name ) :
+
 	'''Given a configuration name (localLibrary, malletHome, tikaHome, or notebooksHome) return the configuration's value.'''
 
 	# require
@@ -350,7 +334,6 @@ def configuration( name ) :
 		exit()
 		
 
-# handle model not found error
 def modelNotFound() :
 	
 	# notify
@@ -521,7 +504,7 @@ def extents( carrel, type ) :
 # output a rudimentary bibliography
 def bibliography( carrel, format='text', save=False ) :
 
-	'''Given the name of a study carrel, a format (text, html, or json), and a value for save (True or False), return a rudimentary bibliography.'''
+	'''Given the name of a study carrel, and a format (text, html, or json), create a rudimentary bibliography. If the value for save is True, then the bibliography will be saved in the carrel's etc directory/folder, otherwise the bibliography is returned.'''
 
 	# require
 	import sqlite3
@@ -552,10 +535,10 @@ def bibliography( carrel, format='text', save=False ) :
 	elif format == 'text' or format == 'html' :
 	
 		# initialize
-		total = len( rows )
+		total        = len( rows )
 		bibliography = ''
-		items = ''
-		template = "<html><head><title>Bibliography</title></head><body style='margin:7%'><h1>Bibliography</h1><ol>##ITEMS##</ol></body></html>"
+		items        = ''
+		template     = "<html><head><title>Bibliography</title></head><body style='margin:7%'><h1>Bibliography</h1><ol>##ITEMS##</ol></body></html>"
 		
 		# process each row
 		for item, row in enumerate( rows ) :
@@ -629,7 +612,7 @@ def bibliography( carrel, format='text', save=False ) :
 # get email addresses
 def addresses( carrel, count=False, like=None ) :
 
-	'''Given the name of a study carrel, a value for count (True or False), and a like statement (a string), return a line-delimited list of email addresses. The like statement is expected to be something like .com or gmail, and it is intended as a filtering device. If the value for count is True, then the result will delimited by a tab character where the first column is an email address and the second column is the address's frequency.'''
+	'''Given the name of a study carrel, a value for count (True or False), and a like statement (a string), return a line-delimited list of email addresses. The like statement is expected to be something such as ".com" or "gmail", and it is intended as a filtering device. If the value for count is True, then the result will delimited by a tab character where the first column is an email address and the second column is the address's frequency.'''
 
 	# require
 	import sqlite3
@@ -695,6 +678,7 @@ def addresses( carrel, count=False, like=None ) :
 def urls( carrel, select='url', count=False, like=None ) :
 
 	'''Given the name of a study carrel, a select value (url or domain), a value for count (True or False), and a like statement (a string), return a line-delimited list of urls or domains.'''
+	
 	# require
 	import sqlite3
 
@@ -1794,17 +1778,8 @@ def grammars( carrel, grammar='svo', query=None, noun=None, lemma='be', sort=Fal
 	return '\n'.join( features )
 	
 
-# elaborate about the lack of word2vec
-def word2vecwarning() :
-
-	import sys
-	
-	sys.stderr.write( "By default, Word2vec not installed, which is required for this subcommand. Linux and Macintosh users can probably run 'pip install word2vec' and then give this subcommand another go. Windows users will have to go through many hoops because the underling word2vec software needs to be compiled. Please see the word2vec home page for more detail: https://github.com/danielfrg/word2vec\n" )
-	exit()
-
-
 # given a file, return a set of tokenized sentences
-def extractSentences( file, stopwords ) :
+def extractTokenizedSentences( file, stopwords ) :
 
 	# initialize
 	results = []
@@ -1867,12 +1842,12 @@ def checkForSemanticIndex( carrel ) :
 
 		# parallel process each plain text file in the given corpus; fast!
 		pool = Pool()
-		sys.stderr.write( 'Step #1 of 4: Reading sentences\n' )
+		sys.stderr.write( 'Step #1 of 3: Reading sentences\n' )
 		results = pool.starmap( extractSentences, [ [ filename, stopwords ] for filename in filenames.glob( PATTERN ) ] )
 		pool.close()
 		
 		# save the result
-		sys.stderr.write( 'Step #2 of 4: Saving sentences\n' )
+		sys.stderr.write( 'Step #2 of 3: Saving sentences\n' )
 		with open( tokens, 'w' ) as handle :
 		
 			# get all sentences and process each one
@@ -1880,14 +1855,10 @@ def checkForSemanticIndex( carrel ) :
 			
 				# output
 				for sentence in sentences : handle.write( '%s\n' % sentence )
-		
-		# iterate the tokenized sentences
-		sys.stderr.write( 'Step #3 of 4: Iterating\n' )
-		sentences = SentencesSplit( tokens )
-		
+				
 		# model; do the real work
-		sys.stderr.write( 'Step #4 of 4: Modeling\n' )
-		model = gensim.models.Word2Vec( sentences )
+		sys.stderr.write( 'Step #3 of 3: Modeling\n' )
+		model = gensim.models.Word2Vec( corpus_file=str( tokens ), workers=8 )
 
 		# save and done
 		model.wv.save( str( vectors ) )
