@@ -179,6 +179,21 @@ class Sentences( object ) :
 		for sentence in open( self.file ) : yield sentence
 
 
+# create an Sentences iterator
+class SentencesSplit( object ) :
+
+	'''Given a file name pointing to a line-delimited list of sentences, iterate over the sentences.'''
+	
+	# initialize
+	def __init__( self, file ) : self.file = file
+
+	# iterate
+	def __iter__( self ) :
+			
+		# return each sentence
+		for sentence in open( self.file ) : yield sentence.split()
+
+
 # given a sentence, parser, and lexicon return matching sentences
 def matchModal( sentence, parser, lexicon ) :
 		
@@ -1788,91 +1803,120 @@ def word2vecwarning() :
 	exit()
 
 
-# make sure the carrel has been indexed; word2vec++
+# given a file, return a set of tokenized sentences
+def extractSentences( file, stopwords ) :
+
+	# initialize
+	results = []
+	
+	# require
+	import nltk
+	import re
+	
+	# slurp up the given file; read the text
+	with open( file ) as handle : text = handle.read()
+
+	# get and process all sentences in the text
+	sentences = nltk.sent_tokenize( text )
+	for sentence in sentences : 
+	
+		# do rudimentary normalization and tokenization
+		sentence = re.sub( '\n', ' ', sentence )
+		sentence = re.sub( '\t', ' ', sentence )
+		sentence = re.sub( ' +', ' ', sentence )
+		sentence = re.sub( '- ', '',  sentence )
+		sentence = re.sub( '- ', '',  sentence )
+		
+		# tokenize and normalize
+		tokens = nltk.word_tokenize( sentence.lower() )
+		tokens = [ token for token in tokens if token.isalpha() ]
+		tokens = [ token for token in tokens if token not in stopwords ]
+
+		# output
+		results.append( ' '.join( tokens )  )
+	
+	# done
+	return( results )
+
+
+# make sure the carrel has been indexed
 def checkForSemanticIndex( carrel ) :
 
 	# configure
-	MODEL   = 'reader.bin'
-	TXT     = 'model.txt'
-	PHRASES = 'model.phrases'
+	VECTORS = 'reader.vec'
+	PATTERN = '*.txt'
+	TOKENS  = 'reader.tok'
 	
 	# require
-	from pathlib  import Path
-	from word2vec import word2vec, word2phrase
-	import               os
+	from multiprocessing import Pool
+	from pathlib         import Path
+	import gensim
 	import sys
-	
-	# initialize
+
+	# configure
 	localLibrary = configuration( 'localLibrary' )
-	model        = localLibrary/carrel/ETC/MODEL
+	vectors      = localLibrary/carrel/ETC/VECTORS
+	tokens       = localLibrary/carrel/ETC/TOKENS
 	
 	# see if we have been here previously
-	if not model.exists() :
+	if not vectors.exists() :
 
-		# initialize some more
-		stopwords = localLibrary/carrel/ETC/STOPWORDS
-		corpus    = localLibrary/carrel/ETC/CORPUS
-		txt       = str( Path.home()/TXT )
-		phrases   = str( Path.home()/PHRASES )
+		filenames    = localLibrary/carrel/TXT
+		stopwords    = localLibrary/carrel/ETC/STOPWORDS
+		with open( stopwords ) as handle : stopwords = handle.read().split( '\n' )
+
+		# parallel process each plain text file in the given corpus; fast!
+		pool = Pool()
+		sys.stderr.write( 'Step #1 of 4: Reading sentences\n' )
+		results = pool.starmap( extractSentences, [ [ filename, stopwords ] for filename in filenames.glob( PATTERN ) ] )
+		pool.close()
 		
-		# tokenize
-		sys.stderr.write( 'Indexing. This needs to be done only once.\n' )
-		sys.stderr.write( 'Step #1 of 6: Tokenizing corpus....\n' )
-		tokens = open( corpus ).read().split()
-
-		# normalize
-		sys.stderr.write( 'Step #2 of 6: Normalizing tokens...\n' )
-		tokens = [ token.lower() for token in tokens if token.isalpha() ]
-
-		# remove stop words
-		sys.stderr.write( 'Step #3 of 6: Removing stop words...\n' )
-		stopwords = open( stopwords ).read().split()
-		tokens    = [ token for token in tokens if token not in stopwords ]
-
-		# save
-		sys.stderr.write( 'Step #4 of 6: Saving tokens...\n' )
-		with open( txt, 'w' ) as handle : handle.write( ' '.join( tokens ) )
+		# save the result
+		sys.stderr.write( 'Step #2 of 4: Saving sentences\n' )
+		with open( tokens, 'w' ) as handle :
 		
-		# create phrases
-		sys.stderr.write( 'Step #5 of 6: Creating phrases...\n' )
-		word2phrase( txt, phrases, verbose=True )
+			# get all sentences and process each one
+			for sentences in results :
+			
+				# output
+				for sentence in sentences : handle.write( '%s\n' % sentence )
+		
+		# iterate the tokenized sentences
+		sys.stderr.write( 'Step #3 of 4: Iterating\n' )
+		sentences = SentencesSplit( tokens )
+		
+		# model; do the real work
+		sys.stderr.write( 'Step #4 of 4: Modeling\n' )
+		model = gensim.models.Word2Vec( sentences )
 
-		# do the work
-		sys.stderr.write( 'Step #6 of 6: Indexing....\n' )
-		word2vec( phrases, str( model ), size=100, binary=True, verbose=True)
+		# save and done
+		model.wv.save( str( vectors ) )
 
-		# clean up and done
-		os.remove( txt )
-		os.remove( phrases )
-		sys.stderr.write( '\nDone. Happy searching!\n' )
+	# done
+	return	
 
 
 # implement semantic (word2vec) indexing
-def word2vec( carrel, type='similarity', query='love', size=10 ) :
+def word2vec( carrel, type='similarity', query='love', topn=10 ) :
 	'''types = similarity|distance|analogy|scatter'''
 
 	# configure
-	MODEL    = 'reader.bin'
-	DISTANCE = 'model.distance( ##QUERY## )'
-
-	# try to import word2vec
-	try    : import word2vec
-	except : word2vecwarning()
+	VECTORS  = 'reader.vec'
 	
 	# require
-	import matplotlib.pyplot as plot
 	import sys
+	import gensim
 
 	# initialize
 	localLibrary = configuration( 'localLibrary' )
-	model        = str( localLibrary/carrel/ETC/MODEL )
-
+	vectors      = str( localLibrary/carrel/ETC/VECTORS )
+	
 	# sanity checks
 	checkForCarrel( carrel )
 	checkForSemanticIndex( carrel )
 		
 	# load model
-	model = word2vec.load( model )
+	model = gensim.models.KeyedVectors.load( vectors )
 
 	# similarity
 	if type == 'similarity' :
@@ -1886,52 +1930,15 @@ def word2vec( carrel, type='similarity', query='love', size=10 ) :
 
 		# search and output
 		try :
-	
 			items = []
 			
-			indexes, metrics = model.similar( query, n=size )
-			similarities = model.generate_response( indexes, metrics ).tolist()
-			for similarity in similarities : items.append( '\t'.join( [ similarity[ 0 ], str( similarity[ 1 ] ) ] ) )
-		
+			similarities = model.most_similar_cosmul( query, topn=topn )
+			for similarity in similarities : print( similarity )
+	
 			return '\n'.join( items )
 			
 		# word not found
 		except KeyError as word : sys.stderr.write ( ( 'The word -- %s -- is not in the index.\n' % word ) )
-
-	# scatter
-	elif type == 'scatter' :
-	
-		from sklearn.manifold import TSNE
-		import numpy as np
-
-		words              = ['love', 'horse', 'house', 'son', 'war', 'man', 'woman', 'spear', 'achilles' ]
-		embedding_clusters = []
-		word_clusters      = []
-		for word in words :
-			embeddings = []
-			words      = []
-			indexes, metrics = model.similar( word, n=20 )
-			similarities = model.generate_response( indexes, metrics ).tolist()
-			for similarity in similarities :
-			
-				words.append(similarity[ 0 ])
-				embeddings.append( ( similarity[ 0 ], similarity[ 1 ] ) )
-		
-			embedding_clusters.append( embeddings )
-			word_clusters.append( words )
-
-		clusters = np.array( embedding_clusters )	
-		print( clusters )
-		exit()
-					
-		tsne     = TSNE( perplexity=2, n_components=2, init='pca'  )
-		model    = tsne.fit_transform( clusters )
-
-		# plot
-		x = model[ :, 0 ]
-		y = model[ :, 1 ]
-		plot.scatter( x, y )
-		plot.show()
 
 	# distance
 	elif type == 'distance' :
@@ -1947,21 +1954,25 @@ def word2vec( carrel, type='similarity', query='love', size=10 ) :
 			exit()
 
 		# create a distance command; hacky!
-		queries = [ ( "'%s'" % word ) for word in words ]
-		command = DISTANCE.replace( '##QUERY##', ', '.join( queries ) )
-		
+		queries     = query.split()
+		word        = queries[ 0 ]
+		other_words = queries[ 1: ]
+				
 		# try to compute
 		try :
 		
+			# initialize
 			items = []
 			
-			# search, sort, output, and done
-			distances = eval( command )
-			distances.sort( key=lambda i: i[ 2 ], reverse=True )
-			for distance in distances : items.append( '\t'.join( [ distance[ 0 ], distance[ 1 ], str( distance[ 2 ] ) ] ) )
+			# search, reshape, sort, output, and done
+			distances = model.distances( word, other_words )
+			distances = zip( other_words, distances )
+			distances = list( set( distances ) )
+			distances.sort( key=lambda i: i[ 1 ], reverse=True )
+			for distance in distances : items.append( '\t'.join( [ distance[ 0 ], str( distance[ 1 ] ) ] ) )
 
 			return '\n'.join( items )
-			
+
 		# error
 		except KeyError as word : 
 			sys.stderr.write( ( 'A word in your query -- %s -- is not in the index. Please remove it.\n' % word ) )
@@ -1982,14 +1993,12 @@ def word2vec( carrel, type='similarity', query='love', size=10 ) :
 		# try to compute
 		try :
 		
-			items = []
+			positive = [ words[ 0 ], words[ 2 ] ]
+			negative = words[ 1 ]
+			items    = []
 			
-			# search, sort, output, and done
-			indexes, metrics = model.analogy( pos=[ words[ 0 ], words[ 1 ] ], neg=[ words[ 2 ] ], n=size )
-			analogies = model.generate_response( indexes, metrics ).tolist()
-			for analogy in analogies : items.append( '\t'.join( [ analogy[ 0 ], str( analogy[ 1 ] ) ] ) )
-
-			return '\n'.join( items )
+			similarities = model.most_similar( positive=positive, negative=negative, topn=topn )
+			for similarity in similarities : print( similarity )
 			
 		# error
 		except KeyError as word : sys.stderr.write( ( 'A word in your query -- %s -- is not in the index. Please remove it.\n' % word ) )
