@@ -494,9 +494,9 @@ def extents( carrel, type ) :
 		words  = row[ 'words' ]
 		flesch = str( int( row[ 'flesch' ] ) )
 
-	if type == 'items'    : value = items
-	elif type == 'words'  : value = words
-	elif type == 'flesch' : value = flesch
+	if type == 'items'    : value = int( items )
+	elif type == 'words'  : value = int( words )
+	elif type == 'flesch' : value = int( flesch )
 	
 	return value
 
