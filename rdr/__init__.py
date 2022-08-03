@@ -494,9 +494,9 @@ def extents( carrel, type ) :
 		words  = row[ 'words' ]
 		flesch = str( int( row[ 'flesch' ] ) )
 
-	if type == 'items'    : value = items
-	elif type == 'words'  : value = words
-	elif type == 'flesch' : value = flesch
+	if type == 'items'    : value = int( items )
+	elif type == 'words'  : value = int( words )
+	elif type == 'flesch' : value = int( flesch )
 	
 	return value
 
@@ -1845,7 +1845,7 @@ def checkForSemanticIndex( carrel ) :
 		# parallel process each plain text file in the given corpus; fast!
 		pool = Pool()
 		sys.stderr.write( 'Step #1 of 3: Reading sentences\n' )
-		results = pool.starmap( extractSentences, [ [ filename, stopwords ] for filename in filenames.glob( PATTERN ) ] )
+		results = pool.starmap( extractTokenizedSentences, [ [ filename, stopwords ] for filename in filenames.glob( PATTERN ) ] )
 		pool.close()
 		
 		# save the result
@@ -1906,7 +1906,11 @@ def word2vec( carrel, type='similarity', query='love', topn=10 ) :
 			items = []
 			
 			similarities = model.most_similar_cosmul( query, topn=topn )
-			for similarity in similarities : print( similarity )
+			for similarity in similarities : 
+				
+				word  = similarity[ 0 ]
+				score = similarity[ 1 ]
+				items.append( '\t'.join( [ word, str( score ) ] ) )
 	
 			return '\n'.join( items )
 			
