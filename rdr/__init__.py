@@ -1270,6 +1270,7 @@ def pos( carrel, select='parts', like='any', count=False, normalize=True, wordcl
 			# output simple tabulation
 			if not wordcloud :
 			
+			
 				# dump
 				for row in rows :
 				
