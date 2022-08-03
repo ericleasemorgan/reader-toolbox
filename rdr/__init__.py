@@ -1271,7 +1271,9 @@ def pos( carrel, select='parts', like='any', count=False, normalize=True, wordcl
 			if not wordcloud :
 			
 				# dump
-				for row in rows : items.append( "\t".join( [ row[ select ], str( row[ 'count' ] ) ] ) )
+				for row in rows :
+				
+					if row[ select ] : items.append( "\t".join( [ row[ select ], str( row[ 'count' ] ) ] ) )
 			
 			# output word cloud
 			else :
