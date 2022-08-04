@@ -3178,6 +3178,10 @@ Use this command to build a data set ("study carrel") based on the files saved i
 	# no metadata file; just do the work
 	else : pool.starmap( _file2bib, [ [ carrel, filename ] for filename in filenames ] )
 		
+	# clean up
+	pool.close()
+	pool = Pool()
+
 	# bag of words
 	click.echo( '(Step #3 of 9) Creating bag-of-words', err=True )
 	_txt2bow( carrel )
@@ -3194,17 +3198,33 @@ Use this command to build a data set ("study carrel") based on the files saved i
 	click.echo( '(Step #4 of 9) Extracting (email) addresses', err=True )
 	pool.starmap( _txt2adr, [ [ carrel, filename ] for filename in filenames ] )
 	
+	# clean up
+	pool.close()
+	pool = Pool()
+
 	# extract named entities
 	click.echo( '(Step #5 of 9) Extracting (named) entities', err=True )
 	pool.starmap( _txt2ent, [ [ carrel, filename ] for filename in filenames ] )
 	
+	# clean up
+	pool.close()
+	pool = Pool()
+
 	# extract parts-of-speech
 	click.echo( '(Step #6 of 9) Extracting parts-of-speech', err=True )
 	pool.starmap( _txt2pos, [ [ carrel, filename ] for filename in filenames ] )
 
+	# clean up
+	pool.close()
+	pool = Pool()
+
 	# extract urls
 	click.echo( '(Step #7 of 9) Extracting URLs', err=True )
 	pool.starmap( _txt2url, [ [ carrel, filename ] for filename in filenames ] )
+
+	# clean up
+	pool.close()
+	pool = Pool()
 
 	# extract keywords
 	click.echo( '(Step #8 of 9) Extracting (key) words', err=True )
