@@ -181,7 +181,9 @@ class Sentences( object ) :
 # given a sentence, parser, and lexicon return matching sentences
 def matchModal( sentence, parser, lexicon ) :
 		
-	'''Given a sentence, an NLTK RegexpParser object (a grammar), and a lexicon (a set of strings), return the sentence if it matches the object's grammar, otherwise return None.'''
+	'''Given a sentence, an NLTK RegexpParser object (a grammar), and a
+	lexicon (a set of strings), return the sentence if it matches the
+	object's grammar, otherwise return None.'''
 	
 	# require
 	import nltk
@@ -209,7 +211,9 @@ def matchModal( sentence, parser, lexicon ) :
 # given a sentence, parser, return matching sentences
 def matchSVO( sentence, parser ) :
 			
-	'''Given a sentence and an NLTK RegexpParser parser object denoting a subject-verb-object grammar, return a list of subject-verb-object snippets if the grammar was found, otherwise return None.'''
+	'''Given a sentence and an NLTK RegexpParser parser object denoting
+	a subject-verb-object grammar, return a list of subject-verb-object
+	snippets if the grammar was found, otherwise return None.'''
 	
 	# require
 	import nltk
@@ -379,8 +383,10 @@ def checkForPunkt() :
 # make sure a study carrel exists
 def checkForCarrel( carrel ) :
 
-	'''Given the name of a study carrel, return True if it exists or False if it does not, but really, if the carrel does not exist, then execution is aborted.'''
-		
+	'''Given the name of a study carrel, return True if it exists or False
+	if it does not, but really, if the carrel does not exist, then execution
+	is aborted.'''
+
 	# initialize and do the work
 	directory = configuration( 'localLibrary' )/carrel
 	if not directory.is_dir() :
@@ -401,7 +407,10 @@ def checkForCarrel( carrel ) :
 # create a word cloud
 def cloud( frequencies, **kwargs ) :
 
-	'''Given a dictionary of tokens and their frequencies, create a word cloud in the form of a PNG file. If the optional file argument is supplied, then save the image accordingly. If not, then return the image itself.'''
+	'''Given a dictionary of tokens and their frequencies, create a word
+	cloud in the form of a PNG file. If the optional file argument is
+	supplied, then save the image accordingly. If not, then return the image
+	itself.'''
 
 	# configure
 	HEIGHT = 960
@@ -438,7 +447,9 @@ def cloud( frequencies, **kwargs ) :
 # read and parse provenance data
 def provenance( carrel, field ) :
 
-	'''Given the name of a study carrel and a provenance element (process, originalID, dateCreated, timeCreated, creator, or input), return the provenance value.'''
+	'''Given the name of a study carrel and a provenance element (process,
+	originalID, dateCreated, timeCreated, creator, or input), return the
+	provenance value.'''
 	
 	# initialize
 	locallibrary = configuration( 'localLibrary' )
@@ -472,7 +483,8 @@ def provenance( carrel, field ) :
 # return various extents
 def extents( carrel, type ) :
 
-	'''Given the name of a study carrel and a type of extent (items, words, or flesch) return the extent value.'''
+	'''Given the name of a study carrel and a type of extent (items, words,
+	or flesch) return the extent value.'''
 	
 	# require
 	import sqlite3
@@ -504,7 +516,10 @@ def extents( carrel, type ) :
 # output a rudimentary bibliography
 def bibliography( carrel, format='text', save=False ) :
 
-	'''Given the name of a study carrel, and a format (text, html, or json), create a rudimentary bibliography. If the value for save is True, then the bibliography will be saved in the carrel's etc directory/folder, otherwise the bibliography is returned.'''
+	'''Given the name of a study carrel, and a format (text, html, or
+	json), create a rudimentary bibliography. If the value for save is
+	True, then the bibliography will be saved in the carrel's etc
+	directory/folder, otherwise the bibliography is returned.'''
 
 	# require
 	import sqlite3
@@ -612,7 +627,13 @@ def bibliography( carrel, format='text', save=False ) :
 # get email addresses
 def addresses( carrel, count=False, like=None ) :
 
-	'''Given the name of a study carrel, a value for count (True or False), and a like statement (a string), return a line-delimited list of email addresses. The like statement is expected to be something such as ".com" or "gmail", and it is intended as a filtering device. If the value for count is True, then the result will delimited by a tab character where the first column is an email address and the second column is the address's frequency.'''
+	'''Given the name of a study carrel, a value for count (True or
+	False), and a like statement (a string), return a line-delimited
+	list of email addresses. The like statement is expected to be
+	something such as ".com" or "gmail", and it is intended as a
+	filtering device. If the value for count is True, then the result
+	will delimited by a tab character where the first column is an email
+	address and the second column is the address's frequency.'''
 
 	# require
 	import sqlite3
@@ -677,7 +698,9 @@ def addresses( carrel, count=False, like=None ) :
 
 def urls( carrel, select='url', count=False, like=None ) :
 
-	'''Given the name of a study carrel, a select value (url or domain), a value for count (True or False), and a like statement (a string), return a line-delimited list of urls or domains.'''
+	'''Given the name of a study carrel, a select value (url or domain),
+	a value for count (True or False), and a like statement (a string),
+	return a line-delimited list of urls or domains.'''
 	
 	# require
 	import sqlite3
@@ -794,6 +817,19 @@ def urls( carrel, select='url', count=False, like=None ) :
 
 def keywords( carrel, count=False, wordcloud=False, save=False ) :
 
+	'''Given the name of a study carrel, return a new-line delimited
+	list of keywords denoted by the build process. If count it True,
+	then the list of keywords is counted, tabulated, and sorted in
+	descending order by frequency. If count is True and wordcloud is
+	True, then a visualization of the frequencies is returned. If count
+	is True, wordcloud is True, and save is True, then the visualization
+	is saved in the given carrel's etc directory as defined by the
+	constant KEYWORDSCLOUD.
+
+	Admittedly, this function, like many of the functions, is convoluted;
+	this function ought to return more standard data structures, not
+	line-delimited lists containing tab-delimited values. My bad. '''
+
 	# require
 	import sqlite3
 
@@ -852,6 +888,20 @@ def keywords( carrel, count=False, wordcloud=False, save=False ) :
 # create and/or get the NTTK model
 def getNLTKText( carrel ) :
 
+	'''Given the name of a study carrel, determine whether or not a NLTK
+	Text object has been previously created and pickled as a file named
+	reader.ntlk in the etc directory. If it has been previously created,
+	then return the object (model). If not, then create the object and
+	return it.
+
+	This function is a prerequisite for the concordance function, but the
+	programmer can also read the object and do other interesting things with
+	it, as per the NLTK documentation. Examples include the output of a
+	dispersion plot or sophisticated regular expression querying.
+
+	This function ought to be re-written to output only True or False. Can
+	you say, "Developer opportunity?"'''
+
 	# configure
 	MODEL = 'reader.nltk'
 
@@ -884,6 +934,22 @@ def getNLTKText( carrel ) :
 # poor man's search engine
 def concordance( carrel, query='love', width=80, lines=999 ) :
 
+	'''Given the  name of a study carrel, implement a keyword-in-context
+	index. The output will be a list of lines and centered in the line will
+	be the value of query. The breadth and depth of the result can be
+	increased or decreased by changing the values of width and/or lines. The
+	query can be a phrase, but regular expressions are not supported.
+
+	Consider counting and tabulating the frequencies of words in the output,
+	and then feeding the result to the cloud function. This will help
+	address the perenial question of "What words are used in conjunction
+	with the given word(s)?" Consider submitting queries with individual
+	results from any of the extracted features (ngrams, keywords,
+	parts-of-speech, named-entities, etc.) Consider submitting queries
+	matching simple grammars such as noun-verb combinations (i.e. "flowers
+	are", "he had", etc.) or the roots of propositional phrases (i.e. "of
+	the").'''
+
 	# require
 	from nltk import Text, word_tokenize
 
@@ -908,6 +974,23 @@ def concordance( carrel, query='love', width=80, lines=999 ) :
 
 # get sizes (measured in words) of documents
 def sizes( carrel, sort='words', output='list', save=False ) :
+
+	'''Given a the name of study carrel, output a newline-delimited list of
+	study carrel item identifiers and the number of words (size) of the
+	given item. Each item/number of words combination is a tab-delimited
+	value. The value of sort can be "words" or anything else. If it is
+	anything else, then the output is sorted by item identifier. The value
+	of "output" can be list, histogram, or boxplot. If the value is
+	histogram or boxplot, then the the result is visualized. If the value of
+	output is histogram or boxplot, and the value of save is True, then the
+	result is saved in the carrel's figures directory as specified by the
+	constants SIZESHISTOGRAM or SIZESBOXPLOT.
+
+	Like many of the functions in this library, this function ought to be
+	re-written to return more Pythonic data structures as opposed to
+	newline-delimited lists subdivided into tab-delimited pairs. Such works
+	will in a terminal environment, but not so well as an application
+	programmer interface. My bad.'''
 
 	# configure
 	WORDS   = 'SELECT id, words FROM bib ORDER BY words DESC'
@@ -975,6 +1058,23 @@ def sizes( carrel, sort='words', output='list', save=False ) :
 # get readability scores
 def flesch( carrel, sort='score', output='list', save=False) :
 
+	'''Given the name of study carrel, output a newline-delimited list of
+	study carrel item identifiers and the readability (Flesch) score of each
+	item. Each item/score combination is a tab-delimited value. The value of
+	sort can be "score" or anything else. If it is anything else, then the
+	output is sorted by item identifier. The value of "output" can be list,
+	histogram, or boxplot. If the value is histogram or boxplot, then the
+	the result is visualized. If the value of output is histogram or
+	boxplot, and the value of save is True, then the result is saved in the
+	carrel's figures directory as specified by the constants
+	READABILITYHISTOGRAM or READABILITYBOXPLOT.
+
+	Like many of the functions in this library, this function ought to be
+	re-written to return more Pythonic data structures as opposed to
+	newline-delimited lists subdivided into tab-delimited pairs. Such works
+	will in a terminal environment, but not so well as an application
+	programmer interface. My bad.'''
+
 	# configure
 	SCORE   = 'SELECT id, flesch FROM bib ORDER BY flesch DESC'
 	ID      = 'SELECT id, flesch FROM bib ORDER BY id ASC'
@@ -1041,6 +1141,23 @@ def flesch( carrel, sort='score', output='list', save=False) :
 
 # compute ngrams
 def ngrams( carrel, size=1, query=None, count=False, location='local', wordcloud=False, save=False ) :
+
+	'''Given the name of a study carrel, output a newline-delimited list of
+	ngrams in the carrel. The value of size denotes the number of ngrams to
+	output on each line. If the value of size is 1 or 2, then stopwords are
+	removed from the output. The output can be filtered using the query
+	parameter, which supports regular expressions. If the value of count is
+	True, then each item in the resulting list of ngrams is counted and
+	tabulated. The value of location can be "local" or "remote". If the
+	value is local, then the given carrel is expected to be on the local
+	file system. If the value is "remote", then the carrel is expected to be
+	available on the Distant Reader Library as defined by the constant
+	REMOTELIBRARY. If the value of count is True and the value of wordcloud
+	is True, then the result is visualized. If the value of count is True,
+	wordcloud is True, and save is True, then the visualization is saved in
+	the carrel's figures directory as denoted by the constants UNIGRAMSCLOUD
+	or BIGRAMSCLOUD. The automatic saving of visualization's of ngrams
+	greater than 2 is not supported.''' 
 
 	# configure
 	LIMIT = 200
@@ -3069,7 +3186,21 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	"""Create <carrel> from files in <directory>
 
-Use this command to build a data set ("study carrel") based on the files saved in a directory. Once the data set is created the other Toolbox commands can be applied to the result. The files can be of any type (PDF, Microsoft Word, HTML, etc.), and they can be of any kind (books, articles, reports, etc.), and they can be of any number (1, 2, 12, a few dozen, hundreds, etc.). The Toolbox is designed to read about a dozen journal articles in the form of PDF files. This command requires a Java tool called Tika, and it is used to convert the input files into plain text as well as extract authors, titles, and dates. If the Toolbox has not been configured and/or Tika is not installed, then the Toolbox will try to install it on your behalf. If the given directory contains a file named 'metadata.csv', then this command will use the file as the source of author, title, and date metadata values. This is often very helpful because sans metadata it is very difficult to make comparison between documents. Please see the full-blown documentation for details."""
+	Use this command to build a data set ("study carrel") based on the files
+	saved in a directory. Once the data set is created the other Toolbox
+	commands can be applied to the result. The files can be of any type
+	(PDF, Microsoft Word, HTML, etc.), and they can be of any kind (books,
+	articles, reports, etc.), and they can be of any number (1, 2, 12, a few
+	dozen, hundreds, etc.). The Toolbox is designed to read about a dozen
+	journal articles in the form of PDF files. This command requires a Java
+	tool called Tika, and it is used to convert the input files into plain
+	text as well as extract authors, titles, and dates. If the Toolbox has
+	not been configured and/or Tika is not installed, then the Toolbox will
+	try to install it on your behalf. If the given directory contains a file
+	named 'metadata.csv', then this command will use the file as the source
+	of author, title, and date metadata values. This is often very helpful
+	because sans metadata it is very difficult to make comparison between
+	documents. Please see the full-blown documentation for details."""
 
 	# configure
 	CACHE  = 'cache'
@@ -3232,8 +3363,12 @@ Use this command to build a data set ("study carrel") based on the files saved i
 def summarize( carrel, look=False ) :
 
 	'''Summarize <carrel>
-	
-	The use of this command will generate a set of reports and save them in specific locations in <carrel>'s file system. If you specify the -l (look) option, then <carrel>'s index.htm file will be opened in your Web browser. You can subsequently use rdr read <carrel> to open the index.htm file.'''
+
+	The use of this command will generate a set of reports and save them in
+	specific locations in <carrel>'s file system. If you specify the -l
+	(look) option, then <carrel>'s index.htm file will be opened in your Web
+	browser. You can subsequently use rdr read <carrel> to open the
+	index.htm file.'''
 
 	# sanity check
 	checkForCarrel( carrel )
