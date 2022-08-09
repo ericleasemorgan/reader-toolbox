@@ -166,7 +166,9 @@ import click
 # create a Sentences iterator
 class Sentences( object ) :
 
-	'''Given a file name pointing to a line-delimited list of tokenized sentences, generate an iterator over the sentences.'''
+	'''Given a file name pointing to a line-delimited list of
+	tokenized sentences, generate an iterator over the
+	sentences.'''
 	
 	# initialize
 	def __init__( self, file ) : self.file = file
@@ -247,7 +249,8 @@ def matchSVO( sentence, parser ) :
 # given a file, return a line-delimited set of sentences
 def extractSentences( file ) :
 
-	'''Given a file name, return a list of strings where each string is a sentence.'''
+	'''Given a file name, return a list of strings where each
+	string is a sentence.'''
 
 	# require
 	import nltk
@@ -282,6 +285,9 @@ def extractSentences( file ) :
 # create or re-create the preferences/settings
 def initializeConfigurations() :
 
+	'''Given zero input, create or re-create the Toolbox's
+	preferences/settings. Returns nothing.'''
+
 	# require
 	from configparser import ConfigParser
 	from pathlib      import Path
@@ -306,7 +312,9 @@ def initializeConfigurations() :
 
 def configuration( name ) :
 
-	'''Given a configuration name (localLibrary, malletHome, tikaHome, or notebooksHome) return the configuration's value.'''
+	'''Given a configuration name (localLibrary, malletHome,
+	tikaHome, or notebooksHome) return the configuration's
+	value.'''
 
 	# require
 	from configparser import ConfigParser
@@ -339,6 +347,12 @@ def configuration( name ) :
 		
 
 def modelNotFound() :
+
+	'''When the spaCy model (as defined by the contant MODEL) is
+	not found, this function is called. It prompt the user for a
+	y or n answer, and if the answer is y, then MODEL is
+	downloaded and installed. This function exits the application
+	after being called.'''
 	
 	# notify
 	click.echo( "Error: Langauge model not found.", err=True )
@@ -371,6 +385,10 @@ def modelNotFound() :
 # make sure the NLTK is sane
 def checkForPunkt() :
 
+	'''When called, this function checks to see of the NLTK
+	tokenizers/punkt exists locally. If not, then it is
+	installed. This function returns nothing.'''
+	
 	# require
 	import nltk
 		
@@ -1307,6 +1325,11 @@ def ngrams( carrel, size=1, query=None, count=False, location='local', wordcloud
 # process parts-of-speech
 def pos( carrel, select='parts', like='any', count=False, normalize=True, wordcloud=False, save=False ) :
 
+	'''Given the name of a study carrel, return various
+	incarnations of parts-of-speech (pos) values. By default,
+	this function returns a newline-delimited list of each and
+	every pos value for each token in the carrel.'''
+	
 	# require
 	import sqlite3
 
@@ -1989,6 +2012,7 @@ def checkForSemanticIndex( carrel ) :
 
 # implement semantic (word2vec) indexing
 def word2vec( carrel, type='similarity', query='love', topn=10 ) :
+
 	'''types = similarity|distance|analogy|scatter'''
 
 	# configure
@@ -2304,6 +2328,7 @@ def search( carrel, query='love', output='human' ) :
 
 # get an inventory of available study carrels
 def catalog( location='local', human=True ) :
+
 	'''location = local|remote'''
 
 	# configure
