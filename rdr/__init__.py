@@ -382,22 +382,6 @@ def modelNotFound() :
 	exit()
 
 
-# make sure the NLTK is sane
-def checkForPunkt() :
-
-	'''When called, this function checks to see of the NLTK
-	tokenizers/punkt exists locally. If not, then it is
-	installed. This function returns nothing.'''
-	
-	# require
-	import nltk
-		
-	try : nltk.data.find( 'tokenizers/punkt' )
-	except LookupError : 
-		click.echo( "Installing punkt. This ought to only happen once.", err=True )
-		nltk.download( 'punkt', quiet=True )
-
-
 # make sure a study carrel exists
 def checkForCarrel( carrel ) :
 
@@ -903,91 +887,44 @@ def keywords( carrel, count=False, wordcloud=False, save=False ) :
 	return '\n'.join( items )
 
 
-# create and/or get the NTTK model
-def getNLTKText( carrel ) :
-
-	'''Given the name of a study carrel, determine whether or not a NLTK
-	Text object has been previously created and pickled as a file named
-	reader.ntlk in the etc directory. If it has been previously created,
-	then return the object (model). If not, then create the object and
-	return it.
-
-	This function is a prerequisite for the concordance function, but the
-	programmer can also read the object and do other interesting things with
-	it, as per the NLTK documentation. Examples include the output of a
-	dispersion plot or sophisticated regular expression querying.
-
-	This function ought to be re-written to output only True or False. Can
-	you say, "Developer opportunity?"'''
-
-	# configure
-	MODEL = 'reader.nltk'
-
-	# require
-	from nltk import Text, word_tokenize
-	from os   import path, stat
-	import    pickle
-	
-	# initialize
-	localLibrary = configuration( 'localLibrary' )
-	file         = localLibrary/carrel/ETC/MODEL
-
-	# check to see if we've previously been here
-	if path.exists( file ) :
-	
-		# read the model
-		with open( file, 'rb' ) as handle : model = pickle.load( handle )	
-			
-	else :
-
-		# create the model and save it for future use
-		corpus = localLibrary/carrel/ETC/CORPUS
-		model  = Text( word_tokenize( open( corpus ).read( ) ) )
-		with open( file, 'wb' ) as handle : pickle.dump( model, handle )
-
-	# return the model
-	return( model )
-
-
 # poor man's search engine
-def concordance( carrel, query='love', width=80, lines=999 ) :
+def concordance( carrel, query='love', width=40 ) :
 
-	'''Given the  name of a study carrel, implement a keyword-in-context
-	index. The output will be a list of lines and centered in the line will
-	be the value of query. The breadth and depth of the result can be
-	increased or decreased by changing the values of width and/or lines. The
-	query can be a phrase, but regular expressions are not supported.
-
-	Consider counting and tabulating the frequencies of words in the output,
-	and then feeding the result to the cloud function. This will help
-	address the perenial question of "What words are used in conjunction
-	with the given word(s)?" Consider submitting queries with individual
-	results from any of the extracted features (ngrams, keywords,
-	parts-of-speech, named-entities, etc.) Consider submitting queries
-	matching simple grammars such as noun-verb combinations (i.e. "flowers
-	are", "he had", etc.) or the roots of propositional phrases (i.e. "of
-	the").'''
+	'''Given the name of a study carrel, a query, and a window, return a
+	list of lines matching the query fro the given carrel'''
 
 	# require
-	from nltk import Text, word_tokenize
-
-	# sanity checks
-	checkForCarrel( carrel )
-	checkForPunkt()
+	import re
 	
-	# initialize, read, and normalize; ought to save the result for future use
-	model = getNLTKText( carrel )
-	items = []			
-			
-	# split query into a list, conditionally
-	if ' ' in query : query = query.split( ' ' )
+	# slurp up the corpus
+	localLibrary = rdr.configuration( 'localLibrary' )
+	with open( localLibrary/carrel/rdr.ETC/rdr.CORPUS ) as handle : corpus = handle.read()
+
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	snippets = []
+
+	# find and process all positions matching the query; finditer does the magic
+	matches = re.finditer( '\\b' + query + '\\b', corpus )
+	for match in matches :
+	
+		# re-initialize
+		start = match.start()
+		end   = match.end()
 		
-	# do the work and output
-	lines = model.concordance_list( query, width=width, lines=lines )
-	for line in lines : items.append( line.line )
+		# get the characters before and after the query
+		before = corpus[ start - width : start ]
+		after  = corpus[ end            : end + width ]
+
+		# build the whole snippet and update
+		snippet = before + ' ' + query + ' ' + after
+		snippet = snippet.replace( '  ' , ' ' )
+		snippets.append( snippet )	
 	
 	# done
-	return '\n'.join( items )
+	return( snippets )
 
 
 # get sizes (measured in words) of documents
