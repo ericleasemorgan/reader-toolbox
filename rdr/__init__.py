@@ -3215,6 +3215,7 @@ def build( carrel, directory, erase=False, start=False ) :
 	ADR    = 'adr'
 	URL    = 'urls'
 	BIB    = 'bib'
+	POOL   = 12
 	
 	# require
 	from   multiprocessing import Pool
@@ -3226,7 +3227,7 @@ def build( carrel, directory, erase=False, start=False ) :
 	
 	# _initialize
 	localLibrary = configuration( 'localLibrary' )
-	pool         = Pool()
+	pool         = Pool( POOL )
 
 	# make sure we have Tika Server
 	_checkForTika( str( configuration( 'tikaHome' ) ) )
@@ -3311,7 +3312,7 @@ def build( carrel, directory, erase=False, start=False ) :
 		
 	# clean up
 	pool.close()
-	pool = Pool()
+	pool = Pool( POOL )
 
 	# bag of words
 	click.echo( '(Step #3 of 9) Creating bag-of-words', err=True )
@@ -3331,7 +3332,7 @@ def build( carrel, directory, erase=False, start=False ) :
 	
 	# clean up
 	pool.close()
-	pool = Pool()
+	pool = Pool( POOL )
 
 	# extract named entities
 	click.echo( '(Step #5 of 9) Extracting (named) entities', err=True )
@@ -3339,7 +3340,7 @@ def build( carrel, directory, erase=False, start=False ) :
 	
 	# clean up
 	pool.close()
-	pool = Pool()
+	pool = Pool( POOL )
 
 	# extract parts-of-speech
 	click.echo( '(Step #6 of 9) Extracting parts-of-speech', err=True )
@@ -3347,7 +3348,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# clean up
 	pool.close()
-	pool = Pool()
+	pool = Pool( POOL )
 
 	# extract urls
 	click.echo( '(Step #7 of 9) Extracting URLs', err=True )
@@ -3355,7 +3356,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# clean up
 	pool.close()
-	pool = Pool()
+	pool = Pool( POOL )
 
 	# extract keywords
 	click.echo( '(Step #8 of 9) Extracting (key) words', err=True )
