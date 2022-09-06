@@ -639,11 +639,10 @@ def cmdSizes( carrel, sort, output, save ) :
 
 # concordance
 @click.command( options_metavar='[<options>]' )
-@click.option('-w', '--width', default=80, help='number of characters in each line of output')
-@click.option('-l', '--lines', default=999, help='number of lines of text to output')
-@click.option('-q', '--query', default='love', help='a word for phrase')
+@click.option('-w', '--width', default=40, help='number of characters on each side of <query>')
+@click.option('-q', '--query', default='love', help='a word, phrase, or regular expression')
 @click.argument( 'carrel', metavar='<carrel>' )
-def cmdConcordance( carrel, query, width, lines ) :
+def cmdConcordance( carrel, query, width ) :
 
 	"""A poor man's search engine
 	
@@ -658,7 +657,7 @@ def cmdConcordance( carrel, query, width, lines ) :
 	See also: rdr ngrams --help"""
 	
 	# do the work
-	click.echo( concordance( carrel, query, width, lines ) )
+	for line in concordance( carrel, query, width ) : click.echo( line )
 
 
 # keywords

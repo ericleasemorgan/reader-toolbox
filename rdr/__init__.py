@@ -166,7 +166,9 @@ import click
 # create a Sentences iterator
 class Sentences( object ) :
 
-	'''Given a file name pointing to a line-delimited list of tokenized sentences, generate an iterator over the sentences.'''
+	'''Given a file name pointing to a line-delimited list of
+	tokenized sentences, generate an iterator over the
+	sentences.'''
 	
 	# initialize
 	def __init__( self, file ) : self.file = file
@@ -247,7 +249,8 @@ def matchSVO( sentence, parser ) :
 # given a file, return a line-delimited set of sentences
 def extractSentences( file ) :
 
-	'''Given a file name, return a list of strings where each string is a sentence.'''
+	'''Given a file name, return a list of strings where each
+	string is a sentence.'''
 
 	# require
 	import nltk
@@ -282,6 +285,9 @@ def extractSentences( file ) :
 # create or re-create the preferences/settings
 def initializeConfigurations() :
 
+	'''Given zero input, create or re-create the Toolbox's
+	preferences/settings. Returns nothing.'''
+
 	# require
 	from configparser import ConfigParser
 	from pathlib      import Path
@@ -306,7 +312,9 @@ def initializeConfigurations() :
 
 def configuration( name ) :
 
-	'''Given a configuration name (localLibrary, malletHome, tikaHome, or notebooksHome) return the configuration's value.'''
+	'''Given a configuration name (localLibrary, malletHome,
+	tikaHome, or notebooksHome) return the configuration's
+	value.'''
 
 	# require
 	from configparser import ConfigParser
@@ -339,6 +347,12 @@ def configuration( name ) :
 		
 
 def modelNotFound() :
+
+	'''When the spaCy model (as defined by the contant MODEL) is
+	not found, this function is called. It prompt the user for a
+	y or n answer, and if the answer is y, then MODEL is
+	downloaded and installed. This function exits the application
+	after being called.'''
 	
 	# notify
 	click.echo( "Error: Langauge model not found.", err=True )
@@ -366,18 +380,6 @@ def modelNotFound() :
 	
 	# done
 	exit()
-
-
-# make sure the NLTK is sane
-def checkForPunkt() :
-
-	# require
-	import nltk
-		
-	try : nltk.data.find( 'tokenizers/punkt' )
-	except LookupError : 
-		click.echo( "Installing punkt. This ought to only happen once.", err=True )
-		nltk.download( 'punkt', quiet=True )
 
 
 # make sure a study carrel exists
@@ -885,91 +887,44 @@ def keywords( carrel, count=False, wordcloud=False, save=False ) :
 	return '\n'.join( items )
 
 
-# create and/or get the NTTK model
-def getNLTKText( carrel ) :
-
-	'''Given the name of a study carrel, determine whether or not a NLTK
-	Text object has been previously created and pickled as a file named
-	reader.ntlk in the etc directory. If it has been previously created,
-	then return the object (model). If not, then create the object and
-	return it.
-
-	This function is a prerequisite for the concordance function, but the
-	programmer can also read the object and do other interesting things with
-	it, as per the NLTK documentation. Examples include the output of a
-	dispersion plot or sophisticated regular expression querying.
-
-	This function ought to be re-written to output only True or False. Can
-	you say, "Developer opportunity?"'''
-
-	# configure
-	MODEL = 'reader.nltk'
-
-	# require
-	from nltk import Text, word_tokenize
-	from os   import path, stat
-	import    pickle
-	
-	# initialize
-	localLibrary = configuration( 'localLibrary' )
-	file         = localLibrary/carrel/ETC/MODEL
-
-	# check to see if we've previously been here
-	if path.exists( file ) :
-	
-		# read the model
-		with open( file, 'rb' ) as handle : model = pickle.load( handle )	
-			
-	else :
-
-		# create the model and save it for future use
-		corpus = localLibrary/carrel/ETC/CORPUS
-		model  = Text( word_tokenize( open( corpus ).read( ) ) )
-		with open( file, 'wb' ) as handle : pickle.dump( model, handle )
-
-	# return the model
-	return( model )
-
-
 # poor man's search engine
-def concordance( carrel, query='love', width=80, lines=999 ) :
+def concordance( carrel, query='love', width=40 ) :
 
-	'''Given the  name of a study carrel, implement a keyword-in-context
-	index. The output will be a list of lines and centered in the line will
-	be the value of query. The breadth and depth of the result can be
-	increased or decreased by changing the values of width and/or lines. The
-	query can be a phrase, but regular expressions are not supported.
-
-	Consider counting and tabulating the frequencies of words in the output,
-	and then feeding the result to the cloud function. This will help
-	address the perenial question of "What words are used in conjunction
-	with the given word(s)?" Consider submitting queries with individual
-	results from any of the extracted features (ngrams, keywords,
-	parts-of-speech, named-entities, etc.) Consider submitting queries
-	matching simple grammars such as noun-verb combinations (i.e. "flowers
-	are", "he had", etc.) or the roots of propositional phrases (i.e. "of
-	the").'''
+	'''Given the name of a study carrel, a query, and a window, return a
+	list of lines matching the query fro the given carrel'''
 
 	# require
-	from nltk import Text, word_tokenize
-
-	# sanity checks
-	checkForCarrel( carrel )
-	checkForPunkt()
+	import re
 	
-	# initialize, read, and normalize; ought to save the result for future use
-	model = getNLTKText( carrel )
-	items = []			
-			
-	# split query into a list, conditionally
-	if ' ' in query : query = query.split( ' ' )
+	# slurp up the corpus
+	localLibrary = rdr.configuration( 'localLibrary' )
+	with open( localLibrary/carrel/rdr.ETC/rdr.CORPUS ) as handle : corpus = handle.read()
+
+	# sanity check
+	checkForCarrel( carrel )
+
+	# initialize
+	snippets = []
+
+	# find and process all positions matching the query; finditer does the magic
+	matches = re.finditer( '\\b' + query + '\\b', corpus )
+	for match in matches :
+	
+		# re-initialize
+		start = match.start()
+		end   = match.end()
 		
-	# do the work and output
-	lines = model.concordance_list( query, width=width, lines=lines )
-	for line in lines : items.append( line.line )
+		# get the characters before and after the query
+		before = corpus[ start - width : start ]
+		after  = corpus[ end            : end + width ]
+
+		# build the whole snippet and update
+		snippet = before + ' ' + query + ' ' + after
+		snippet = snippet.replace( '  ' , ' ' )
+		snippets.append( snippet )	
 	
 	# done
-	return '\n'.join( items )
+	return( snippets )
 
 
 # get sizes (measured in words) of documents
@@ -1307,6 +1262,34 @@ def ngrams( carrel, size=1, query=None, count=False, location='local', wordcloud
 # process parts-of-speech
 def pos( carrel, select='parts', like='any', count=False, normalize=True, wordcloud=False, save=False ) :
 
+	'''Given the name of a study carrel, return various
+	incarnations of parts-of-speech (pos) values.
+
+	If the value of select is "parts" (the default), then a
+	newline-delimited list of pos values are returned for each
+	and every word in the carrel. If the value of select is
+	"words", then all of the words (tokens) are returned. If the
+	value of select is anything else, then the lemmas of each
+	token is returned.
+
+	The value of like is akin to an SQL LIKE commands enabling
+	the developer to limit the shape of the select value. For
+	eample, if the value of select is "parts", then only nouns
+	can be returned if the value for like is "N".
+
+	If count is True, then the result is counted, tabulated, and
+	sorted by frequency in descending order.
+
+	If normalize is True, the values of select are lower-cased.
+
+	If count is True and wordcloud is True, then the frequencies
+	are visualized as a wordcloud.
+
+	If count is True, wordcloud is True, and save is True, then
+	the resulting wordcloud is saved in the carrel's etc
+	directory, but only for a limited number of values for like
+	(NOUN, VERB, PRON, ADJ, PROPN, and ADV).'''
+	
 	# require
 	import sqlite3
 
@@ -1465,6 +1448,31 @@ def pos( carrel, select='parts', like='any', count=False, normalize=True, wordcl
 # process named entities
 def entities( carrel, select='type', like='any', count=False, wordcloud=False, save=False ) :
 
+	'''Given the name of a study carrel, return various
+	incarnations of named-entity values.
+
+	If the value of select is "type" (the default), then a
+	newline-delimited list of entity values are returned for each
+	and every word in the carrel. If the value of select is
+	"entity", then all of the named-entities are returned.
+
+	The value of like is akin to an SQL LIKE command enabling the
+	developer to limit the shape of the select value. For
+	example, if the value of select is "entity", then only
+	people's names will be returned if the value for like is
+	"PERSON".
+
+	If count is True, then the result is counted, tabulated, and
+	sorted by frequency in descending order.
+
+	If count is True and wordcloud is True, then the frequencies
+	are visualized as a wordcloud.
+
+	If count is True, wordcloud is True, and save is True, then
+	the resulting wordcloud is saved in the carrel's etc
+	directory, but only for a limited number of values for like
+	(any, PERSON, ORG, and GPE).'''
+
 	# require
 	import sqlite3
 
@@ -1579,6 +1587,14 @@ def entities( carrel, select='type', like='any', count=False, wordcloud=False, s
 # do feature reduction and visualize
 def cluster( carrel, type='dendrogram', save=False ) :
 
+	'''Given the name of a study carrel, use PCA to reduce the
+	carrel's content to two or three dimensions and then
+	visualize the result. If the value of type is "dendrogram",
+	then reducd to two dimensions, and if the value of type is
+	"cube", then reduce to three dimensions. If the value of save
+	is True, then save the resulting image in the carrel's
+	figures directory.'''
+	
 	# configure
 	MAXIMUM   = 0.95
 	MINIMUM   = 2
@@ -1638,6 +1654,36 @@ def cluster( carrel, type='dendrogram', save=False ) :
 # process collocations
 def collocate( carrel, window=4, filter=4, measure='chisqr', limit=4000, output='image', save=False ) :
 
+	'''Given the name of study carrel, collocate carrel's content
+	and output either an image or a Graph Modeling Language (GML)
+	file. This function is an implementation of the
+	nltk.collocations.BigramAssocMeasures method.
+
+	The value of window denotes the number of words on either
+	side of a given word.
+
+	The value of filter is used to denote the number of times a
+	collocation must appear in order to be retained.
+
+	The value of measure can be any one of 'chisqr', 'jaccard',
+	'likelihood', 'raw', or 'fisher'. They are used to measure
+	the significance of each collocation. See the NLTK
+	documentation for details.
+
+	The value of limit is used to approxmiate the total number of
+	collocations desired.
+
+	If the value of output is "image", then the collocations are
+	internally manifested as a GML file, and a visualization is
+	returned. If the value is "gml", then the GML file is
+	returned.
+
+	If the value of output is "gml", and the value of save is
+	True, then the resulting GML file is saved in the carrel's
+	etc directory with the value of the constant named
+	COLLOCATIONS. The resulting GML file is intended to be
+	visualized with something like Gephi.'''
+	
 	# require
 	from   nltk.collocations import BigramAssocMeasures
 	import matplotlib.pyplot as plt
@@ -1989,6 +2035,7 @@ def checkForSemanticIndex( carrel ) :
 
 # implement semantic (word2vec) indexing
 def word2vec( carrel, type='similarity', query='love', topn=10 ) :
+
 	'''types = similarity|distance|analogy|scatter'''
 
 	# configure
@@ -2304,6 +2351,7 @@ def search( carrel, query='love', output='human' ) :
 
 # get an inventory of available study carrels
 def catalog( location='local', human=True ) :
+
 	'''location = local|remote'''
 
 	# configure
