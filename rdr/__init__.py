@@ -3263,7 +3263,7 @@ def build( carrel, directory, erase=False, start=False ) :
 	ADR    = 'adr'
 	URL    = 'urls'
 	BIB    = 'bib'
-	POOL   = 12
+	POOL   = 14
 	
 	# require
 	from   multiprocessing import Pool
