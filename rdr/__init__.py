@@ -1530,7 +1530,10 @@ def entities( carrel, select='type', like='any', count=False, wordcloud=False, s
 			if not wordcloud :
 			
 				# dump
-				for row in rows : items.append( "\t".join( [ row[ select ], str( row[ 'count' ] ) ] ) )
+				for row in rows :
+				
+					# make sure the row value is sane; a hack
+					if ( row[ select ] ) : items.append( "\t".join( [ row[ select ], str( row[ 'count' ] ) ] ) )
 			
 			# output word cloud
 			else :
@@ -3263,7 +3266,7 @@ def build( carrel, directory, erase=False, start=False ) :
 	ADR    = 'adr'
 	URL    = 'urls'
 	BIB    = 'bib'
-	POOL   = 14
+	POOL   = 22
 	
 	# require
 	from   multiprocessing import Pool
@@ -3421,12 +3424,12 @@ def build( carrel, directory, erase=False, start=False ) :
 	cursor.executescript( SCHEMA )
 	
 	# reduce; fill it with content
-	_tsv2db( localLibrary/carrel/POS, '*.pos', 'pos', connection )
-	_tsv2db( localLibrary/carrel/ENT, '*.ent', 'ent', connection )
-	_tsv2db( localLibrary/carrel/WRD, '*.wrd', 'wrd', connection )
+	_tsv2db( localLibrary/carrel/BIB, '*.bib', 'bib', connection )
 	_tsv2db( localLibrary/carrel/ADR, '*.adr', 'adr', connection )
 	_tsv2db( localLibrary/carrel/URL, '*.url', 'url', connection )
-	_tsv2db( localLibrary/carrel/BIB, '*.bib', 'bib', connection )
+	_tsv2db( localLibrary/carrel/WRD, '*.wrd', 'wrd', connection )
+	_tsv2db( localLibrary/carrel/ENT, '*.ent', 'ent', connection )
+	_tsv2db( localLibrary/carrel/POS, '*.pos', 'pos', connection )
 
 	# output another hint
 	# out hint
