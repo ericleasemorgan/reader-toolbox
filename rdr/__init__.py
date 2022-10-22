@@ -128,28 +128,40 @@ TEMPLATE = '''
 			</p>
 
 		<h3>Ngrams</h3>
-			<p style='text-align: center'>
-			<img src='./figures/unigrams-cloud.png' width='49%' /> <img src='./figures/bigrams-cloud.png' width='49%' />
-			</p>
+			<table>
+				<tr align='center'>
+					<td><img src='./figures/unigrams-cloud.png' width='100%' /><br /><br />unigrams</td>
+					<td><img src='./figures/bigrams-cloud.png'  width='100%' /><br /><br />bigrams</td>
+				</tr>
+			</table>
 
 		<h3>Parts-of-speech</h3>
-			<p style='text-align: center'>
-			<img src='./figures/pos-noun.png' width='49%' /> <img src='./figures/pos-propernoun.png' width='49%' />
-			</p>
-			<p style='text-align: center'>
-			<img src='./figures/pos-pronoun.png' width='49%' /> <img src='./figures/pos-verb.png' width='49%' />
-			</p>
-			<p style='text-align: center'>
-			<img src='./figures/pos-adjective.png' width='49%' /> <img src='./figures/pos-adverb.png' width='49%' />
-			</p>
+			<table>
+				<tr align='center'>
+					<td><img src='./figures/pos-noun.png'  width='100%' /><br /><br />nouns<br /><br /><br /></td>
+					<td><img src='./figures/pos-propernoun.png'  width='100%'  /><br /><br />proper nouns<br /><br /><br /></td>
+				</tr>
+				<tr align='center'>
+					<td><img src='./figures/pos-pronoun.png'  width='100%'  /><br /><br />pronouns<br /><br /><br /></td>
+					<td><img src='./figures/pos-verb.png'  width='100%'  /><br /><br />verbs<br /><br /><br /></td>
+				</tr>
+				<tr align='center'>
+					<td><img src='./figures/pos-adjective.png'  width='100%'  /><br /><br />adjectives<br /><br /></td>
+					<td><img src='./figures/pos-adverb.png'  width='100%'  /><br /><br />adverbs<br /><br /></td>
+				</tr>
+			</table>
 
 		<h3>Entities</h3>
-			<p style='text-align: center'>
-			<img src='./figures/entities-any.png' width='49%' /> <img src='./figures/entities-person.png' width='49%' />
-			</p>
-			<p style='text-align: center'>
-			<img src='./figures/entities-gpe.png' width='49%' /> <img src='./figures/entities-org.png' width='49%' />
-			</p>
+			<table>
+				<tr align='center'>
+					<td><img src='./figures/entities-any.png' width='100%' /><br /><br />any entity<br /><br /><br /></td>
+					<td><img src='./figures/entities-person.png' width='100%' /><br /><br />persons<br /><br /><br /></td>
+				</tr>
+				<tr align='center'>
+					<td><img src='./figures/entities-gpe.png' width='100%' /><br /><br />geo-political entities</td>
+					<td><img src='./figures/entities-org.png' width='100%' /><br /><br />organizations</td>
+				</tr>
+			</table>
 
 		<h3>Keywords</h3>
 			<p style='text-align: center'>
