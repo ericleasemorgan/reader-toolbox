@@ -86,11 +86,11 @@ POSPROPN             = 'pos-propernoun.png'
 MODEL = 'en_core_web_sm'
 
 # mallet
-MALLETZIP = 'http://library.distantreader.org/apps/mallet.zip'
+MALLETZIP = 'https://distantreader.org/apps/mallet.zip'
 MALLETBIN = 'bin/mallet'
 
 # tika server
-TIKADOWNLOAD = 'http://library.distantreader.org/apps/tika-server.jar'
+TIKADOWNLOAD = 'https://distantreader.org/apps/tika-server.jar'
 
 # html template for summarize command
 TEMPLATE = '''
