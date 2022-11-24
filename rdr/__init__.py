@@ -35,8 +35,8 @@ TIKAHOME             = 'tika-server.jar'
 NOTEBOOKSHOME        = 'reader-notebooks'
 
 # remote library
-REMOTELIBRARY = 'http://library.distantreader.org'
-CARRELS       = 'carrels'
+REMOTELIBRARY = 'https://distantreader.org'
+CARRELS       = 'stacks/carrels-legacy'
 
 # documentation
 DOCUMENTATION = 'https://reader-toolbox.readthedocs.io'
@@ -2372,7 +2372,7 @@ def catalog( location='local', human=True ) :
 	'''location = local|remote'''
 
 	# configure
-	TSV    = 'catalog/catalog.tsv'
+	TSV    = 'stacks/carrels-legacy/catalog.tsv'
 	RECORD = "      item: ##ITEM##\n      name: ##NAME##\n      date: ##DATE##\n  keywords: ##KEYWORDS##\n     items: ##ITEMS##\n     words: ##WORDS##\n     score: ##SCORE##\n     bytes: ##BYTES##\n\n"
 	HEADER = "\nThe catalog includes ##COUNT## items, and each is listed below:\n\n"
 
@@ -2402,7 +2402,7 @@ def catalog( location='local', human=True ) :
 			# create a rudimentary catalog
 			catalog = ''
 			count   = 0
-			
+						
 			records = get( REMOTELIBRARY + '/' + TSV ).text 
 			for item, record in enumerate( records.split( '\n' ) ) :
 			
@@ -2448,7 +2448,7 @@ def download( carrel ) :
 			
 	# configure
 	ZIPFILE = 'study-carrel.zip'
-	CARRELS = 'carrels'
+	CARRELS = 'stacks/carrels-legacy'
 
 	# require
 	from requests import get
