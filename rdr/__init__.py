@@ -45,6 +45,7 @@ DOCUMENTATION = 'https://reader-toolbox.readthedocs.io'
 CORPUS               = 'reader.txt'
 COLLOCATIONS         = 'reader.gml'
 DATABASE             = 'reader.db'
+VECTORS              = 'reader.vec'
 SENTENCES            = 'reader.sents'
 ETC                  = 'etc'
 HTM                  = 'htm'
@@ -907,6 +908,7 @@ def concordance( carrel, query='love', width=40 ) :
 
 	# require
 	import re
+	import rdr
 	
 	# slurp up the corpus
 	localLibrary = rdr.configuration( 'localLibrary' )
