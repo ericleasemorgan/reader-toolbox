@@ -83,7 +83,7 @@ POSADV               = 'pos-adverb.png'
 POSPROPN             = 'pos-propernoun.png'
 
 # spacy langauge model
-MODEL = 'en_core_web_sm'
+MODEL = 'en_core_web_md'
 
 # mallet
 MALLETZIP = 'https://distantreader.org/apps/mallet.zip'
