@@ -83,7 +83,8 @@ POSADV               = 'pos-adverb.png'
 POSPROPN             = 'pos-propernoun.png'
 
 # spacy langauge model
-MODEL = 'en_core_web_md'
+MODELSMALL   = 'en_core_web_sm'
+MODELMEDIUM  = 'en_core_web_md'
 
 # mallet
 MALLETZIP = 'https://distantreader.org/apps/mallet.zip'
@@ -383,7 +384,7 @@ def modelNotFound() :
 
 		# require and do the work
 		from os import system
-		system( 'python -m spacy download ' + MODEL )
+		system( 'python -m spacy download ' + MODELSMALL )
 	
 	# no
 	elif c == 'n' : click.echo( "Okay, but installing the model is necessary for this function to work. You'll be asked again next time.", err=True )
@@ -1810,7 +1811,7 @@ def _carrel2doc( carrel ) :
 	if path.exists( pickle ) :
 		
 		# read the pickle file
-		try            : doc = next( textacy.io.spacy.read_spacy_docs( pickle, lang=MODEL ) )
+		try            : doc = next( textacy.io.spacy.read_spacy_docs( pickle, lang=MODELSMALL ) )
 		except OSError : modelNotFound()
 			
 	# otherwise
@@ -1827,7 +1828,7 @@ ask yourself, "Self, what is justice?"\n''' )
 		size           = ( stat( file ).st_size ) + 1
 		
 		# initialize some more
-		try            : nlp  = load( MODEL )
+		try            : nlp  = load( MODELSMALL )
 		except OSError : modelNotFound()
 		
 		# do the work
@@ -2733,7 +2734,7 @@ def _file2bib( carrel, file, metadata=None ) :
 		if ( isinstance( pages, list ) ) : pages = pages[ 0 ]
 		
 	# model the text
-	nlp            = spacy.load( MODEL )
+	nlp            = spacy.load( MODELSMALL )
 	nlp.max_length = ( len( text ) + 1 )
 	nlp.add_pipe( PROCESS )
 	doc            = nlp( text )
@@ -3003,7 +3004,7 @@ def _txt2ent( carrel, file ) :
 	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
 
 	# model the text
-	nlp            = spacy.load( MODEL )
+	nlp            = spacy.load( MODELMEDIUM )
 	nlp.max_length = ( len( text ) + 1 )
 	doc            = nlp( text )
 
@@ -3048,7 +3049,7 @@ def _txt2pos( carrel, file ) :
 	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
 
 	# model the text
-	nlp            = spacy.load( MODEL )
+	nlp            = spacy.load( MODELMEDIUM )
 	nlp.max_length = ( len( text ) + 1 )
 	doc            = nlp( text )
 
@@ -3153,7 +3154,7 @@ def _txt2wrd( carrel, file ) :
 	with open( file, encoding='utf-8' ) as handle : text = _normalize( handle.read() )
 
 	# model the text and get the keywords
-	nlp            = spacy.load( MODEL )
+	nlp            = spacy.load( MODELMEDIUM )
 	nlp.max_length = os.path.getsize( file ) + 1 
 	doc            = nlp( text )
 
@@ -3324,7 +3325,7 @@ def build( carrel, directory, erase=False, start=False ) :
 	
 	
 	# check to see if the language model has been installed
-	try            : nlp  = spacy.load( MODEL )
+	try            : nlp  = spacy.load( MODELSMALL )
 	except OSError : modelNotFound()
 
 	# check for pre-existing carrel
