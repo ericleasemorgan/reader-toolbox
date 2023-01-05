@@ -84,7 +84,7 @@ POSPROPN             = 'pos-propernoun.png'
 
 # spacy langauge model
 MODELSMALL   = 'en_core_web_sm'
-MODELMEDIUM  = 'en_core_web_lg'
+MODELMEDIUM  = 'en_core_web_md'
 
 # mallet
 MALLETZIP = 'https://distantreader.org/apps/mallet.zip'
@@ -274,7 +274,7 @@ def extractSentences( file ) :
 	results = []
 	
 	# slurp up the given file; read the text
-	with open( file ) as handle : text = handle.read()
+	with open( file, encoding='utf-8' ) as handle : text = handle.read()
 
 	# get and process all sentences in the text
 	sentences = nltk.sent_tokenize( text )
@@ -318,7 +318,7 @@ def initializeConfigurations() :
 								"tikaHome"      : Path.home()/TIKAHOME }
 
 	# save them
-	with open( str( configurationFile ), 'w' ) as handle : configurations.write( handle )
+	with open( str( configurationFile ), 'w', encoding='utf-8'  ) as handle : configurations.write( handle )
 
 	# create the library directory
 	( Path.home()/READERLIBRARY ).mkdir( exist_ok=True )
@@ -474,7 +474,7 @@ def provenance( carrel, field ) :
 	checkForCarrel( carrel )
 
 	# read provenance file
-	with open( locallibrary/carrel/PROVENANCE ) as handle : provenance = handle.read().split( '\t' )
+	with open( locallibrary/carrel/PROVENANCE, encoding='utf-8'  ) as handle : provenance = handle.read().split( '\t' )
 	
 	# parse it
 	process     = provenance[ 0 ]
@@ -913,7 +913,7 @@ def concordance( carrel, query='love', width=40 ) :
 	
 	# slurp up the corpus
 	localLibrary = rdr.configuration( 'localLibrary' )
-	with open( localLibrary/carrel/rdr.ETC/rdr.CORPUS ) as handle : corpus = handle.read()
+	with open( localLibrary/carrel/rdr.ETC/rdr.CORPUS, encoding='utf-8'  ) as handle : corpus = handle.read()
 
 	# sanity check
 	checkForCarrel( carrel )
@@ -1973,7 +1973,7 @@ def extractTokenizedSentences( file, stopwords ) :
 	import re
 	
 	# slurp up the given file; read the text
-	with open( file ) as handle : text = handle.read()
+	with open( file, encoding='utf-8'  ) as handle : text = handle.read()
 
 	# get and process all sentences in the text
 	sentences = nltk.sent_tokenize( text )
@@ -2022,7 +2022,7 @@ def checkForSemanticIndex( carrel ) :
 
 		filenames    = localLibrary/carrel/TXT
 		stopwords    = localLibrary/carrel/ETC/STOPWORDS
-		with open( stopwords ) as handle : stopwords = handle.read().split( '\n' )
+		with open( stopwords, encoding='utf-8'  ) as handle : stopwords = handle.read().split( '\n' )
 
 		# parallel process each plain text file in the given corpus; fast!
 		pool = Pool()
@@ -2032,7 +2032,7 @@ def checkForSemanticIndex( carrel ) :
 		
 		# save the result
 		sys.stderr.write( 'Step #2 of 3: Saving sentences\n' )
-		with open( tokens, 'w' ) as handle :
+		with open( tokens, 'w', encoding='utf-8'  ) as handle :
 		
 			# get all sentences and process each one
 			for sentences in results :
@@ -2206,7 +2206,7 @@ def _checkForIndex( carrel ) :
 
 		# read full text
 		sys.stderr.write( 'Step #2 of 4: Reading full text; please be patient...\n' )
-		with open( transaction, 'w' ) as handle : handle.write( 'BEGIN TRANSACTION;\n' )
+		with open( transaction, 'w', encoding='utf-8'  ) as handle : handle.write( 'BEGIN TRANSACTION;\n' )
 		files = txt.glob( '*.txt' )
 		for file in files :
 
@@ -2232,14 +2232,14 @@ def _checkForIndex( carrel ) :
 			#click.echo( err=True )
 	
 			# update
-			with open( transaction, 'a' ) as handle : handle.write( sql )
+			with open( transaction, 'a', encoding='utf-8'  ) as handle : handle.write( sql )
 
 		# close the transaction
-		with open( transaction, 'a' ) as handle : handle.write( 'END TRANSACTION;\n' )
+		with open( transaction, 'a', encoding='utf-8'  ) as handle : handle.write( 'END TRANSACTION;\n' )
 
 		# write full text
 		sys.stderr.write( 'Step #3 of 4: Writing full text to database...\n' )
-		with open( transaction ) as handle :
+		with open( transaction, encoding='utf-8'  ) as handle :
 
 			# repeat forever, almost
 			while True :
@@ -2527,7 +2527,7 @@ def _checkForTika( tika ) :
 		malletHome              = configuration( 'malletHome' )
 		tikaHome                = Path.home()/TIKAHOME
 		configurations[ "RDR" ] = { "localLibrary"  : localLibrary, "malletHome" : malletHome, "tikaHome" : tikaHome }
-		with open( configurationFile, 'w' ) as handle : configurations.write( handle )
+		with open( configurationFile, 'w', encoding='utf-8'  ) as handle : configurations.write( handle )
 
 		# done
 		click.echo( '''
