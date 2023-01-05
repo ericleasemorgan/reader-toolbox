@@ -22,6 +22,7 @@ from the mundane to the sublime.
 
 Eric Lease Morgan <emorgan@nd.edu>
 (c) University of Notre Dame; distributed under a GNU Public License
+
 """
 
 VERBOSE   = 2
