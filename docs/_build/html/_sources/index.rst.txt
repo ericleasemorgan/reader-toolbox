@@ -16,6 +16,7 @@ A command-line tool for interacting with Distant Reader study carrels
    quick-start
    tutorial
    commands
+   structure
    quips
    usecase-tm
    usecase-collocations

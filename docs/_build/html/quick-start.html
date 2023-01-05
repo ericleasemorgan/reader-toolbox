@@ -52,34 +52,34 @@
 <span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span>
 
 <span class="c1"># list all bigrams</span>
-<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span>
 
 <span class="c1"># list all bigrams and count them</span>
-<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span>
 
 <span class="c1"># list all bigrams, count them, and filter the results</span>
-<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>
 
 <span class="c1"># same as the above, but pipe the result through a pager</span>
-<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="o">|</span> <span class="n">more</span>
 
 <span class="c1"># search</span>
 <span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span>
 
 <span class="c1"># search again, but specify a query</span>
-<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">war</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="n">war</span>
 
 <span class="c1"># same as the above, but pipe the result through a pager</span>
-<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">war</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="n">war</span> <span class="o">|</span> <span class="n">more</span>
 
 <span class="c1"># list subject-verb-object fragments; please be patient</span>
 <span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span>
 
 <span class="c1"># list noun phrases</span>
-<span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span>
 
 <span class="c1"># same as the above, but tabulate the results, look for love, and page the results</span>
-<span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="o">|</span> <span class="n">more</span>
 
 <span class="c1"># cluster; do the items in the carrel group themselves?</span>
 <span class="n">rdr</span> <span class="n">cluster</span> <span class="n">homer</span>
@@ -94,10 +94,10 @@
 <span class="n">rdr</span> <span class="n">catalog</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="o">-</span><span class="n">h</span>
 
 <span class="c1"># read a remote study carrel</span>
-<span class="n">rdr</span> <span class="n">read</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="n">pride</span>
+<span class="n">rdr</span> <span class="n">read</span> <span class="n">pride</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span>
 
 <span class="c1"># browse the content of a remote study carrel</span>
-<span class="n">rdr</span> <span class="n">browse</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="n">pride</span>
+<span class="n">rdr</span> <span class="n">browse</span> <span class="n">pride</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span>
 
 <span class="c1"># download another carrel</span>
 <span class="n">rdr</span> <span class="n">download</span> <span class="n">pride</span>
@@ -109,12 +109,13 @@
 <span class="n">rdr</span> <span class="n">catalog</span>
 
 <span class="c1"># search for love</span>
-<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">pride</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="n">pride</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>
 
 <span class="c1"># find a lot of love</span>
-<span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">sonnets</span>
+<span class="n">rdr</span> <span class="n">concordance</span> <span class="n">sonnets</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>
 </pre></div>
 </div>
+<p>See  <a class="reference external" href="./tutorial.html">Tutorial</a> to learn how to use the Toolbox in greater detail.</p>
 </section>
 
 
@@ -140,8 +141,12 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands in depth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure of a study carrel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quips.html">Quips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecase-tm.html">Use case: Topic modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecase-collocations.html">Use case: Network graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecase-dhq.html">Use case: Reading DHQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helpers.html">Helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Supporting software</a></li>
 <li class="toctree-l1"><a class="reference internal" href="more.html">More to come</a></li>
 <li class="toctree-l1"><a class="reference internal" href="author.html">About the author</a></li>
@@ -179,7 +184,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2022, University of Notre Dame.
+      &copy;2023, University of Notre Dame.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>

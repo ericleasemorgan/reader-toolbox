@@ -82,11 +82,11 @@
 <section id="list-words">
 <h2>List words<a class="headerlink" href="#list-words" title="Permalink to this headline">¶</a></h2>
 <p>List of all the words (unigrams) from a study carrel in the remote library:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="n">homer</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span>
 </pre></div>
 </div>
 <p>Do the same thing, but this time request bigrams (two-word phrases):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="n">homer</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span>
 </pre></div>
 </div>
 <p>There are many more options, including the ability to count and tabulate the results, filter (query) the results using regular expressions, and more importantly, apply these same techniques to study carrels saved locally.</p>
@@ -109,7 +109,7 @@
 <section id="build-your-library">
 <h2>Build your library<a class="headerlink" href="#build-your-library" title="Permalink to this headline">¶</a></h2>
 <p>When you create a local collection of study carrels – your library, then there are many more things you can do. To configure the location of your local collection, use the <code class="docutils literal notranslate"><span class="pre">set</span></code> command, and you will be prompted for the name of a folder/directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span> <span class="n">local</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span> <span class="o">-</span><span class="n">s</span> <span class="n">local</span>
 </pre></div>
 </div>
 <p>Now you can download a study carrel from the remote library and add it to your local collection:</p>
@@ -133,13 +133,13 @@
 <span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span>
 
 <span class="c1"># all bigrams</span>
-<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s2</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s2</span>
 
 <span class="c1"># count and tabulate bigrams</span>
-<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
 
 <span class="c1"># just like above, but filter with the word &quot;love&quot;</span>
-<span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
 </section>
@@ -162,15 +162,15 @@
 </div>
 <p>(In order to use this function, you may need to install a language model, and if you do, then you will be asked to do so, but you will only have to do it once. Moreover, the given carrel will need to be modeled, and that only has to be done once as well.)</p>
 <p>You can also list the noun phrases in a carrel:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="n">homer</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span>
 </pre></div>
 </div>
 <p>You can also count such things:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span>
 </pre></div>
 </div>
 <p>The list of grammars may be long, so you might want to pipe the result through a pager:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
 </section>
@@ -178,6 +178,7 @@
 <h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h2>
 <p>Now that you have gotten this far, see <a class="reference external" href="./commands.html">Commands in depth</a> for a complete listing of all the commands and how to use them.</p>
 <p>Happy reading!</p>
+<p>See  <a class="reference external" href="./commands.html">Commands in depth</a> to read about each command in the Toolbox.</p>
 </section>
 </section>
 
@@ -214,8 +215,12 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands in depth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure of a study carrel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quips.html">Quips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecase-tm.html">Use case: Topic modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecase-collocations.html">Use case: Network graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecase-dhq.html">Use case: Reading DHQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helpers.html">Helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Supporting software</a></li>
 <li class="toctree-l1"><a class="reference internal" href="more.html">More to come</a></li>
 <li class="toctree-l1"><a class="reference internal" href="author.html">About the author</a></li>
@@ -253,7 +258,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2022, University of Notre Dame.
+      &copy;2023, University of Notre Dame.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>

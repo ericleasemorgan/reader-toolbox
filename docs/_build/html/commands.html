@@ -15,7 +15,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Use case: Topic modeling" href="usecase-tm.html" />
+    <link rel="next" title="Structure of a study carrel" href="structure.html" />
     <link rel="prev" title="Tutorial" href="tutorial.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -35,28 +35,96 @@
             
   <section id="commands-in-depth">
 <h1>Commands in depth<a class="headerlink" href="#commands-in-depth" title="Permalink to this headline">¶</a></h1>
-<p>This section describes each Toolbox command in greater detail. They are listed, more or less, in the order they ought to be executed when wanting to do your analysis.</p>
-<section id="set">
-<h2>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">set</span></code> subcommand to tell the Toolbox two things: 1) the location of your locally cached study carrels, and 2) the location of an external tool called MALLET. For example, to set the location of your local cache of study carrels, enter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span>
-</pre></div>
-</div>
-<p>By default, the location of your study carrels is set to <code class="docutils literal notranslate"><span class="pre">reader-library</span></code> in your home directory, but this setting does not take effect until you run <code class="docutils literal notranslate"><span class="pre">set</span></code>. You can move your collection of carrels anywhere you desire. In fact, you might consider having more than one collection. Just tell the Toolbox which cache you want to use.</p>
-<p>When you initially run the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, and if the subsystem called MALLET is not configured, then the Toolbox will download MALLET, save it in your home directory, and automatically update the configuration. Like above, you can move MALLET any where you desire, but you need to tell the Toolbox where it is located:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span> <span class="o">-</span><span class="n">s</span> <span class="n">mallet</span>
+<p>This section describes each Toolbox command in greater detail. They are listed in alphabetical order.</p>
+<section id="about">
+<h2>about<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
+<p>Use this command – <code class="docutils literal notranslate"><span class="pre">about</span></code> – to ouput the tiniest of descriptions of the Toolbox:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">about</span>
 </pre></div>
 </div>
 </section>
-<section id="get">
-<h2>get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">get</span></code> to echo the values denoting the location of your local cache of study carrels as well as the location of MALLET. More than anything, this command is used for debugging purposes.</p>
-<p>People using Linux or Macintosh computers can run the following command, and the result will change the working directory to the location of the local cache of study carrels:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># change directories to local collection of carrels
-cd $(rdr get)
+<section id="adr">
+<h2>adr<a class="headerlink" href="#adr" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">adr</span></code> subcommand is used to output email addresses.</p>
+<p>As a study carrel is created, the Distant Reader will look for email addresses in the content. Use this command to enumerate and filter those addresses. But alas, the works of Homer include zero email addresses. Consequently, download a different carrel which does, for example, part of a run of an electronic journal named Information Technology and Libraries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">download</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span>
 </pre></div>
 </div>
-<p>This makes it easier to manage your local collection, and it will also make command line completion easier. There is most likely a similar command for people using Windows computers, and I will give $5 to the first person who tells me what the command is. Really. I promise.</p>
+<p>You can now list email addresses:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">adr</span></code> subcommand does not echo the same address multiple times, but an address may very well occur more than once. To see how many times addresses occur, use the <code class="docutils literal notranslate"><span class="pre">-c</span></code> flag:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">c</span>
+</pre></div>
+</div>
+<p>The student, researcher, or scholar can filter the addresses with <code class="docutils literal notranslate"><span class="pre">-l</span></code> which is short for the LIKE operator in SQL. For example, to list all the addresses like “.com”, use this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">l</span> <span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+<p>And/or count the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">l</span> <span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+<p>Use the output of <code class="docutils literal notranslate"><span class="pre">adr</span></code> responsibly. You know what I mean.</p>
+</section>
+<section id="bib">
+<h2>bib<a class="headerlink" href="#bib" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">bib</span></code> subcommand to list the bibliographic characteristics of each item in your carrel. The result is a sort of bibliography:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">bib</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>The result will be quite long, and thus, you may want to pipe the result through your pager, like “more”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">bib</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>Each item will include the following fields, but not all the fields will have values:</p>
+<ol class="arabic simple">
+<li><p>item - a running integer denoting where the item is in the list as a whole</p></li>
+<li><p>id - the unique identifier of the item, a very important value, a sort of key</p></li>
+<li><p>author - the creator of the item; this field may not have a value</p></li>
+<li><p>title - the title of the item; for a variety of reasons, this field may echo the value of id</p></li>
+<li><p>date - the date when the item was created; this field may not have a value</p></li>
+<li><p>words - an integer denoting the size of the document measured in words</p></li>
+<li><p>flesch - an integer denoting the work’s readability score; values closer to 100 are easier to read</p></li>
+<li><p>summary - a computed narative describing the work</p></li>
+<li><p>keyword - a list of statistically significant keywords, akin to subject headings</p></li>
+<li><p>cache - the full path of the original item on your file system</p></li>
+<li><p>plain text - the full path of the plain text version of the original item; all analysis was done against this file</p></li>
+</ol>
+<p>The author and date fields may not have values, and the value of title may be the value of id. This is because it is very difficult to automatically extract author, title, and date values from the original content, the content denoted by the value of cache. The original content may have been manifested as a PDF file, a Microsoft Word document, an HTML file, etc. Each of these file formats include placeholders for author, title, and data values, but the placeholders may not have values. The Distant Reader does its best to determine the values of author, title, and date, but if no values are present then author and date are left empty, and the value of title is denoted as the value of id. All the other values in the bibliography are computable, and consequently they have values.</p>
+<p>There are many different ways the output of <code class="docutils literal notranslate"><span class="pre">bib</span></code> can be used. One of the quickest and easiest is to use it to use the value of plain text as input to their operating system’s pager command – like “more” or “less”. This enables you to read the file in the traditional manner. On my computer, an example includes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">more</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">eric</span><span class="o">/</span><span class="n">Documents</span><span class="o">/</span><span class="n">reader</span><span class="o">-</span><span class="n">library</span><span class="o">/</span><span class="n">homer</span><span class="o">/</span><span class="n">txt</span><span class="o">/</span><span class="n">homer</span><span class="o">-</span><span class="n">odyssey_24</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Additionally, the student, researcher, or scholar may observe the values in the keyword field, and then use the <code class="docutils literal notranslate"><span class="pre">search</span></code> subcommand (described below), to identify other documents about the same topic.</p>
+</section>
+<section id="browse">
+<h2>browse<a class="headerlink" href="#browse" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">browse</span></code> subcommand is very similar to <code class="docutils literal notranslate"><span class="pre">read</span></code> but the view of the study carrel is more akin to perusing a computer’s directory structure. Using the <code class="docutils literal notranslate"><span class="pre">browse</span></code> command against a remote study carrel returns a manifest, a sort of directory listing. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">browse</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>Using <code class="docutils literal notranslate"><span class="pre">browse</span></code> on a carrel in your local collection is facilitated through a terminal-based Web browser called Lynx. Don’t laugh. Lynx is full-fledged browser. It just does not support Javascript. There are many things Lynx can do that Chrome, Safari, nor FireFox can. For example, it can open files with non-standard file extensions, such as pos, ent, or wrd.</p>
+<p>If you do not have Lynx installed, then consider using your computer’s native tools to browse your collection. Remember, 99% of the files in a study carrel are plain text files, and you can open them in your word processor, text editor, spreadsheet, or database program.</p>
+<p>When doing your analysis, it is very important to become familiar with your data. The purposes of <code class="docutils literal notranslate"><span class="pre">read</span></code> and <code class="docutils literal notranslate"><span class="pre">browse</span></code> are complementary, and they go a long way to helping you answer your research questions.</p>
+</section>
+<section id="build">
+<h2>build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">build</span></code> subcommand to create your own study carrels.</p>
+<p>Study carrels can be created from just about any number, type, or format of file, as long as the files are narrative in nature. The Toolbox works well when the number of files is greater than 1 and less than a few thousand. The Toolbox is intended to process scholarly journal articles, books, reports, email messages, etc. The Toolbox exploits a tool called Tika, and Tika makes it possible to extract the underlying text from file formats such as PDF, Word, HTML, PowerPoint, CSV, plain text files, etc. Now-a-days, most people have many PDF files.</p>
+<p>Create a folder/directory on your computer, and put the files you want to read in the folder. It is better if the files have zero spaces in their names. It is best if the file names only contain letters, numbers, dashes (-), underbars (_) and a single dot (.) delimiting a file’s extension. But the files’ names do not really matter.</p>
+<p>When you are ready, build your carrel with the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">build</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">directory</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Where &lt;carrel&gt; is the name you are giving your study carrel, and &lt;directory&gt; is the location of the folder you just created.</p>
+<p>If this is your first time through, you will have to specify the <code class="docutils literal notranslate"><span class="pre">-s</span></code> (start) option to get Tika up and running, and if the location of Tika has not been configured, then you will prompted to download it.</p>
+<p>It is not uncommon for you to want &lt;carrel&gt; to be recreated. No problem. Use the <code class="docutils literal notranslate"><span class="pre">-e</span></code> (erase) option to delete the existing carrel and put a new one in its place.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">build</span></code> process is complicated, and depending on many things, the <code class="docutils literal notranslate"><span class="pre">build</span></code> process can take less than a minute to more than hour to complete. Most of my carrels, which are usually bigger rather than smaller, finish in less than five minutes.</p>
+<p>Metadata</p>
+<p>Enhance the context of your study carrel by supplementing it with metadata. Believe me, this will make your analysis so much more meaningful. This is accomplished by adding a file named metadata.csv to &lt;directory&gt;. This comma-separated value (CSV) must include at least two columns and one of them must to be named “file”. The Toolbox knows about three other columns: author, title, and date. Use your favorite spreadsheet program to create a table with a column named “file”. In each row, enter the name of a file saved in &lt;directory&gt;. Add additional columns named author, title, and/or date. For each file, add author, title, and/or date values. When done, save the table as a CSV file named metadata.csv, and save it in &lt;directory&gt;. If a metadata.csv file exists in &lt;directory&gt;, then the <code class="docutils literal notranslate"><span class="pre">build</span></code> process will read metadata.csv and associate each of the given files with the associated metadata value(s). Later on, when you are doing your analysis (“reading”), you will be better able to compare &amp; contrast items in &lt;carrel&gt;. For example, you will be able to visualize how different author’s write or how ideas ebb and flow over time. Finally, because is is tedious, creating metadata.csv files can be difficult; learn how to automate the process of creating metadata.csv files.</p>
+<p>Once &lt;carrel&gt; is created, you ought to be able to use any of the other <code class="docutils literal notranslate"><span class="pre">rdr</span></code> commands.</p>
 </section>
 <section id="catalog">
 <h2>catalog<a class="headerlink" href="#catalog" title="Permalink to this headline">¶</a></h2>
@@ -94,24 +162,77 @@ cd $(rdr get)
 </div>
 <p>You can then open <code class="docutils literal notranslate"><span class="pre">catalog.tsv</span></code> in your favorite spreadsheet application and from there you can search, filter, sort, and group.</p>
 </section>
-<section id="read">
-<h2>read<a class="headerlink" href="#read" title="Permalink to this headline">¶</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">read</span></code> subcommand to look through and peruse the contents of a local or remote study carrel. Two examples include:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">read</span> <span class="n">homer</span>
-<span class="n">rdr</span> <span class="n">read</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="n">homer</span>
+<section id="cluster">
+<h2>cluster<a class="headerlink" href="#cluster" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand to get an idea of a given carrel’s homogeneity.</p>
+<p>The Toolbox supports two types of clustering. The first (and default) is <code class="docutils literal notranslate"><span class="pre">dendrogram</span></code> where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>Study carrels are data sets. A subset of the datasets are HTML files intended for traditional reading purposes. These HTML files are narrative in nature but there are a number of interactive tables as well. The use of the <code class="docutils literal notranslate"><span class="pre">read</span></code> subcommand is a great way to become familiar with a study carrel’s provenance, breadth, depth, and content.</p>
+<p>The following command is equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="n">dendrogram</span>
+</pre></div>
+</div>
+<p>The second type of clustering (<code class="docutils literal notranslate"><span class="pre">cube</span></code>) reduces the carrel to three dimensions and plots the results in a space:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="n">cube</span>
+</pre></div>
+</div>
+<p>If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand is also useful when using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> (topic modeling) subcommand, because <code class="docutils literal notranslate"><span class="pre">cluster</span></code> will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result of <code class="docutils literal notranslate"><span class="pre">cluster</span></code> most likely not be very readable.</p>
 </section>
-<section id="browse">
-<h2>browse<a class="headerlink" href="#browse" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">browse</span></code> subcommand is very similar to <code class="docutils literal notranslate"><span class="pre">read</span></code> but the view of the study carrel is more akin to perusing a computer’s directory structure. Using the <code class="docutils literal notranslate"><span class="pre">browse</span></code> command against a remote study carrel returns a manifest, a sort of directory listing. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">browse</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span> <span class="n">homer</span>
+<section id="collocations">
+<h2>collocations<a class="headerlink" href="#collocations" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">collocations</span></code> to identify pairs of co-occuring words, measure their weights, and output the result as a network graph. To paraphrase John Rupert Firth, “You shall know a word by the company it keeps.” This command is yet another way manifest this concept. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">collocations</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>Using <code class="docutils literal notranslate"><span class="pre">browse</span></code> on a carrel in your local collection is facilitated through a terminal-based Web browser called Lynx. Don’t laugh. Lynx is full-fledged browser. It just does not support Javascript. There are many things Lynx can do that Chrome, Safari, nor FireFox can. For example, it can open files with non-standard file extensions, such as pos, ent, or wrd.</p>
-<p>If you do not have Lynx installed, then consider using your computer’s native tools to browse your collection. Remember, 99% of the files in a study carrel are plain text files, and you can open them in your word processor, text editor, spreadsheet, or database program.</p>
-<p>When doing your analysis, it is very important to become familiar with your data. The purposes of <code class="docutils literal notranslate"><span class="pre">read</span></code> and <code class="docutils literal notranslate"><span class="pre">browse</span></code> are complementary, and they go a long way to helping you answer your research questions.</p>
+<p>After a bit of time, the result will be a little report echoing the input, the size of the resulting graph, and a visualization of said graph. The visualization is merely intended to be a sketch. The student, researcher, or scholar is expected to output the results of this command to a file, open the file into some other application (like Gephi), and create a visualization (enhance the model) from there. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">collocations</span> <span class="n">homer</span> <span class="o">-</span><span class="n">o</span> <span class="n">gml</span> <span class="o">&gt;</span> <span class="n">homer</span><span class="o">.</span><span class="n">gml</span>
+</pre></div>
+</div>
+<p>Just like topic modeling, there is no such thing as the perfect set of inputs; there is no one correct way to collocate a carrel. Instead, play with the input until the output tells a compelling story. I have found that when the number of edges is about 1.5 or 2 times greater than the number of nodes, then the resulting graph can tell an interesting story. As a rule of thumb, for every 200,000 words in a carrel, limit the number of collocations to 1000. Consequently, if your carrel is 400,000 words long, then denote an <code class="docutils literal notranslate"><span class="pre">-l</span></code> (limit) value of 2000.</p>
+<p>Increasing the <code class="docutils literal notranslate"><span class="pre">-w</span></code> (window) value will increase the number of nodes but not necessarily the number of edges. Denoting different <code class="docutils literal notranslate"><span class="pre">-m</span></code> (measure) values will strengthen or weaken the edges between the nodes.</p>
+<p>Of all the subcommands in the Toolbox, this one requires the most finesse. Practices makes perfect.</p>
+</section>
+<section id="concordance">
+<h2>concordance<a class="headerlink" href="#concordance" title="Permalink to this headline">¶</a></h2>
+<p>Developed in the 13th century, concordances are the oldest form of text mining, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man’s search engine. Iteratively use the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> command as you cycle through the use of the other commands.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see what words are used in the same breath as a given word. Used without any options, the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> tool will query the given carrel for the word “love”, and the result will be a number of lines where each line contains about 40 characters prior to the word “love”, the word “love”, and about 40 characters after the word “love”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>You can query (filter) the results with the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option, and the query must be a word or phrase, not a regular expression. Thus, the following command is identical to the default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>
+</pre></div>
+</div>
+<p>Alternatively, the query can be a phrase, and it is often interesting to associate a noun with a verb, such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;war is&quot;</span>
+</pre></div>
+</div>
+<p>Or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;hector had&quot;</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">concordance</span></code> will output as many 999 lines. Using the <code class="docutils literal notranslate"><span class="pre">-l</span></code> option you can configure the number of lines. For example, to output only 5 lines, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">-</span><span class="n">l</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>You can also configure the size of each line’s width – the number of characters on either side of the query. To see very short snippets, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span>
+</pre></div>
+</div>
+<p>It is useful to first exploit the <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> command to identify words or phrases of interest, then use the results as input for the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> command. The same thing holds true for many of the other commands; use the other subcommands to identify words of interest, and then use <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see how they are used in context.</p>
+<p>Like many of the other subcommands, the output of <code class="docutils literal notranslate"><span class="pre">concordance</span></code> is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results of <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">&gt;</span> <span class="n">homer</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Initially, the cloud will be dominated by the value of <code class="docutils literal notranslate"><span class="pre">-q</span></code>, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.</p>
+</section>
+<section id="documentation">
+<h2>documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>This command merely opens up your computer’s Web browser and sends it off to the Toolbox’s documentation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">documentation</span>
+</pre></div>
+</div>
 </section>
 <section id="download">
 <h2>download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
@@ -121,131 +242,6 @@ cd $(rdr get)
 </div>
 <p>If you have not configured the Toolbox to denote the location of your local cache, then this operation will gracefully fail. You will then be prompted to make the configuration.</p>
 <p>Unlike traditional libraries, once you check something out of the Reader’s library, you do not have to return it. :)</p>
-</section>
-<section id="info">
-<h2>info<a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">info</span></code> subcommand to get the broadest of views describing the carrel and whence it came. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">info</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>The result will be a human-readable snippet of text listing the name(s) of the carrel as it appears on your file system, who published (created) the carrel and when, the Distant Reader process used to create the carrel and the associated input, a number of extents (sizes) describing the carrel, and the most frequent statistically significant computed keywords.</p>
-<p>When it comes to the number of words, some context is beneficial. A carrel of 1 million words begins to be large. The Bible is about .8 million words long. Herman Melville’s Moby Dick is about .2 million words long. The typical scholarly journal article is about .005 (5,000) words long. Depending on the size of the carrel, different modeling techniques are apropos.</p>
-<p>Think of the output of the <code class="docutils literal notranslate"><span class="pre">info</span></code> command akin to a traditional library catalog card. Remember those? For most of us, probably not.</p>
-</section>
-<section id="bib">
-<h2>bib<a class="headerlink" href="#bib" title="Permalink to this headline">¶</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">bib</span></code> subcommand to list the bibliographic characteristics of each item in your carrel. The result is a sort of bibliography:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">bib</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>The result will be quite long, and thus, you may want to pipe the result through your pager, like “more”:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">bib</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-</pre></div>
-</div>
-<p>Each item will include the following fields, but not all the fields will have values:</p>
-<ol class="arabic simple">
-<li><p>item - a running integer denoting where the item is in the list as a whole</p></li>
-<li><p>id - the unique identifier of the item, a very important value, a sort of key</p></li>
-<li><p>author - the creator of the item; this field may not have a value</p></li>
-<li><p>title - the title of the item; for a variety of reasons, this field may echo the value of id</p></li>
-<li><p>date - the date when the item was created; this field may not have a value</p></li>
-<li><p>words - an integer denoting the size of the document measured in words</p></li>
-<li><p>flesch - an integer denoting the work’s readability score; values closer to 100 are easier to read</p></li>
-<li><p>summary - a computed narative describing the work</p></li>
-<li><p>keyword - a list of statistically significant keywords, akin to subject headings</p></li>
-<li><p>cache - the full path of the original item on your file system</p></li>
-<li><p>plain text - the full path of the plain text version of the original item; all analysis was done against this file</p></li>
-</ol>
-<p>The author and date fields may not have values, and the value of title may be the value of id. This is because it is very difficult to automatically extract author, title, and date values from the original content, the content denoted by the value of cache. The original content may have been manifested as a PDF file, a Microsoft Word document, an HTML file, etc. Each of these file formats include placeholders for author, title, and data values, but the placeholders may not have values. The Distant Reader does its best to determine the values of author, title, and date, but if no values are present then author and date are left empty, and the value of title is denoted as the value of id. All the other values in the bibliography are computable, and consequently they have values.</p>
-<p>There are many different ways the output of <code class="docutils literal notranslate"><span class="pre">bib</span></code> can be used. One of the quickest and easiest is to use it to use the value of plain text as input to their operating system’s pager command – like “more” or “less”. This enables you to read the file in the traditional manner. On my computer, an example includes:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">more</span> <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">eric</span><span class="o">/</span><span class="n">Documents</span><span class="o">/</span><span class="n">reader</span><span class="o">-</span><span class="n">library</span><span class="o">/</span><span class="n">homer</span><span class="o">/</span><span class="n">txt</span><span class="o">/</span><span class="n">homer</span><span class="o">-</span><span class="n">odyssey_24</span><span class="o">.</span><span class="n">txt</span>
-</pre></div>
-</div>
-<p>Additionally, the student, researcher, or scholar may observe the values in the keyword field, and then use the <code class="docutils literal notranslate"><span class="pre">search</span></code> subcommand (described below), to identify other documents about the same topic.</p>
-</section>
-<section id="sizes">
-<h2>sizes<a class="headerlink" href="#sizes" title="Permalink to this headline">¶</a></h2>
-<p>Use this command to learn about the sizes – measured in words – of each item in your carrel. Sizes is a type of extent.</p>
-<p>By default, the <code class="docutils literal notranslate"><span class="pre">sizes</span></code> command outputs a tab-delimited list of carrel identifiers and number of words in descending order:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sizes</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>This will give you an idea of what items are larger as opposed to smaller.</p>
-<p>You can also output the list sorted by identifier:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sizes</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="nb">id</span>
-</pre></div>
-</div>
-<p>This is useful if you need/want to know how large a specific item is.</p>
-<p>You can output the result as a boxplot or a histogram, and this is a good way to compare &amp; contrast the sizes of the items as a whole. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sizes</span> <span class="n">homer</span> <span class="o">-</span><span class="n">o</span> <span class="n">boxplot</span>
-</pre></div>
-</div>
-<p>As points of reference, the Bible is about .8 million words long. Herman Melville’s Moby Dick is about .2 million words long. Many scholary journal articles and book chapters are about .005 million (5,000) words long.</p>
-</section>
-<section id="readability">
-<h2>readability<a class="headerlink" href="#readability" title="Permalink to this headline">¶</a></h2>
-<p>Readability is another type of extent, and use the <code class="docutils literal notranslate"><span class="pre">readability</span></code> subcommand to learn how difficult an item may (or may not) be easy to comprehend. By default, this command will output a tab-delimited list of identifiers and readability scores in descending order:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">readability</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>Each score ought to be an integer between 0 and 100, where 0 means nobody can read the item and 100 means anybody can read the item. Readability (Flesch) scores takes into account things like: number of words, number of sentences, lengths of sentences, and lengths of words.</p>
-<p>You change the output so it is sorted by identifier:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">readability</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="nb">id</span>
-</pre></div>
-</div>
-<p>Visualize the whole as a boxplot or histogram, for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">readability</span> <span class="n">homer</span> <span class="o">-</span><span class="n">o</span> <span class="n">histogram</span>
-</pre></div>
-</div>
-<p>As points of reference, Shakespeare’s Sonnets have a high readability score in the 90’s. Based on my experience, many classic novels have readability scores in the 80’s. Scholarly journal articles seem to be in the 70’s. Many blog postings and OCR’ed (optical character recognition) files have lower scores because: 1) blogs come along with all sorts of HTML navigation, and 2) OCR files have a large number of unique (nonsense) words.</p>
-</section>
-<section id="ngrams">
-<h2>ngrams<a class="headerlink" href="#ngrams" title="Permalink to this headline">¶</a></h2>
-<p>This is one of the strongest subcommands in the Toolbox. Use it to comprehend a deeper breadth, depth, and scope of a carrel. Begin by simply giving <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>The student, researcher, or scholar will often want to count the occurances of ngrams, and that is what the <code class="docutils literal notranslate"><span class="pre">-c</span></code> option is for. For example, to count and tabulate the most frequent unigrams in a carrel you can:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>The result will be very long, and you can probably pipe the results through to an operating system utility called “more” in order to page through the results:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-</pre></div>
-</div>
-<p>You can do the same thing but this time, you can use the <code class="docutils literal notranslate"><span class="pre">-s</span></code> option to denote the size of the ngram, for example, two-word phrases:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-</pre></div>
-</div>
-<p>If you specify a size greater than 2, then stop words will not be removed:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">3</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-</pre></div>
-</div>
-<p>At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result to a file named <code class="docutils literal notranslate"><span class="pre">bigrams.tsv</span></code>, and then open <code class="docutils literal notranslate"><span class="pre">bigrams.tsv</span></code> in your spreadsheet application for searching, sorting, and grouping purposes:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="n">homer</span> <span class="o">&gt;</span> <span class="n">bigrams</span><span class="o">.</span><span class="n">tsv</span>
-</pre></div>
-</div>
-<p>It is possible to query (filter) the results of the <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> subcommand with the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option. Queries are expected to be regular expressions so the results of the following command will be a list of all bigrams containing the characters l-o-v-e:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>You might enhance the query to return all bigrams beginning with the characters l-o-v-e:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;^love&quot;</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>Or only the bigrams beginning with the word “love”:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;^love</span><span class="se">\b</span><span class="s2">&quot;</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>Or list the most frequent bigrams containing the letters l-o-v-e:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-</pre></div>
-</div>
-<p>At this point you may want to redirect the output to a file, and then, again, use another application to do additional analysis. For example, find all bigrams containing l-o-v-e, redirect the output to a file, and then import the result into a network analysis program (like Gephi) to illustrate relationships:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span> <span class="o">&gt;</span> <span class="n">love</span><span class="o">.</span><span class="n">tsv</span>
-</pre></div>
-</div>
-<p>Finally, <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> filters results using a stop word list contained in every study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand is for; the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand makes it easy to modify a carrel’s stop word list, and consequently make the output of <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> more meaningful. See the next section for more detail.</p>
 </section>
 <section id="edit">
 <h2>edit<a class="headerlink" href="#edit" title="Permalink to this headline">¶</a></h2>
@@ -257,115 +253,164 @@ cd $(rdr get)
 <p>Given a carrel’s name, this command will read your computer’s environment, determine what text editor you have defined as the default, launch that editor, and open the stop words file. Use the result to add or subtract from the list, and save the file.  When you run <code class="docutils literal notranslate"><span class="pre">ngrams</span></code>, <code class="docutils literal notranslate"><span class="pre">tm</span></code>, <code class="docutils literal notranslate"><span class="pre">semantics</span></code> again, the results ought to be cleaner.</p>
 <p>It is not necessary to use the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand to process your list of stop words. You can use just about any editor you desire, but it is imperative that you save the result as a plain text file and its name must be <code class="docutils literal notranslate"><span class="pre">stopwords.txt</span></code>.</p>
 </section>
-<section id="concordance">
-<h2>concordance<a class="headerlink" href="#concordance" title="Permalink to this headline">¶</a></h2>
-<p>Developed in the 13th century, concordances are the oldest form of text mining, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man’s search engine. Iteratively use the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> command as you cycle through the use of the other commands.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see what words are used in the same breath as a given word. Used without any options, the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> tool will query the given carrel for the word “love”, and the result will be a number of lines where each line contains about 40 characters prior to the word “love”, the word “love”, and about 40 characters after the word “love”:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span>
+<section id="ent">
+<h2>ent<a class="headerlink" href="#ent" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">ent</span></code> to output, enumerate, and filter named entity values from your study carrel.</p>
+<p>Think of named entities as even more specific types of nouns. Common types include persons, organizations, places, dates, and times. Given these sorts of values, more accurate newspaper reporter-like questions can be addressed.  Like <code class="docutils literal notranslate"><span class="pre">pos</span></code> and <code class="docutils literal notranslate"><span class="pre">grammars</span></code>, <code class="docutils literal notranslate"><span class="pre">ent</span></code> exploits a (spaCy) language model to make educated guesses at what these values are in your carrel. For example, to count and tabulate the different types of entities in your carrel, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ent</span> <span class="n">homer</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
-<p>You can query (filter) the results with the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option, and the query must be a word or phrase, not a regular expression. Thus, the following command is identical to the default:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+<p>If you wanted to count &amp; tabulate the names of people in your carrel, then try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ent</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="n">entity</span> <span class="o">-</span><span class="n">l</span> <span class="n">PERSON</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
-<p>Alternatively, the query can be a phrase, and it is often interesting to associate a noun with a verb, such as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;war is&quot;</span> <span class="n">homer</span>
+<p>The same things can be done for places and locations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ent</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="n">entity</span> <span class="o">-</span><span class="n">l</span> <span class="n">GPE</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">ent</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="n">entity</span> <span class="o">-</span><span class="n">l</span> <span class="n">LOC</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
-<p>Or:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;hector had&quot;</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>By default, <code class="docutils literal notranslate"><span class="pre">concordance</span></code> will output as many 999 lines. Using the <code class="docutils literal notranslate"><span class="pre">-l</span></code> option you can configure the number of lines. For example, to output only 5 lines, try:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">l</span> <span class="mi">5</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>You can also configure the size of each line’s width – the number of characters on either side of the query. To see very short snippets, try:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>It is useful to first exploit the <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> command to identify words or phrases of interest, then use the results as input for the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> command. The same thing holds true for many of the other commands; use the other subcommands to identify words of interest, and then use <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see how they are used in context.</p>
-<p>Like many of the other subcommands, the output of <code class="docutils literal notranslate"><span class="pre">concordance</span></code> is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results of <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">&gt;</span> <span class="n">homer</span><span class="o">.</span><span class="n">txt</span>
-</pre></div>
-</div>
-<p>Initially, the cloud will be dominated by the value of <code class="docutils literal notranslate"><span class="pre">-q</span></code>, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.</p>
+<p>The returned values are not always accurate, but in this vein, “Do not let the perfect be the enemy of the good.” While computers are pretty stupid, they can make educated guesses.</p>
+<p>Use the output of <code class="docutils literal notranslate"><span class="pre">ent</span></code> as input to <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see how entities of interest are used in context.</p>
+<p>For extra credit, export things like people or places to a file. Programmatically look up those values in an encyclopedia or gazateer to get birth dates, death dates, or geographic coordinates. From the results, create a timeline or map. The results will illustrate characteristics of your carrel not immediately apparent.</p>
 </section>
-<section id="adr">
-<h2>adr<a class="headerlink" href="#adr" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">adr</span></code> subcommand is used to output email addresses.</p>
-<p>As a study carrel is created, the Distant Reader will look for email addresses in the content. Use this command to enumerate and filter those addresses. But alas, the works of Homer include zero email addresses. Consequently, download a different carrel which does, for example, part of a run of an electronic journal named Information Technology and Libraries:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">download</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span>
+<section id="get">
+<h2>get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">get</span></code> to echo the values denoting the location of your local cache of study carrels as well as the location of MALLET. More than anything, this command is used for debugging purposes.</p>
+<p>People using Linux or Macintosh computers can run the following command, and the result will change the working directory to the location of the local cache of study carrels:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># change directories to local collection of carrels
+cd $(rdr get)
 </pre></div>
 </div>
-<p>You can now list email addresses:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span>
-</pre></div>
-</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">adr</span></code> subcommand does not echo the same address multiple times, but an address may very well occur more than once. To see how many times addresses occur, use the <code class="docutils literal notranslate"><span class="pre">-c</span></code> flag:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">c</span>
-</pre></div>
-</div>
-<p>The student, researcher, or scholar can filter the addresses with <code class="docutils literal notranslate"><span class="pre">-l</span></code> which is short for the LIKE operator in SQL. For example, to list all the addresses like “.com”, use this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">l</span> <span class="o">.</span><span class="n">com</span>
-</pre></div>
-</div>
-<p>And/or count the result:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">adr</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">l</span> <span class="o">.</span><span class="n">com</span>
-</pre></div>
-</div>
-<p>Use the output of <code class="docutils literal notranslate"><span class="pre">adr</span></code> responsibly. You know what I mean.</p>
+<p>This makes it easier to manage your local collection, and it will also make command line completion easier. There is most likely a similar command for people using Windows computers, and I will give $5 to the first person who tells me what the command is. Really. I promise.</p>
 </section>
-<section id="url">
-<h2>url<a class="headerlink" href="#url" title="Permalink to this headline">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">url</span></code> to list, enumerate, and filter URLs.</p>
-<p>Like the listing of words, persons, or keywords, the listing of URLs can be quite telling when it comes to learning the content of a study carrel. The <code class="docutils literal notranslate"><span class="pre">url</span></code> subcommand facilitates this. Again, Homer’s works include zero URLs, so download a carrel named ital-urls, which includes many:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">download</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span>
+<section id="grammars">
+<h2>grammars<a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">grammars</span></code> to output parts of sentences matching language patterns – grammars.</p>
+<p>Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.</p>
+<p>In order to exploit grammars, a specific (spaCy) language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be quite a time consuming process. The Toolbox will do this work, if it has not already been done.</p>
+<p>The Toolbox supports four different grammars. The first is subject-verb-object (svo) – rudimentary sentences.  To extract svo-like fragments from a given study carrel, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>List all the URLs and pipe them through a pager. They will be sorted alphabetically:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">|</span> <span class="n">more</span>
+<p>The result is usually lengthy, and consequently you may want to pipe the results through to a pager such as “more”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
-<p>Many times the domain for a URL is telling, so you can list just those instead:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">s</span> <span class="n">domain</span> <span class="o">|</span> <span class="n">more</span>
+<p>The default grammar (svo) can be explicitly articulated on the command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">svo</span>
 </pre></div>
 </div>
-<p>There will quite likely be duplicates, so you may want to count and tabulate the result:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">s</span> <span class="n">domain</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+<p>The other three grammars include:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nouns</span></code> - all nouns and noun chunks</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">quotes</span></code> - things people say</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sss</span></code> - semi-structured sentences; this is the most complicated grammar</p></li>
+</ol>
+<p>To list all the nouns and noun chunks in a carrel, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span>
 </pre></div>
 </div>
-<p>You can also filter the results with <code class="docutils literal notranslate"><span class="pre">-l</span></code>. So, to count and tabulate URLs like pdf, try:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">l</span> <span class="n">pdf</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+<p>To list all the direct quotes in a carrel, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">quotes</span>
 </pre></div>
 </div>
-<p>Besides using the URLs to help you learn about your carrel, you can also use <code class="docutils literal notranslate"><span class="pre">url</span></code> to assist you in acquiring additional content. For example, first filter the URLs for “pdf” and output the result to a file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">l</span> <span class="n">pdf</span> <span class="o">&gt;</span> <span class="n">pdfs</span><span class="o">.</span><span class="n">txt</span>
+<p>Semi-structured sentences (sss) are the most complicated grammar, and it requires at least one additional option, <code class="docutils literal notranslate"><span class="pre">-n</span></code> where the value is some sort of noun. This grammar provides for an additional option, <code class="docutils literal notranslate"><span class="pre">-l</span></code> for the lemma of a verb. By default, the value of <code class="docutils literal notranslate"><span class="pre">-l</span></code> is the lemma “be”. Thus, to list all sentence fragments where the subject of the sentences is “war”, and the predicate is a form of “be”, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">war</span>
 </pre></div>
 </div>
-<p>Then use pdfs.txt as input to a mass downloader to actually get the content. For example, use the venerable wget command</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="o">-</span><span class="n">i</span> <span class="n">pdfs</span><span class="o">.</span><span class="n">txt</span>
+<p>The following command is equivalent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">war</span> <span class="o">-</span><span class="n">l</span> <span class="n">be</span>
 </pre></div>
 </div>
-<p>Consider also using the output of <code class="docutils literal notranslate"><span class="pre">urls</span></code> as input to the Distant Reader; create a new study carrel using the URLs identified in a carrel.</p>
-<p>Finally, some of the URLs extracted from the underlying plain text are quite ugly, if not down-right invalid. Please remember, “Do not let the perfect be the enemy of the good.” Moreover, keep in mind that URLs very frequently break, go stale, or require authentication. Such is not uncommon. Also, increasingly, URLs pointing to scholarly journal articles do not really point to journal articles. Instead, they point to “splash” or “landing” pages which then force you to find the link to the article, and even then the student, researcher, or scholar may not get the item in question, but a viewer instead. Your milage may vary.</p>
+<p>Using the semi-structured grammars is sometimes more accurate than filtering concordances. For example, in Homer’s works, one can ask, “What are horses?”</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">horses</span> <span class="o">-</span><span class="n">l</span> <span class="n">be</span>
+</pre></div>
+</div>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option, the student, researcher, or scholar can filter the output of <code class="docutils literal notranslate"><span class="pre">grammars</span></code>. Like most of the other filters, this one takes a regular expression as an argument. Thus, to filter the <code class="docutils literal notranslate"><span class="pre">svo</span></code> option with the letters l-o-v-e, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">svo</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>
+</pre></div>
+</div>
+<p>The same thing can be quite useful when it comes to the <code class="docutils literal notranslate"><span class="pre">noun</span></code> grammar:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>
+</pre></div>
+</div>
+<p>As well as the <code class="docutils literal notranslate"><span class="pre">quotes</span></code> grammar:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">quotes</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>
+</pre></div>
+</div>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">-s</span></code> and <code class="docutils literal notranslate"><span class="pre">-c</span></code> options to make the output more meaningful. The <code class="docutils literal notranslate"><span class="pre">-s</span></code> option sorts the results alphabetically, and by doing so, patterns may emerge. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>Similarly, the <code class="docutils literal notranslate"><span class="pre">-c</span></code> option counts and tabulates the results, and this is quite useful for determining what nouns and noun phrases are frequently mentioned in a carrel:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
 </section>
-<section id="wrd">
-<h2>wrd<a class="headerlink" href="#wrd" title="Permalink to this headline">¶</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">wrd</span></code> subcommand to count and tabulate the statistically significant keywords from your carrel.</p>
-<p>Statistically significant keywords can be computed from a given text by comparing each word’s frequency with the frequency of other words and the size of the given text. The resulting words are often a good way to denote a text’s “aboutness”. The Distant Reader did such computing, saved the results in your carrel, and this command reports on those values. For example, to list all the statistically significant keywords, try:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">wrd</span> <span class="n">homer</span>
+<section id="info">
+<h2>info<a class="headerlink" href="#info" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">info</span></code> subcommand to get the broadest of views describing the carrel and whence it came. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">info</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>More often than not, you will want to count &amp; tabulate the results. Thus, you ought to use the <code class="docutils literal notranslate"><span class="pre">-c</span></code> flag, like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">wrd</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span>
+<p>The result will be a human-readable snippet of text listing the name(s) of the carrel as it appears on your file system, who published (created) the carrel and when, the Distant Reader process used to create the carrel and the associated input, a number of extents (sizes) describing the carrel, and the most frequent statistically significant computed keywords.</p>
+<p>When it comes to the number of words, some context is beneficial. A carrel of 1 million words begins to be large. The Bible is about .8 million words long. Herman Melville’s Moby Dick is about .2 million words long. The typical scholarly journal article is about .005 (5,000) words long. Depending on the size of the carrel, different modeling techniques are apropos.</p>
+<p>Think of the output of the <code class="docutils literal notranslate"><span class="pre">info</span></code> command akin to a traditional library catalog card. Remember those? For most of us, probably not.</p>
+</section>
+<section id="ngrams">
+<h2>ngrams<a class="headerlink" href="#ngrams" title="Permalink to this headline">¶</a></h2>
+<p>This is one of the strongest subcommands in the Toolbox. Use it to comprehend a deeper breadth, depth, and scope of a carrel. Begin by simply giving <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>The result may be quite long, and consequently you will want to pipe the result through your pager:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">wrd</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<p>The student, researcher, or scholar will often want to count the occurances of ngrams, and that is what the <code class="docutils literal notranslate"><span class="pre">-c</span></code> option is for. For example, to count and tabulate the most frequent unigrams in a carrel you can:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>Scan the list for words of personal interest, and use those words as input to the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> subcommand.</p>
+<p>The result will be very long, and you can probably pipe the results through to an operating system utility called “more” in order to page through the results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>You can do the same thing but this time, you can use the <code class="docutils literal notranslate"><span class="pre">-s</span></code> option to denote the size of the ngram, for example, two-word phrases:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>If you specify a size greater than 2, then stop words will not be removed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result to a file named <code class="docutils literal notranslate"><span class="pre">bigrams.tsv</span></code>, and then open <code class="docutils literal notranslate"><span class="pre">bigrams.tsv</span></code> in your spreadsheet application for searching, sorting, and grouping purposes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span>  <span class="o">&gt;</span> <span class="n">bigrams</span><span class="o">.</span><span class="n">tsv</span>
+</pre></div>
+</div>
+<p>It is possible to query (filter) the results of the <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> subcommand with the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option. Queries are expected to be regular expressions so the results of the following command will be a list of all bigrams containing the characters l-o-v-e:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>
+</pre></div>
+</div>
+<p>You might enhance the query to return all bigrams beginning with the characters l-o-v-e:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;^love&quot;</span>
+</pre></div>
+</div>
+<p>Or only the bigrams beginning with the word “love”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="s2">&quot;^love</span><span class="se">\b</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>Or list the most frequent bigrams containing the letters l-o-v-e:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>At this point you may want to redirect the output to a file, and then, again, use another application to do additional analysis. For example, find all bigrams containing l-o-v-e, redirect the output to a file, and then import the result into a network analysis program (like Gephi) to illustrate relationships:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>  <span class="o">&gt;</span> <span class="n">love</span><span class="o">.</span><span class="n">tsv</span>
+</pre></div>
+</div>
+<p>Finally, <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> filters results using a stop word list contained in every study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand is for; the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand makes it easy to modify a carrel’s stop word list, and consequently make the output of <code class="docutils literal notranslate"><span class="pre">ngrams</span></code> more meaningful. See the next section for more detail.</p>
+</section>
+<section id="notebooks">
+<h2>notebooks<a class="headerlink" href="#notebooks" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="play">
+<h2>play<a class="headerlink" href="#play" title="Permalink to this headline">¶</a></h2>
+<p>Use this subcommand to play hangman. It is that simple.</p>
 </section>
 <section id="pos">
 <h2>pos<a class="headerlink" href="#pos" title="Permalink to this headline">¶</a></h2>
@@ -384,150 +429,51 @@ cd $(rdr get)
 </pre></div>
 </div>
 <p>What are those values? Well, for the most part all you need to know is that different types of nouns begin with N, verbs begin with V, and adjectives begin with J. Given such information, the student, researcher, or scholar can count and tabulate the noun types, verb types, and adjective types:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">parts</span> <span class="o">-</span><span class="n">l</span> <span class="n">N</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-<span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">parts</span> <span class="o">-</span><span class="n">l</span> <span class="n">V</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-<span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">parts</span> <span class="o">-</span><span class="n">l</span> <span class="n">J</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="n">parts</span> <span class="o">-</span><span class="n">l</span> <span class="n">N</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">pos</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="n">parts</span> <span class="o">-</span><span class="n">l</span> <span class="n">V</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+<span class="n">rdr</span> <span class="n">pos</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="n">parts</span> <span class="o">-</span><span class="n">l</span> <span class="n">J</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
 <p>So, what is a count and tabulation of all the nouns? To answer the question, use this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">words</span> <span class="o">-</span><span class="n">l</span> <span class="n">N</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="n">words</span> <span class="o">-</span><span class="n">l</span> <span class="n">N</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
 <p>You might want to normalize (lowercase) the values to get a more accurate count:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">words</span> <span class="o">-</span><span class="n">l</span> <span class="n">N</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">n</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="n">words</span> <span class="o">-</span><span class="n">l</span> <span class="n">N</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">n</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
 <p>A count and tabulation of verbs addresses the question, “What do the things in the text do?” In this case it is often useful to count and tabulate the verbs’ lemma (root) values:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="o">-</span><span class="n">s</span> <span class="n">lemmas</span> <span class="o">-</span><span class="n">l</span> <span class="n">V</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">n</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">pos</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="n">lemmas</span> <span class="o">-</span><span class="n">l</span> <span class="n">V</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">n</span> <span class="o">|</span> <span class="n">more</span>
 </pre></div>
 </div>
 <p>The vast majority of time, the lemmas “be” and “have” are number 1 and number 2 on such a list. Novels often include the word “say”. Scientific journal articles often include words like “examine” and “measure”.</p>
 <p>Use the output of <code class="docutils literal notranslate"><span class="pre">pos</span></code> to identify words of interest. Use the words as input to <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see how the words are used in context.</p>
 </section>
-<section id="ent">
-<h2>ent<a class="headerlink" href="#ent" title="Permalink to this headline">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">ent</span></code> to output, enumerate, and filter named entity values from your study carrel.</p>
-<p>Think of named entities as even more specific types of nouns. Common types include persons, organizations, places, dates, and times. Given these sorts of values, more accurate newspaper reporter-like questions can be addressed.  Like <code class="docutils literal notranslate"><span class="pre">pos</span></code> and <code class="docutils literal notranslate"><span class="pre">grammars</span></code>, <code class="docutils literal notranslate"><span class="pre">ent</span></code> exploits a (spaCy) language model to make educated guesses at what these values are in your carrel. For example, to count and tabulate the different types of entities in your carrel, enter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ent</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<section id="read">
+<h2>read<a class="headerlink" href="#read" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">read</span></code> subcommand to look through and peruse the contents of a local or remote study carrel. Two examples include:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">read</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">read</span> <span class="n">homer</span> <span class="o">-</span><span class="n">l</span> <span class="n">remote</span>
 </pre></div>
 </div>
-<p>If you wanted to count &amp; tabulate the names of people in your carrel, then try:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ent</span> <span class="o">-</span><span class="n">s</span> <span class="n">entity</span> <span class="o">-</span><span class="n">l</span> <span class="n">PERSON</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-</pre></div>
-</div>
-<p>The same things can be done for places and locations:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ent</span> <span class="o">-</span><span class="n">s</span> <span class="n">entity</span> <span class="o">-</span><span class="n">l</span> <span class="n">GPE</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-<span class="n">rdr</span> <span class="n">ent</span> <span class="o">-</span><span class="n">s</span> <span class="n">entity</span> <span class="o">-</span><span class="n">l</span> <span class="n">LOC</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-</pre></div>
-</div>
-<p>The returned values are not always accurate, but in this vein, “Do not let the perfect be the enemy of the good.” While computers are pretty stupid, they can make educated guesses.</p>
-<p>Use the output of <code class="docutils literal notranslate"><span class="pre">ent</span></code> as input to <code class="docutils literal notranslate"><span class="pre">concordance</span></code> to see how entities of interest are used in context.</p>
-<p>For extra credit, export things like people or places to a file. Programmatically look up those values in an encyclopedia or gazateer to get birth dates, death dates, or geographic coordinates. From the results, create a timeline or map. The results will illustrate characteristics of your carrel not immediately apparent.</p>
+<p>Study carrels are data sets. A subset of the datasets are HTML files intended for traditional reading purposes. These HTML files are narrative in nature but there are a number of interactive tables as well. The use of the <code class="docutils literal notranslate"><span class="pre">read</span></code> subcommand is a great way to become familiar with a study carrel’s provenance, breadth, depth, and content.</p>
 </section>
-<section id="grammars">
-<h2>grammars<a class="headerlink" href="#grammars" title="Permalink to this headline">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">grammars</span></code> to output parts of sentences matching language patterns – grammars.</p>
-<p>Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.</p>
-<p>In order to exploit grammars, a specific (spaCy) language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be quite a time consuming process. The Toolbox will do this work, if it has not already been done.</p>
-<p>The Toolbox supports four different grammars. The first is subject-verb-object (svo) – rudimentary sentences.  To extract svo-like fragments from a given study carrel, enter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span>
+<section id="readability">
+<h2>readability<a class="headerlink" href="#readability" title="Permalink to this headline">¶</a></h2>
+<p>Readability is another type of extent, and use the <code class="docutils literal notranslate"><span class="pre">readability</span></code> subcommand to learn how difficult an item may (or may not) be easy to comprehend. By default, this command will output a tab-delimited list of identifiers and readability scores in descending order:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">readability</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>The result is usually lengthy, and consequently you may want to pipe the results through to a pager such as “more”:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
+<p>Each score ought to be an integer between 0 and 100, where 0 means nobody can read the item and 100 means anybody can read the item. Readability (Flesch) scores takes into account things like: number of words, number of sentences, lengths of sentences, and lengths of words.</p>
+<p>You change the output so it is sorted by identifier:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">readability</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="nb">id</span>
 </pre></div>
 </div>
-<p>The default grammar (svo) can be explicitly articulated on the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">svo</span> <span class="n">homer</span>
+<p>Visualize the whole as a boxplot or histogram, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">readability</span> <span class="n">homer</span> <span class="o">-</span><span class="n">o</span> <span class="n">histogram</span>
 </pre></div>
 </div>
-<p>The other three grammars include:</p>
-<ol class="arabic simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">nouns</span></code> - all nouns and noun chunks</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">quotes</span></code> - things people say</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">sss</span></code> - semi-structured sentences; this is the most complicated grammar</p></li>
-</ol>
-<p>To list all the nouns and noun chunks in a carrel, enter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>To list all the direct quotes in a carrel, enter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">quotes</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>Semi-structured sentences (sss) are the most complicated grammar, and it requires at least one additional option, <code class="docutils literal notranslate"><span class="pre">-n</span></code> where the value is some sort of noun. This grammar provides for an additional option, <code class="docutils literal notranslate"><span class="pre">-l</span></code> for the lemma of a verb. By default, the value of <code class="docutils literal notranslate"><span class="pre">-l</span></code> is the lemma “be”. Thus, to list all sentence fragments where the subject of the sentences is “war”, and the predicate is a form of “be”, enter:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">war</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>The following command is equivalent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">war</span> <span class="o">-</span><span class="n">l</span> <span class="n">be</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>Using the semi-structured grammars is sometimes more accurate than filtering concordances. For example, in Homer’s works, one can ask, “What are horses?”</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">sss</span> <span class="o">-</span><span class="n">n</span> <span class="n">horses</span> <span class="o">-</span><span class="n">l</span> <span class="n">be</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>Using the <code class="docutils literal notranslate"><span class="pre">-q</span></code> option, the student, researcher, or scholar can filter the output of <code class="docutils literal notranslate"><span class="pre">grammars</span></code>. Like most of the other filters, this one takes a regular expression as an argument. Thus, to filter the <code class="docutils literal notranslate"><span class="pre">svo</span></code> option with the letters l-o-v-e, try:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">svo</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>The same thing can be quite useful when it comes to the <code class="docutils literal notranslate"><span class="pre">noun</span></code> grammar:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>As well as the <code class="docutils literal notranslate"><span class="pre">quotes</span></code> grammar:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">quotes</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">-s</span></code> and <code class="docutils literal notranslate"><span class="pre">-c</span></code> options to make the output more meaningful. The <code class="docutils literal notranslate"><span class="pre">-s</span></code> option sorts the results alphabetically, and by doing so, patterns may emerge. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">s</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-</pre></div>
-</div>
-<p>Similarly, the <code class="docutils literal notranslate"><span class="pre">-c</span></code> option counts and tabulates the results, and this is quite useful for determining what nouns and noun phrases are frequently mentioned in a carrel:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">grammars</span> <span class="o">-</span><span class="n">g</span> <span class="n">nouns</span> <span class="o">-</span><span class="n">c</span> <span class="n">homer</span> <span class="o">|</span> <span class="n">more</span>
-</pre></div>
-</div>
-</section>
-<section id="cluster">
-<h2>cluster<a class="headerlink" href="#cluster" title="Permalink to this headline">¶</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand to get an idea of a given carrel’s homogeneity.</p>
-<p>The Toolbox supports two types of clustering. The first (and default) is <code class="docutils literal notranslate"><span class="pre">dendrogram</span></code> where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>The following command is equivalent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="o">-</span><span class="n">t</span> <span class="n">dendrogram</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>The second type of clustering (<code class="docutils literal notranslate"><span class="pre">cube</span></code>) reduces the carrel to three dimensions and plots the results in a space:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">cluster</span> <span class="o">-</span><span class="n">t</span> <span class="n">cube</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The <code class="docutils literal notranslate"><span class="pre">cluster</span></code> subcommand is also useful when using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> (topic modeling) subcommand, because <code class="docutils literal notranslate"><span class="pre">cluster</span></code> will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result of <code class="docutils literal notranslate"><span class="pre">cluster</span></code> most likely not be very readable.</p>
-</section>
-<section id="tm">
-<h2>tm<a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">tm</span></code> to do topic modeling.</p>
-<p>Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, “What N things is the carrel about, and how might each N thing be described?” But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare’s works about?</p>
-<p>This subcommand builds on the good work venerable MALLET suite of software. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly.</p>
-<p>When using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, start with a small number of topics, say seven, which is the default:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>If there are many overlapping circles in the results, then consider reducing the number of topics:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span>
-</pre></div>
-</div>
-<p>Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span>
-</pre></div>
-</div>
-<p>If you observe words in the output which you deem as useless, then consider using the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand to denote those words as stop words. When running <code class="docutils literal notranslate"><span class="pre">tm</span></code> again, those words ought not be in the output.</p>
-<p>The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span> <span class="o">-</span><span class="n">i</span> <span class="mi">4800</span>
-</pre></div>
-</div>
-<p>Knowing the correct value for <code class="docutils literal notranslate"><span class="pre">-i</span></code> is determined by the size of your carrel, the size of your computer, and your patience.</p>
+<p>As points of reference, Shakespeare’s Sonnets have a high readability score in the 90’s. Based on my experience, many classic novels have readability scores in the 80’s. Scholarly journal articles seem to be in the 70’s. Many blog postings and OCR’ed (optical character recognition) files have lower scores because: 1) blogs come along with all sorts of HTML navigation, and 2) OCR files have a large number of unique (nonsense) words.</p>
 </section>
 <section id="search">
 <h2>search<a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h2>
@@ -535,22 +481,22 @@ cd $(rdr get)
 <p>Given an expression ranging from the simple to the complex, this subcommand will return a list of items from the carrel, and each item will be include authors, titles, summaries, keywords, etc.</p>
 <p>The expression can be quite… expressive. It can be a single word, a phrase, a fielded search, a Boolean operation, and even a nested query. Rudimentary examples follow:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># single word search</span>
-<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="n">love</span>
 
 <span class="c1"># phrase search</span>
-<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;&quot;floods of rain&quot;&#39;</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;&quot;floods of rain&quot;&#39;</span>
 
 <span class="c1"># implicit Boolean intersection (AND)</span>
-<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love justice&#39;</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love justice&#39;</span>
 
 <span class="c1"># explicit Boolean intersection</span>
-<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love AND justice&#39;</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love AND justice&#39;</span>
 
 <span class="c1"># Boolean union (OR)</span>
-<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love OR justice&#39;</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love OR justice&#39;</span>
 
 <span class="c1"># Boolean negation (NOT)</span>
-<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love NOT justice&#39;</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;love NOT justice&#39;</span>
 </pre></div>
 </div>
 <p>Each bibliographic record is made up of many fields, and those fields include:</p>
@@ -567,36 +513,22 @@ cd $(rdr get)
 </ol>
 <p>Each one of these fields can be used in a query, but not all fields will necessarily have values. Additional query examples include:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># keyword search</span>
-<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="n">keyword</span><span class="p">:</span><span class="n">trojans</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="n">keyword</span><span class="p">:</span><span class="n">trojans</span>
 
 <span class="c1"># keyword search with Boolean intersection (AND)</span>
-<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;keyword:trojans AND keyword:hector&#39;</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;keyword:trojans AND keyword:hector&#39;</span>
 
 <span class="c1"># summary search</span>
-<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="n">summary</span><span class="p">:</span><span class="n">war</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="n">summary</span><span class="p">:</span><span class="n">war</span>
 </pre></div>
 </div>
 <p>Queries can also be nested, thus allowing you to override the presidence of Boolean operations:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># nested query</span>
-<span class="n">rdr</span> <span class="n">search</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;(keyword:trojans AND keyword:hector) OR (love AND justice)&#39;</span> <span class="n">homer</span>
+<span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;(keyword:trojans AND keyword:hector) OR (love AND justice)&#39;</span>
 </pre></div>
 </div>
 <p>The words, sentences, and flesch fields are searchable, but their values have been normalized into strings, and therefore mathematical operations are not possible.</p>
 <p>Search results are always returned in a relevancy ranked order. If you need or want to sort, group, or filter the results in some other way, then export the results as a comma-separated value (CSV) file and use your favorite spreadsheet application accordingly.</p>
-</section>
-<section id="collocations">
-<h2>collocations<a class="headerlink" href="#collocations" title="Permalink to this headline">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">collocations</span></code> to identify pairs of co-occuring words, measure their weights, and output the result as a network graph. To paraphrase John Rupert Firth, “You shall know a word by the company it keeps.” This command is yet another way manifest this concept. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">collocations</span> <span class="n">homer</span>
-</pre></div>
-</div>
-<p>After a bit of time, the result will be a little report echoing the input, the size of the resulting graph, and a visualization of said graph. The visualization is merely intended to be a sketch. The student, researcher, or scholar is expected to output the results of this command to a file, open the file into some other application (like Gephi), and create a visualization (enhance the model) from there. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">collocations</span> <span class="n">homer</span> <span class="o">-</span><span class="n">o</span> <span class="n">gml</span> <span class="o">&gt;</span> <span class="n">homer</span><span class="o">.</span><span class="n">gml</span>
-</pre></div>
-</div>
-<p>Just like topic modeling, there is no such thing as the perfect set of inputs; there is no one correct way to collocate a carrel. Instead, play with the input until the output tells a compelling story. I have found that when the number of edges is about 1.5 or 2 times greater than the number of nodes, then the resulting graph can tell an interesting story. As a rule of thumb, for every 200,000 words in a carrel, limit the number of collocations to 1000. Consequently, if your carrel is 400,000 words long, then denote an <code class="docutils literal notranslate"><span class="pre">-l</span></code> (limit) value of 2000.</p>
-<p>Increasing the <code class="docutils literal notranslate"><span class="pre">-w</span></code> (window) value will increase the number of nodes but not necessarily the number of edges. Denoting different <code class="docutils literal notranslate"><span class="pre">-m</span></code> (measure) values will strengthen or weaken the edges between the nodes.</p>
-<p>Of all the subcommands in the Toolbox, this one requires the most finesse. Practices makes perfect.</p>
 </section>
 <section id="semantics">
 <h2>semantics<a class="headerlink" href="#semantics" title="Permalink to this headline">¶</a></h2>
@@ -625,6 +557,37 @@ cd $(rdr get)
 </div>
 <p>Think of semantic indexing this way. When this word, that word, or the other word is used in the corpus, what other words are also used, or what other words are not used.</p>
 <p>Finally, and very importantly, semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than one million words ought to be considered dubious at best. (Melville’s Moby Dick is often considered a long book, and it is only .2 million words long.) Corpora measuring 1.5 million words begins to be amenable. Corpora greater than two million words long ought to be good to go. The larger, the better.</p>
+</section>
+<section id="set">
+<h2>set<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">set</span></code> subcommand to tell the Toolbox two things: 1) the location of your locally cached study carrels, and 2) the location of an external tool called MALLET. For example, to set the location of your local cache of study carrels, enter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span> <span class="o">-</span><span class="n">s</span> <span class="n">local</span>
+</pre></div>
+</div>
+<p>By default, the location of your study carrels is set to <code class="docutils literal notranslate"><span class="pre">reader-library</span></code> in your home directory, but this setting does not take effect until you run <code class="docutils literal notranslate"><span class="pre">set</span></code>. You can move your collection of carrels anywhere you desire. In fact, you might consider having more than one collection. Just tell the Toolbox which cache you want to use.</p>
+<p>When you initially run the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, and if the subsystem called MALLET is not configured, then the Toolbox will download MALLET, save it in your home directory, and automatically update the configuration. Like above, you can move MALLET any where you desire, but you need to tell the Toolbox where it is located:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="nb">set</span> <span class="o">-</span><span class="n">s</span> <span class="n">mallet</span>
+</pre></div>
+</div>
+</section>
+<section id="sizes">
+<h2>sizes<a class="headerlink" href="#sizes" title="Permalink to this headline">¶</a></h2>
+<p>Use this command to learn about the sizes – measured in words – of each item in your carrel. Sizes is a type of extent.</p>
+<p>By default, the <code class="docutils literal notranslate"><span class="pre">sizes</span></code> command outputs a tab-delimited list of carrel identifiers and number of words in descending order:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sizes</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>This will give you an idea of what items are larger as opposed to smaller.</p>
+<p>You can also output the list sorted by identifier:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sizes</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="nb">id</span>
+</pre></div>
+</div>
+<p>This is useful if you need/want to know how large a specific item is.</p>
+<p>You can output the result as a boxplot or a histogram, and this is a good way to compare &amp; contrast the sizes of the items as a whole. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">sizes</span> <span class="n">homer</span> <span class="o">-</span><span class="n">o</span> <span class="n">boxplot</span>
+</pre></div>
+</div>
+<p>As points of reference, the Bible is about .8 million words long. Herman Melville’s Moby Dick is about .2 million words long. Many scholary journal articles and book chapters are about .005 million (5,000) words long.</p>
 </section>
 <section id="sql">
 <h2>sql<a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h2>
@@ -670,26 +633,87 @@ SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE &#39
 <p>The different types of queries are almost limitless, and the key to using the database is less about knowing SQL and more about being able to articulate the type of information one wants to extract.</p>
 <p>For more ideas of how to exploit the database see <code class="docutils literal notranslate"><span class="pre">etc/queries.sql</span></code> found in every study carrel. That file is used to create <code class="docutils literal notranslate"><span class="pre">etc/report.txt</span></code>.</p>
 </section>
-<section id="build">
-<h2>build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">build</span></code> subcommand to create your own study carrels.</p>
-<p>Study carrels can be created from just about any number, type, or format of file, as long as the files are narrative in nature. The Toolbox works well when the number of files is greater than 1 and less than a few thousand. The Toolbox is intended to process scholarly journal articles, books, reports, email messages, etc. The Toolbox exploits a tool called Tika, and Tika makes it possible to extract the underlying text from file formats such as PDF, Word, HTML, PowerPoint, CSV, plain text files, etc. Now-a-days, most people have many PDF files.</p>
-<p>Create a folder/directory on your computer, and put the files you want to read in the folder. It is better if the files have zero spaces in their names. It is best if the file names only contain letters, numbers, dashes (-), underbars (_) and a single dot (.) delimiting a file’s extension. But the files’ names do not really matter.</p>
-<p>When you are ready, build your carrel with the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">build</span> <span class="o">&lt;</span><span class="n">carrel</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">directory</span><span class="o">&gt;</span>
+<section id="summarize">
+<h2>summarize<a class="headerlink" href="#summarize" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="tm">
+<h2>tm<a class="headerlink" href="#tm" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">tm</span></code> to do topic modeling.</p>
+<p>Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, “What N things is the carrel about, and how might each N thing be described?” But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare’s works about?</p>
+<p>This subcommand builds on the good work venerable MALLET suite of software. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly.</p>
+<p>When using the <code class="docutils literal notranslate"><span class="pre">tm</span></code> command, start with a small number of topics, say seven, which is the default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span>
 </pre></div>
 </div>
-<p>Where &lt;carrel&gt; is the name you are giving your study carrel, and &lt;directory&gt; is the location of the folder you just created.</p>
-<p>If this is your first time through, you will have to specify the <code class="docutils literal notranslate"><span class="pre">-s</span></code> (start) option to get Tika up and running, and if the location of Tika has not been configured, then you will prompted to download it.</p>
-<p>It is not uncommon for you to want &lt;carrel&gt; to be recreated. No problem. Use the <code class="docutils literal notranslate"><span class="pre">-e</span></code> (erase) option to delete the existing carrel and put a new one in its place.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">build</span></code> process is complicated, and depending on many things, the <code class="docutils literal notranslate"><span class="pre">build</span></code> process can take less than a minute to more than hour to complete. Most of my carrels, which are usually bigger rather than smaller, finish in less than five minutes.</p>
-<p>Metadata</p>
-<p>Enhance the context of your study carrel by supplementing it with metadata. Believe me, this will make your analysis so much more meaningful. This is accomplished by adding a file named metadata.csv to &lt;directory&gt;. This comma-separated value (CSV) must include at least two columns and one of them must to be named “file”. The Toolbox knows about three other columns: author, title, and date. Use your favorite spreadsheet program to create a table with a column named “file”. In each row, enter the name of a file saved in &lt;directory&gt;. Add additional columns named author, title, and/or date. For each file, add author, title, and/or date values. When done, save the table as a CSV file named metadata.csv, and save it in &lt;directory&gt;. If a metadata.csv file exists in &lt;directory&gt;, then the <code class="docutils literal notranslate"><span class="pre">build</span></code> process will read metadata.csv and associate each of the given files with the associated metadata value(s). Later on, when you are doing your analysis (“reading”), you will be better able to compare &amp; contrast items in &lt;carrel&gt;. For example, you will be able to visualize how different author’s write or how ideas ebb and flow over time. Finally, because is is tedious, creating metadata.csv files can be difficult; learn how to automate the process of creating metadata.csv files.</p>
-<p>Once &lt;carrel&gt; is created, you ought to be able to use any of the other <code class="docutils literal notranslate"><span class="pre">rdr</span></code> commands.</p>
+<p>If there are many overlapping circles in the results, then consider reducing the number of topics:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span>
+</pre></div>
+</div>
+<p>If you observe words in the output which you deem as useless, then consider using the <code class="docutils literal notranslate"><span class="pre">edit</span></code> subcommand to denote those words as stop words. When running <code class="docutils literal notranslate"><span class="pre">tm</span></code> again, those words ought not be in the output.</p>
+<p>The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span> <span class="o">-</span><span class="n">i</span> <span class="mi">4800</span>
+</pre></div>
+</div>
+<p>Knowing the correct value for <code class="docutils literal notranslate"><span class="pre">-i</span></code> is determined by the size of your carrel, the size of your computer, and your patience.</p>
 </section>
-<section id="play">
-<h2>play<a class="headerlink" href="#play" title="Permalink to this headline">¶</a></h2>
-<p>Use this subcommand to play hangman. It is that simple.</p>
+<section id="url">
+<h2>url<a class="headerlink" href="#url" title="Permalink to this headline">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">url</span></code> to list, enumerate, and filter URLs.</p>
+<p>Like the listing of words, persons, or keywords, the listing of URLs can be quite telling when it comes to learning the content of a study carrel. The <code class="docutils literal notranslate"><span class="pre">url</span></code> subcommand facilitates this. Again, Homer’s works include zero URLs, so download a carrel named ital-urls, which includes many:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">download</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span>
+</pre></div>
+</div>
+<p>List all the URLs and pipe them through a pager. They will be sorted alphabetically:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>Many times the domain for a URL is telling, so you can list just those instead:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">s</span> <span class="n">domain</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>There will quite likely be duplicates, so you may want to count and tabulate the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">s</span> <span class="n">domain</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>You can also filter the results with <code class="docutils literal notranslate"><span class="pre">-l</span></code>. So, to count and tabulate URLs like pdf, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">l</span> <span class="n">pdf</span> <span class="o">-</span><span class="n">c</span> <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>Besides using the URLs to help you learn about your carrel, you can also use <code class="docutils literal notranslate"><span class="pre">url</span></code> to assist you in acquiring additional content. For example, first filter the URLs for “pdf” and output the result to a file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">url</span> <span class="n">ital</span><span class="o">-</span><span class="n">urls</span> <span class="o">-</span><span class="n">l</span> <span class="n">pdf</span> <span class="o">&gt;</span> <span class="n">pdfs</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Then use pdfs.txt as input to a mass downloader to actually get the content. For example, use the venerable wget command</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="o">-</span><span class="n">i</span> <span class="n">pdfs</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>Consider also using the output of <code class="docutils literal notranslate"><span class="pre">urls</span></code> as input to the Distant Reader; create a new study carrel using the URLs identified in a carrel.</p>
+<p>Finally, some of the URLs extracted from the underlying plain text are quite ugly, if not down-right invalid. Please remember, “Do not let the perfect be the enemy of the good.” Moreover, keep in mind that URLs very frequently break, go stale, or require authentication. Such is not uncommon. Also, increasingly, URLs pointing to scholarly journal articles do not really point to journal articles. Instead, they point to “splash” or “landing” pages which then force you to find the link to the article, and even then the student, researcher, or scholar may not get the item in question, but a viewer instead. Your milage may vary.</p>
+</section>
+<section id="web">
+<h2>web<a class="headerlink" href="#web" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="wrd">
+<h2>wrd<a class="headerlink" href="#wrd" title="Permalink to this headline">¶</a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">wrd</span></code> subcommand to count and tabulate the statistically significant keywords from your carrel.</p>
+<p>Statistically significant keywords can be computed from a given text by comparing each word’s frequency with the frequency of other words and the size of the given text. The resulting words are often a good way to denote a text’s “aboutness”. The Distant Reader did such computing, saved the results in your carrel, and this command reports on those values. For example, to list all the statistically significant keywords, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">wrd</span> <span class="n">homer</span>
+</pre></div>
+</div>
+<p>More often than not, you will want to count &amp; tabulate the results. Thus, you ought to use the <code class="docutils literal notranslate"><span class="pre">-c</span></code> flag, like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">homer</span> <span class="n">wrd</span> <span class="o">-</span><span class="n">c</span>
+</pre></div>
+</div>
+<p>The result may be quite long, and consequently you will want to pipe the result through your pager:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">homer</span> <span class="n">wrd</span> <span class="o">-</span><span class="n">c</span>  <span class="o">|</span> <span class="n">more</span>
+</pre></div>
+</div>
+<p>Scan the list for words of personal interest, and use those words as input to the <code class="docutils literal notranslate"><span class="pre">concordance</span></code> subcommand.</p>
+<p>See  <a class="reference external" href="./structure.html">Structure of a study carrel</a> to learn the layout of a study carrel.</p>
 </section>
 </section>
 
@@ -716,37 +740,46 @@ SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE &#39
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Commands in depth</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#set">set</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#get">get</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#catalog">catalog</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#read">read</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#browse">browse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#download">download</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#info">info</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#bib">bib</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sizes">sizes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#readability">readability</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ngrams">ngrams</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#edit">edit</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#concordance">concordance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#about">about</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adr">adr</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#url">url</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#wrd">wrd</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pos">pos</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ent">ent</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#grammars">grammars</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cluster">cluster</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tm">tm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#search">search</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#collocations">collocations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#semantics">semantics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sql">sql</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bib">bib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#browse">browse</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#build">build</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#catalog">catalog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cluster">cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#collocations">collocations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#concordance">concordance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#download">download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edit">edit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ent">ent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#get">get</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grammars">grammars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#info">info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ngrams">ngrams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#notebooks">notebooks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#play">play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pos">pos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#read">read</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#readability">readability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search">search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#semantics">semantics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#set">set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sizes">sizes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sql">sql</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summarize">summarize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tm">tm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#url">url</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#web">web</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wrd">wrd</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure of a study carrel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quips.html">Quips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecase-tm.html">Use case: Topic modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecase-collocations.html">Use case: Network graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecase-dhq.html">Use case: Reading DHQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helpers.html">Helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Supporting software</a></li>
 <li class="toctree-l1"><a class="reference internal" href="more.html">More to come</a></li>
 <li class="toctree-l1"><a class="reference internal" href="author.html">About the author</a></li>
@@ -757,7 +790,7 @@ SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE &#39
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="tutorial.html" title="previous chapter">Tutorial</a></li>
-      <li>Next: <a href="usecase-tm.html" title="next chapter">Use case: Topic modeling</a></li>
+      <li>Next: <a href="structure.html" title="next chapter">Structure of a study carrel</a></li>
   </ul></li>
 </ul>
 </div>
@@ -784,7 +817,7 @@ SELECT COUNT( LOWER( lemma ) ) AS c, LOWER( lemma ) FROM pos WHERE pos LIKE &#39
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2022, University of Notre Dame.
+      &copy;2023, University of Notre Dame.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>

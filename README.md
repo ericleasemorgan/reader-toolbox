@@ -2,7 +2,7 @@
 
 # Distant Reader Toolbox
 
-A command-line interface for interacting with [Distant Reader](https://distantreader.org) study carrels
+A command-line interface for creating and interacting with [Distant Reader](https://distantreader.org) study carrels
 
 
 ## Installation
@@ -15,7 +15,7 @@ A command-line interface for interacting with [Distant Reader](https://distantre
 
 ```  
   # configure; accept the default
-  rdr set -s local
+ rdr set -s local
 
   # add an item to your library
   rdr download homer
@@ -27,22 +27,22 @@ A command-line interface for interacting with [Distant Reader](https://distantre
   rdr ngrams homer
 
   # list all bigrams
-  rdr ngrams -s 2 homer
+  rdr ngrams homer -s 2
 
   # list all bigrams and count them
-  rdr ngrams -s 2 -c homer
+  rdr ngrams homer -s 2 -c
 
   # search
   rdr concordance homer
 
   # search again, but specify a query
-  rdr concordance -q war homer
+  rdr concordance homer -q war
 
   # list subject-verb-object fragments; please be patient
   rdr grammars homer
 
   # list noun phrases
-  rdr grammars -g nouns homer
+  rdr grammars homer -g nouns
 
   # cluster; do the items in the carrel group themselves?
   rdr cluster homer
@@ -65,7 +65,7 @@ A command-line interface for interacting with [Distant Reader](https://distantre
 
 ## Description and background
 
-The Reader Toolbox -- run from the command-line as ``rdr`` -- is designed to interact with Distant Reader study carrels. Using the Toolbox you can things such as but not limited to:
+The Reader Toolbox -- run from the command-line as ``rdr`` -- is designed to create and interact with Distant Reader study carrels. Using the Toolbox you can do things such as but not limited to:
 
    * search and browse the collection of more than 3,000 publicly available study carrels
    * download study carrels from the public collection and add them to your own collection
@@ -73,7 +73,10 @@ The Reader Toolbox -- run from the command-line as ``rdr`` -- is designed to int
    * apply concordancing (keyword-in-context searching) against study carrels
    * apply topic modeling (extracting latent themes) against study carrels
    * extract information from your study carrels matching specific grammars
+   * create your own study carrels
    * and more
+
+In the end, the Toolbox empowers you to read, use, and understand large volumes of text quickly and easily.
 
 ## Links
 
@@ -84,4 +87,4 @@ The Reader Toolbox -- run from the command-line as ``rdr`` -- is designed to int
 
 ---
 Eric Lease Morgan &lt;emorgan@nd.edu&gt;  
-April 15, 2022
+January 5, 2023

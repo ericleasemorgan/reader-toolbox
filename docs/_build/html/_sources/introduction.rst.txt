@@ -38,3 +38,6 @@ For more information see:
 3. the home page of the Distant Reader (https://distantreader.org)
 
 Embrace information overload. Use the Distant Reader.
+
+See  `Installation <./installation.html>`_ and learn how to install the Toolbox.
+

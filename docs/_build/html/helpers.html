@@ -16,7 +16,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Supporting software" href="software.html" />
-    <link rel="prev" title="Use case: Network graphs" href="usecase-collocations.html" />
+    <link rel="prev" title="Use case: Reading DHQ" href="usecase-dhq.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -35,13 +35,16 @@
             
   <section id="helpers">
 <h1>Helpers<a class="headerlink" href="#helpers" title="Permalink to this headline">¶</a></h1>
-<p>This is a fledgling list of helper applications/scripts used in conjunction with the Toolbox. Your milage will vary:</p>
+<p>This is a list of helper applications/scripts that can be used to create or analyze study carrels:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p><a class="reference external" href="https://github.com/ericleasemorgan/folder2metadata">folder2metadata</a> - Given a directory, output a CSV file suitable for the Reader</p></li>
-<li><p><a class="reference external" href="https://github.com/ericleasemorgan/htid2books">htid2books</a> - Given an access key, secret token, and a HathiTrust identifier, output plain text as well as PDF versions of a book.</p></li>
-<li><p><a class="reference external" href="https://github.com/ericleasemorgan/mbox2reader">mbox2reader</a> - Given a few configurations, read an mbox file, and output a file system amenable to the Reader</p></li>
-<li><p><a class="reference external" href="https://github.com/ericleasemorgan/txt2chapters">txt2chapters</a> - Given a plain text file delimited by a patter, output “DIRECTORY”</p></li>
+<li><p><a class="reference external" href="https://www.laurenceanthony.net/software/antconc/">AntConc</a> - A robust, GUI, cross-platform concordance application; very useful!</p></li>
+<li><p><a class="reference external" href="https://github.com/ericleasemorgan/folder2metadata">folder2metadata</a> - Given a directory, this Python script outputs a CSV file suitable for the Reader</p></li>
+<li><p><a class="reference external" href="https://github.com/ericleasemorgan/htid2books">htid2books</a> - Given an access key, secret token, and a HathiTrust identifier, this set of Bash/Perl scripts output plain text as well as PDF versions of a book.</p></li>
+<li><p><a class="reference external" href="https://github.com/ericleasemorgan/mbox2reader">mbox2reader</a> - Given a few configurations, this Python script read an mbox file, and outputs a file system amenable to the Reader</p></li>
+<li><p><a class="reference external" href="https://openrefine.org">OpenRefine</a> - A wonderful, GUI, cross-platform tool for reading, normalizing, and analyzing tabular data; takes practice but pays off in the end</p></li>
+<li><p><a class="reference external" href="https://github.com/ericleasemorgan/txt2chapters">txt2chapters</a> - Given a plain text file, a pattern, and a directory, this Perl script subdivides the file into chapters saved in the directory</p></li>
+<li><p><a class="reference external" href="https://web.archive.org/web/20191115162244/http://www.wordle.net/">Wordle</a> - No, not the popular word game but instead a GUI application for generating word clouds; found in the Internet Archives Wayback Machine</p></li>
 </ol>
 </div></blockquote>
 </section>
@@ -69,8 +72,11 @@
 <li class="toctree-l1"><a class="reference internal" href="quick-start.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands in depth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure of a study carrel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quips.html">Quips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecase-tm.html">Use case: Topic modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecase-collocations.html">Use case: Network graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecase-dhq.html">Use case: Reading DHQ</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Helpers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Supporting software</a></li>
 <li class="toctree-l1"><a class="reference internal" href="more.html">More to come</a></li>
@@ -81,7 +87,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="usecase-collocations.html" title="previous chapter">Use case: Network graphs</a></li>
+      <li>Previous: <a href="usecase-dhq.html" title="previous chapter">Use case: Reading DHQ</a></li>
       <li>Next: <a href="software.html" title="next chapter">Supporting software</a></li>
   </ul></li>
 </ul>
@@ -109,7 +115,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2022, University of Notre Dame.
+      &copy;2023, University of Notre Dame.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>

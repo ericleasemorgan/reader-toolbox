@@ -156,5 +156,6 @@ Now that you have gotten this far, see `Commands in depth <./commands.html>`_ fo
 
 Happy reading!
 
+See  `Commands in depth <./commands.html>`_ to read about each command in the Toolbox.
 
 

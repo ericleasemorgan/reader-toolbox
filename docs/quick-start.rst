@@ -81,5 +81,6 @@ This is a quick start for using the Toolbox, sans very much elaboration: ::
   # find a lot of love
   rdr concordance sonnets -q love 
 
+See  `Tutorial <./tutorial.html>`_ to learn how to use the Toolbox in greater detail.
 
 

@@ -1,33 +1,121 @@
 Commands in depth
 =================
 
-This section describes each Toolbox command in greater detail. They are listed, more or less, in the order they ought to be executed when wanting to do your analysis.
+This section describes each Toolbox command in greater detail. They are listed in alphabetical order.
 
-set
+about
+-----
+
+Use this command -- ``about`` -- to ouput the tiniest of descriptions of the Toolbox: ::
+
+  rdr about
+
+
+adr
 ---
 
-Use the ``set`` subcommand to tell the Toolbox two things: 1) the location of your locally cached study carrels, and 2) the location of an external tool called MALLET. For example, to set the location of your local cache of study carrels, enter: ::
+The ``adr`` subcommand is used to output email addresses.
 
-  rdr set -s local
+As a study carrel is created, the Distant Reader will look for email addresses in the content. Use this command to enumerate and filter those addresses. But alas, the works of Homer include zero email addresses. Consequently, download a different carrel which does, for example, part of a run of an electronic journal named Information Technology and Libraries: ::
 
-By default, the location of your study carrels is set to ``reader-library`` in your home directory, but this setting does not take effect until you run ``set``. You can move your collection of carrels anywhere you desire. In fact, you might consider having more than one collection. Just tell the Toolbox which cache you want to use.
+  rdr download ital-urls
 
-When you initially run the ``tm`` command, and if the subsystem called MALLET is not configured, then the Toolbox will download MALLET, save it in your home directory, and automatically update the configuration. Like above, you can move MALLET any where you desire, but you need to tell the Toolbox where it is located: ::
+You can now list email addresses: ::
 
-  rdr set -s mallet
+  rdr adr ital-urls
+
+The ``adr`` subcommand does not echo the same address multiple times, but an address may very well occur more than once. To see how many times addresses occur, use the ``-c`` flag: ::
+
+  rdr adr ital-urls -c 
+
+The student, researcher, or scholar can filter the addresses with ``-l`` which is short for the LIKE operator in SQL. For example, to list all the addresses like ".com", use this: ::
+
+  rdr adr ital-urls -l .com
+
+And/or count the result: ::
+
+  rdr adr ital-urls -c -l .com
+
+Use the output of ``adr`` responsibly. You know what I mean.
 
 
-get
+bib
 ---
 
-Use ``get`` to echo the values denoting the location of your local cache of study carrels as well as the location of MALLET. More than anything, this command is used for debugging purposes. 
+Use the ``bib`` subcommand to list the bibliographic characteristics of each item in your carrel. The result is a sort of bibliography: ::
 
-People using Linux or Macintosh computers can run the following command, and the result will change the working directory to the location of the local cache of study carrels: ::
+  rdr bib homer
 
-  # change directories to local collection of carrels
-  cd $(rdr get)
+The result will be quite long, and thus, you may want to pipe the result through your pager, like "more": ::
 
-This makes it easier to manage your local collection, and it will also make command line completion easier. There is most likely a similar command for people using Windows computers, and I will give $5 to the first person who tells me what the command is. Really. I promise.
+  rdr bib homer | more
+  
+Each item will include the following fields, but not all the fields will have values:
+
+1. item - a running integer denoting where the item is in the list as a whole
+2. id - the unique identifier of the item, a very important value, a sort of key
+3. author - the creator of the item; this field may not have a value
+4. title - the title of the item; for a variety of reasons, this field may echo the value of id
+5. date - the date when the item was created; this field may not have a value
+6. words - an integer denoting the size of the document measured in words
+7. flesch - an integer denoting the work's readability score; values closer to 100 are easier to read
+8. summary - a computed narative describing the work
+9. keyword - a list of statistically significant keywords, akin to subject headings
+10. cache - the full path of the original item on your file system
+11. plain text - the full path of the plain text version of the original item; all analysis was done against this file
+
+The author and date fields may not have values, and the value of title may be the value of id. This is because it is very difficult to automatically extract author, title, and date values from the original content, the content denoted by the value of cache. The original content may have been manifested as a PDF file, a Microsoft Word document, an HTML file, etc. Each of these file formats include placeholders for author, title, and data values, but the placeholders may not have values. The Distant Reader does its best to determine the values of author, title, and date, but if no values are present then author and date are left empty, and the value of title is denoted as the value of id. All the other values in the bibliography are computable, and consequently they have values.
+
+There are many different ways the output of ``bib`` can be used. One of the quickest and easiest is to use it to use the value of plain text as input to their operating system's pager command -- like "more" or "less". This enables you to read the file in the traditional manner. On my computer, an example includes: ::
+
+  more /Users/eric/Documents/reader-library/homer/txt/homer-odyssey_24.txt
+
+Additionally, the student, researcher, or scholar may observe the values in the keyword field, and then use the ``search`` subcommand (described below), to identify other documents about the same topic.
+
+
+browse
+------
+
+The ``browse`` subcommand is very similar to ``read`` but the view of the study carrel is more akin to perusing a computer's directory structure. Using the ``browse`` command against a remote study carrel returns a manifest, a sort of directory listing. For example: ::
+
+  rdr browse -l remote homer
+
+Using ``browse`` on a carrel in your local collection is facilitated through a terminal-based Web browser called Lynx. Don't laugh. Lynx is full-fledged browser. It just does not support Javascript. There are many things Lynx can do that Chrome, Safari, nor FireFox can. For example, it can open files with non-standard file extensions, such as pos, ent, or wrd.
+
+If you do not have Lynx installed, then consider using your computer's native tools to browse your collection. Remember, 99% of the files in a study carrel are plain text files, and you can open them in your word processor, text editor, spreadsheet, or database program.
+
+When doing your analysis, it is very important to become familiar with your data. The purposes of ``read`` and ``browse`` are complementary, and they go a long way to helping you answer your research questions.
+
+
+build
+-----
+
+Use the ``build`` subcommand to create your own study carrels.
+
+Study carrels can be created from just about any number, type, or format of file, as long as the files are narrative in nature. The Toolbox works well when the number of files is greater than 1 and less than a few thousand. The Toolbox is intended to process scholarly journal articles, books, reports, email messages, etc. The Toolbox exploits a tool called Tika, and Tika makes it possible to extract the underlying text from file formats such as PDF, Word, HTML, PowerPoint, CSV, plain text files, etc. Now-a-days, most people have many PDF files. 
+
+Create a folder/directory on your computer, and put the files you want to read in the folder. It is better if the files have zero spaces in their names. It is best if the file names only contain letters, numbers, dashes (-), underbars (_) and a single dot (.) delimiting a file's extension. But the files' names do not really matter.
+
+When you are ready, build your carrel with the following command: ::
+
+  rdr build <carrel> <directory>
+
+Where <carrel> is the name you are giving your study carrel, and <directory> is the location of the folder you just created. 
+
+If this is your first time through, you will have to specify the ``-s`` (start) option to get Tika up and running, and if the location of Tika has not been configured, then you will prompted to download it.
+
+It is not uncommon for you to want <carrel> to be recreated. No problem. Use the ``-e`` (erase) option to delete the existing carrel and put a new one in its place.
+
+The ``build`` process is complicated, and depending on many things, the ``build`` process can take less than a minute to more than hour to complete. Most of my carrels, which are usually bigger rather than smaller, finish in less than five minutes. 
+
+Metadata
+
+Enhance the context of your study carrel by supplementing it with metadata. Believe me, this will make your analysis so much more meaningful. This is accomplished by adding a file named metadata.csv to <directory>. This comma-separated value (CSV) must include at least two columns and one of them must to be named "file". The Toolbox knows about three other columns: author, title, and date. Use your favorite spreadsheet program to create a table with a column named "file". In each row, enter the name of a file saved in <directory>. Add additional columns named author, title, and/or date. For each file, add author, title, and/or date values. When done, save the table as a CSV file named metadata.csv, and save it in <directory>. If a metadata.csv file exists in <directory>, then the ``build`` process will read metadata.csv and associate each of the given files with the associated metadata value(s). Later on, when you are doing your analysis ("reading"), you will be better able to compare & contrast items in <carrel>. For example, you will be able to visualize how different author's write or how ideas ebb and flow over time. Finally, because is is tedious, creating metadata.csv files can be difficult; learn how to automate the process of creating metadata.csv files. 
+
+Once <carrel> is created, you ought to be able to use any of the other ``rdr`` commands.
+
+
+
 
 
 catalog
@@ -70,29 +158,89 @@ Finally, you might also consider outputting the catalog to a file, like this: ::
 You can then open ``catalog.tsv`` in your favorite spreadsheet application and from there you can search, filter, sort, and group.
 
 
-read
-----
+cluster
+-------
 
-Use the ``read`` subcommand to look through and peruse the contents of a local or remote study carrel. Two examples include: ::
+Use the ``cluster`` subcommand to get an idea of a given carrel's homogeneity. 
 
-  rdr read homer
-  rdr read homer -l remote 
+The Toolbox supports two types of clustering. The first (and default) is ``dendrogram`` where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example: ::
 
-Study carrels are data sets. A subset of the datasets are HTML files intended for traditional reading purposes. These HTML files are narrative in nature but there are a number of interactive tables as well. The use of the ``read`` subcommand is a great way to become familiar with a study carrel's provenance, breadth, depth, and content. 
+  rdr cluster homer
+
+The following command is equivalent: ::
+
+  rdr cluster homer -t dendrogram 
+
+The second type of clustering (``cube``) reduces the carrel to three dimensions and plots the results in a space: ::
+
+  rdr cluster homer -t cube 
+
+If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the ``cluster`` subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The ``cluster`` subcommand is also useful when using the ``tm`` (topic modeling) subcommand, because ``cluster`` will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result of ``cluster`` most likely not be very readable.
 
 
-browse
-------
+collocations
+------------
 
-The ``browse`` subcommand is very similar to ``read`` but the view of the study carrel is more akin to perusing a computer's directory structure. Using the ``browse`` command against a remote study carrel returns a manifest, a sort of directory listing. For example: ::
+Use ``collocations`` to identify pairs of co-occuring words, measure their weights, and output the result as a network graph. To paraphrase John Rupert Firth, "You shall know a word by the company it keeps." This command is yet another way manifest this concept. For example: ::
 
-  rdr browse -l remote homer
+  rdr collocations homer
 
-Using ``browse`` on a carrel in your local collection is facilitated through a terminal-based Web browser called Lynx. Don't laugh. Lynx is full-fledged browser. It just does not support Javascript. There are many things Lynx can do that Chrome, Safari, nor FireFox can. For example, it can open files with non-standard file extensions, such as pos, ent, or wrd.
+After a bit of time, the result will be a little report echoing the input, the size of the resulting graph, and a visualization of said graph. The visualization is merely intended to be a sketch. The student, researcher, or scholar is expected to output the results of this command to a file, open the file into some other application (like Gephi), and create a visualization (enhance the model) from there. For example: ::
 
-If you do not have Lynx installed, then consider using your computer's native tools to browse your collection. Remember, 99% of the files in a study carrel are plain text files, and you can open them in your word processor, text editor, spreadsheet, or database program.
+  rdr collocations homer -o gml > homer.gml
 
-When doing your analysis, it is very important to become familiar with your data. The purposes of ``read`` and ``browse`` are complementary, and they go a long way to helping you answer your research questions.
+Just like topic modeling, there is no such thing as the perfect set of inputs; there is no one correct way to collocate a carrel. Instead, play with the input until the output tells a compelling story. I have found that when the number of edges is about 1.5 or 2 times greater than the number of nodes, then the resulting graph can tell an interesting story. As a rule of thumb, for every 200,000 words in a carrel, limit the number of collocations to 1000. Consequently, if your carrel is 400,000 words long, then denote an ``-l`` (limit) value of 2000. 
+
+Increasing the ``-w`` (window) value will increase the number of nodes but not necessarily the number of edges. Denoting different ``-m`` (measure) values will strengthen or weaken the edges between the nodes. 
+
+Of all the subcommands in the Toolbox, this one requires the most finesse. Practices makes perfect.
+
+
+
+concordance
+-----------
+
+Developed in the 13th century, concordances are the oldest form of text mining, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man's search engine. Iteratively use the ``concordance`` command as you cycle through the use of the other commands.
+
+Use ``concordance`` to see what words are used in the same breath as a given word. Used without any options, the ``concordance`` tool will query the given carrel for the word "love", and the result will be a number of lines where each line contains about 40 characters prior to the word "love", the word "love", and about 40 characters after the word "love": ::
+
+  rdr concordance homer
+  
+You can query (filter) the results with the ``-q`` option, and the query must be a word or phrase, not a regular expression. Thus, the following command is identical to the default: ::
+
+  rdr concordance homer -q love 
+
+Alternatively, the query can be a phrase, and it is often interesting to associate a noun with a verb, such as: ::
+
+  rdr concordance homer -q "war is" 
+
+Or: ::
+
+  rdr concordance -q "hector had" homer
+
+By default, ``concordance`` will output as many 999 lines. Using the ``-l`` option you can configure the number of lines. For example, to output only 5 lines, try: ::
+
+  rdr concordance homer -l 5 
+  
+You can also configure the size of each line's width -- the number of characters on either side of the query. To see very short snippets, try: ::
+
+  rdr concordance homer -w 24 
+
+It is useful to first exploit the ``ngrams`` command to identify words or phrases of interest, then use the results as input for the ``concordance`` command. The same thing holds true for many of the other commands; use the other subcommands to identify words of interest, and then use ``concordance`` to see how they are used in context.
+
+Like many of the other subcommands, the output of ``concordance`` is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results of ``concordance`` to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results: ::
+
+  rdr concordance homer > homer.txt
+  
+Initially, the cloud will be dominated by the value of ``-q``, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.
+
+documentation
+-------------
+
+This command merely opens up your computer's Web browser and sends it off to the Toolbox's documentation: ::
+
+  rdr documentation
+
 
 
 download
@@ -105,6 +253,129 @@ The ``download`` command is used to cache a study carrel from the public collect
 If you have not configured the Toolbox to denote the location of your local cache, then this operation will gracefully fail. You will then be prompted to make the configuration.
 
 Unlike traditional libraries, once you check something out of the Reader's library, you do not have to return it. :)
+
+
+edit
+----
+
+Use the ``edit`` command to modify the given carrel's stop word list. For example: ::
+
+  rdr edit homer
+
+Each study carrel comes with a stop word list located at ``etc/stopwords.txt``. This list is taken into account whenever the ``ngram``, ``tm``, or ``semantics`` subcommands are executed. Through your reading, you may observe words which are meaningless to your investigations. Conversely, you may identify words which do not appear, and you believe they should. Thus, you may want to modify the stop word list. 
+
+Given a carrel's name, this command will read your computer's environment, determine what text editor you have defined as the default, launch that editor, and open the stop words file. Use the result to add or subtract from the list, and save the file.  When you run ``ngrams``, ``tm``, ``semantics`` again, the results ought to be cleaner. 
+
+It is not necessary to use the ``edit`` subcommand to process your list of stop words. You can use just about any editor you desire, but it is imperative that you save the result as a plain text file and its name must be ``stopwords.txt``.
+
+
+ent
+---
+
+Use ``ent`` to output, enumerate, and filter named entity values from your study carrel.
+
+Think of named entities as even more specific types of nouns. Common types include persons, organizations, places, dates, and times. Given these sorts of values, more accurate newspaper reporter-like questions can be addressed.  Like ``pos`` and ``grammars``, ``ent`` exploits a (spaCy) language model to make educated guesses at what these values are in your carrel. For example, to count and tabulate the different types of entities in your carrel, enter: ::
+
+  rdr ent homer -c | more
+  
+If you wanted to count & tabulate the names of people in your carrel, then try: ::
+
+  rdr ent homer -s entity -l PERSON -c | more
+
+The same things can be done for places and locations: ::
+
+  rdr ent homer -s entity -l GPE -c | more
+  rdr ent homer -s entity -l LOC -c | more
+
+The returned values are not always accurate, but in this vein, "Do not let the perfect be the enemy of the good." While computers are pretty stupid, they can make educated guesses. 
+
+Use the output of ``ent`` as input to ``concordance`` to see how entities of interest are used in context.
+
+For extra credit, export things like people or places to a file. Programmatically look up those values in an encyclopedia or gazateer to get birth dates, death dates, or geographic coordinates. From the results, create a timeline or map. The results will illustrate characteristics of your carrel not immediately apparent. 
+
+
+
+get
+---
+
+Use ``get`` to echo the values denoting the location of your local cache of study carrels as well as the location of MALLET. More than anything, this command is used for debugging purposes. 
+
+People using Linux or Macintosh computers can run the following command, and the result will change the working directory to the location of the local cache of study carrels: ::
+
+  # change directories to local collection of carrels
+  cd $(rdr get)
+
+This makes it easier to manage your local collection, and it will also make command line completion easier. There is most likely a similar command for people using Windows computers, and I will give $5 to the first person who tells me what the command is. Really. I promise.
+
+
+grammars
+--------
+
+Use ``grammars`` to output parts of sentences matching language patterns -- grammars.
+
+Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.
+
+In order to exploit grammars, a specific (spaCy) language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be quite a time consuming process. The Toolbox will do this work, if it has not already been done.
+
+The Toolbox supports four different grammars. The first is subject-verb-object (svo) -- rudimentary sentences.  To extract svo-like fragments from a given study carrel, enter: ::
+
+  rdr grammars homer
+
+The result is usually lengthy, and consequently you may want to pipe the results through to a pager such as "more": ::
+
+  rdr grammars homer | more
+  
+The default grammar (svo) can be explicitly articulated on the command line: ::
+
+  rdr grammars homer -g svo 
+  
+The other three grammars include:
+
+1. ``nouns`` - all nouns and noun chunks
+2. ``quotes`` - things people say
+3. ``sss`` - semi-structured sentences; this is the most complicated grammar
+
+To list all the nouns and noun chunks in a carrel, enter: ::
+
+  rdr grammars homer -g nouns 
+
+To list all the direct quotes in a carrel, enter: ::
+
+  rdr grammars homer -g quotes 
+  
+Semi-structured sentences (sss) are the most complicated grammar, and it requires at least one additional option, ``-n`` where the value is some sort of noun. This grammar provides for an additional option, ``-l`` for the lemma of a verb. By default, the value of ``-l`` is the lemma "be". Thus, to list all sentence fragments where the subject of the sentences is "war", and the predicate is a form of "be", enter: ::
+
+  rdr grammars homer -g sss -n war 
+
+The following command is equivalent: ::
+
+  rdr grammars homer -g sss -n war -l be 
+  
+Using the semi-structured grammars is sometimes more accurate than filtering concordances. For example, in Homer's works, one can ask, "What are horses?" ::
+
+  rdr grammars homer -g sss -n horses -l be 
+
+Using the ``-q`` option, the student, researcher, or scholar can filter the output of ``grammars``. Like most of the other filters, this one takes a regular expression as an argument. Thus, to filter the ``svo`` option with the letters l-o-v-e, try: ::
+
+  rdr grammars homer -g svo -q love 
+  
+The same thing can be quite useful when it comes to the ``noun`` grammar: ::
+
+  rdr grammars homer -g nouns -q love 
+  
+As well as the ``quotes`` grammar: ::
+
+  rdr grammars homer -g quotes -q love 
+
+Use the ``-s`` and ``-c`` options to make the output more meaningful. The ``-s`` option sorts the results alphabetically, and by doing so, patterns may emerge. For example: ::
+
+ rdr grammars homer -s | more
+ 
+Similarly, the ``-c`` option counts and tabulates the results, and this is quite useful for determining what nouns and noun phrases are frequently mentioned in a carrel: ::
+
+  rdr grammars homer -g nouns -c | more
+  
+
 
 
 info
@@ -121,62 +392,117 @@ When it comes to the number of words, some context is beneficial. A carrel of 1 
 Think of the output of the ``info`` command akin to a traditional library catalog card. Remember those? For most of us, probably not.
 
 
-bib
+ngrams
+------
+
+This is one of the strongest subcommands in the Toolbox. Use it to comprehend a deeper breadth, depth, and scope of a carrel. Begin by simply giving ``ngrams`` the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords: ::
+
+  rdr ngrams homer
+
+The student, researcher, or scholar will often want to count the occurances of ngrams, and that is what the ``-c`` option is for. For example, to count and tabulate the most frequent unigrams in a carrel you can: ::
+
+  rdr ngrams homer -c homer
+
+The result will be very long, and you can probably pipe the results through to an operating system utility called "more" in order to page through the results: ::
+
+  rdr ngrams homer -c | more
+
+You can do the same thing but this time, you can use the ``-s`` option to denote the size of the ngram, for example, two-word phrases: ::
+
+  rdr ngrams homer -c -s 2 | more
+  
+If you specify a size greater than 2, then stop words will not be removed: ::
+
+  rdr ngrams homer -c -s 3 | more
+  
+At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result to a file named ``bigrams.tsv``, and then open ``bigrams.tsv`` in your spreadsheet application for searching, sorting, and grouping purposes: ::
+
+  rdr ngrams homer -s 2  > bigrams.tsv
+  
+It is possible to query (filter) the results of the ``ngrams`` subcommand with the ``-q`` option. Queries are expected to be regular expressions so the results of the following command will be a list of all bigrams containing the characters l-o-v-e: ::
+
+  rdr ngrams homer -s 2 -q love 
+  
+You might enhance the query to return all bigrams beginning with the characters l-o-v-e: ::
+  
+  rdr ngrams homer -s 2 -q "^love" 
+
+Or only the bigrams beginning with the word "love": ::
+
+  rdr ngrams homer -s 2 -q "^love\b" 
+
+Or list the most frequent bigrams containing the letters l-o-v-e: ::
+
+  rdr ngrams homer -c -s 2 -q love | more
+
+At this point you may want to redirect the output to a file, and then, again, use another application to do additional analysis. For example, find all bigrams containing l-o-v-e, redirect the output to a file, and then import the result into a network analysis program (like Gephi) to illustrate relationships: ::
+
+  rdr ngrams homer -s 2 -q love  > love.tsv
+  
+Finally, ``ngrams`` filters results using a stop word list contained in every study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the ``edit`` subcommand is for; the ``edit`` subcommand makes it easy to modify a carrel's stop word list, and consequently make the output of ``ngrams`` more meaningful. See the next section for more detail.
+
+
+notebooks
+---------
+
+
+play
+----
+
+Use this subcommand to play hangman. It is that simple. 
+
+
+pos
 ---
 
-Use the ``bib`` subcommand to list the bibliographic characteristics of each item in your carrel. The result is a sort of bibliography: ::
+Use ``pos`` to output, enumerate, and filter parts-of-speech values from your study carrel.
 
-  rdr bib homer
+Up until now, all of the previous subcommands had very little meaning associated with them. That is because all of the content of the previous subcommands had no context. The content was merely strings of characters, and such analysis could have just as easily been done in any language, including Klingon. Conversely, the ``pos``, ``ent``, and ``grammars`` subcommands take advantage of language (spaCy) models to guess the parts-of-speech values, named entity values, and grammars. These values represent context. Given these educated guesses -- the context, it becomes easier to answer newspaper reporter-like questions such as: who, what, when, where, how, and how many. Through the use of text mining, it is very difficult to answer questions regarding why.
 
-The result will be quite long, and thus, you may want to pipe the result through your pager, like "more": ::
+The default output of ``pos`` will be as stream of parts-of-speech tags, and this is an excellent way to begin stylometric analysis: ::
 
-  rdr bib homer | more
+  rdr pos homer
+
+A power user's modification of the previous command outputs something akin to a narrative text but in tags: ::
+
+  rdr pos homer | tr '\n' ' ' | more
+
+For most people, the following command is more meaningful, since it counts and tabulates each parts-of-speech value and pipes the result through a pager: ::
+
+  rdr pos -c homer | more
   
-Each item will include the following fields, but not all the fields will have values:
+What are those values? Well, for the most part all you need to know is that different types of nouns begin with N, verbs begin with V, and adjectives begin with J. Given such information, the student, researcher, or scholar can count and tabulate the noun types, verb types, and adjective types: ::
 
-1. item - a running integer denoting where the item is in the list as a whole
-2. id - the unique identifier of the item, a very important value, a sort of key
-3. author - the creator of the item; this field may not have a value
-4. title - the title of the item; for a variety of reasons, this field may echo the value of id
-5. date - the date when the item was created; this field may not have a value
-6. words - an integer denoting the size of the document measured in words
-7. flesch - an integer denoting the work's readability score; values closer to 100 are easier to read
-8. summary - a computed narative describing the work
-9. keyword - a list of statistically significant keywords, akin to subject headings
-10. cache - the full path of the original item on your file system
-11. plain text - the full path of the plain text version of the original item; all analysis was done against this file
+  rdr pos homer -s parts -l N -c | more
+  rdr pos homer -s parts -l V -c | more
+  rdr pos homer -s parts -l J -c | more
 
-The author and date fields may not have values, and the value of title may be the value of id. This is because it is very difficult to automatically extract author, title, and date values from the original content, the content denoted by the value of cache. The original content may have been manifested as a PDF file, a Microsoft Word document, an HTML file, etc. Each of these file formats include placeholders for author, title, and data values, but the placeholders may not have values. The Distant Reader does its best to determine the values of author, title, and date, but if no values are present then author and date are left empty, and the value of title is denoted as the value of id. All the other values in the bibliography are computable, and consequently they have values.
+So, what is a count and tabulation of all the nouns? To answer the question, use this: ::
 
-There are many different ways the output of ``bib`` can be used. One of the quickest and easiest is to use it to use the value of plain text as input to their operating system's pager command -- like "more" or "less". This enables you to read the file in the traditional manner. On my computer, an example includes: ::
-
-  more /Users/eric/Documents/reader-library/homer/txt/homer-odyssey_24.txt
-
-Additionally, the student, researcher, or scholar may observe the values in the keyword field, and then use the ``search`` subcommand (described below), to identify other documents about the same topic.
-
-
-sizes
------
-
-Use this command to learn about the sizes -- measured in words -- of each item in your carrel. Sizes is a type of extent. 
-
-By default, the ``sizes`` command outputs a tab-delimited list of carrel identifiers and number of words in descending order: ::
-
-  rdr sizes homer
-
-This will give you an idea of what items are larger as opposed to smaller. 
-
-You can also output the list sorted by identifier: ::
-
-  rdr sizes homer -s id
+  rdr pos homer -s words -l N -c | more
   
-This is useful if you need/want to know how large a specific item is. 
+You might want to normalize (lowercase) the values to get a more accurate count: ::
 
-You can output the result as a boxplot or a histogram, and this is a good way to compare & contrast the sizes of the items as a whole. For example: ::
+  rdr pos homer -s words -l N -c -n | more
+  
+A count and tabulation of verbs addresses the question, "What do the things in the text do?" In this case it is often useful to count and tabulate the verbs' lemma (root) values: ::
 
-  rdr sizes homer -o boxplot
+  rdr pos homer -s lemmas -l V -c -n | more
+  
+The vast majority of time, the lemmas "be" and "have" are number 1 and number 2 on such a list. Novels often include the word "say". Scientific journal articles often include words like "examine" and "measure". 
 
-As points of reference, the Bible is about .8 million words long. Herman Melville's Moby Dick is about .2 million words long. Many scholary journal articles and book chapters are about .005 million (5,000) words long. 
+Use the output of ``pos`` to identify words of interest. Use the words as input to ``concordance`` to see how the words are used in context.
+
+
+read
+----
+
+Use the ``read`` subcommand to look through and peruse the contents of a local or remote study carrel. Two examples include: ::
+
+  rdr read homer
+  rdr read homer -l remote 
+
+Study carrels are data sets. A subset of the datasets are HTML files intended for traditional reading purposes. These HTML files are narrative in nature but there are a number of interactive tables as well. The use of the ``read`` subcommand is a great way to become familiar with a study carrel's provenance, breadth, depth, and content. 
 
 
 readability
@@ -199,379 +525,6 @@ Visualize the whole as a boxplot or histogram, for example: ::
 As points of reference, Shakespeare's Sonnets have a high readability score in the 90's. Based on my experience, many classic novels have readability scores in the 80's. Scholarly journal articles seem to be in the 70's. Many blog postings and OCR'ed (optical character recognition) files have lower scores because: 1) blogs come along with all sorts of HTML navigation, and 2) OCR files have a large number of unique (nonsense) words. 
   
 
-ngrams
-------
-
-This is one of the strongest subcommands in the Toolbox. Use it to comprehend a deeper breadth, depth, and scope of a carrel. Begin by simply giving ``ngrams`` the name of a carrel, and the result will be a stream of all the words in the carrel, sans stopwords: ::
-
-  rdr ngrams homer
-
-The student, researcher, or scholar will often want to count the occurances of ngrams, and that is what the ``-c`` option is for. For example, to count and tabulate the most frequent unigrams in a carrel you can: ::
-
-  rdr ngrams -c homer
-
-The result will be very long, and you can probably pipe the results through to an operating system utility called "more" in order to page through the results: ::
-
-  rdr ngrams -c homer | more
-
-You can do the same thing but this time, you can use the ``-s`` option to denote the size of the ngram, for example, two-word phrases: ::
-
-  rdr ngrams -c -s 2 homer | more
-  
-If you specify a size greater than 2, then stop words will not be removed: ::
-
-  rdr ngrams -c -s 3 homer | more
-  
-At this point, you may want to redirect the output of ngrams to a file, and then use another application for further analysis. For example, save the result to a file named ``bigrams.tsv``, and then open ``bigrams.tsv`` in your spreadsheet application for searching, sorting, and grouping purposes: ::
-
-  rdr ngrams -s 2 homer > bigrams.tsv
-  
-It is possible to query (filter) the results of the ``ngrams`` subcommand with the ``-q`` option. Queries are expected to be regular expressions so the results of the following command will be a list of all bigrams containing the characters l-o-v-e: ::
-
-  rdr ngrams -s 2 -q love homer
-  
-You might enhance the query to return all bigrams beginning with the characters l-o-v-e: ::
-  
-  rdr ngrams -s 2 -q "^love" homer
-
-Or only the bigrams beginning with the word "love": ::
-
-  rdr ngrams -s 2 -q "^love\b" homer
-
-Or list the most frequent bigrams containing the letters l-o-v-e: ::
-
-  rdr ngrams -c -s 2 -q love homer | more
-
-At this point you may want to redirect the output to a file, and then, again, use another application to do additional analysis. For example, find all bigrams containing l-o-v-e, redirect the output to a file, and then import the result into a network analysis program (like Gephi) to illustrate relationships: ::
-
-  rdr ngrams -s 2 -q love homer > love.tsv
-  
-Finally, ``ngrams`` filters results using a stop word list contained in every study carrel. The given stop word list may be too restrictive or not restrictive enough. That is what the ``edit`` subcommand is for; the ``edit`` subcommand makes it easy to modify a carrel's stop word list, and consequently make the output of ``ngrams`` more meaningful. See the next section for more detail.
-
-
-edit
-----
-
-Use the ``edit`` command to modify the given carrel's stop word list. For example: ::
-
-  rdr edit homer
-
-Each study carrel comes with a stop word list located at ``etc/stopwords.txt``. This list is taken into account whenever the ``ngram``, ``tm``, or ``semantics`` subcommands are executed. Through your reading, you may observe words which are meaningless to your investigations. Conversely, you may identify words which do not appear, and you believe they should. Thus, you may want to modify the stop word list. 
-
-Given a carrel's name, this command will read your computer's environment, determine what text editor you have defined as the default, launch that editor, and open the stop words file. Use the result to add or subtract from the list, and save the file.  When you run ``ngrams``, ``tm``, ``semantics`` again, the results ought to be cleaner. 
-
-It is not necessary to use the ``edit`` subcommand to process your list of stop words. You can use just about any editor you desire, but it is imperative that you save the result as a plain text file and its name must be ``stopwords.txt``.
-
-
-concordance
------------
-
-Developed in the 13th century, concordances are the oldest form of text mining, and now-a-days they are often called keyword-in-context (KWIC) indexes. Concordances are the poor man's search engine. Iteratively use the ``concordance`` command as you cycle through the use of the other commands.
-
-Use ``concordance`` to see what words are used in the same breath as a given word. Used without any options, the ``concordance`` tool will query the given carrel for the word "love", and the result will be a number of lines where each line contains about 40 characters prior to the word "love", the word "love", and about 40 characters after the word "love": ::
-
-  rdr concordance homer
-  
-You can query (filter) the results with the ``-q`` option, and the query must be a word or phrase, not a regular expression. Thus, the following command is identical to the default: ::
-
-  rdr concordance -q love homer
-
-Alternatively, the query can be a phrase, and it is often interesting to associate a noun with a verb, such as: ::
-
-  rdr concordance -q "war is" homer
-
-Or: ::
-
-  rdr concordance -q "hector had" homer
-
-By default, ``concordance`` will output as many 999 lines. Using the ``-l`` option you can configure the number of lines. For example, to output only 5 lines, try: ::
-
-  rdr concordance -l 5 homer
-  
-You can also configure the size of each line's width -- the number of characters on either side of the query. To see very short snippets, try: ::
-
-  rdr concordance -w 24 homer
-
-It is useful to first exploit the ``ngrams`` command to identify words or phrases of interest, then use the results as input for the ``concordance`` command. The same thing holds true for many of the other commands; use the other subcommands to identify words of interest, and then use ``concordance`` to see how they are used in context.
-
-Like many of the other subcommands, the output of ``concordance`` is designed to be used by other applications or tools. Moreover, a word is often known by the company it keeps. Output the results of ``concordance`` to a file, and then use the file as input to a wordcloud tool (like Wordle) to visualize the results: ::
-
-  rdr concordance homer > homer.txt
-  
-Initially, the cloud will be dominated by the value of ``-q``, but you can use your text editor to find/replace the query with nothingness. The visualization will be quite insightful, I promise.
-
-
-adr
----
-
-The ``adr`` subcommand is used to output email addresses.
-
-As a study carrel is created, the Distant Reader will look for email addresses in the content. Use this command to enumerate and filter those addresses. But alas, the works of Homer include zero email addresses. Consequently, download a different carrel which does, for example, part of a run of an electronic journal named Information Technology and Libraries: ::
-
-  rdr download ital-urls
-
-You can now list email addresses: ::
-
-  rdr adr ital-urls
-
-The ``adr`` subcommand does not echo the same address multiple times, but an address may very well occur more than once. To see how many times addresses occur, use the ``-c`` flag: ::
-
-  rdr adr ital-urls -c 
-
-The student, researcher, or scholar can filter the addresses with ``-l`` which is short for the LIKE operator in SQL. For example, to list all the addresses like ".com", use this: ::
-
-  rdr adr ital-urls -l .com
-
-And/or count the result: ::
-
-  rdr adr ital-urls -c -l .com
-
-Use the output of ``adr`` responsibly. You know what I mean.
-
-
-url
----
-
-Use ``url`` to list, enumerate, and filter URLs.
-
-Like the listing of words, persons, or keywords, the listing of URLs can be quite telling when it comes to learning the content of a study carrel. The ``url`` subcommand facilitates this. Again, Homer's works include zero URLs, so download a carrel named ital-urls, which includes many: ::
-
-  rdr download ital-urls
-
-List all the URLs and pipe them through a pager. They will be sorted alphabetically: ::
-
-  rdr url ital-urls | more
-  
-Many times the domain for a URL is telling, so you can list just those instead: ::
-
-  rdr url ital-urls -s domain | more
-  
-There will quite likely be duplicates, so you may want to count and tabulate the result: ::
-
-  rdr url ital-urls -s domain -c | more
-
-You can also filter the results with ``-l``. So, to count and tabulate URLs like pdf, try: ::
-
-  rdr url ital-urls -l pdf -c | more
-
-Besides using the URLs to help you learn about your carrel, you can also use ``url`` to assist you in acquiring additional content. For example, first filter the URLs for "pdf" and output the result to a file: ::
-
-  rdr url ital-urls -l pdf > pdfs.txt
-
-Then use pdfs.txt as input to a mass downloader to actually get the content. For example, use the venerable wget command ::
-
-  wget -i pdfs.txt
-
-Consider also using the output of ``urls`` as input to the Distant Reader; create a new study carrel using the URLs identified in a carrel.
-
-Finally, some of the URLs extracted from the underlying plain text are quite ugly, if not down-right invalid. Please remember, "Do not let the perfect be the enemy of the good." Moreover, keep in mind that URLs very frequently break, go stale, or require authentication. Such is not uncommon. Also, increasingly, URLs pointing to scholarly journal articles do not really point to journal articles. Instead, they point to "splash" or "landing" pages which then force you to find the link to the article, and even then the student, researcher, or scholar may not get the item in question, but a viewer instead. Your milage may vary.
-
-
-wrd
----
-
-Use the ``wrd`` subcommand to count and tabulate the statistically significant keywords from your carrel.
-
-Statistically significant keywords can be computed from a given text by comparing each word's frequency with the frequency of other words and the size of the given text. The resulting words are often a good way to denote a text's "aboutness". The Distant Reader did such computing, saved the results in your carrel, and this command reports on those values. For example, to list all the statistically significant keywords, try: ::
-
-  rdr wrd homer
-
-More often than not, you will want to count & tabulate the results. Thus, you ought to use the ``-c`` flag, like this: ::
-
-  rdr wrd -c homer
-
-The result may be quite long, and consequently you will want to pipe the result through your pager: ::
-
-  rdr wrd -c homer | more
-
-Scan the list for words of personal interest, and use those words as input to the ``concordance`` subcommand.
-
- 
-pos
----
-
-Use ``pos`` to output, enumerate, and filter parts-of-speech values from your study carrel.
-
-Up until now, all of the previous subcommands had very little meaning associated with them. That is because all of the content of the previous subcommands had no context. The content was merely strings of characters, and such analysis could have just as easily been done in any language, including Klingon. Conversely, the ``pos``, ``ent``, and ``grammars`` subcommands take advantage of language (spaCy) models to guess the parts-of-speech values, named entity values, and grammars. These values represent context. Given these educated guesses -- the context, it becomes easier to answer newspaper reporter-like questions such as: who, what, when, where, how, and how many. Through the use of text mining, it is very difficult to answer questions regarding why.
-
-The default output of ``pos`` will be as stream of parts-of-speech tags, and this is an excellent way to begin stylometric analysis: ::
-
-  rdr pos homer
-
-A power user's modification of the previous command outputs something akin to a narrative text but in tags: ::
-
-  rdr pos homer | tr '\n' ' ' | more
-
-For most people, the following command is more meaningful, since it counts and tabulates each parts-of-speech value and pipes the result through a pager: ::
-
-  rdr pos -c homer | more
-  
-What are those values? Well, for the most part all you need to know is that different types of nouns begin with N, verbs begin with V, and adjectives begin with J. Given such information, the student, researcher, or scholar can count and tabulate the noun types, verb types, and adjective types: ::
-
-  rdr pos -s parts -l N -c homer | more
-  rdr pos -s parts -l V -c homer | more
-  rdr pos -s parts -l J -c homer | more
-
-So, what is a count and tabulation of all the nouns? To answer the question, use this: ::
-
-  rdr pos -s words -l N -c homer | more
-  
-You might want to normalize (lowercase) the values to get a more accurate count: ::
-
-  rdr pos -s words -l N -c -n homer | more
-  
-A count and tabulation of verbs addresses the question, "What do the things in the text do?" In this case it is often useful to count and tabulate the verbs' lemma (root) values: ::
-
-  rdr pos -s lemmas -l V -c -n homer | more
-  
-The vast majority of time, the lemmas "be" and "have" are number 1 and number 2 on such a list. Novels often include the word "say". Scientific journal articles often include words like "examine" and "measure". 
-
-Use the output of ``pos`` to identify words of interest. Use the words as input to ``concordance`` to see how the words are used in context.
-
-
-ent
----
-
-Use ``ent`` to output, enumerate, and filter named entity values from your study carrel.
-
-Think of named entities as even more specific types of nouns. Common types include persons, organizations, places, dates, and times. Given these sorts of values, more accurate newspaper reporter-like questions can be addressed.  Like ``pos`` and ``grammars``, ``ent`` exploits a (spaCy) language model to make educated guesses at what these values are in your carrel. For example, to count and tabulate the different types of entities in your carrel, enter: ::
-
-  rdr ent -c homer | more
-  
-If you wanted to count & tabulate the names of people in your carrel, then try: ::
-
-  rdr ent -s entity -l PERSON -c homer | more
-
-The same things can be done for places and locations: ::
-
-  rdr ent -s entity -l GPE -c homer | more
-  rdr ent -s entity -l LOC -c homer | more
-
-The returned values are not always accurate, but in this vein, "Do not let the perfect be the enemy of the good." While computers are pretty stupid, they can make educated guesses. 
-
-Use the output of ``ent`` as input to ``concordance`` to see how entities of interest are used in context.
-
-For extra credit, export things like people or places to a file. Programmatically look up those values in an encyclopedia or gazateer to get birth dates, death dates, or geographic coordinates. From the results, create a timeline or map. The results will illustrate characteristics of your carrel not immediately apparent. 
-
-
-grammars
---------
-
-Use ``grammars`` to output parts of sentences matching language patterns -- grammars.
-
-Langauges follow patterns, and these patterns are called grammars. Through the use of machine learning computing techniques, it is possible to apply grammars to a text and extract matching sentence fragments. The results are more meaningful than simple ngram and concordance outputs because the patterns (grammars) assume relationships between words, not mere frequencies nor proximities.
-
-In order to exploit grammars, a specific (spaCy) language model must be installed, and if it has not been installed, then the Toolbox will do so. Moreover, applying the model to the carrel can be quite a time consuming process. The Toolbox will do this work, if it has not already been done.
-
-The Toolbox supports four different grammars. The first is subject-verb-object (svo) -- rudimentary sentences.  To extract svo-like fragments from a given study carrel, enter: ::
-
-  rdr grammars homer
-
-The result is usually lengthy, and consequently you may want to pipe the results through to a pager such as "more": ::
-
-  rdr grammars homer | more
-  
-The default grammar (svo) can be explicitly articulated on the command line: ::
-
-  rdr grammars -g svo homer
-  
-The other three grammars include:
-
-1. ``nouns`` - all nouns and noun chunks
-2. ``quotes`` - things people say
-3. ``sss`` - semi-structured sentences; this is the most complicated grammar
-
-To list all the nouns and noun chunks in a carrel, enter: ::
-
-  rdr grammars -g nouns homer
-
-To list all the direct quotes in a carrel, enter: ::
-
-  rdr grammars -g quotes homer
-  
-Semi-structured sentences (sss) are the most complicated grammar, and it requires at least one additional option, ``-n`` where the value is some sort of noun. This grammar provides for an additional option, ``-l`` for the lemma of a verb. By default, the value of ``-l`` is the lemma "be". Thus, to list all sentence fragments where the subject of the sentences is "war", and the predicate is a form of "be", enter: ::
-
-  rdr grammars -g sss -n war homer
-
-The following command is equivalent: ::
-
-  rdr grammars -g sss -n war -l be homer
-  
-Using the semi-structured grammars is sometimes more accurate than filtering concordances. For example, in Homer's works, one can ask, "What are horses?" ::
-
-  rdr grammars -g sss -n horses -l be homer
-
-Using the ``-q`` option, the student, researcher, or scholar can filter the output of ``grammars``. Like most of the other filters, this one takes a regular expression as an argument. Thus, to filter the ``svo`` option with the letters l-o-v-e, try: ::
-
-  rdr grammars -g svo -q love homer
-  
-The same thing can be quite useful when it comes to the ``noun`` grammar: ::
-
-  rdr grammars -g nouns -q love homer
-  
-As well as the ``quotes`` grammar: ::
-
-  rdr grammars -g quotes -q love homer
-
-Use the ``-s`` and ``-c`` options to make the output more meaningful. The ``-s`` option sorts the results alphabetically, and by doing so, patterns may emerge. For example: ::
-
- rdr grammars -s homer | more
- 
-Similarly, the ``-c`` option counts and tabulates the results, and this is quite useful for determining what nouns and noun phrases are frequently mentioned in a carrel: ::
-
-  rdr grammars -g nouns -c homer | more
-  
-
-cluster
--------
-
-Use the ``cluster`` subcommand to get an idea of a given carrel's homogeneity. 
-
-The Toolbox supports two types of clustering. The first (and default) is ``dendrogram`` where the underlying algorithm will reduce the carrel to two dimensions and plot them as a dendrogram. For example: ::
-
-  rdr cluster homer
-
-The following command is equivalent: ::
-
-  rdr cluster -t dendrogram homer
-
-The second type of clustering (``cube``) reduces the carrel to three dimensions and plots the results in a space: ::
-
-  rdr cluster -t cube homer
-
-If your carrel contains sets of journal articles, all of the chapters of a given book, or all the works by a given author, then the ``cluster`` subcommand may give you a good idea of how each item in your carrel is related to every other item. It is quite likely you will observe patterns. The ``cluster`` subcommand is also useful when using the ``tm`` (topic modeling) subcommand, because ``cluster`` will give you an idea of how many latent themes may exist in a carrel. On the other hand, if your carrel contains too many items (say, a few hundred), then the result of ``cluster`` most likely not be very readable.
-
-
-tm
---
-
-Use ``tm`` to do topic modeling.
-
-Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, "What N things is the carrel about, and how might each N thing be described?" But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare's works about?
-
-This subcommand builds on the good work venerable MALLET suite of software. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly.
-
-When using the ``tm`` command, start with a small number of topics, say seven, which is the default: ::
-
-  rdr tm homer
-
-If there are many overlapping circles in the results, then consider reducing the number of topics: ::
-
-  rdr tm homer -t 5
-
-Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating: ::
-
-  rdr tm homer -t 5 -w 24
-
-If you observe words in the output which you deem as useless, then consider using the ``edit`` subcommand to denote those words as stop words. When running ``tm`` again, those words ought not be in the output.
-
-The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example: ::
-
-  rdr tm homer -t 5 -w 24 -i 4800
-
-Knowing the correct value for ``-i`` is determined by the size of your carrel, the size of your computer, and your patience.
-
-
 search
 ------
 
@@ -582,22 +535,22 @@ Given an expression ranging from the simple to the complex, this subcommand will
 The expression can be quite... expressive. It can be a single word, a phrase, a fielded search, a Boolean operation, and even a nested query. Rudimentary examples follow: ::
 
   # single word search
-  rdr search -q love homer
+  rdr search homer -q love 
   
   # phrase search
-  rdr search -q '"floods of rain"' homer
+  rdr search homer -q '"floods of rain"' 
   
   # implicit Boolean intersection (AND)
-  rdr search -q 'love justice' homer
+  rdr search homer -q 'love justice' 
   
   # explicit Boolean intersection
-  rdr search -q 'love AND justice' homer
+  rdr search homer -q 'love AND justice' 
   
   # Boolean union (OR)
-  rdr search -q 'love OR justice' homer
+  rdr search homer -q 'love OR justice' 
   
   # Boolean negation (NOT)
-  rdr search -q 'love NOT justice' homer
+  rdr search homer -q 'love NOT justice' 
   
 Each bibliographic record is made up of many fields, and those fields include:
 
@@ -614,40 +567,22 @@ Each bibliographic record is made up of many fields, and those fields include:
 Each one of these fields can be used in a query, but not all fields will necessarily have values. Additional query examples include: ::
 
   # keyword search
-  rdr search -q keyword:trojans homer
+  rdr search homer -q keyword:trojans 
   
   # keyword search with Boolean intersection (AND)
-  rdr search -q 'keyword:trojans AND keyword:hector' homer
+  rdr search homer -q 'keyword:trojans AND keyword:hector' 
   
   # summary search
-  rdr search -q summary:war homer
+  rdr search homer -q summary:war 
   
 Queries can also be nested, thus allowing you to override the presidence of Boolean operations: ::
 
   # nested query
-  rdr search -q '(keyword:trojans AND keyword:hector) OR (love AND justice)' homer
+  rdr search homer -q '(keyword:trojans AND keyword:hector) OR (love AND justice)' 
 
 The words, sentences, and flesch fields are searchable, but their values have been normalized into strings, and therefore mathematical operations are not possible. 
 
 Search results are always returned in a relevancy ranked order. If you need or want to sort, group, or filter the results in some other way, then export the results as a comma-separated value (CSV) file and use your favorite spreadsheet application accordingly.
-
-
-collocations
-------------
-
-Use ``collocations`` to identify pairs of co-occuring words, measure their weights, and output the result as a network graph. To paraphrase John Rupert Firth, "You shall know a word by the company it keeps." This command is yet another way manifest this concept. For example: ::
-
-  rdr collocations homer
-
-After a bit of time, the result will be a little report echoing the input, the size of the resulting graph, and a visualization of said graph. The visualization is merely intended to be a sketch. The student, researcher, or scholar is expected to output the results of this command to a file, open the file into some other application (like Gephi), and create a visualization (enhance the model) from there. For example: ::
-
-  rdr collocations homer -o gml > homer.gml
-
-Just like topic modeling, there is no such thing as the perfect set of inputs; there is no one correct way to collocate a carrel. Instead, play with the input until the output tells a compelling story. I have found that when the number of edges is about 1.5 or 2 times greater than the number of nodes, then the resulting graph can tell an interesting story. As a rule of thumb, for every 200,000 words in a carrel, limit the number of collocations to 1000. Consequently, if your carrel is 400,000 words long, then denote an ``-l`` (limit) value of 2000. 
-
-Increasing the ``-w`` (window) value will increase the number of nodes but not necessarily the number of edges. Denoting different ``-m`` (measure) values will strengthen or weaken the edges between the nodes. 
-
-Of all the subcommands in the Toolbox, this one requires the most finesse. Practices makes perfect.
 
 
 semantics
@@ -682,6 +617,46 @@ The last semantic is analogy, and it takes three words as input. The first two w
 Think of semantic indexing this way. When this word, that word, or the other word is used in the corpus, what other words are also used, or what other words are not used.
 
 Finally, and very importantly, semantic indexing requires a relatively large corpus in order work accurately. Results from corpora less than one million words ought to be considered dubious at best. (Melville's Moby Dick is often considered a long book, and it is only .2 million words long.) Corpora measuring 1.5 million words begins to be amenable. Corpora greater than two million words long ought to be good to go. The larger, the better. 
+
+
+
+
+set
+---
+
+Use the ``set`` subcommand to tell the Toolbox two things: 1) the location of your locally cached study carrels, and 2) the location of an external tool called MALLET. For example, to set the location of your local cache of study carrels, enter: ::
+
+  rdr set -s local
+
+By default, the location of your study carrels is set to ``reader-library`` in your home directory, but this setting does not take effect until you run ``set``. You can move your collection of carrels anywhere you desire. In fact, you might consider having more than one collection. Just tell the Toolbox which cache you want to use.
+
+When you initially run the ``tm`` command, and if the subsystem called MALLET is not configured, then the Toolbox will download MALLET, save it in your home directory, and automatically update the configuration. Like above, you can move MALLET any where you desire, but you need to tell the Toolbox where it is located: ::
+
+  rdr set -s mallet
+
+
+sizes
+-----
+
+Use this command to learn about the sizes -- measured in words -- of each item in your carrel. Sizes is a type of extent. 
+
+By default, the ``sizes`` command outputs a tab-delimited list of carrel identifiers and number of words in descending order: ::
+
+  rdr sizes homer
+
+This will give you an idea of what items are larger as opposed to smaller. 
+
+You can also output the list sorted by identifier: ::
+
+  rdr sizes homer -s id
+  
+This is useful if you need/want to know how large a specific item is. 
+
+You can output the result as a boxplot or a histogram, and this is a good way to compare & contrast the sizes of the items as a whole. For example: ::
+
+  rdr sizes homer -o boxplot
+
+As points of reference, the Bible is about .8 million words long. Herman Melville's Moby Dick is about .2 million words long. Many scholary journal articles and book chapters are about .005 million (5,000) words long. 
 
 
 sql
@@ -733,37 +708,100 @@ The different types of queries are almost limitless, and the key to using the da
 For more ideas of how to exploit the database see ``etc/queries.sql`` found in every study carrel. That file is used to create ``etc/report.txt``.
 
 
-build
------
-
-Use the ``build`` subcommand to create your own study carrels.
-
-Study carrels can be created from just about any number, type, or format of file, as long as the files are narrative in nature. The Toolbox works well when the number of files is greater than 1 and less than a few thousand. The Toolbox is intended to process scholarly journal articles, books, reports, email messages, etc. The Toolbox exploits a tool called Tika, and Tika makes it possible to extract the underlying text from file formats such as PDF, Word, HTML, PowerPoint, CSV, plain text files, etc. Now-a-days, most people have many PDF files. 
-
-Create a folder/directory on your computer, and put the files you want to read in the folder. It is better if the files have zero spaces in their names. It is best if the file names only contain letters, numbers, dashes (-), underbars (_) and a single dot (.) delimiting a file's extension. But the files' names do not really matter.
-
-When you are ready, build your carrel with the following command: ::
-
-  rdr build <carrel> <directory>
-
-Where <carrel> is the name you are giving your study carrel, and <directory> is the location of the folder you just created. 
-
-If this is your first time through, you will have to specify the ``-s`` (start) option to get Tika up and running, and if the location of Tika has not been configured, then you will prompted to download it.
-
-It is not uncommon for you to want <carrel> to be recreated. No problem. Use the ``-e`` (erase) option to delete the existing carrel and put a new one in its place.
-
-The ``build`` process is complicated, and depending on many things, the ``build`` process can take less than a minute to more than hour to complete. Most of my carrels, which are usually bigger rather than smaller, finish in less than five minutes. 
-
-Metadata
-
-Enhance the context of your study carrel by supplementing it with metadata. Believe me, this will make your analysis so much more meaningful. This is accomplished by adding a file named metadata.csv to <directory>. This comma-separated value (CSV) must include at least two columns and one of them must to be named "file". The Toolbox knows about three other columns: author, title, and date. Use your favorite spreadsheet program to create a table with a column named "file". In each row, enter the name of a file saved in <directory>. Add additional columns named author, title, and/or date. For each file, add author, title, and/or date values. When done, save the table as a CSV file named metadata.csv, and save it in <directory>. If a metadata.csv file exists in <directory>, then the ``build`` process will read metadata.csv and associate each of the given files with the associated metadata value(s). Later on, when you are doing your analysis ("reading"), you will be better able to compare & contrast items in <carrel>. For example, you will be able to visualize how different author's write or how ideas ebb and flow over time. Finally, because is is tedious, creating metadata.csv files can be difficult; learn how to automate the process of creating metadata.csv files. 
-
-Once <carrel> is created, you ought to be able to use any of the other ``rdr`` commands.
+summarize
+---------
 
 
-play
-----
+tm
+--
 
-Use this subcommand to play hangman. It is that simple. 
+Use ``tm`` to do topic modeling.
+
+Topic modeling is an unsupervised machine learning process used to enumerate latent themes in a corpora. The process is every useful for denoting the aboutness of a study carrel; it is useful for answering the question, "What N things is the carrel about, and how might each N thing be described?" But be forewarned, there is no absolutely correct value for N. After all, how many N things is the sum of Shakespeare's works about?
+
+This subcommand builds on the good work venerable MALLET suite of software. If the Toolbox has not been configured to know the location of MALLET on your computer, then the Toolbox will download MALLET, and update your configurations accordingly.
+
+When using the ``tm`` command, start with a small number of topics, say seven, which is the default: ::
+
+  rdr tm homer
+
+If there are many overlapping circles in the results, then consider reducing the number of topics: ::
+
+  rdr tm homer -t 5
+
+Many people find topic modeling to be confusing, and this is because they specify too many words to denote a topic. By default, the Toolbox uses seven words to describe each topic, but increasing the number may prove to be more illuminating: ::
+
+  rdr tm homer -t 5 -w 24
+
+If you observe words in the output which you deem as useless, then consider using the ``edit`` subcommand to denote those words as stop words. When running ``tm`` again, those words ought not be in the output.
+
+The larger the study carrel, the more important it is to allow the underlying subsystems to iterate over the corpus. The results ought to be more accurate. For smaller carrels, such as a single book, then the default (2400 iterations) is probably good enough, but for a larger carrel, then twice as many iterations or more may be in order. For example: ::
+
+  rdr tm homer -t 5 -w 24 -i 4800
+
+Knowing the correct value for ``-i`` is determined by the size of your carrel, the size of your computer, and your patience.
 
 
+
+url
+---
+
+Use ``url`` to list, enumerate, and filter URLs.
+
+Like the listing of words, persons, or keywords, the listing of URLs can be quite telling when it comes to learning the content of a study carrel. The ``url`` subcommand facilitates this. Again, Homer's works include zero URLs, so download a carrel named ital-urls, which includes many: ::
+
+  rdr download ital-urls
+
+List all the URLs and pipe them through a pager. They will be sorted alphabetically: ::
+
+  rdr url ital-urls | more
+  
+Many times the domain for a URL is telling, so you can list just those instead: ::
+
+  rdr url ital-urls -s domain | more
+  
+There will quite likely be duplicates, so you may want to count and tabulate the result: ::
+
+  rdr url ital-urls -s domain -c | more
+
+You can also filter the results with ``-l``. So, to count and tabulate URLs like pdf, try: ::
+
+  rdr url ital-urls -l pdf -c | more
+
+Besides using the URLs to help you learn about your carrel, you can also use ``url`` to assist you in acquiring additional content. For example, first filter the URLs for "pdf" and output the result to a file: ::
+
+  rdr url ital-urls -l pdf > pdfs.txt
+
+Then use pdfs.txt as input to a mass downloader to actually get the content. For example, use the venerable wget command ::
+
+  wget -i pdfs.txt
+
+Consider also using the output of ``urls`` as input to the Distant Reader; create a new study carrel using the URLs identified in a carrel.
+
+Finally, some of the URLs extracted from the underlying plain text are quite ugly, if not down-right invalid. Please remember, "Do not let the perfect be the enemy of the good." Moreover, keep in mind that URLs very frequently break, go stale, or require authentication. Such is not uncommon. Also, increasingly, URLs pointing to scholarly journal articles do not really point to journal articles. Instead, they point to "splash" or "landing" pages which then force you to find the link to the article, and even then the student, researcher, or scholar may not get the item in question, but a viewer instead. Your milage may vary.
+
+
+web
+---
+
+
+wrd
+---
+
+Use the ``wrd`` subcommand to count and tabulate the statistically significant keywords from your carrel.
+
+Statistically significant keywords can be computed from a given text by comparing each word's frequency with the frequency of other words and the size of the given text. The resulting words are often a good way to denote a text's "aboutness". The Distant Reader did such computing, saved the results in your carrel, and this command reports on those values. For example, to list all the statistically significant keywords, try: ::
+
+  rdr wrd homer
+
+More often than not, you will want to count & tabulate the results. Thus, you ought to use the ``-c`` flag, like this: ::
+
+  rdr homer wrd -c 
+
+The result may be quite long, and consequently you will want to pipe the result through your pager: ::
+
+  rdr homer wrd -c  | more
+
+Scan the list for words of personal interest, and use those words as input to the ``concordance`` subcommand.
+
+See  `Structure of a study carrel <./structure.html>`_ to learn the layout of a study carrel.
