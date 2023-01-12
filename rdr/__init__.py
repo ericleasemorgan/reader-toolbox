@@ -363,18 +363,18 @@ def configuration( name ) :
 
 def modelNotFound() :
 
-	'''When the spaCy model (as defined by the contant MODEL) is
-	not found, this function is called. It prompt the user for a
-	y or n answer, and if the answer is y, then MODEL is
-	downloaded and installed. This function exits the application
-	after being called.'''
+	'''When a spaCy model (as defined by the contants
+	MODELSMALL and MODELMEDIUIM) is not found, this function is
+	called. It prompts the user for a y or n answer, and if the
+	answer is y, then the models are downloaded and installed. This
+	function exits the application after being called.'''
 	
 	# notify
-	click.echo( "Error: Langauge model not found.", err=True )
+	click.echo( "Error: Langauge models not found.", err=True )
 	click.echo()
-	click.echo( f"This functions requires a spaCy langauge model ({ MODEL}) to be installed. This only has to be done once, and after the model has been installed you can run the command again.", err=True )
+	click.echo( f"This functions requires one of two different spaCy langauge models ({ MODELSMALL } and { MODELMEDIUM }) to be installed. This only has to be done once, and after the models have been installed you can run the command again.", err=True )
 	click.echo()
-	click.echo( 'Do you want to install the model now? [yn] ', err=True, nl=False )
+	click.echo( 'Do you want to install the models now? [yn] ', err=True, nl=False )
 	
 	# get input
 	c = click.getchar()
@@ -386,6 +386,7 @@ def modelNotFound() :
 		# require and do the work
 		from os import system
 		system( 'python -m spacy download ' + MODELSMALL )
+		system( 'python -m spacy download ' + MODELMEDIUM )
 	
 	# no
 	elif c == 'n' : click.echo( "Okay, but installing the model is necessary for this function to work. You'll be asked again next time.", err=True )
