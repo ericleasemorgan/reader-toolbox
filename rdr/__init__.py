@@ -85,7 +85,7 @@ POSPROPN             = 'pos-propernoun.png'
 
 # spacy langauge model
 MODELSMALL   = 'en_core_web_sm'
-MODELMEDIUM  = 'en_core_web_lg'
+MODELMEDIUM  = 'en_core_web_md'
 
 # mallet
 MALLETZIP = 'https://distantreader.org/apps/mallet.zip'
