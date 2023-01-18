@@ -264,12 +264,13 @@ def rdr() :
 @click.command( options_metavar='<options>' )
 def cmdAbout() :
 
-	"""Output a brief description of the Reader Toolbox (rdr) application."""
+	"""Output a brief description and version number of the Reader Toolbox (rdr) application."""
 
 	# configure
 	ABOUT = '''
-  The Reader Toolbox (rdr) is a command-line application used to create
-  and model data sets called Distant Reader study carrels.
+  The Reader Toolbox (rdr) is a Python library and command-line
+  application used to create and model data sets called Distant
+  Reader study carrels. This is version 0.2.2.
 '''
 
 	# do the work and done
