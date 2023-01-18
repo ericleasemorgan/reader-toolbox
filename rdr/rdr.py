@@ -270,7 +270,8 @@ def cmdAbout() :
 	ABOUT = '''
   The Reader Toolbox (rdr) is a Python library and command-line
   application used to create and model data sets called Distant
-  Reader study carrels. This is version 0.2.2.
+  Reader study carrels. It was written and is maintaned by Eric
+  Lease Morgan <emorgan@nd.edu>. This is version 0.2.2.
 '''
 
 	# do the work and done
