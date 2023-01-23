@@ -47,4 +47,7 @@ Quip #4
 There are zero 100% correct ways to model a study carrel; model your study carrel in the hopes of telling a compelling story from the result.
 
 
+Quip #5
+-------
 
+Modeling text is an iterative process: 1) articulate a research question, 2) identify content which might address the question, 3) obtain the content, 4) model (analyze) the content, 5) address the question, 6) go to Step #1. This process is never done.
