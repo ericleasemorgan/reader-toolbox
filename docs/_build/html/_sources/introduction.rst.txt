@@ -1,7 +1,7 @@
-Introduction
-============
+Definitions
+===========
 
-This section introduces a thing called the Distant Reader, its output called "study carrels", and the Distant Reader Toolbox - a command-line tool for interacting with study carrels.
+This section defines things called the Distant Reader, its output called "study carrels", and the Distant Reader Toolbox - a command-line tool for interacting with study carrels.
 
 
 Distant Reader
@@ -37,7 +37,7 @@ For more information see:
 2. this documentation (https://reader-toolbox.readthedocs.io)
 3. the home page of the Distant Reader (https://distantreader.org)
 
-Embrace information overload. Use the Distant Reader.
+*Embrace information overload. Use the Distant Reader.*
 
 See  `Installation <./installation.html>`_ and learn how to install the Toolbox.
 

@@ -2,7 +2,7 @@
 Quips
 =====
 
-This is a list of short remarks -- quips -- behooving the student, researcher, or scholar to keep in mind when using the Reader Toolbox. The quips are not necessarily presented in priority order.
+This is a list of remarks -- quips -- behooving the student, researcher, or scholar to keep in mind when using the Reader Toolbox. The quips are not necessarily presented in priority order.
 
 
 Quip #1
@@ -44,10 +44,37 @@ The Toolbox only outputs the most mundane of truths, but more sublime truths can
 Quip #4
 -------
 
-There are zero 100% correct ways to model a study carrel; model your study carrel in the hopes of telling a compelling story from the result.
+There are zero 100% correct ways to model a study carrel; model your study carrel in the hopes of telling a compelling story.
 
 
 Quip #5
 -------
 
-Modeling text is an iterative process: 1) articulate a research question, 2) identify content which might address the question, 3) obtain the content, 4) model (analyze) the content, 5) address the question, 6) go to Step #1. This process is never done.
+Modeling text -- whether you use the Toolbox or not -- is an iterative process: 1) articulate a research question, 2) identify content which might address the question, 3) obtain the content, 4) model (analyze) the content, 5) address the question, 6) go to Step #1. The process is never done.
+
+
+Quip #6
+-------
+
+The hardest part of effectively exploiting your study carrels is two-fold. First, you must articulate a research question. The question(s) can range from the mundane to the sublime. Examples might include:
+
+   * Measured in number of words, how big is this study carrel and how difficult might it be to use and understand?
+   * What are each of the items in my study carrel about? How can they be described?
+   * Who or what is mentioned in this study carrel, what do they do, and how are they related to each other?
+   * What is the defintion of love, honor, truth, and beauty?
+   * How does St. Augustine define love, and how is his defintion different from Rousseau's? 
+
+To a large degree, your ability to articulate research questions hinges on your ability to think critically.
+
+Second, effectively exploiting study carrels is dependent on your ability to quickly and easily tranform one data structure to another. The majority of the time, to accomplish this task, you need to know how to:
+
+   1. redirect the Toolbox's output to a file
+   2. edit the output; this can be done a text editor, a spreadsheet-like application, or programatically
+   3. save the edits
+   4. open the edits in a more specific analysis program or visualization application
+
+Text editors and spreadsheet-like applications are indispensble for the person who does not know how to write software. You must know how to use the applications' find/replace functions, add or delete columns of content, and export the results to any number of formats: CSV, TSV, plain text, other delimited formats, JSON, etc. All of this is true because more specific analysis programs and visualization applications (such as concordancers, word cloud generators, network analysis applications, topic modelers, etc.) require their input to be in a myriad of data structures.
+
+To a large degree, your ability to transform one data structure to another is a matter of practice and attention to detail. Believe me, it is not rocket surgery.
+
+
