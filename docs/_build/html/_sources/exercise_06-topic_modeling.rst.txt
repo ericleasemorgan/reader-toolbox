@@ -1,6 +1,9 @@
 Exercise: Topic modeling
 ========================
 
+With the Toolbox
+----------------
+
 In this section I will outline a method for applying topic modeling against Homer's Iliad and Odyssey. I have found this method works very well for just about any study carrel. 
 
 Topic modeling is an unsupervised machine learning process. It is used to enumerate latent themes in a corpus, and it is a very good way to describe what a corpus is about. But the student, researcher, or scholar must keep in mind that there is no one correct answer to questions regarding aboutness. For example, answer me this, "How many things are Shakespeare's writings about, and what are they?" That said, topic modeling is a useful exercise because it can be used to illustrate the ebb & flow of ideas over time or how different authors' writings compare & contrast.
@@ -87,3 +90,6 @@ Notice how the topic of "will" dominates, again, and then ask yourself, "Why?"
 
 Topic modeling, like all modeling processes, is iterative in nature. Like all modeling proceses, start out small, visualize often, and grow your model. The problem to solve is not so much articulating truth. Instead, it is about making observations and telling a compelling story.
 
+
+With Topic Modeling Tool
+------------------------

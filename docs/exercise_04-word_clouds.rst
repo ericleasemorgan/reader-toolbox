@@ -1,6 +1,12 @@
 Exercise: Word Clouds
 =====================
 
+With the Toolbox
+----------------
+
+With Wordle
+-----------
+
 Simple wordcloud
 ------------------
 

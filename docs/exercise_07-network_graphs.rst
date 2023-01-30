@@ -1,6 +1,19 @@
 Exercise: Network graphs
 ========================
 
+
+From bigrams
+------------
+
+With people and actions
+-----------------------
+
+With people an documents
+------------------------
+
+With documents and keywords
+---------------------------
+
 Create a bigram network
 -----------------------
 
