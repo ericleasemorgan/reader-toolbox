@@ -6,22 +6,25 @@
 Distant Reader Toolbox
 **********************
 
-A command-line tool for interacting with Distant Reader study carrels
+A command-line tool for creating and interacting with Distant Reader study carrels
 
 .. toctree::
-   :maxdepth: 2
+	:maxdepth: 2
 
-   introduction
-   installation
-   quick-start
-   tutorial
-   commands
-   structure
-   quips
-   usecase-tm
-   usecase-collocations
-   usecase-dhq
-   helpers
-   software
-   more
-   author
+	definitions
+	installation
+	exercise_01-quick_start
+	commands
+	exercise_02-introduction
+	exercise_03-building_carrrels
+	structure
+	gui
+	quips
+	exercise_04-word_clouds
+	exercise_05-searching
+	exercise_06-topic_modeling
+	exercise_07-network_graphs
+	notebooks
+	usecases
+	software
+	author

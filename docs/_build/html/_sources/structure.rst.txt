@@ -1,5 +1,5 @@
-Structure of a study carrel
-===========================
+Structure of a carrel
+=====================
 
 It can not be stated strongly enough, *the Distant Reader Toolbox takes a set of unstructured data (files of narrative text) as input, and it outputs a set of structured data -- a "study carrel" -- intended to be computed against.*
 

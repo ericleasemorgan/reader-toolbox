@@ -1,0 +1,14 @@
+Exercise: Word Clouds
+=====================
+
+Simple wordcloud
+------------------
+
+[INSERT HERE DIRECTIONS HOW TO CREATE A WORDCLOUD WITH PLAIN TEXT FILES.]
+
+Redux
+-----
+
+[INSERT HERE DIRECTIONS HOW TO CREATE A WORDCLOUD WITH MORE SOPHISITCIATED FREQUECIES.]
+
+

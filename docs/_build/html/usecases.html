@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Use cases &#8212; Reader Toolbox  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Supporting software" href="software.html" />
+    <link rel="prev" title="Python Notebooks" href="notebooks.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="use-cases">
+<h1>Use cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h1>
+<section id="analyzing-web-of-science">
+<h2>analyzing Web Of Science<a class="headerlink" href="#analyzing-web-of-science" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="reading-collections-from-the-hathitrust">
+<h2>reading collections from the HathiTrust<a class="headerlink" href="#reading-collections-from-the-hathitrust" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="analyzing-open-access-articles">
+<h2>analyzing open access articles<a class="headerlink" href="#analyzing-open-access-articles" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="creating-a-carrel-from-email-messages">
+<h2>creating a carrel from email messages<a class="headerlink" href="#creating-a-carrel-from-email-messages" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="reading-an-entire-blog">
+<h2>reading an entire blog<a class="headerlink" href="#reading-an-entire-blog" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="reading-dhq">
+<h2>Reading DHQ<a class="headerlink" href="#reading-dhq" title="Permalink to this headline">¶</a></h2>
+<p>I did some rudimentary analysis (“reading”) against the whole of Digital Humanities Quarterly (DHQ), and this use case outlines what I’ve learned so far.</p>
+<p>First of all, extents. The corpus numbers about 400 articles, for a total of 3.3 million words. Moby Dick is .2 million words long, and consequently the whole of DHQ is equal to about sixteen Moby Dicks. The average readability (Flesh) score for the corpus is 47. Shakespeare’s sonnets measure about 90 (easy). Most scholarly journal articles – in my experience – have a score around 70. Something is unusual here.</p>
+<img alt="_images/dhq-sizes-histogram.png" src="_images/dhq-sizes-histogram.png" />
+<img alt="_images/dhq-sizes-boxplot.png" src="_images/dhq-sizes-boxplot.png" />
+<img alt="_images/dhq-readability-histogram.png" src="_images/dhq-readability-histogram.png" />
+<img alt="_images/dhq-readability-boxplot.png" src="_images/dhq-readability-boxplot.png" />
+<p>Second, I created a rudimentary bibliography, and it is complete with computed summaries and computed keywords. The frequencies of the keywords can be illustrated as a word cloud. After removing dominate keywords like “digital”, and “humanties”, the cloud is interesting.</p>
+<img alt="_images/dhq-keywords.png" src="_images/dhq-keywords.png" />
+<p>Third, after doing quick &amp; dirty topic modeling with seven topics, the topics come out to be the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">topics</span>  <span class="n">weights</span>                                           <span class="n">features</span>
+ <span class="n">digital</span>  <span class="mf">0.52049</span>  <span class="n">digital</span> <span class="n">humanities</span> <span class="n">research</span> <span class="n">students</span> <span class="n">work</span> <span class="n">proj</span><span class="o">...</span>
+ <span class="n">reading</span>  <span class="mf">0.35646</span>  <span class="n">reading</span> <span class="n">digital</span> <span class="n">new</span> <span class="n">media</span> <span class="n">literary</span> <span class="n">literature</span> <span class="o">...</span>
+    <span class="n">data</span>  <span class="mf">0.28013</span>  <span class="n">data</span> <span class="n">information</span> <span class="n">research</span> <span class="n">design</span> <span class="n">visualization</span><span class="o">...</span>
+    <span class="n">text</span>  <span class="mf">0.26300</span>  <span class="n">text</span> <span class="n">digital</span> <span class="n">texts</span> <span class="n">work</span> <span class="n">textual</span> <span class="n">new</span> <span class="n">archive</span> <span class="n">pr</span><span class="o">...</span>
+<span class="n">analysis</span>  <span class="mf">0.15128</span>  <span class="n">analysis</span> <span class="n">text</span> <span class="n">words</span> <span class="n">data</span> <span class="n">texts</span> <span class="n">results</span> <span class="n">also</span> <span class="n">word</span>
+     <span class="n">des</span>  <span class="mf">0.01854</span>                  <span class="n">des</span> <span class="n">les</span> <span class="n">dans</span> <span class="n">une</span> <span class="n">par</span> <span class="n">qui</span> <span class="n">que</span> <span class="n">est</span>
+     <span class="n">que</span>  <span class="mf">0.01266</span>                 <span class="n">que</span> <span class="n">los</span> <span class="n">las</span> <span class="k">del</span> <span class="n">una</span> <span class="n">para</span> <span class="n">por</span> <span class="n">como</span>
+</pre></div>
+</div>
+<p>Transforming the result into a pie chart illustrates how no theme dominates. Plotting the two most significant topics (“digital” and “reading”) over time emphasizes the point; themes ebb &amp; flow to a great degree; the journal does not manifest a single, over-arching theme.</p>
+<img alt="_images/dhq-topics.png" src="_images/dhq-topics.png" />
+<img alt="_images/dhq-topics-over-time.jpg" src="_images/dhq-topics-over-time.jpg" />
+<p>Compare this with Pride And Prejudice, and one can see how the theme “Elizabeth” (the red line) is an over-arching theme.</p>
+<img alt="_images/dhq-pride.png" src="_images/dhq-pride.png" />
+<p>I tried to model collocations in the form of a network graph, but the model did not turn out very well, but the result – just like the topic modeling – illustrates the existence of non-English words and a number of TEI elements in the texts. This needs to be improved.</p>
+<img alt="_images/dhq-collocations.png" src="_images/dhq-collocations.png" />
+<p>I could have done some semantic indexing analysis, but I don’t know how to visualize the result, yet.</p>
+<p>Such is what I learned so far, and further investigation would require more specific questions from domain experts – people who have a vested interest in the Quarterly. ‘Got questions?</p>
+<p>Fun with text mining.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Reader Toolbox</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="definitions.html">Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise_01-quick_start.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise_02-introduction.html">Exercise: Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise_03-building_carrrels.html">Exercise: Building carrels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">Structure of a carrel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">GUI applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quips.html">Quips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise_04-word_clouds.html">Exercise: Word Clouds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise_05-searching.html">Exercise: Searching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise_06-topic_modeling.html">Exercise: Topic modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise_07-network_graphs.html">Exercise: Network graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks.html">Python Notebooks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Use cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#analyzing-web-of-science">analyzing Web Of Science</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reading-collections-from-the-hathitrust">reading collections from the HathiTrust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analyzing-open-access-articles">analyzing open access articles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-carrel-from-email-messages">creating a carrel from email messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reading-an-entire-blog">reading an entire blog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reading-dhq">Reading DHQ</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="software.html">Supporting software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="author.html">About the author</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="notebooks.html" title="previous chapter">Python Notebooks</a></li>
+      <li>Next: <a href="software.html" title="next chapter">Supporting software</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, University of Notre Dame.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/usecases.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
