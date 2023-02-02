@@ -72,7 +72,21 @@ After you run the last command, you ought to see a horizontal bar chart illustra
 
 Adding a metadata.csv file literally adds four new dimenstions to your study carrel, dimensions that are often take for granted. Creating a metadata.csv file can be challenging though. On the other hand, everybody has a spreadsheet application at their disposal, and it is not difficult to identify the author, title, date, and file name of each of your files. Right?  :)
 
+Helper applications
+-------------------
+
+Even in this age when we feel we are drinking from the proverbial firehose, it is it can be quite challenging to create a folder/directory, fill it with content, and describe each file with some metadata. To make my life easier, I have written the following scripts that create such data structures for me, and they are created from folders of content, the content of email messages, content from the HathiTrust, and things like novels filled with chapters. The items below outline and point to such tools:
+
+  1. folder2metadata_ - Given a directory, this Python script outputs a CSV file suitable for the Reader
+  2. mbox2reader_ - Given a few configurations, this Python script read an mbox file, and outputs a file system amenable to the Reader
+  3. htid2books_ - Given an access key, secret token, and a HathiTrust identifier, this set of Bash/Perl scripts output plain text as well as PDF versions of a book.
+  4. txt2chapters_ - Given a plain text file, a pattern, and a directory, this Perl script subdivides the file into chapters saved in the directory
 
 
+.. _folder2metadata: https://github.com/ericleasemorgan/folder2metadata
+.. _htid2books: https://github.com/ericleasemorgan/htid2books
+.. _txt2chapters: https://github.com/ericleasemorgan/txt2chapters
+.. _mbox2reader: https://github.com/ericleasemorgan/mbox2reader
 
+\
 	

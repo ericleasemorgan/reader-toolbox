@@ -117,6 +117,19 @@
 <p>After you run the last command, you ought to see a horizontal bar chart illustrating the degree each author wrote about the computed topics. Notice how each author’s writings are distinct. Put another way, what did Austen write about, what did Homer write about, and what did Thoreau write about?</p>
 <p>Adding a metadata.csv file literally adds four new dimenstions to your study carrel, dimensions that are often take for granted. Creating a metadata.csv file can be challenging though. On the other hand, everybody has a spreadsheet application at their disposal, and it is not difficult to identify the author, title, date, and file name of each of your files. Right?  :)</p>
 </section>
+<section id="helper-applications">
+<h2>Helper applications<a class="headerlink" href="#helper-applications" title="Permalink to this headline">¶</a></h2>
+<p>Even in this age when we feel we are drinking from the proverbial firehose, it is it can be quite challenging to create a folder/directory, fill it with content, and describe each file with some metadata. To make my life easier, I have written the following scripts that create such data structures for me, and they are created from folders of content, the content of email messages, content from the HathiTrust, and things like novels filled with chapters. The items below outline and point to such tools:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p><a class="reference external" href="https://github.com/ericleasemorgan/folder2metadata">folder2metadata</a> - Given a directory, this Python script outputs a CSV file suitable for the Reader</p></li>
+<li><p><a class="reference external" href="https://github.com/ericleasemorgan/mbox2reader">mbox2reader</a> - Given a few configurations, this Python script read an mbox file, and outputs a file system amenable to the Reader</p></li>
+<li><p><a class="reference external" href="https://github.com/ericleasemorgan/htid2books">htid2books</a> - Given an access key, secret token, and a HathiTrust identifier, this set of Bash/Perl scripts output plain text as well as PDF versions of a book.</p></li>
+<li><p><a class="reference external" href="https://github.com/ericleasemorgan/txt2chapters">txt2chapters</a> - Given a plain text file, a pattern, and a directory, this Perl script subdivides the file into chapters saved in the directory</p></li>
+</ol>
+</div></blockquote>
+<p></p>
+</section>
 </section>
 
 
@@ -146,6 +159,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#simple-carrel">Simple carrel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#your-first-carrel">Your first carrel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#with-secret-sauce">With secret sauce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#helper-applications">Helper applications</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="structure.html">Structure of a carrel</a></li>
