@@ -859,7 +859,8 @@ def keywords( carrel, count=False, wordcloud=False, save=False ) :
 	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
 	connection.row_factory = sqlite3.Row
 	items                  = []
-	
+	stopwords              = open( str( locallibrary/carrel/ETC/STOPWORDS ), encoding='utf-8' ).read().split()
+
 	# dump a sorted list of all keywords
 	if not count :
 
@@ -881,7 +882,10 @@ def keywords( carrel, count=False, wordcloud=False, save=False ) :
 			for row in rows : 
 		
 				# output, conditionally; weird
-				if row[ 'keyword' ] : items.append( "\t".join( [ row[ 'keyword' ], str( row[ 'count' ] ) ] ) )			
+				if row[ 'keyword' ] : 
+				
+					# make sure the value is not in the stopwords
+					if row[ 'keyword' ] not in stopwords : items.append( "\t".join( [ row[ 'keyword' ], str( row[ 'count' ] ) ] ) )			
 
 		# output a word cloud
 		else :
@@ -890,7 +894,11 @@ def keywords( carrel, count=False, wordcloud=False, save=False ) :
 			frequencies = {}
 			for row in rows :
 			
-				if row[ 'keyword' ] : frequencies[ row[ 'keyword' ] ] = row[ 'count' ]
+				# make sure the row has a value
+				if row[ 'keyword' ] :
+				
+					# make sure the value is not in the stopwords
+					if row[ 'keyword' ] not in stopwords : frequencies[ row[ 'keyword' ] ] = row[ 'count' ]
 			
 			if not save : cloud( frequencies )
 			else :
