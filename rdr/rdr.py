@@ -17,7 +17,7 @@ KEYS            = 'keys.tsv'
 KEYSHEADER      = [ 'ids', 'weights', 'features' ]
 DOCUMENTS       = 'documents.txt'
 DOCUMENTSHEADER = [ 'ids', 'dids', 'files', 'proportions' ]
-TOPDOCS         = 5
+TOPDOCS         = 100
 SCALE           = 100
 PERCENTAGE      = '%1.0f%%'
 SQL             = 'SELECT "file:%s/%s/txt/" || cast( id AS text ) || ".txt" AS file, %s FROM bib order by %s;'
@@ -1247,7 +1247,7 @@ def cmdNotebooks( command ) :
 @click.option('-w', '--words', default=8, help="number of words used to describe topic" )
 @click.option('-i', '--iterations', default=2400, help="number of times to cacluate" )
 @click.option('-o', '--output', default='summary', type=click.Choice( [ 'summary', 'chart', 'topdocs', 'csv' ] ), help="type of report" )
-@click.option('-f', '--field', type=click.Choice( [ 'author', 'title', 'date', 'track', 'category', 'type', 'year', 'journal' ] ), help="field for pivoting" )
+@click.option('-f', '--field', type=click.Choice( [ 'author', 'title', 'date', 'track', 'category', 'type', 'year', 'journal', 'topic' ] ), help="field for pivoting" )
 @click.option('-y', '--type', default='pie', type=click.Choice( [ 'pie', 'bar', 'barh', 'line', 'scatter' ] ), help="type of chart" )
 @click.argument( 'carrel', metavar='<carrel>' )
 def cmdTm( carrel, process, topics, words, iterations, output, field, type ) :
