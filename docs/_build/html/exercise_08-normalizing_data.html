@@ -35,7 +35,62 @@
             
   <section id="exercise-normalizing">
 <h1>Exercise: Normalizing<a class="headerlink" href="#exercise-normalizing" title="Permalink to this headline">¶</a></h1>
-<p>[ INSERT HERE HOW TO INSERT THE HUMAN-IN-THE-MIDDLE COMPUTING TECHNIQUES INTO THE CARREL MODELING PROCESS.]</p>
+<p>The Reader Toolbox takes sets of narrative text as input, and it outputs sets of extracted features. As detailed in another section of the documentation, these extracted features include: bibliographics, parts-of-speech, named-entities, email addresses, URLs, an statistically significant keywords. The features have been saved as tab-delimited files as well as reduced to an SQLite relational database file. Thus, analysis against a study carrel can be done through Toolbox commands, through various application programmer interfaces, or through any number of graphical user interface (GUI) applications. A free and cross-platform application called OpenRefine is one such GUI application, and this section outlines how to exploit it for the purposes of using and understanding any carrel.</p>
+<section id="keywords">
+<h2>Keywords<a class="headerlink" href="#keywords" title="Permalink to this headline">¶</a></h2>
+<p>Let’s use OpenRefine to address the question, “What are Homer’s works about, and how is this aboutness manifested over the corpus?”. To address this question, we can analyze the files in the wrd directory, where the keyword files are saved. Here’s how:</p>
+<ol class="arabic simple">
+<li><p>download, install, and lauch OpenRefine</p></li>
+<li><p>choose all 48 files from the homer study carrel wrd directory</p></li>
+<li><p>accept the defaults as you continue configure parsing and creating your OpenRefine project; remember that every file in the wrd directory is a tab-delimited file and you must use the “CSV / TSV / separater-based files” option to complete importing the data</p></li>
+<li><p>after the data has been imported, create a text-based facet on the keywords column</p></li>
+<li><p>select a keyword of interest, and then create a text-based facet on the id column</p></li>
+<li><p>in the end a list of identifiers will be displayed denoting which items in the carrel are about the selected keyword</p></li>
+<li><p>select different keywords, and notice how the list of faceted identifiers changes</p></li>
+</ol>
+<img alt="_images/normalizing-01.png" src="_images/normalizing-01.png" />
+<img alt="_images/normalizing-02.png" src="_images/normalizing-02.png" />
+<img alt="_images/normalizing-03.png" src="_images/normalizing-03.png" />
+<img alt="_images/normalizing-04.png" src="_images/normalizing-04.png" />
+<img alt="_images/normalizing-05.png" src="_images/normalizing-05.png" />
+<img alt="_images/normalizing-06.png" src="_images/normalizing-06.png" />
+<img alt="_images/normalizing-07.png" src="_images/normalizing-07.png" />
+<img alt="_images/normalizing-08.png" src="_images/normalizing-08.png" />
+<img alt="_images/normalizing-09.png" src="_images/normalizing-09.png" />
+<p>The same thing can be done the other way around, and you can ask yourself, “What is a given item about?” Here’s how:</p>
+<ol class="arabic simple">
+<li><p>use the Remove All button to return your project to the default state</p></li>
+<li><p>create a text-based facet on the id column</p></li>
+<li><p>select an id of interest, and notice how the keywwords associated with the item are displayed</p></li>
+</ol>
+<img alt="_images/normalizing-10.png" src="_images/normalizing-10.png" />
+<img alt="_images/normalizing-11.png" src="_images/normalizing-11.png" />
+<img alt="_images/normalizing-12.png" src="_images/normalizing-12.png" />
+<p>The tab-delimited files found in the wrd folder/directory are easy use because they contain a small number of columns with simple data types. The other delimited files are more complex, but by extension, they offer the ability to address more complex questions.</p>
+</section>
+<section id="named-entities">
+<h2>Named entities<a class="headerlink" href="#named-entities" title="Permalink to this headline">¶</a></h2>
+<p>The named enity files afford the ability to adress questions regarding people, places, organizations, and other things. Let’s address the question, “Who are the people mentioned in the Iliad and the Odyssey, and how often?” Here’s how:</p>
+<ol class="arabic simple">
+<li><p>use the Open… button to create a new project</p></li>
+<li><p>import all the files found the homer study carrel pos directory; remember that every file in the wrd directory is a tab-delimited file and you must use the “CSV / TSV / separater-based files” option to complete importing the data</p></li>
+<li><p>create a text-based facet on column named type</p></li>
+<li><p>select the PERSON type, and create a text-based facet on the entity column</p></li>
+<li><p>sort the result based on count, and the result addresses the question; Jove is the most frequently mentioned person</p></li>
+</ol>
+<img alt="_images/normalizing-13.png" src="_images/normalizing-13.png" />
+<img alt="_images/normalizing-14.png" src="_images/normalizing-14.png" />
+<img alt="_images/normalizing-15.png" src="_images/normalizing-15.png" />
+<img alt="_images/normalizing-16.png" src="_images/normalizing-16.png" />
+<p>You can then ask, “In what items is Jove mentioned and how often?” To answer this question, you:</p>
+<ol class="arabic simple" start="6">
+<li><p>select a person of intered (Jove)</p></li>
+<li><p>create a text-based facet on the id column</p></li>
+<li><p>sort the result on count; Jove appears in many items, and he appears in the eigth book of the Iliad the most</p></li>
+</ol>
+<img alt="_images/normalizing-17.png" src="_images/normalizing-17.png" />
+<img alt="_images/normalizing-18.png" src="_images/normalizing-18.png" />
+</section>
 </section>
 
 
@@ -69,7 +124,11 @@
 <li class="toctree-l1"><a class="reference internal" href="exercise_05-searching.html">Exercise: Searching</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_06-topic_modeling.html">Exercise: Topic modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_07-network_graphs.html">Exercise: Network graphs</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Exercise: Normalizing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Exercise: Normalizing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#keywords">Keywords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#named-entities">Named entities</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks.html">Python Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecases.html">Use cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Supporting software</a></li>
