@@ -24,6 +24,7 @@ A command-line tool for creating and interacting with Distant Reader study carre
 	exercise_05-searching
 	exercise_06-topic_modeling
 	exercise_07-network_graphs
+	exercise_08-normalizing_data
 	notebooks
 	usecases
 	software
