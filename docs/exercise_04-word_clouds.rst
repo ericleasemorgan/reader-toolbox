@@ -86,18 +86,3 @@ Here's a quick and dirty way to use World with content from any carrel:
 
 9. go to Step \#8 until you get tired
 
-
-
-
-   
-Simple wordcloud
-------------------
-
-[INSERT HERE DIRECTIONS HOW TO CREATE A WORDCLOUD WITH PLAIN TEXT FILES.]
-
-Redux
------
-
-[INSERT HERE DIRECTIONS HOW TO CREATE A WORDCLOUD WITH MORE SOPHISITCIATED FREQUECIES.]
-
-
