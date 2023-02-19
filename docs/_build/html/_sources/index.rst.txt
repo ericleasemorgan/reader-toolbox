@@ -14,8 +14,8 @@ A command-line tool for creating and interacting with Distant Reader study carre
 	definitions
 	installation
 	exercise_01-quick_start
-	commands
 	exercise_02-introduction
+	commands
 	exercise_03-building_carrrels
 	structure
 	gui
