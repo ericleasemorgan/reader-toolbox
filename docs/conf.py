@@ -17,10 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Reader Toolbox'
+project   = 'Reader Toolbox'
 copyright = '2023, University of Notre Dame'
-author = 'Eric Lease Morgan'
-version = 'The 2023 Code4Lib Preconference Workshop edition'
+author    = 'Eric Lease Morgan'
 
 
 # -- General configuration ---------------------------------------------------
