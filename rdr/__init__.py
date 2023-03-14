@@ -112,7 +112,8 @@ TEMPLATE = '''
 		<tr><td>Number of items</td><td>##ITEMS##</td></tr>
 		<tr><td>Number of words</td><td>##WORDS##</td></tr>
 		<tr><td>Average readability score</td><td>##FLESCH##</td></tr>
-		<tr><td>Bibliography</td><td><a href="./etc/bibliography.txt">plain text</a>; <a href="./etc/bibliography.htm">HTML</a>; <a href="./etc/bibliography.json">JSON</a></td></tr>
+		<tr><td>Bibliographics</td><td><a href="./etc/bibliography.txt">plain text</a>; <a href="./etc/bibliography.htm">HTML</a>; <a href="./etc/bibliography.json">JSON</a></td></tr>
+		<tr><td>Other files</td><td><a href="./etc/stopwords.txt">stopwords</a>; <a href="./etc/reader.txt">entire corpus</a></td></tr>
 		</table>
 		
 		<h3>Sizes</h3>
@@ -170,7 +171,79 @@ TEMPLATE = '''
 			<p style='text-align: center'>
 			<img src='./figures/keywords-cloud.png' width='66%' />
 			</p>
-			
+
+
+		<h3>Next steps</h3>
+
+		<p>
+		The next step is for you to ask yourself some sort of question, and apply it to this data set. There are quite a number of ways to do this.
+		</p>
+
+		<p>
+		The <a href="https://distantreader.org/">Distant Reader</a> and the <a href="https://reader-toolbox.readthedocs.io">Distant Reader Toolbox</a> take an almost arbitrary amount of text as input and output data sets -- affectionatly known as "study carrels". The contents of this page was created from a study carrel.
+		</p>
+
+		<p>
+		Each study carrel is constituted with the same set of folders and files. These folders and files contain "features" of the original documents such as parts-of-speech, named-entities, and statistically significant keywords. For example, all of the <a href="./cache/">original documents</a> have been saved in the cache folder, and all of the <a href="./txt/">plain-text versions of the original documents</a> have been saved in the txt directory. Since almost all of the files in a study carrel are either plain-text files or tab-delimited files, Distant Reader study carrels can be accessed and used by almost any text editor, word processor, spreadsheet, database, or analysis application. The following folders contain information of particular interest:
+		</p>
+
+		<ul>
+			<li><a href="./adr/">email addresses</a> (adr)</li>
+			<li><a href="./bib/">bibliographics</a> (bib)</li>
+			<li><a href="./cache/">original documents</a> (cache)</li>
+			<li><a href="./ent/">named-entities</a> (ent)</li>
+			<li><a href="./figures/">visualizations</a> (figures)</li>
+			<li><a href="./pos/">parts-of-speech</a> (pos)</li>
+			<li><a href="./txt/">plain-text versions of the cached documents</a> (txt)</li>
+			<li><a href="./urls/">universal resource locators</a> (urls)</li>
+			<li><a href="./wrd/">statistically significant keywords</a> (wrd)</li>
+		</ul>
+
+		<p>
+		There are a few files of note:
+		</p>
+
+		<ul>
+			<li><a href="./index.htm">this file</a> (index.htm)</li>
+			<li><a href="./etc/stopwords.txt">stopwords</a>, words of little interest (./etc/stopwords.txt)</li>
+			<li>a distillation of all the features in the form of an SQLite database (./etc/reader.db)</li>
+			<li><a href="./etc/reader.txt">the whole corpus as a single file</a> (./etc/reader.txt)</li>
+		</ul>
+
+		<p>
+		There are quite a number of graphical-user interface (GUI) applications you can apply to a carrel's content:
+		</p>
+
+		<ul>
+			<li>any text editor, and I recommend <a href="https://www.barebones.com/products/bbedit/">BBEdit</a> or <a href="https://notepad-plus-plus.org/">NotePad++</a></li>
+			<li><a href="https://web.archive.org/web/20191115162244/http://www.wordle.net/">Wordle</a> to create word clouds</li>
+			<li><a href="https://www.laurenceanthony.net/software/antconc/">AntConc</a> to do concordancing</li>
+			<li><a href="https://github.com/senderle/topic-modeling-tool">Topic Modeling Tool</a> for... topic modeling</li>
+			<li><a href="https://openrefine.org/">OpenRefine</a> to sort, filter, and normalize the tab-delimited files</li>
+			<li><a href="https://gephi.org">Gephi</a> to analyze and visualize network graphs</li>
+			<li>any SQLite client to query anything and everything</li>
+		</ul>
+
+		<p>
+		Finally, if you have Python installed, then you can install the Reader Toolbox (<code>pip install reader-toolbox</code>), and use the <code>rdr</code> command from the command line to do many of the things the GUI applications do and more. There is also a set of <a href="https://github.com/ericleasemorgan/reader-toolbox/tree/main/notebooks">Jupyter Notebooks</a> demonstrating how the Toolbox can be extended and used in conjunction with other Python modules (like Pandas, SQLite, WordNet, etc.).
+		</p>
+
+		<p>
+		For more information, please see the <a href="https://reader-toolbox.readthedocs.io">complete manual</a>.
+		</p>
+
+		<p>
+		<em>Happy reading!</em>
+		</p>
+
+		<hr />
+		
+		<p style='text-align:right'>
+		Eric Lease Morgan &lt;<a href="mailto:emorgan@nd.edu">emorgan@nd.edu</a>&gt;<br />
+		Navari Family Center for Digital Scholarship<br />
+		University of Notre Dame
+		</p>
+		
 </body>
 </html>
 '''
