@@ -35,17 +35,26 @@
             
   <section id="exercise-searching">
 <h1>Exercise: Searching<a class="headerlink" href="#exercise-searching" title="Permalink to this headline">¶</a></h1>
-<section id="simple-concordancing">
-<h2>Simple concordancing<a class="headerlink" href="#simple-concordancing" title="Permalink to this headline">¶</a></h2>
+<section id="concordancing">
+<h2>Concordancing<a class="headerlink" href="#concordancing" title="Permalink to this headline">¶</a></h2>
+<p>The Toolbox supports rudimentary concordancing, but from the shell, there are a number of ways to quickly and easily extract meaning. For example, the student, researcher, or scholar might output rudimentary definintions of a given person:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">concordance</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="s1">&#39;hector is|hector was&#39;</span> <span class="o">-</span><span class="n">w</span> <span class="mi">60</span> <span class="o">|</span> <span class="n">sed</span> <span class="s2">&quot;s/^.*hector is|hector was//&quot;</span> <span class="o">|</span> <span class="n">sort</span>
+</pre></div>
+</div>
 </section>
 <section id="advanced-concordancing">
 <h2>Advanced concordancing<a class="headerlink" href="#advanced-concordancing" title="Permalink to this headline">¶</a></h2>
+<p>A graphical-user interface (GUI) concordance application – callled AntConc – is easier to use than the Reader’s concordance application and it supports more functionality than the Toolbox’s interface.</p>
 </section>
 <section id="full-text-searching">
 <h2>Full text searching<a class="headerlink" href="#full-text-searching" title="Permalink to this headline">¶</a></h2>
+<p>The Toolbox full-text searching via the search subcommand.</p>
 </section>
 <section id="sql">
 <h2>SQL<a class="headerlink" href="#sql" title="Permalink to this headline">¶</a></h2>
+<p>Just about all the content of a study carrel – full text content, parts-of-speech, URLs, addresses, named-entities, etc. – has been reduced to an SQLite relational database file (./etc/reader.db) with the following structure:</p>
+<p>[INSERT STRUCTURE HERE.]</p>
+<p>Using any SQLite client, one ought to be able to query the database to output more refined and specialized reports.</p>
 </section>
 </section>
 
@@ -70,15 +79,15 @@
 <li class="toctree-l1"><a class="reference internal" href="definitions.html">Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_01-quick_start.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_02-introduction.html">Exercise: Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_03-building_carrrels.html">Exercise: Building carrels</a></li>
 <li class="toctree-l1"><a class="reference internal" href="structure.html">Structure of a carrel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui.html">GUI applications</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quips.html">Quips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_04-word_clouds.html">Exercise: Word Clouds</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Exercise: Searching</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#simple-concordancing">Simple concordancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#concordancing">Concordancing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#advanced-concordancing">Advanced concordancing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#full-text-searching">Full text searching</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sql">SQL</a></li>
@@ -86,6 +95,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_06-topic_modeling.html">Exercise: Topic modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_07-network_graphs.html">Exercise: Network graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise_08-normalizing_data.html">Exercise: Normalizing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks.html">Python Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecases.html">Use cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Supporting software</a></li>

@@ -59,7 +59,8 @@
 </section>
 <section id="with-wordle">
 <h2>With Wordle<a class="headerlink" href="#with-wordle" title="Permalink to this headline">¶</a></h2>
-<p>Wordle is a very nice word cloud program. After importing an entire carrel into Wordle and generating a word cloud, the student, researcher, or scholar can quickly and easily begin to tell a little story about any study carrel. For example, given the following visualisations, what story might you be to tell about the Iliad and the Odyssey?</p>
+<p>Wordle is a very nice word cloud program. Given any set of plain text, Wordle will create word clouds with one or more words, of different fonts, different colors, and different orientations. If the given words in the text are delimited by colon (:) characters and associated with frequencies (“weights”), then Wordle becomes more expressive.</p>
+<p>For example, after importing an entire carrel into Wordle and generating a word cloud, the student, researcher, or scholar can quickly and easily begin to tell a little story about any study carrel. For example, given the following nine visualisations, what stories might you be able to tell about the <em>Iliad</em> and the <em>Odyssey</em>?</p>
 <a class="reference internal image-reference" href="_images/cloud-01.png"><img alt="_images/cloud-01.png" src="_images/cloud-01.png" style="width: 30%;" /></a>
 <a class="reference internal image-reference" href="_images/cloud-02.png"><img alt="_images/cloud-02.png" src="_images/cloud-02.png" style="width: 30%;" /></a>
 <a class="reference internal image-reference" href="_images/cloud-03.png"><img alt="_images/cloud-03.png" src="_images/cloud-03.png" style="width: 30%;" /></a>
@@ -70,8 +71,12 @@
 <a class="reference internal image-reference" href="_images/cloud-08.png"><img alt="_images/cloud-08.png" src="_images/cloud-08.png" style="width: 30%;" /></a>
 <a class="reference internal image-reference" href="_images/cloud-09.png"><img alt="_images/cloud-09.png" src="_images/cloud-09.png" style="width: 30%;" /></a>
 <p>Here’s a quick and dirty way to use World with content from any carrel:</p>
-<ol class="arabic simple">
-<li><p>use your text editor to open the file &lt;carrel&gt;/etc/reader.txt, where &lt;carrel&gt; is the name of your study carrel; for these purposes, open homer/etc/reader.txt in your text editor</p></li>
+<ol class="arabic">
+<li><p>use your text editor to open the file &lt;carrel&gt;/etc/reader.txt, where &lt;carrel&gt; is the name of your study carrel; for these purposes, open homer/etc/reader.txt in your text editor; remember, you can be reminded where your study carrels are located using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">get</span>
+</pre></div>
+</div>
+</li>
 <li><p>look more closely at the result; as described in the section on the structure of a study carrel, reader.txt is a concatonation of all the plain text items in the carrel</p></li>
 <li><p>select all the text in your text editor, and copy it to your clipboard</p></li>
 <li><p>open Wordle, select the “Your Text” tab, and paste the contents of your clipboard into Wordle (see below); Wordle has no other way to get input</p></li>
@@ -81,18 +86,61 @@
 <a class="reference internal image-reference" href="_images/cloud-11.png"><img alt="_images/cloud-11.png" src="_images/cloud-11.png" style="width: 49%;" /></a>
 <ol class="arabic simple" start="6">
 <li><p>click the “Go” button</p></li>
-<li><p>notice the results; answer the question, what is the most frequently used word (sans some stop words) in the corpus?</p></li>
+<li><p>notice the results; answer the question, “What is the most frequently used word (sans some stop words) in the corpus?”</p></li>
 <li><p>go to Step #5, and double the value of maximum words</p></li>
 <li><p>go to Step #8 until you get tired</p></li>
 </ol>
+<p>The same process can be applied to one or more of the individual items in your study carrels. Remember, plain text versions your study carrel items are saved in the carrel’s txt directory. After you identify a one or more specific items of interest, you can open them in your text editor, copy the whole to your clipboard, and paste the result into Wordle.</p>
+<p>For example, a search against the homer study carrel for items with the keyword “hector” returns many items, and the first one is homer-iliad_07.txt, which is considered the most relevant:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">search</span> <span class="n">homer</span> <span class="o">-</span><span class="n">q</span> <span class="n">keyword</span><span class="p">:</span><span class="n">hector</span>
+</pre></div>
+</div>
+<p>After importing homer-iliad_07.txt into Wordle and limiting the number of most frequent words to thirty-two, we can see what other words are significant in the item. Thus, we can begin to answer the question, “With what words is Hector associated?”:</p>
+<img alt="_images/cloud-16.png" src="_images/cloud-16.png" />
+<section id="with-frequencies">
+<h3>With frequencies<a class="headerlink" href="#with-frequencies" title="Permalink to this headline">¶</a></h3>
+<p>Wordle takes two types of input: 1) a simple set of plain text, or 2) a list of words or phrases associated with frequencies. Understanding how to create the second type of input enables you to visualize many more things. It also enables you to create more compelling visualizations. The secret is to learn how to: 1) create a list of words, 2) denote their frequencies, and 3) delimit the two with a colon.</p>
+<p>Let’s apply this process to unigrams. Here’s how:</p>
+<ol class="arabic">
+<li><p>count &amp; tabulate the unigrams in the homer study carrel, and save the result to a file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">c</span> <span class="o">&gt;</span> <span class="n">unigrams</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+</li>
+<li><p>open the file (unigrams.txt) in your text editor</p></li>
+<li><p>use the editor’s find/replace functionality to find tab characters and replace them with colons</p></li>
+<li><p>copy the whole to your clipboard and insert the result into Wordle, and the result ought to look something like this:</p></li>
+</ol>
+<img alt="_images/cloud-17.png" src="_images/cloud-17.png" />
+<ol class="arabic simple" start="5">
+<li><p>visualize, and the result will look something like this:</p></li>
+</ol>
+<img alt="_images/cloud-18.png" src="_images/cloud-18.png" />
+<p>Let’s address a more complicated question, “With what words is Ulysses most closely asssociated, and at what frequency?” The answer to this question ought to tell us about Ulysses. On our mark. Get set. Go:</p>
+<ol class="arabic">
+<li><p>count &amp; tabulate the bigrams containing the word “ulysses” and save the result to a file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">ngrams</span> <span class="n">homer</span> <span class="o">-</span><span class="n">s</span> <span class="mi">2</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">q</span> <span class="n">ulysses</span> <span class="o">&gt;</span> <span class="n">ulysses</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+</li>
+<li><p>open the file (ulysses.txt) in your text editor</p></li>
+<li><p>use the editor’s find/replace functionality to replace the tab character just before the frequency with a colon, and this can be done through the use of a pair of regular expressions: 1) t(d+)$, and 2) :1; in other words find the regular expression t(d+)$ and replace it with another regular expression :1</p></li>
+</ol>
+<ol class="arabic simple" start="5">
+<li><p>remove the tab characters; find tab and replace it with space</p></li>
+<li><p>copy the whole document to your clipboard, paste it into Wordle, and the result ough to look something like this:</p></li>
+</ol>
+<img alt="_images/cloud-19.png" src="_images/cloud-19.png" />
+<ol class="arabic simple" start="7">
+<li><p>visualize, ask yourself, “With what words is Ulysses most closely associated?”, and one such answer is illustrated below:</p></li>
+</ol>
+<img alt="_images/cloud-20.png" src="_images/cloud-20.png" />
+<p>Apparently Ulysses is asked a lot of questions, and he responds to them.</p>
 </section>
-<section id="simple-wordcloud">
-<h2>Simple wordcloud<a class="headerlink" href="#simple-wordcloud" title="Permalink to this headline">¶</a></h2>
-<p>[INSERT HERE DIRECTIONS HOW TO CREATE A WORDCLOUD WITH PLAIN TEXT FILES.]</p>
 </section>
-<section id="redux">
-<h2>Redux<a class="headerlink" href="#redux" title="Permalink to this headline">¶</a></h2>
-<p>[INSERT HERE DIRECTIONS HOW TO CREATE A WORDCLOUD WITH MORE SOPHISITCIATED FREQUECIES.]</p>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>True, word clouds are rudimentary visualizations. They are a simple descriptive statistics because they only compare frequencies to other frequencies as opposed to frequencies and some other things such as times, places, demographics, genres, etc. On the other hand, when those frequecies are of a given type (nouns, verbs, their lemmas, bigrams, etc. ), the result can be quite telling. Learning how to save the result of Toolbox commands to files, editing them into a format suitable for Wordle, and visualizign the result can lead to even more compelling visualizations.</p>
 </section>
 </section>
 
@@ -117,8 +165,8 @@
 <li class="toctree-l1"><a class="reference internal" href="definitions.html">Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_01-quick_start.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_02-introduction.html">Exercise: Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_03-building_carrrels.html">Exercise: Building carrels</a></li>
 <li class="toctree-l1"><a class="reference internal" href="structure.html">Structure of a carrel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui.html">GUI applications</a></li>
@@ -126,13 +174,13 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Exercise: Word Clouds</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#with-the-toolbox">With the Toolbox</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#with-wordle">With Wordle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#simple-wordcloud">Simple wordcloud</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#redux">Redux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_05-searching.html">Exercise: Searching</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_06-topic_modeling.html">Exercise: Topic modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_07-network_graphs.html">Exercise: Network graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise_08-normalizing_data.html">Exercise: Normalizing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks.html">Python Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecases.html">Use cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Supporting software</a></li>

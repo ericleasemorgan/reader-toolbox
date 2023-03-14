@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Reader Toolbox'
+project   = 'Reader Toolbox'
 copyright = '2023, University of Notre Dame'
-author = 'Eric Lease Morgan'
+author    = 'Eric Lease Morgan'
 
 
 # -- General configuration ---------------------------------------------------

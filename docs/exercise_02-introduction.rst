@@ -149,13 +149,13 @@ The list of grammars may be long, so you might want to pipe the result through a
   rdr grammars homer -g nouns -c | more
 
 
-Next steps
-----------
+Summary
+-------
+
+The Toolbox is made up of many different commands. They are invoked by typing rdr followed the command itself. Append --help to any command to learn more about it.
 
 Now that you have gotten this far, see `Commands in depth <./commands.html>`_ for a complete listing of all the commands and how to use them.
 
 Happy reading!
-
-See  `Commands in depth <./commands.html>`_ to read about each command in the Toolbox.
 
 
