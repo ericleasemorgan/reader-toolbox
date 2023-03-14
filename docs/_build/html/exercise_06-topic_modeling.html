@@ -57,35 +57,35 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">1</span> <span class="o">-</span><span class="n">w</span> <span class="mi">1</span>
 </pre></div>
 </div>
-<p>Apparently Homer’s works are about “will”:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">labels</span>  <span class="n">weights</span> <span class="n">features</span>
-<span class="n">will</span>   <span class="mf">5.8306</span>    <span class="n">will</span>
+<p>Apparently Homer’s works are about “man”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span>  <span class="n">weights</span> <span class="n">features</span>
+   <span class="n">man</span>  <span class="mf">5.83955</span>     <span class="n">man</span>
 </pre></div>
 </div>
 <p>Now ask yourself, “How can that single topic be elaborated upon?” To answer the question, model Homer with a single topic and four words:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">1</span> <span class="o">-</span><span class="n">w</span> <span class="mi">4</span>
 </pre></div>
 </div>
-<p>Apparently Homer has something to do with the topic will-son-one-man, and the topic can be labeled with the word “will”:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">labels</span>  <span class="n">weights</span>           <span class="n">features</span>
-<span class="n">will</span>   <span class="mf">5.8306</span>  <span class="n">will</span> <span class="n">son</span> <span class="n">one</span> <span class="n">man</span>
+<p>Apparently Homer has something to do with the topic man-ulysses-men-jove, and the topic can be labeled with the word “man”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span>  <span class="n">weights</span>               <span class="n">features</span>
+   <span class="n">man</span>  <span class="mf">5.83955</span>  <span class="n">man</span> <span class="n">ulysses</span> <span class="n">men</span> <span class="n">jove</span>
 </pre></div>
 </div>
 <p>“Okay,” you say do yourself, “But if I were divide Homer into two topics and each where elaborated upon with four words, then what might those topics be?” Try this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">2</span> <span class="o">-</span><span class="n">w</span> <span class="mi">4</span>
 </pre></div>
 </div>
-<p>The answer to your question is “will”, and “son”, but just as importantly, take note of the words used to elaborate on these topics:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  <span class="n">labels</span>  <span class="n">weights</span>                    <span class="n">features</span>
-<span class="n">will</span>  <span class="mf">0.52631</span>     <span class="n">will</span> <span class="n">ulysses</span> <span class="n">one</span> <span class="n">house</span>
- <span class="n">son</span>  <span class="mf">0.42646</span>  <span class="n">son</span> <span class="n">will</span> <span class="n">trojans</span> <span class="n">achaeans</span>
+<p>The answer to your question is “ulysses”, and “trojans”, but just as importantly, take note of the words used to elaborate on these topics:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">labels</span>  <span class="n">weights</span>                        <span class="n">features</span>
+<span class="n">ulysses</span>  <span class="mf">0.46761</span>           <span class="n">ulysses</span> <span class="n">man</span> <span class="n">men</span> <span class="n">tell</span>
+<span class="n">trojans</span>  <span class="mf">0.38471</span>  <span class="n">trojans</span> <span class="n">achaeans</span> <span class="n">hector</span> <span class="n">ships</span>
 </pre></div>
 </div>
 <p>Now is a good time to visualize this result. Given the whole corpus has been divided into two themes, and each theme has a weight, then what proportion of the whole is assigned to each theme? Pie charts are an easy way to visualize these relationships. To create a pie chart from the model, give this a go:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">p</span> <span class="n">read</span> <span class="o">-</span><span class="n">o</span> <span class="n">chart</span>
 </pre></div>
 </div>
-<p>We can literally see that about half of Homer is about “will” and half of Homer is about “son”. And notice also how the pie chart’s ratios are very similar to the ratios output by the cluster process:</p>
+<p>We can literally see that about half of Homer is about “ulysses” and half of Homer is about “trojans”. And notice also how the pie chart’s ratios are very similar to the ratios output by the cluster process:</p>
 <img alt="_images/tm-pie-01.png" src="_images/tm-pie-01.png" />
 <p>Since the underlying files in this study carrel are named sequentially, it is possible to enhance the underlying topic model with file names, pivot the model, and illustrate how our two themes ebb and flow of the course of the Homer’s stories:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">p</span> <span class="n">read</span> <span class="o">-</span><span class="n">o</span> <span class="n">chart</span> <span class="o">-</span><span class="n">y</span> <span class="n">line</span> <span class="o">-</span><span class="n">f</span> <span class="n">title</span>
@@ -101,19 +101,41 @@
 </div>
 <img alt="_images/tm-pie-02.png" src="_images/tm-pie-02.png" />
 <img alt="_images/tm-line-02.png" src="_images/tm-line-02.png" />
-<p>Given there are forty-eight books in the whole of Homer, it might behoove the student, researcher, or scholar to model the corpus with forty-eight topics, many words, denote an obscene number of iterations, and visualize the result:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">48</span> <span class="o">-</span><span class="n">w</span> <span class="mi">12</span> <span class="o">-</span><span class="n">i</span> <span class="mi">12800</span>
+<p>Given there are forty-eight books in the whole of Homer, it might behoove the student, researcher, or scholar to model the corpus on an even larger number of topics, many words, denote an obscene number of iterations, and visualize the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">t</span> <span class="mi">24</span> <span class="o">-</span><span class="n">w</span> <span class="mi">24</span> <span class="o">-</span><span class="n">i</span> <span class="mi">25600</span>
 <span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">p</span> <span class="n">read</span> <span class="o">-</span><span class="n">o</span> <span class="n">chart</span>
 <span class="n">rdr</span> <span class="n">tm</span> <span class="n">homer</span> <span class="o">-</span><span class="n">p</span> <span class="n">read</span> <span class="o">-</span><span class="n">o</span> <span class="n">chart</span> <span class="o">-</span><span class="n">y</span> <span class="n">line</span> <span class="o">-</span><span class="n">f</span> <span class="n">title</span>
 </pre></div>
 </div>
 <img alt="_images/tm-pie-03.png" src="_images/tm-pie-03.png" />
 <img alt="_images/tm-line-03.png" src="_images/tm-line-03.png" />
-<p>Notice how the topic of “will” dominates, again, and then ask yourself, “Why?”</p>
 <p>Topic modeling, like all modeling processes, is iterative in nature. Like all modeling proceses, start out small, visualize often, and grow your model. The problem to solve is not so much articulating truth. Instead, it is about making observations and telling a compelling story.</p>
 </section>
 <section id="with-topic-modeling-tool">
 <h2>With Topic Modeling Tool<a class="headerlink" href="#with-topic-modeling-tool" title="Permalink to this headline">¶</a></h2>
+<p>Topic Modeling Tool is a GUI version of MALLET, and MALLET is the grand-daddy of topic modeling applications. If you know where your study carrels are saved on your file system, then the use of Topic Modeling Tool is a good example of how study carrel data can be used by many other applications.</p>
+<p>Let’s do a bit of topic modeling with Topic Modeling Tool. Begin by downloading the Tool and launching it.</p>
+<img alt="_images/tm-tool-01.png" src="_images/tm-tool-01.png" />
+<p>Once you get that far, open up your terminal and enter the following command which will tell you were your study carrels are saved on your computer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rdr</span> <span class="n">get</span>
+</pre></div>
+</div>
+<p>Using the output of the previous command, use Topic Modeling Tool’s “Input Dir…” button to select the txt directory of your homer study carrel:</p>
+<img alt="_images/tm-tool-02.png" src="_images/tm-tool-02.png" />
+<p>You now need to denote where the Tool’s output will  go. For the sake of this execise, create a folder on your Desktop and call it “model”. Like above, use the Tool’s “Output Dir…” button to navigate your file system and select the newly created model directory. Additionally, donote a stop word list by clicking the “Optional Settings…” button, clicking “Stopword File…” from the resulting window, and selecting the file named “stopwords.txt” from your study carrel’s etc directory:</p>
+<img alt="_images/tm-tool-03.png" src="_images/tm-tool-03.png" />
+<img alt="_images/tm-tool-04.png" src="_images/tm-tool-04.png" />
+<p>After you have selected your stop words file, clock “Ok” to return to the main window.</p>
+<p>Like before, you want grow your model slowly. Consequently, denote the number of topics to 1 and click the “Learn Topics” button. When the modeling process is done, the Tool answered the question, “If there was on overarching theme in this text, and if the theme were elaborated upon using twenty words, then what would that theme be”. The result ought to look something like this:</p>
+<img alt="_images/tm-tool-05.png" src="_images/tm-tool-05.png" />
+<p>Repeat the previous step three or four times, and remember to double the value of number of topics. Also consider increasing the number of iterations from the “Optional Settings…” pane. Beause of the number of words in the study carrel (about 275,000) a value of 2400 is the minumum you ought to use. The results of the modeling process should to be very similar to the results outut by the Reader. For example, with eight topics:</p>
+<img alt="_images/tm-tool-06.png" src="_images/tm-tool-06.png" />
+<p>The result of the Tool’s work is saved in the model directory you created previously. More specifically, the directory contains some comma-separated value (CSV) files as well as some HTML files. Open the model directory. Open the output_html directory, and open the file named “all_topics.html”. The result is a Web page listing the topics, and select the topic about “man”. Finally, you will see what files are most about “man”.</p>
+<img alt="_images/tm-tool-07.png" src="_images/tm-tool-07.png" />
+<img alt="_images/tm-tool-08.png" src="_images/tm-tool-08.png" />
+<img alt="_images/tm-tool-09.png" src="_images/tm-tool-09.png" />
+<p>While beyond the scope of this documenation, the model’s “output_csv” directory contains tabular data that can be used to create visualizations. Used in combination with the Tool’s “Metadata File” option, this tabular data can be enhanced, pivoted, and visualized to answer questions like, “How do themes ebb and flow over time?” or “How can the themes of different authors in the same carrel be compared and contrasted?”</p>
+<p>In summary, Topic Modeling Tool is a GUI interface for topic modeling. Its functionality is similar to the Toolbox’s functionality. Both have their own set of advantages and disadvantages.</p>
 </section>
 </section>
 
@@ -138,8 +160,8 @@
 <li class="toctree-l1"><a class="reference internal" href="definitions.html">Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_01-quick_start.html">Quick start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_02-introduction.html">Exercise: Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_03-building_carrrels.html">Exercise: Building carrels</a></li>
 <li class="toctree-l1"><a class="reference internal" href="structure.html">Structure of a carrel</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gui.html">GUI applications</a></li>
@@ -152,6 +174,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="exercise_07-network_graphs.html">Exercise: Network graphs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="exercise_08-normalizing_data.html">Exercise: Normalizing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks.html">Python Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecases.html">Use cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Supporting software</a></li>
