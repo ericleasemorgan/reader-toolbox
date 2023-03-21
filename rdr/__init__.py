@@ -3355,16 +3355,17 @@ def build( carrel, directory, erase=False, start=False ) :
 	documents. Please see the full-blown documentation for details."""
 
 	# configure
-	CACHE  = 'cache'
-	TXT    = 'txt'
-	SCHEMA = '''-- parts-of-speech\ncreate table pos (\n    id    TEXT,\n    sid   INT,\n    tid   INT,\n    token TEXT,\n    lemma TEXT,\n    pos   TEXT\n);\n\n-- name entitites\ncreate table ent (\n    id     TEXT,\n    sid    INT,\n    eid    INT,\n    entity TEXT,\n    type   TEXT\n);\n\n-- keywords\ncreate table wrd (\n    id      TEXT,\n    keyword TEXT\n);\n\n-- email addresses\ncreate table adr (\n    id      TEXT,\n    address TEXT\n);\n\n-- questions\ncreate table questions (\n    id       TEXT,\n    question TEXT\n);\n\n-- urls\ncreate table url (\n    id     TEXT,\n    domain TEXT,\n    url    TEXT\n);\n\n-- bibliographics, such as they are\ncreate table bib (\n    id        TEXT,\n    words     INT,\n    sentence  INT,\n    flesch    INT,\n    summary   TEXT,\n    title     TEXT,\n    author    TEXT,\n    date      TEXT,\n    txt       TEXT,\n    cache     TEXT,\n    pages     INT,\n    extension TEXT,\n    mime      TEXT,\n    genre     TEXT\n);'''
-	POS    = 'pos'
-	ENT    = 'ent'
-	WRD    = 'wrd'
-	ADR    = 'adr'
-	URL    = 'urls'
-	BIB    = 'bib'
-	POOL   = 48
+	CACHE     = 'cache'
+	TXT       = 'txt'
+	SCHEMA    = '''-- parts-of-speech\ncreate table pos (\n    id    TEXT,\n    sid   INT,\n    tid   INT,\n    token TEXT,\n    lemma TEXT,\n    pos   TEXT\n);\n\n-- name entitites\ncreate table ent (\n    id     TEXT,\n    sid    INT,\n    eid    INT,\n    entity TEXT,\n    type   TEXT\n);\n\n-- keywords\ncreate table wrd (\n    id      TEXT,\n    keyword TEXT\n);\n\n-- email addresses\ncreate table adr (\n    id      TEXT,\n    address TEXT\n);\n\n-- questions\ncreate table questions (\n    id       TEXT,\n    question TEXT\n);\n\n-- urls\ncreate table url (\n    id     TEXT,\n    domain TEXT,\n    url    TEXT\n);\n\n-- bibliographics, such as they are\ncreate table bib (\n    id        TEXT,\n    words     INT,\n    sentence  INT,\n    flesch    INT,\n    summary   TEXT,\n    title     TEXT,\n    author    TEXT,\n    date      TEXT,\n    txt       TEXT,\n    cache     TEXT,\n    pages     INT,\n    extension TEXT,\n    mime      TEXT,\n    genre     TEXT\n);'''
+	POS       = 'pos'
+	ENT       = 'ent'
+	WRD       = 'wrd'
+	ADR       = 'adr'
+	URL       = 'urls'
+	BIB       = 'bib'
+	POOLSMALL = 32
+	POOLBIG   = 56
 	
 	# require
 	from   multiprocessing import Pool
@@ -3376,7 +3377,7 @@ def build( carrel, directory, erase=False, start=False ) :
 	
 	# _initialize
 	localLibrary = configuration( 'localLibrary' )
-	pool         = Pool( POOL )
+	pool         = Pool( POOLSMALL )
 
 	# make sure we have Tika Server
 	_checkForTika( str( configuration( 'tikaHome' ) ) )
@@ -3461,7 +3462,7 @@ def build( carrel, directory, erase=False, start=False ) :
 		
 	# clean up
 	pool.close()
-	pool = Pool( POOL )
+	pool = Pool( POOLBIG )
 
 	# bag of words
 	click.echo( '(Step #3 of 9) Creating bag-of-words', err=True )
@@ -3481,7 +3482,7 @@ def build( carrel, directory, erase=False, start=False ) :
 	
 	# clean up
 	pool.close()
-	pool = Pool( POOL )
+	pool = Pool( POOLBIG )
 
 	# extract named entities
 	click.echo( '(Step #5 of 9) Extracting (named) entities', err=True )
@@ -3489,7 +3490,7 @@ def build( carrel, directory, erase=False, start=False ) :
 	
 	# clean up
 	pool.close()
-	pool = Pool( POOL )
+	pool = Pool( POOLBIG )
 
 	# extract parts-of-speech
 	click.echo( '(Step #6 of 9) Extracting parts-of-speech', err=True )
@@ -3497,7 +3498,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# clean up
 	pool.close()
-	pool = Pool( POOL )
+	pool = Pool( POOLBIG )
 
 	# extract urls
 	click.echo( '(Step #7 of 9) Extracting URLs', err=True )
@@ -3505,7 +3506,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# clean up
 	pool.close()
-	pool = Pool( POOL )
+	pool = Pool( POOLBIG )
 
 	# extract keywords
 	click.echo( '(Step #8 of 9) Extracting (key) words', err=True )
