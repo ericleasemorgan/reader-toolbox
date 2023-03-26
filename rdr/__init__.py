@@ -2387,7 +2387,8 @@ def search( carrel, query='love', output='human' ) :
 	elif output == 'tsv' : return( rows.to_csv( header=False, sep='\t' ) )
 	
 	# json
-	elif output == 'json' : return( rows.to_json( orient='records' ) )
+	#elif output == 'json' : return( rows.to_json( orient='records' ) )
+	elif output == 'json' : return( rows.to_json( orient='index' ) )
 	
 	# count; tsv stream of metadata
 	elif output == 'count' :
@@ -3364,8 +3365,8 @@ def build( carrel, directory, erase=False, start=False ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 32
-	POOLBIG   = 56
+	POOLSMALL = 8
+	POOLBIG   = 8
 	
 	# require
 	from   multiprocessing import Pool
