@@ -628,7 +628,7 @@ def bibliography( carrel, format='text', save=False ) :
 	connection.row_factory = sqlite3.Row
 
 	# query database
-	sql  = '''SELECT b.id, b.words, b.extension, b.flesch, b.author, b.title, b.date, GROUP_CONCAT( LOWER( w.keyword ), '; ') AS keywords, b.summary
+	sql  = '''SELECT b.id, b.words, b.extension, b.flesch, b.author, b.title, b.date, GROUP_CONCAT( LOWER( w.keyword ), '; ') AS keywords, b.summary, b.mime
 			  FROM bib AS b, wrd AS w
 			  WHERE b.id = w.id
 			  GROUP BY b.id
