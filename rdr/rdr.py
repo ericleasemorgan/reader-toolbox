@@ -360,6 +360,20 @@ def cmdDownload( carrel ) :
 ''' ) % ( carrel, carrel, carrel, carrel, carrel, carrel, ), err=True )
 
 
+# archive
+@click.command( options_metavar='[<options>]' )
+@click.argument( 'carrel', metavar='<carrel>' )
+def cmdZip( carrel ) :
+
+	"""Create an archive (index.zip) file of <carrel>"""
+			
+	# do the work and give a hint
+	carrel2zip( carrel )
+	click.echo('''\n  Done. An archive file (index.zip) has been created and saved
+  in the root of the ''' + carrel + ''' study carrel. Share the file
+  with your friends and colleagues.\n''', err=True )
+
+
 # catalog
 @click.command( options_metavar='<options>' )
 @click.option('-h', '--human', is_flag=True, help='output in a more human-readable form')
@@ -1532,6 +1546,7 @@ rdr.add_command( cmdSummarize,     name='summarize' )
 rdr.add_command( cmdTm,            name='tm' )
 rdr.add_command( cmdUrl,           name='url' )
 rdr.add_command( cmdWrd,           name='wrd' )
+rdr.add_command( cmdZip,           name='zip' )
 
 # do the work
 if __name__ == '__main__' : rdr()

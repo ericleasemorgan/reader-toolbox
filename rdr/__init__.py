@@ -68,14 +68,14 @@ INDEXRDF             = 'index.rdf'
 KEYWORDSCLOUD        = 'keywords-cloud.png'
 LEXICON              = 'lexicon.txt'
 MANIFEST             = 'MANIFEST.xml'
-METADATA             = 'metadata.csv'
+METADATA             = 'index.csv'
 POSADJ               = 'pos-adjective.png'
 POSADV               = 'pos-adverb.png'
 POSNOUN              = 'pos-noun.png'
 POSPRON              = 'pos-pronoun.png'
 POSPROPN             = 'pos-propernoun.png'
 POSVERB              = 'pos-verb.png'
-PROVENANCE           = 'provenance.tsv'
+PROVENANCE           = 'index.tsv'
 READABILITYBOXPLOT   = 'readability-boxplot.png'
 READABILITYHISTOGRAM = 'readability-histogram.png'
 SENTENCES            = 'reader.sents'
@@ -87,10 +87,11 @@ UNIGRAMSCLOUD        = 'unigrams-cloud.png'
 VECTORS              = 'reader.vec'
 WRD                  = 'wrd'
 WRDS                 = 'reader.wrds'
+ZIP                  = 'index.zip'
 
 # spacy langauge model
 MODELSMALL   = 'en_core_web_sm'
-MODELMEDIUM  = 'en_core_web_md'
+MODELMEDIUM  = 'en_core_web_sm'
 
 # mallet
 MALLETZIP = 'https://distantreader.org/apps/mallet.zip'
@@ -272,6 +273,50 @@ class Sentences( object ) :
 		# return each sentence
 		for sentence in open( self.file ) : yield sentence
 
+
+# given the name of a carrel, create zip file (index.zip) in its root
+def carrel2zip( carrel ) :
+
+	'''Given then name of a carrel, create a zip file (index.zip)
+	in its root.'''
+
+	# I don't know were to require these, here or at the root?
+	from zipfile import ZipFile
+	import os
+	import rdr
+	import tempfile
+	
+	# sanity check
+	rdr.checkForCarrel( carrel )
+	
+	# initialize
+	library = rdr.configuration( 'localLibrary' )
+	zip     = library/carrel/( rdr.ZIP )
+	staging = tempfile.NamedTemporaryFile( delete=False ).name
+	
+	# debug
+	click.echo( "Creating archive (index.zip) file of " + carrel, err=True )
+	
+	# make sane
+	zip.unlink( missing_ok=True )
+	os.chdir( library )
+	
+	# create an archive
+	with ZipFile( staging, 'w' ) as handle :
+
+		# find all files
+		for root, _, files in os.walk( carrel ) :
+
+			# process each file
+			for file in files:
+			
+				# create full path name, debug, and do the work
+				file = os.path.join( root, file )
+				click.echo( file, err=True )
+				handle.write( file )
+
+	# put the archive into place
+	os.rename( staging, zip )
 
 # given a sentence, parser, and lexicon return matching sentences
 def matchModal( sentence, parser, lexicon ) :
@@ -2703,11 +2748,11 @@ def _initialize( carrel, directory ) :
 	directory = Path( directory )
 	for source in directory.glob( '*' ) :
 
-		# check for metadata file
-		if source.name == METADATA :
+		# check for metadata file; look for a very specific file
+		if source.name == 'metadata.csv' :
 		
 			# copy the metadata file to the root of the carrel
-			destination = localLibrary/carrel/( source.name )
+			destination = localLibrary/carrel/METADATA
 			shutil.copyfile( source, destination )
 
 		else :
