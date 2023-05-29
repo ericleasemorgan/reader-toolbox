@@ -45,7 +45,7 @@ DOCUMENTATION = 'https://reader-toolbox.readthedocs.io'
 # file system mappings
 AUTHORS              = 'reader.authors'
 BIB                  = 'bib'
-BIBLIOGRAPHYHTML     = 'bibliography.htm'
+BIBLIOGRAPHYHTML     = 'index.xhtml'
 BIBLIOGRAPHYJSON     = 'bibliography.json'
 BIBLIOGRAPHYTEXT     = 'bibliography.txt'
 BIGRAMSCLOUD         = 'bigrams-cloud.png'
@@ -99,6 +99,19 @@ MALLETBIN = 'bin/mallet'
 
 # tika server
 TIKADOWNLOAD = 'https://distantreader.org/apps/tika-server.jar'
+
+# xhtml template for bibliography (index.xhtml)
+XHTML = '''
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head><title>Bibliography</title></head>
+<body style="margin:3%">
+<h1>Bibliography</h1>
+<p>This is an automatically generated bibliography describing the content of this study carrel.</p>
+<ol>##ITEMS##</ol>
+</body>
+</html>
+'''
 
 # html template for summarize command
 TEMPLATE = '''
@@ -669,15 +682,15 @@ def carrel2zip( carrel ) :
 	# I don't know were to require these, here or at the root?
 	from zipfile import ZipFile
 	import os
-	import rdr
 	import tempfile
+	import shutil
 	
 	# sanity check
 	rdr.checkForCarrel( carrel )
 	
 	# initialize
-	library = rdr.configuration( 'localLibrary' )
-	zip     = library/carrel/( rdr.ZIP )
+	library = configuration( 'localLibrary' )
+	zip     = library/carrel/ZIP
 	staging = tempfile.NamedTemporaryFile( delete=False ).name
 	
 	# debug
@@ -702,7 +715,7 @@ def carrel2zip( carrel ) :
 				handle.write( file )
 
 	# put the archive into place
-	os.rename( staging, zip )
+	shutil.move( staging, zip )
 
 # given a sentence, parser, and lexicon return matching sentences
 def matchModal( sentence, parser, lexicon ) :
@@ -1080,7 +1093,7 @@ def bibliography( carrel, format='text', save=False ) :
 		total        = len( rows )
 		bibliography = ''
 		items        = ''
-		template     = "<html><head><title>Bibliography</title></head><body style='margin:7%'><h1>Bibliography</h1><ol>##ITEMS##</ol></body></html>"
+		template     = XHTML
 		
 		# process each row
 		for item, row in enumerate( rows ) :
@@ -1103,11 +1116,14 @@ def bibliography( carrel, format='text', save=False ) :
 			else                      : extension = row[ 'extension' ]
 			
 			# build cache and plain text
-			cache = str( locallibrary/carrel/CACHE/id ) + extension
-			text  = str( locallibrary/carrel/TXT/id )   + '.txt'
+			#cache = str( locallibrary/carrel/CACHE/id ) + extension
+			#text  = str( locallibrary/carrel/TXT/id )   + '.txt'
 	
 			if format == 'text' :
 			
+				cache = str( locallibrary/carrel/CACHE/id ) + extension
+				text  = str( locallibrary/carrel/TXT/id )   + '.txt'
+				
 				# build the bibliography
 				bibliography = bibliography + ( '        item: #%s of %s\n' % ( str( item + 1 ), total ) )
 				bibliography = bibliography + ( '          id: %s\n' % id )
@@ -1124,6 +1140,9 @@ def bibliography( carrel, format='text', save=False ) :
 	
 			else :
 			
+				cache = './' + CACHE + '/' + id + extension
+				text  = './' + TXT + '/' + id + '.txt'
+				
 				item = '<ul>'
 				item = item + '<li>' + ( 'author: %s'    % author )   + '</li>'
 				item = item + '<li>' + ( 'title: %s'     % title )    + '</li>'
@@ -1132,8 +1151,7 @@ def bibliography( carrel, format='text', save=False ) :
 				item = item + '<li>' + ( 'flesch: %s'    % flesch )   + '</li>'
 				item = item + '<li>' + ( 'summary: %s'   % summary )  + '</li>'
 				item = item + '<li>' + ( 'keywords: %s'  % keywords ) + '</li>'
-				item = item + '<li>' + ( 'cache: %s'      % cache )   + '</li>'
-				item = item + '<li>' + ( 'plain text: %s' % text )    + '</li>'
+				item = item + '<li>' + ( 'versions: <a href="' + cache + '">original</a>; <a href="' + text + '">plain text</a>' ) + '</li>'
 				item = item + '</ul>'
 				
 				items = items + "<li>" + id + item + "</li>"
@@ -1143,7 +1161,7 @@ def bibliography( carrel, format='text', save=False ) :
 	if save :
 
 		if format == 'text' : file = locallibrary/carrel/ETC/BIBLIOGRAPHYTEXT
-		if format == 'html' : file = locallibrary/carrel/ETC/BIBLIOGRAPHYHTML
+		if format == 'html' : file = locallibrary/carrel/BIBLIOGRAPHYHTML
 		if format == 'json' : file = locallibrary/carrel/ETC/BIBLIOGRAPHYJSON
 		
 		with open( file, 'w', encoding='utf-8' ) as handle : handle.write( bibliography )
