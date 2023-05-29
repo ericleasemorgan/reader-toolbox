@@ -5,6 +5,7 @@
 
 # July 30, 2021 - in Three Oaks with Pat; first real working version
 # June 14, 2022 - trying to consolidate everything into a single file
+# May  29, 2023 - whoefully lacking in updates here; added... everthing
 
 
 
@@ -29,7 +30,6 @@ LABELS          = [ 'docId', 'file' ]
 # require
 from rdr import *
 
-#####
 
 def _makeSummary( keys, header ) :
 
@@ -372,6 +372,19 @@ def cmdZip( carrel ) :
 	click.echo('''\n  Done. An archive file (index.zip) has been created and saved
   in the root of the ''' + carrel + ''' study carrel. Share the file
   with your friends and colleagues.\n''', err=True )
+
+
+# reconcile, create RDF, and graph
+@click.command( options_metavar='[<options>]' )
+@click.argument( 'carrel', metavar='<carrel>' )
+@click.option('-v', '--save', is_flag=True, help='write output to default location')
+@click.option('-o', '--output', default='gml', help='gml for custom visualization (recommended); chart for graphic', type=click.Choice( [ 'gml', 'chart' ] ) )
+def cmdRDFGraph( carrel, output, save ) :
+
+	"""Create RDF (Linked Data) file against <carrel>"""
+			
+	# do the work
+	graph2gml( carrel, output, save )
 
 
 # catalog
@@ -1534,6 +1547,7 @@ rdr.add_command( cmdNgrams,        name='ngrams' )
 rdr.add_command( cmdNotebooks,     name='notebooks' )
 rdr.add_command( cmdPlay,          name='play' )
 rdr.add_command( cmdPos,           name='pos' )
+rdr.add_command( cmdRDFGraph,      name='rdfgraph' )
 rdr.add_command( cmdRead,          name='read' )
 rdr.add_command( cmdReadability,   name='readability' )
 rdr.add_command( cmdSearch,        name='search' )

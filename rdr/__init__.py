@@ -64,7 +64,7 @@ FIGURES              = 'figures'
 HTM                  = 'htm'
 GML                  = 'reader.gml'
 INDEX                = 'index.htm'
-INDEXRDF             = 'index.rdf'
+INDEXRDF                  = 'index.rdf'
 KEYWORDSCLOUD        = 'keywords-cloud.png'
 LEXICON              = 'lexicon.txt'
 MANIFEST             = 'MANIFEST.xml'
@@ -272,6 +272,392 @@ class Sentences( object ) :
 			
 		# return each sentence
 		for sentence in open( self.file ) : yield sentence
+
+
+# return the object of a given subject/predicate pair
+def rdfSearchForObject ( graph, subject, predicate ) :
+	sparql = 'SELECT ?object WHERE {<' + str( subject ) + '> <' + predicate + '> ?object}'
+	object = graph.query( sparql ).bindings[ 0 ][ 'object' ]
+	return object
+	
+
+# return the English label of a given object
+def rdfSearchForLabel ( graph, object ) :
+	sparql = 'SELECT ?label WHERE {<' + str( object ) + '> rdfs:label ?label . FILTER(LANG(?label) = "en")}'
+	label  = graph.query( sparql ).bindings[ 0 ][ 'label' ]
+	return label
+
+	
+# given the name of a carrel, return GML
+def graph2gml( carrel, output='gml', save=False, erase=False ) :
+
+	'''Given the name of a carrel, and an optional output type ('gml' or 'chart'), return GML or its visualization.'''
+	
+	# configure
+	FORMAT  = 'xml'
+	CARREL  = 'https://distantreader.org/carrel#'
+	WDP     = 'http://www.wikidata.org/prop/direct/'
+	DCTITLE = 'http://purl.org/dc/terms/title'
+	OUTPUTS = [ 'gml', 'chart' ]
+	
+	# require
+	from rdflib.namespace import DCTERMS, RDFS
+	import networkx
+	import rdflib
+	import sys
+	
+	# sanity check #0
+	if output not in OUTPUTS :
+	
+		click.echo( "Error: Unsupported value for output (" + str( output ) + "); exiting.", err=True )
+		exit()
+		
+	# sanity check #1
+	checkForCarrel( carrel )
+	
+	# initialize
+	graph   = rdflib.Graph()
+	library = configuration( 'localLibrary' )
+
+	# sanity check #2
+	authors  = library/carrel/ETC/AUTHORS
+	keywords = library/carrel/ETC/WRDS
+	if not authors.exists()  : reconcile( carrel, 'authors' )
+	if not keywords.exists() : reconcile( carrel, 'keywords' )
+
+	# more configuration and santity checks
+	rdf = library/carrel/INDEXRDF
+	if not rdf.exists() : carrel2graph( carrel )
+
+	# yet more initialization
+	graph  = graph.parse( rdf, format=FORMAT )
+	CARREL = rdflib.Namespace( CARREL )
+	WDP    = rdflib.Namespace( WDP )
+	nodes  = []
+	edges  = []
+
+	# process all keywords
+	for subject, predicate, object in graph.triples( ( None, CARREL.keyword, None ) ) :
+	
+		# get the subject's corresponding title
+		subject = rdfSearchForObject( graph, subject, DCTITLE )
+		
+		# update
+		nodes.append( ( subject, { 'types' : 'item' } ) )
+		nodes.append( ( object, { 'types' : 'keyword' } ) )
+		edges.append( ( subject, object, { 'types' : 'keyword' } ) )
+
+	# process all subjects
+	for subject, predicate, object in graph.triples( ( None, DCTERMS.subject, None ) ) :
+							
+		# get the subject's title and the object's label
+		subject = rdfSearchForObject( graph, subject, DCTITLE )
+		object  = rdfSearchForLabel( graph, object )
+					
+		# update
+		nodes.append( ( subject, { 'types' : 'item' } ) )
+		nodes.append( ( object, { 'types' : 'subject' } ) )
+		edges.append( ( subject, object, { 'types' : 'subject' } ) )
+
+	# process all authors
+	for subject, predicate, object in graph.triples( ( None, CARREL.hasAuthor, None ) ) :
+	
+		# get the subject's corresponding title
+		subject = rdfSearchForObject( graph, subject, DCTITLE )
+
+		# update 
+		nodes.append( ( subject, { 'types' : 'item' } ) )
+		nodes.append( ( object, { 'types' : 'author' } ) )
+		edges.append( ( subject, object, { 'types' : 'author' } ) )
+
+	# process all creators
+	for subject, predicate, object in graph.triples( ( None, DCTERMS.creator, None ) ) :
+	
+		# get the subject's corresponding title
+		subject = rdfSearchForObject( graph, subject, DCTITLE )
+		object  = rdfSearchForLabel( graph, object )
+
+		# update 
+		nodes.append( ( subject, { 'types' : 'item' } ) )
+		nodes.append( ( object, { 'types' : 'creator' } ) )
+		edges.append( ( subject, object, { 'types' : 'creator' } ) )
+
+	# build the graph; very smart
+	graph = networkx.Graph()
+	graph.add_nodes_from( nodes )
+	graph.add_edges_from( edges )
+
+	# GML output
+	if output == 'gml' :
+	
+		# save
+		if save == True :
+		
+			gml = library/carrel/ETC/GML
+			networkx.write_gml( graph, gml )
+
+		# send to STDOUT
+		else : networkx.write_gml( graph, sys.stdout.buffer )
+
+	# chart output
+	if output == 'chart' : click.echo( "Warning: The output value of chart is not implemented, yet.", err=True )
+
+
+# given the name of a carrel, create an RDF file describing it
+def carrel2graph( carrel ) :
+
+	'''Given the name of a carrel, create an RDF file (index.rdr) describing it.'''
+	
+	# configure
+	NAMESPACE = 'https://distantreader.org/carrel#'
+	PREFIX    = 'carrel'
+	FORMAT    = 'xml'
+	GRAPHROOT = 'http://distantreader.org/stacks/carrels/'
+	CREATOR   = { 'name':"Eric Lease Morgan", 'qnumber':'https://www.wikidata.org/wiki/Q102275801' }
+	TEMPLATE  = '''PREFIX wd: <http://www.wikidata.org/entity/> CONSTRUCT { wd:##QNUMBER## ?p ?o } WHERE { SERVICE <https://query.wikidata.org/bigdata/namespace/wdq/sparql> { wd:##QNUMBER## ?p ?o }}'''
+	WIKIDATA  = 'http://www.wikidata.org/entity/'
+
+	# require
+	from rdflib           import Graph, URIRef, Literal, Namespace
+	from rdflib.namespace import RDF, DCTERMS, DCMITYPE, RDFS
+	import pandas as pd
+	import json
+
+	# sanity check
+	checkForCarrel( carrel )
+	
+	# initialize
+	studyCarrel = carrel
+	graph       = Graph()
+	CARREL      = Namespace( NAMESPACE )
+	library     = configuration( 'localLibrary' )
+	graph.bind( PREFIX, CARREL )
+
+	# denote a carrel and update the graph
+	carrel  = URIRef( GRAPHROOT + studyCarrel )
+	graph.add( ( carrel, RDF.type,        CARREL.carrel ) )
+	graph.add( ( carrel, RDF.type,        DCMITYPE.Dataset ) )
+	graph.add( ( carrel, RDF.type,        DCMITYPE.Collection ) )
+	graph.add( ( carrel, DCTERMS.title,   Literal( studyCarrel ) ) )
+
+	# add the carrel's creator (me)
+	#qnumber = URIRef( CREATOR[ 'qnumber' ] )
+	#graph.add( ( carrel, DCTERMS.creator, qnumber ) )
+	#graph.add( ( qnumber, RDFS.label,     Literal( CREATOR[ 'name' ] ) ) )
+
+	# get provenance and extents...
+	dateCreated      = provenance( studyCarrel, 'dateCreated' )
+	process          = provenance( studyCarrel, 'process' )
+	totalSizeInItems = extents( studyCarrel,    'items' )
+	totalSizeInWords = extents( studyCarrel,    'words' )
+	averageFlesch    = extents( studyCarrel,    'flesch' )
+
+	# ...and update the graph
+	graph.add( ( carrel, DCTERMS.created,            Literal( dateCreated ) ) )
+	graph.add( ( carrel, CARREL.hasCreationProcess,  Literal( process ) ) )
+	graph.add( ( carrel, CARREL.hasTotalSizeInItems, Literal( totalSizeInItems ) ) )
+	graph.add( ( carrel, CARREL.hasTotalSizeInWords, Literal( totalSizeInWords ) ) )
+	graph.add( ( carrel, CARREL.hasAverageFlesch,    Literal( averageFlesch ) ) )
+
+	# get the name of the keywords reconciliation file, and check
+	keywords = library/studyCarrel/ETC/WRDS
+	if not keywords.exists() :
+	
+		click.echo( "The keywords reconciliation file does not exist. Please create one. Exiting.", err=True )
+		exit()
+		
+	# reconciliation file exists
+	else :
+	
+		# get and process all keyword qunumbers; update the graph with reconciled values
+		keywords = pd.read_csv( keywords, sep='\t', dtype={'id': str} )
+		qnumbers = set( keywords[ keywords[ 'qnumber' ].notnull() ][ 'qnumber' ].tolist() )
+
+	# get wikidata qnumbers, if they exist
+	qnumbers = sorted( qnumbers)
+	length   = len( qnumbers )
+	for index, qnumber in enumerate( qnumbers ) :
+
+		# debug, create SPARQL query, search, get result, and update graph
+		click.echo( "Getting Wikidata for keyword " + qnumber + ' (#' + str( index + 1 ) + ' of ' + str( length) + ')', err=True )
+		sparql = TEMPLATE.replace( '##QNUMBER##', qnumber )
+		rdf    = graph.query( sparql ).serialize( format=FORMAT )
+		graph.parse( rdf, format=FORMAT )	
+
+	# get the name of the authors reconciliation file, and check
+	authors = library/studyCarrel/ETC/AUTHORS
+	if not authors.exists() :
+	
+		click.echo( "The authors reconciliation file does not exist. Please create one. Exiting.", err=True )
+		exit()
+
+	# reconciliation file exists
+	else :
+	
+		# get and process all author qunumbers; update the graph with reconciled values
+		authors  = pd.read_csv( authors, sep='\t' )
+		qnumbers = set( authors[ authors[ 'qnumber' ].notnull() ][ 'qnumber' ].tolist() ) 
+
+	# process all author qunumbers; update the graph with reconciled values some more
+	qnumbers = sorted( qnumbers)
+	length   = len( qnumbers )
+	for index, qnumber in enumerate( qnumbers ) :
+
+		# debug, create SPARQL query, search, get result, and update graph
+		click.echo( "Getting Wikidata for author " + qnumber + ' (#' + str( index + 1 ) + ' of ' + str( length) + ')', err=True )
+		sparql = TEMPLATE.replace( '##QNUMBER##', qnumber )
+		rdf    = graph.query( sparql ).serialize( format=FORMAT )
+		graph.parse( rdf, format=FORMAT )	
+
+	# get and process each bibliographic item
+	bibliographics = json.loads( bibliography( studyCarrel, format='json' ) )
+	length         = len( bibliographics )
+	for index, bibliographic in enumerate( bibliographics ) :
+		
+		# debug
+		click.echo( 'Adding item ' + str( index ) + ' of ' + str( length ) + '\r', nl=False, err=True )
+	
+		# get the item's id and update the graph
+		idItem = str( bibliographic[ 'id' ] )
+		item   = URIRef( idItem )
+		graph.add( ( carrel, DCTERMS.hasPart, item ) )
+	
+		# process authors, conditionally
+		if not authors.empty :
+	
+			# iterate over the keywords
+			for _, author in authors.iterrows() :
+			
+				# update the graph, conditionally
+				if str( author[ 'id' ] ) == idItem :
+				
+					# get the qnumber and update the graph, conditionally
+					qnumber = author[ 'qnumber' ]
+					if type( qnumber ) is str : graph.add( ( item, DCTERMS.creator, URIRef( WIKIDATA + qnumber ) ) )
+					else : graph.add( ( item, CARREL.hasAuthor, Literal( author[ 'author' ] ) ) )
+
+		# add title
+		graph.add( ( item, DCTERMS.title, Literal( bibliographic[ 'title' ] ) ) )
+
+		# add date
+		graph.add( ( item, DCTERMS.date, Literal( bibliographic[ 'date' ] ) ) )
+
+		# add extents
+		graph.add( ( item, CARREL.hasFlesch, Literal( int( bibliographic[ 'flesch' ] ) ) ) )
+		graph.add( ( item, CARREL.hasSizeInWords, Literal( int( bibliographic[ 'words' ] ) ) ) )
+
+		# add cache and plain text	
+		cache = URIRef( GRAPHROOT + studyCarrel + '/' + ( CACHE ) + '/' + idItem + bibliographic[ 'extension' ] )
+		text  = URIRef( GRAPHROOT + studyCarrel + '/' + ( TXT )   + '/' + idItem + '.txt' )
+		graph.add( ( item,  CARREL.hasCache,     cache ) )
+		graph.add( ( item,  CARREL.hasPlainText, text ) )
+		graph.add( ( cache, DCTERMS.type,        Literal( bibliographic[ 'mime' ] ) ) )
+		graph.add( ( text,  DCTERMS.type,        Literal( 'text/plain' ) ) )
+	
+		# process keywords, conditionally
+		if not keywords.empty :
+			
+			# iterate over the keywords
+			for _, keyword in keywords.iterrows() :
+						
+				# update the graph, conditionally
+				if str( keyword[ 'id' ] ) == idItem :
+				
+				
+					# get the qnumber and update the graph, conditionally
+					qnumber = keyword[ 'qnumber' ]
+					if type( qnumber ) is str : graph.add( ( item, DCTERMS.subject, URIRef( WIKIDATA + qnumber ) ) )
+					else : graph.add( ( item, CARREL.keyword, Literal( keyword[ 'keyword' ] ) ) )
+
+	# output and done
+	rdf = library/studyCarrel/INDEXRDF
+	with open( rdf, 'w' ) as handle : handle.write( graph.serialize( format=FORMAT ) )
+
+
+# given a carrel and a type, (re-)create reconciliation file(s)
+def reconcile( carrel, type, erase=False ) :
+
+	'''Given the name of a carrel and a type ('author' or 'keyword'), (re-)initialize a recoconciliation file'''
+
+	# configure
+	PATTERN  = '*'
+	AUTHORS  = [ 'id', 'author', 'qnumber' ]
+	KEYWORDS = [ 'id', 'keyword', 'qnumber' ]
+	TYPES    = [ 'authors', 'keywords' ]
+	
+	# require
+	from   glob import glob
+	import pandas as pd
+	import rdr
+	import sys
+
+	# sanity check #1
+	rdr.checkForCarrel( carrel )
+
+	# sanity check #2
+	if type not in TYPES :
+	
+		click.echo( "Error: Unknown value for type (" + str( type ) + "); exiting", err=True )
+		exit()
+	
+	# debug
+	click.echo( 'Reconciling ' + type + " of " + carrel, err=True )
+
+	# initialize
+	library  = rdr.configuration( 'localLibrary' )
+	authors  = library/carrel/( rdr.ETC )/( rdr.AUTHORS )
+	keywords = library/carrel/( rdr.ETC )/( rdr.WRDS )
+
+	# check whether or not we've already been here, and get files to reconcile, conditionally
+	if type == 'authors' :
+			
+		# check to see if the file ought to be overwritten
+		if authors.exists() and erase == False :
+	
+			click.echo( "Warning: Authors reconciliation exists and erase is false, thus, not overwriting; exiting.\n", err=True )
+			exit()
+	
+		# delete the existing reconcilation
+		else: authors.unlink( missing_ok=True )
+
+		# get the files to process
+		files = glob( str( library/carrel/( rdr.BIB )/PATTERN ) )
+
+	# check whether or we've already been here, and get files to reconcile, conditionally
+	if type == 'keywords' :
+			
+		# check to see if the file ought to be overwritten
+		if keywords.exists() and erase == False :
+	
+			click.echo( "Warning: Keywords reconciliation exists and erase is false, thus, not overwriting; exiting.\n", err=True )
+			exit()
+	
+		# delete the existing reconcilation
+		else: keywords.unlink( missing_ok=True )
+
+		# get the files to process
+		files   = glob( str( library/carrel/( rdr.WRD )/PATTERN ) )
+
+	# create a dataframe of all records and process each; reconcile
+	reconciliations = []
+	records         = pd.concat( ( pd.read_csv( file, sep='\t', dtype={ 'id': str } ) for file in files ) )
+	for index, record in records.iterrows() :
+	
+		# reconcile; here is where we add qnumbers from a dictionary
+		if type == 'authors'  : reconciliation = [ record[ 'id' ], record[ 'author' ], '' ]
+		if type == 'keywords' : reconciliation = [ record[ 'id' ], record[ 'keyword' ], '' ]
+		
+		# update
+		reconciliations.append( reconciliation )
+		
+	# create a dataframe of reconciliations, output, and done
+	if type == 'authors' :
+		reconciliations = pd.DataFrame( reconciliations, columns=AUTHORS )
+		with open( authors, 'w' ) as handle : handle.write( reconciliations.to_csv( sep='\t', index=False ) )
+
+	if type == 'keywords' :
+		reconciliations = pd.DataFrame( reconciliations, columns=KEYWORDS )
+		with open( keywords, 'w' ) as handle : handle.write( reconciliations.to_csv( sep='\t', index=False ) )
 
 
 # given the name of a carrel, create zip file (index.zip) in its root
