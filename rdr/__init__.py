@@ -555,8 +555,9 @@ def carrel2graph( carrel ) :
 		# add date
 		graph.add( ( item, DCTERMS.date, Literal( bibliographic[ 'date' ] ) ) )
 
-		# add extents
-		graph.add( ( item, CARREL.hasFlesch, Literal( int( bibliographic[ 'flesch' ] ) ) ) )
+		# add extents; using try is a hack for bogus data
+		try : graph.add( ( item, CARREL.hasFlesch, Literal( int( bibliographic[ 'flesch' ] ) ) ) )
+		except TypeError : continue
 		graph.add( ( item, CARREL.hasSizeInWords, Literal( int( bibliographic[ 'words' ] ) ) ) )
 
 		# add cache and plain text	
@@ -1537,8 +1538,11 @@ def sizes( carrel, sort='words', output='list', save=False ) :
 		
 			if not row[ 'words' ] : words = 0
 			else                  : words = row[ 'words' ]
+			
+			# using try is a hack; need to fix this
 			#records.append( int( row[ 'words' ] ) )
-			records.append( int( words ) )
+			try : records.append( int( words ) )
+			except ValueError : continue
 		df = pd.DataFrame( records, columns=COLUMNS )
 
 		# initialize the plot
