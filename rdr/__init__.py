@@ -64,7 +64,7 @@ FIGURES              = 'figures'
 HTM                  = 'htm'
 GML                  = 'reader.gml'
 INDEX                = 'index.htm'
-INDEXRDF                  = 'index.rdf'
+INDEXRDF             = 'index.rdf'
 KEYWORDSCLOUD        = 'keywords-cloud.png'
 LEXICON              = 'lexicon.txt'
 MANIFEST             = 'MANIFEST.xml'
@@ -91,7 +91,7 @@ ZIP                  = 'index.zip'
 
 # spacy langauge model
 MODELSMALL   = 'en_core_web_sm'
-MODELMEDIUM  = 'en_core_web_sm'
+MODELMEDIUM  = 'en_core_web_md'
 
 # mallet
 MALLETZIP = 'https://distantreader.org/apps/mallet.zip'
@@ -3823,8 +3823,8 @@ def build( carrel, directory, erase=False, start=False ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 48
-	POOLBIG   = 54
+	POOLSMALL = 12
+	POOLBIG   = 56
 	
 	# require
 	from   multiprocessing import Pool
