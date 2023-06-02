@@ -101,8 +101,7 @@ MALLETBIN = 'bin/mallet'
 TIKADOWNLOAD = 'https://distantreader.org/apps/tika-server.jar'
 
 # xhtml template for bibliography (index.xhtml)
-XHTML = '''
-<!DOCTYPE html>
+XHTML = '''<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head><title>Bibliography</title></head>
 <body style="margin:3%">
@@ -1054,6 +1053,7 @@ def extents( carrel, type ) :
 	return value
 
 
+	
 # output a rudimentary bibliography
 def bibliography( carrel, format='text', save=False ) :
 
@@ -1066,6 +1066,7 @@ def bibliography( carrel, format='text', save=False ) :
 	import sqlite3
 	from pathlib import Path
 	import json
+	from html import escape
 	
 	# sanity check
 	checkForCarrel( carrel )
@@ -1145,13 +1146,13 @@ def bibliography( carrel, format='text', save=False ) :
 				text  = './' + TXT + '/' + id + '.txt'
 				
 				item = '<ul>'
-				item = item + '<li>' + ( 'author: %s'    % author )   + '</li>'
-				item = item + '<li>' + ( 'title: %s'     % title )    + '</li>'
+				item = item + '<li>' + ( 'author: %s'    % escape( author ) )   + '</li>'
+				item = item + '<li>' + ( 'title: %s'     % escape( title ) )    + '</li>'
 				item = item + '<li>' + ( 'date: %s'      % date )     + '</li>'
-				item = item + '<li>' + ( 'words: %s'     % words )    + '</li>'
+				item = item + '<li>' + ( 'words: %s'     % escape( words ) )    + '</li>'
 				item = item + '<li>' + ( 'flesch: %s'    % flesch )   + '</li>'
-				item = item + '<li>' + ( 'summary: %s'   % summary )  + '</li>'
-				item = item + '<li>' + ( 'keywords: %s'  % keywords ) + '</li>'
+				item = item + '<li>' + ( 'summary: %s'   % escape( summary ) )  + '</li>'
+				item = item + '<li>' + ( 'keywords: %s'  % escape( keywords ) ) + '</li>'
 				item = item + '<li>' + ( 'versions: <a href="' + cache + '">original</a>; <a href="' + text + '">plain text</a>' ) + '</li>'
 				item = item + '</ul>'
 				
