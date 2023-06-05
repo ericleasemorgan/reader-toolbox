@@ -559,8 +559,9 @@ def carrel2graph( carrel ) :
 		except TypeError : continue
 		graph.add( ( item, CARREL.hasSizeInWords, Literal( int( bibliographic[ 'words' ] ) ) ) )
 
-		# add cache and plain text	
-		cache = URIRef( GRAPHROOT + studyCarrel + '/' + ( CACHE ) + '/' + idItem + bibliographic[ 'extension' ] )
+		# add cache and text
+		if bibliographic[ 'extension' ] : cache = URIRef( GRAPHROOT + studyCarrel + '/' + ( CACHE ) + '/' + idItem + bibliographic[ 'extension' ] )
+		else                            : cache = URIRef( GRAPHROOT + studyCarrel + '/' + ( CACHE ) + '/' + idItem )
 		text  = URIRef( GRAPHROOT + studyCarrel + '/' + ( TXT )   + '/' + idItem + '.txt' )
 		graph.add( ( item,  CARREL.hasCache,     cache ) )
 		graph.add( ( item,  CARREL.hasPlainText, text ) )
