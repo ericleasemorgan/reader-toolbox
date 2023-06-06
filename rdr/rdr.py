@@ -377,13 +377,15 @@ def cmdZip( carrel ) :
 # do cool stuff with sentences
 @click.command( options_metavar='[<options>]' )
 @click.argument( 'carrel', metavar='<carrel>' )
+@click.option('-q', '--query', default='love', type=click.STRING, help="filter results to include the given regular expression")
+@click.option('-p', '--process', default='list', type=click.Choice( [ 'list', 'filter' ] ), help="type of work to do" )
 @click.option('-v', '--save', is_flag=True, help='write output to default location')
-def cmdSentences( carrel, save=False ) :
+def cmdSentences( carrel, process, query='love', save=False ) :
 
 	'''Given <carrel> save, output, and process sentences'''
 	
 	# do the work
-	sentences( carrel, save )
+	sentences( carrel, process, query, save )
 
 
 # reconcile, create RDF, and graph

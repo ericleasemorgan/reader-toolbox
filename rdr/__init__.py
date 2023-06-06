@@ -416,7 +416,7 @@ def graph2gml( carrel, output='gml', save=False, erase=False ) :
 
 
 # given the name of a carrel, output sentences
-def sentences( carrel, save=True ) :
+def sentences( carrel, process='list', query='love', save=True ) :
 
 	# configure
 	PATTERN = '*.txt'
@@ -432,14 +432,7 @@ def sentences( carrel, save=True ) :
 
 	checkForCarrel( carrel )
 
-	# check to see if we've already been here
-	if sentences.exists() and save == False :
-	
-		# output each sentence
-		for sentence in Sentences( sentences ) : click.echo( sentence, nl=False )
-
-	# create the sentences
-	else :
+	if not sentences.exists() :
 	
 		# parallel process each plain text file in the given corpus
 		pool    = multiprocessing.Pool()
@@ -460,10 +453,18 @@ def sentences( carrel, save=True ) :
 		# done
 		click.echo( 'Done.', err=True )
 
-		if save == False :
+	if process == 'list' and save == False :
 		
-			# output each sentence
-			for sentence in Sentences( sentences ) : click.echo( sentence, nl=False )
+		# output each sentence
+		for sentence in Sentences( sentences ) : click.echo( sentence, nl=False )
+
+	if process == 'filter' :
+	
+		# output each sentence
+		for sentence in Sentences( sentences ) : 
+		
+			if query in sentence : click.echo( sentence, nl=False )
+
 
 # given the name of a carrel, create an RDF file describing it
 def carrel2graph( carrel ) :
