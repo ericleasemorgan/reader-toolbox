@@ -1054,7 +1054,13 @@ def extents( carrel, type ) :
 	return value
 
 
-	
+# escape ampersands
+def escape( s ) :
+
+	from html import escape
+	if not s : return
+	return escape( s )
+
 # output a rudimentary bibliography
 def bibliography( carrel, format='text', save=False ) :
 
@@ -1067,7 +1073,6 @@ def bibliography( carrel, format='text', save=False ) :
 	import sqlite3
 	from pathlib import Path
 	import json
-	from html import escape
 	
 	# sanity check
 	checkForCarrel( carrel )
