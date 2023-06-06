@@ -415,6 +415,56 @@ def graph2gml( carrel, output='gml', save=False, erase=False ) :
 	if output == 'chart' : click.echo( "Warning: The output value of chart is not implemented, yet.", err=True )
 
 
+# given the name of a carrel, output sentences
+def sentences( carrel, save=True ) :
+
+	# configure
+	PATTERN = '*.txt'
+	
+	# require
+	import rdr
+	import multiprocessing
+	
+	# configure
+	library   = configuration( 'localLibrary' )
+	filenames = library/carrel/rdr.TXT
+	sentences = library/carrel/( rdr.ETC )/( rdr.SENTENCES )
+
+	checkForCarrel( carrel )
+
+	# check to see if we've already been here
+	if sentences.exists() and save == False :
+	
+		# output each sentence
+		for sentence in Sentences( sentences ) : click.echo( sentence, nl=False )
+
+	# create the sentences
+	else :
+	
+		# parallel process each plain text file in the given corpus
+		pool    = multiprocessing.Pool()
+		click.echo( 'Step #1 of 2: Reading sentences', err=True )
+		results = pool.starmap( rdr.extractSentences, [ [ filename ] for filename in filenames.glob( PATTERN ) ] )
+		pool.close()
+
+		# save the result
+		click.echo( 'Step #2 of 2: Saving sentences', err=True )
+		with open( sentences, 'w' ) as handle :
+
+			# get all sentences and process each one
+			for result in results :
+
+				# output
+				for sentence in result : handle.write( '%s\n' % sentence )
+
+		# done
+		click.echo( 'Done.', err=True )
+
+		if save == False :
+		
+			# output each sentence
+			for sentence in Sentences( sentences ) : click.echo( sentence, nl=False )
+
 # given the name of a carrel, create an RDF file describing it
 def carrel2graph( carrel ) :
 

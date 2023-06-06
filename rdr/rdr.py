@@ -374,6 +374,18 @@ def cmdZip( carrel ) :
   with your friends and colleagues.\n''', err=True )
 
 
+# do cool stuff with sentences
+@click.command( options_metavar='[<options>]' )
+@click.argument( 'carrel', metavar='<carrel>' )
+@click.option('-v', '--save', is_flag=True, help='write output to default location')
+def cmdSentences( carrel, save=False ) :
+
+	'''Given <carrel> save, output, and process sentences'''
+	
+	# do the work
+	sentences( carrel, save )
+
+
 # reconcile, create RDF, and graph
 @click.command( options_metavar='[<options>]' )
 @click.argument( 'carrel', metavar='<carrel>' )
@@ -1561,6 +1573,7 @@ rdr.add_command( cmdTm,            name='tm' )
 rdr.add_command( cmdUrl,           name='url' )
 rdr.add_command( cmdWrd,           name='wrd' )
 rdr.add_command( cmdZip,           name='zip' )
+rdr.add_command( cmdSentences,     name='sentences' )
 
 # do the work
 if __name__ == '__main__' : rdr()
