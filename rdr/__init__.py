@@ -3881,8 +3881,8 @@ def build( carrel, directory, erase=False, start=False ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 12
-	POOLBIG   = 48
+	POOLSMALL = 24
+	POOLBIG   = 56
 	
 	# require
 	from   multiprocessing import Pool
