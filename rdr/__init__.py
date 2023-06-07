@@ -424,7 +424,8 @@ def sentences( carrel, process='list', query='love', save=True ) :
 	# require
 	import rdr
 	import multiprocessing
-	
+	from nltk.wsd import lesk
+
 	# configure
 	library   = configuration( 'localLibrary' )
 	filenames = library/carrel/rdr.TXT
@@ -457,6 +458,27 @@ def sentences( carrel, process='list', query='love', save=True ) :
 		
 		# output each sentence
 		for sentence in Sentences( sentences ) : click.echo( sentence, nl=False )
+
+	if process == 'define' :
+	
+		# output each sentence
+		for sentence in Sentences( sentences ) : 
+		
+			# filter
+			if query in sentence :
+				
+				# disambiguate
+				synset = lesk( sentence.split(), query )
+	
+				# output, conditionally
+				if synset :
+	
+					# debug
+					click.echo( '       query: ' + query)
+					click.echo( '      synset: ' + synset.name() )
+					click.echo( '    sentence: ' + sentence, nl=False )
+					click.echo( '  definition: ' + synset.definition() )
+					click.echo()
 
 	if process == 'filter' :
 	
