@@ -507,6 +507,7 @@ def carrel2graph( carrel ) :
 	from rdflib.namespace import RDF, DCTERMS, DCMITYPE, RDFS
 	import pandas as pd
 	import json
+	import rdr
 
 	# sanity check
 	checkForCarrel( carrel )
@@ -753,11 +754,15 @@ def carrel2zip( carrel ) :
 	'''Given then name of a carrel, create a zip file (index.zip)
 	in its root.'''
 
+	# configure
+	PERMISSION = 0o755
+
 	# I don't know were to require these, here or at the root?
 	from zipfile import ZipFile
 	import os
 	import tempfile
 	import shutil
+	import rdr
 	
 	# sanity check
 	rdr.checkForCarrel( carrel )
@@ -788,8 +793,10 @@ def carrel2zip( carrel ) :
 				click.echo( file, err=True )
 				handle.write( file )
 
-	# put the archive into place
+	# put the archive into place and make it readable
 	shutil.move( staging, zip )
+	os.chmod( zip, PERMISSION )
+
 
 # given a sentence, parser, and lexicon return matching sentences
 def matchModal( sentence, parser, lexicon ) :
