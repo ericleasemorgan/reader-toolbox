@@ -549,7 +549,7 @@ def cmdCluster( carrel, type, save ) :
 	See also: rdr tm --help"""
 
 	# do the work
-	cluster( carrel, type, save )
+	cluster( carrel, type=type, save=save )
 
 
 # named entities
@@ -577,8 +577,8 @@ def cmdEnt( carrel, select, like, count, wordcloud, save ) :
 	See also: rdr pos --help"""
 
 	# do the work
-	if not wordcloud : click.echo( entities( carrel, select, like, count ) )
-	else             : entities( carrel, select, like, count, wordcloud, save )
+	if not wordcloud : click.echo( entities( carrel, None, select, like, count ) )
+	else             : entities( carrel, None, select, like, count, wordcloud, save )
 
 
 # parts-of-speech
@@ -612,8 +612,8 @@ def cmdPos( carrel, select, like, count, normalize, wordcloud, save ) :
 	  rdr ent --help"""
 
 	# do the work and done
-	if not wordcloud : click.echo( pos( carrel, select, like, count, normalize ) )
-	else             : pos( carrel, select, like, count, normalize, wordcloud, save )
+	if not wordcloud : click.echo( pos( carrel, None, select, like, count, normalize ) )
+	else             : pos( carrel, None, select, like, count, normalize, wordcloud, save )
 
 
 # ngrams
@@ -643,8 +643,8 @@ def cmdNgrams( carrel, size, query, count, location, wordcloud, save ) :
 
 	See also: rdr concordance --help"""
 
-	if not save : click.echo( ngrams( carrel, size, query, count, location, wordcloud ) )
-	else        : ngrams( carrel, size, query, count, location, wordcloud, save )
+	if not save : click.echo( ngrams( carrel, None, size, query, count, location, wordcloud ) )
+	else        : ngrams( carrel, None, size, query, count, location, wordcloud, save )
 
 
 # readability
@@ -662,8 +662,8 @@ def cmdReadability( carrel, sort, output, save ) :
 	Example: rdr readability homer -o boxplot"""
 
 	# do the work
-	if not save : click.echo( flesch( carrel, sort, output ) )
-	else        : flesch( carrel, sort, output, save )
+	if not save : click.echo( flesch( carrel, None, sort, output ) )
+	else        : flesch( carrel, None, sort, output, save )
 
 
 # sizes
@@ -677,7 +677,7 @@ def cmdSizes( carrel, sort, output, save ) :
 	"""Report on the sizes (in words) of items in <carrel>"""
 
 	# do the work
-	click.echo( sizes( carrel, sort, output, save ) )
+	click.echo( sizes( carrel, None, sort, output, save ) )
 
 
 # concordance
@@ -728,8 +728,8 @@ def cmdWrd( carrel, count, wordcloud, save ) :
 	  rdr search --help"""
 
 	# do the work and conditionally output
-	if not wordcloud : click.echo( keywords( carrel, count ) )
-	else             : keywords( carrel, count, wordcloud, save )
+	if not wordcloud : click.echo( keywords( carrel, None, count ) )
+	else             : keywords( carrel, None, count, wordcloud, save )
 
 
 # urls
@@ -1522,7 +1522,7 @@ def cmdBuild( carrel, directory, erase, start ) :
 
 Use this command to build a data set ("study carrel") based on the files saved in a directory. Once the data set is created the other Toolbox commands can be applied to the result. The files can be of any type (PDF, Microsoft Word, HTML, etc.), and they can be of any kind (books, articles, reports, etc.), and they can be of any number (1, 2, 12, a few dozen, hundreds, etc.). The Toolbox is designed to read about a dozen journal articles in the form of PDF files. This command requires a Java tool called Tika, and it is used to convert the input files into plain text as well as extract authors, titles, and dates. If the Toolbox has not been configured and/or Tika is not installed, then the Toolbox will try to install it on your behalf. If the given directory contains a file named 'metadata.csv', then this command will use the file as the source of author, title, and date metadata values. This is often very helpful because sans metadata it is very difficult to make comparison between documents. Please see the full-blown documentation for details."""
 
-	build( carrel, directory, erase, start )
+	build( carrel, directory, erase, start, None )
 
 @click.command()
 def cmdServer() :

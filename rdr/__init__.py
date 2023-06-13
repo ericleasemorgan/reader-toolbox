@@ -301,7 +301,7 @@ def rdfSearchForLabel ( graph, object ) :
 
 	
 # given the name of a carrel, return GML
-def graph2gml( carrel, output='gml', save=False, erase=False ) :
+def graph2gml( carrel, output='gml', save=False, erase=False, localLibrary=None ) :
 
 	'''Given the name of a carrel, and an optional output type ('gml' or 'chart'), return GML or its visualization.'''
 	
@@ -317,6 +317,10 @@ def graph2gml( carrel, output='gml', save=False, erase=False ) :
 	import networkx
 	import rdflib
 	import sys
+	from pathlib import Path
+	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 	
 	# sanity check #0
 	if output not in OUTPUTS :
@@ -325,21 +329,20 @@ def graph2gml( carrel, output='gml', save=False, erase=False ) :
 		exit()
 		
 	# sanity check #1
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
 	
 	# initialize
 	graph   = rdflib.Graph()
-	library = configuration( 'localLibrary' )
 
 	# sanity check #2
-	authors  = library/carrel/ETC/AUTHORS
-	keywords = library/carrel/ETC/WRDS
-	if not authors.exists()  : reconcile( carrel, 'authors' )
-	if not keywords.exists() : reconcile( carrel, 'keywords' )
+	authors  = localLibrary/carrel/ETC/AUTHORS
+	keywords = localLibrary/carrel/ETC/WRDS
+	if not authors.exists()  : reconcile( carrel, 'authors', localLibrary, erase=False )
+	if not keywords.exists() : reconcile( carrel, 'keywords', localLibrary, erase=False )
 
 	# more configuration and santity checks
-	rdf = library/carrel/INDEXRDF
-	if not rdf.exists() : carrel2graph( carrel )
+	rdf = localLibrary/carrel/INDEXRDF
+	if not rdf.exists() : carrel2graph( carrel, localLibrary )
 
 	# yet more initialization
 	graph  = graph.parse( rdf, format=FORMAT )
@@ -405,7 +408,7 @@ def graph2gml( carrel, output='gml', save=False, erase=False ) :
 		# save
 		if save == True :
 		
-			gml = library/carrel/ETC/GML
+			gml = localLibrary/carrel/ETC/GML
 			networkx.write_gml( graph, gml )
 
 		# send to STDOUT
@@ -489,7 +492,7 @@ def sentences( carrel, process='list', query='love', save=True ) :
 
 
 # given the name of a carrel, create an RDF file describing it
-def carrel2graph( carrel ) :
+def carrel2graph( carrel, localLibrary=None ) :
 
 	'''Given the name of a carrel, create an RDF file (index.rdr) describing it.'''
 	
@@ -508,15 +511,18 @@ def carrel2graph( carrel ) :
 	import pandas as pd
 	import json
 	import rdr
-
-	# sanity check
-	checkForCarrel( carrel )
+	from pathlib import Path
 	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
+	
+	# sanity check
+	checkForCarrel( carrel, localLibrary )
+
 	# initialize
 	studyCarrel = carrel
 	graph       = Graph()
 	CARREL      = Namespace( NAMESPACE )
-	library     = configuration( 'localLibrary' )
 	graph.bind( PREFIX, CARREL )
 
 	# denote a carrel and update the graph
@@ -532,11 +538,11 @@ def carrel2graph( carrel ) :
 	#graph.add( ( qnumber, RDFS.label,     Literal( CREATOR[ 'name' ] ) ) )
 
 	# get provenance and extents...
-	dateCreated      = provenance( studyCarrel, 'dateCreated' )
-	process          = provenance( studyCarrel, 'process' )
-	totalSizeInItems = extents( studyCarrel,    'items' )
-	totalSizeInWords = extents( studyCarrel,    'words' )
-	averageFlesch    = extents( studyCarrel,    'flesch' )
+	dateCreated      = provenance( studyCarrel, 'dateCreated', localLibrary )
+	process          = provenance( studyCarrel, 'process', localLibrary )
+	totalSizeInItems = extents( studyCarrel,    'items', localLibrary )
+	totalSizeInWords = extents( studyCarrel,    'words', localLibrary )
+	averageFlesch    = extents( studyCarrel,    'flesch', localLibrary )
 
 	# ...and update the graph
 	graph.add( ( carrel, DCTERMS.created,            Literal( dateCreated ) ) )
@@ -546,7 +552,7 @@ def carrel2graph( carrel ) :
 	graph.add( ( carrel, CARREL.hasAverageFlesch,    Literal( averageFlesch ) ) )
 
 	# get the name of the keywords reconciliation file, and check
-	keywords = library/studyCarrel/ETC/WRDS
+	keywords = localLibrary/studyCarrel/ETC/WRDS
 	if not keywords.exists() :
 	
 		click.echo( "The keywords reconciliation file does not exist. Please create one. Exiting.", err=True )
@@ -571,7 +577,7 @@ def carrel2graph( carrel ) :
 		graph.parse( rdf, format=FORMAT )	
 
 	# get the name of the authors reconciliation file, and check
-	authors = library/studyCarrel/ETC/AUTHORS
+	authors = localLibrary/studyCarrel/ETC/AUTHORS
 	if not authors.exists() :
 	
 		click.echo( "The authors reconciliation file does not exist. Please create one. Exiting.", err=True )
@@ -596,7 +602,7 @@ def carrel2graph( carrel ) :
 		graph.parse( rdf, format=FORMAT )	
 
 	# get and process each bibliographic item
-	bibliographics = json.loads( bibliography( studyCarrel, format='json' ) )
+	bibliographics = json.loads( bibliography( studyCarrel, localLibrary, format='json' ) )
 	length         = len( bibliographics )
 	for index, bibliographic in enumerate( bibliographics ) :
 		
@@ -658,12 +664,12 @@ def carrel2graph( carrel ) :
 					else : graph.add( ( item, CARREL.keyword, Literal( keyword[ 'keyword' ] ) ) )
 
 	# output and done
-	rdf = library/studyCarrel/INDEXRDF
+	rdf = localLibrary/studyCarrel/INDEXRDF
 	with open( rdf, 'w' ) as handle : handle.write( graph.serialize( format=FORMAT ) )
 
 
 # given a carrel and a type, (re-)create reconciliation file(s)
-def reconcile( carrel, type, erase=False ) :
+def reconcile( carrel, type, localLibrary=None, erase=False ) :
 
 	'''Given the name of a carrel and a type ('author' or 'keyword'), (re-)initialize a recoconciliation file'''
 
@@ -678,10 +684,14 @@ def reconcile( carrel, type, erase=False ) :
 	import pandas as pd
 	import rdr
 	import sys
+	from pathlib import Path
+	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 
 	# sanity check #1
-	rdr.checkForCarrel( carrel )
-
+	checkForCarrel( carrel, localLibrary )
+	
 	# sanity check #2
 	if type not in TYPES :
 	
@@ -692,9 +702,8 @@ def reconcile( carrel, type, erase=False ) :
 	click.echo( 'Reconciling ' + type + " of " + carrel, err=True )
 
 	# initialize
-	library  = rdr.configuration( 'localLibrary' )
-	authors  = library/carrel/( rdr.ETC )/( rdr.AUTHORS )
-	keywords = library/carrel/( rdr.ETC )/( rdr.WRDS )
+	authors  = localLibrary/carrel/( rdr.ETC )/( rdr.AUTHORS )
+	keywords = localLibrary/carrel/( rdr.ETC )/( rdr.WRDS )
 
 	# check whether or not we've already been here, and get files to reconcile, conditionally
 	if type == 'authors' :
@@ -709,7 +718,7 @@ def reconcile( carrel, type, erase=False ) :
 		else: authors.unlink( missing_ok=True )
 
 		# get the files to process
-		files = glob( str( library/carrel/( rdr.BIB )/PATTERN ) )
+		files = glob( str( localLibrary/carrel/( rdr.BIB )/PATTERN ) )
 
 	# check whether or we've already been here, and get files to reconcile, conditionally
 	if type == 'keywords' :
@@ -724,7 +733,7 @@ def reconcile( carrel, type, erase=False ) :
 		else: keywords.unlink( missing_ok=True )
 
 		# get the files to process
-		files   = glob( str( library/carrel/( rdr.WRD )/PATTERN ) )
+		files   = glob( str( localLibrary/carrel/( rdr.WRD )/PATTERN ) )
 
 	# create a dataframe of all records and process each; reconcile
 	reconciliations = []
@@ -749,7 +758,7 @@ def reconcile( carrel, type, erase=False ) :
 
 
 # given the name of a carrel, create zip file (index.zip) in its root
-def carrel2zip( carrel ) :
+def carrel2zip( carrel, localLibrary=None ) :
 
 	'''Given then name of a carrel, create a zip file (index.zip)
 	in its root.'''
@@ -758,18 +767,21 @@ def carrel2zip( carrel ) :
 	PERMISSION = 0o755
 
 	# I don't know were to require these, here or at the root?
-	from zipfile import ZipFile
+	from   pathlib import Path
+	from   zipfile import ZipFile
 	import os
-	import tempfile
-	import shutil
 	import rdr
+	import shutil
+	import tempfile
 	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
+
 	# sanity check
-	rdr.checkForCarrel( carrel )
+	rdr.checkForCarrel( carrel, localLibrary )
 	
 	# initialize
-	library = configuration( 'localLibrary' )
-	zip     = library/carrel/ZIP
+	zip     = localLibrary/carrel/ZIP
 	staging = tempfile.NamedTemporaryFile( delete=False ).name
 	
 	# debug
@@ -777,7 +789,7 @@ def carrel2zip( carrel ) :
 	
 	# make sane
 	zip.unlink( missing_ok=True )
-	os.chdir( library )
+	os.chdir( localLibrary )
 	
 	# create an archive
 	with ZipFile( staging, 'w' ) as handle :
@@ -1002,14 +1014,20 @@ def modelNotFound() :
 
 
 # make sure a study carrel exists
-def checkForCarrel( carrel ) :
+def checkForCarrel( carrel, localLibrary=None ) :
 
 	'''Given the name of a study carrel, return True if it exists or False
 	if it does not, but really, if the carrel does not exist, then execution
 	is aborted.'''
 
+	# require
+	from pathlib import Path
+	
 	# initialize and do the work
-	directory = configuration( 'localLibrary' )/carrel
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
+	
+	directory = localLibrary/carrel
 	if not directory.is_dir() :
 		
 		# error
@@ -1066,20 +1084,24 @@ def cloud( frequencies, **kwargs ) :
 
 
 # read and parse provenance data
-def provenance( carrel, field ) :
+def provenance( carrel, field, localLibrary=None ) :
 
 	'''Given the name of a study carrel and a provenance element (process,
 	originalID, dateCreated, timeCreated, creator, or input), return the
 	provenance value.'''
 	
+	# require
+	from pathlib import Path
+	
 	# initialize
-	locallibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 	
 	# sanity check
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
 
 	# read provenance file
-	with open( locallibrary/carrel/PROVENANCE, encoding='utf-8'  ) as handle : provenance = handle.read().split( '\t' )
+	with open( localLibrary/carrel/PROVENANCE, encoding='utf-8'  ) as handle : provenance = handle.read().split( '\t' )
 	
 	# parse it
 	process     = provenance[ 0 ]
@@ -1102,20 +1124,23 @@ def provenance( carrel, field ) :
 	
 	
 # return various extents
-def extents( carrel, type ) :
+def extents( carrel, type, localLibrary=None ) :
 
 	'''Given the name of a study carrel and a type of extent (items, words,
 	or flesch) return the extent value.'''
 	
 	# require
 	import sqlite3
-
+	from pathlib import Path
+	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
+	
 	# sanity check
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
 
 	# initialize
-	locallibrary           = configuration( 'localLibrary' )
-	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection             = sqlite3.connect( str( localLibrary/carrel/ETC/DATABASE )  )
 	connection.row_factory = sqlite3.Row
 
 	# get extents
@@ -1142,7 +1167,7 @@ def escape( s ) :
 	return escape( s )
 
 # output a rudimentary bibliography
-def bibliography( carrel, format='text', save=False ) :
+def bibliography( carrel, localLibrary=None, format='text', save=False ) :
 
 	'''Given the name of a study carrel, and a format (text, html, or
 	json), create a rudimentary bibliography. If the value for save is
@@ -1154,12 +1179,15 @@ def bibliography( carrel, format='text', save=False ) :
 	from pathlib import Path
 	import json
 	
+	# initialize
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
+
 	# sanity check
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
 
 	# initialize
-	locallibrary           = configuration( 'localLibrary' )
-	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection             = sqlite3.connect( str( localLibrary/carrel/ETC/DATABASE )  )
 	connection.row_factory = sqlite3.Row
 
 	# query database
@@ -1209,8 +1237,8 @@ def bibliography( carrel, format='text', save=False ) :
 	
 			if format == 'text' :
 			
-				cache = str( locallibrary/carrel/CACHE/id ) + extension
-				text  = str( locallibrary/carrel/TXT/id )   + '.txt'
+				cache = str( localLibrary/carrel/CACHE/id ) + extension
+				text  = str( localLibrary/carrel/TXT/id )   + '.txt'
 				
 				# build the bibliography
 				bibliography = bibliography + ( '        item: #%s of %s\n' % ( str( item + 1 ), total ) )
@@ -1248,9 +1276,9 @@ def bibliography( carrel, format='text', save=False ) :
 	
 	if save :
 
-		if format == 'text' : file = locallibrary/carrel/ETC/BIBLIOGRAPHYTEXT
-		if format == 'html' : file = locallibrary/carrel/BIBLIOGRAPHYHTML
-		if format == 'json' : file = locallibrary/carrel/ETC/BIBLIOGRAPHYJSON
+		if format == 'text' : file = localLibrary/carrel/ETC/BIBLIOGRAPHYTEXT
+		if format == 'html' : file = localLibrary/carrel/BIBLIOGRAPHYHTML
+		if format == 'json' : file = localLibrary/carrel/ETC/BIBLIOGRAPHYJSON
 		
 		with open( file, 'w', encoding='utf-8' ) as handle : handle.write( bibliography )
 		
@@ -1448,7 +1476,7 @@ def urls( carrel, select='url', count=False, like=None ) :
 	return '\n'.join( items )
 
 
-def keywords( carrel, count=False, wordcloud=False, save=False ) :
+def keywords( carrel, localLibrary=None, count=False, wordcloud=False, save=False ) :
 
 	'''Given the name of a study carrel, return a new-line delimited
 	list of keywords denoted by the build process. If count it True,
@@ -1465,16 +1493,19 @@ def keywords( carrel, count=False, wordcloud=False, save=False ) :
 
 	# require
 	import sqlite3
-
+	from pathlib import Path
+	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
+	
 	# sanity check
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
 
 	# initialize
-	locallibrary           = configuration( 'localLibrary' )
-	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection             = sqlite3.connect( str( localLibrary/carrel/ETC/DATABASE )  )
 	connection.row_factory = sqlite3.Row
 	items                  = []
-	stopwords              = open( str( locallibrary/carrel/ETC/STOPWORDS ), encoding='utf-8' ).read().split()
+	stopwords              = open( str( localLibrary/carrel/ETC/STOPWORDS ), encoding='utf-8' ).read().split()
 
 	# dump a sorted list of all keywords
 	if not count :
@@ -1518,7 +1549,7 @@ def keywords( carrel, count=False, wordcloud=False, save=False ) :
 			if not save : cloud( frequencies )
 			else :
 			
-				file = locallibrary/carrel/FIGURES/KEYWORDSCLOUD
+				file = localLibrary/carrel/FIGURES/KEYWORDSCLOUD
 				cloud( frequencies, file=file )
 
 	# clean up and done; the result might be empty, which is sort of bogus
@@ -1568,7 +1599,7 @@ def concordance( carrel, query='love', width=40 ) :
 
 
 # get sizes (measured in words) of documents
-def sizes( carrel, sort='words', output='list', save=False ) :
+def sizes( carrel, localLibrary=None, sort='words', output='list', save=False ) :
 
 	'''Given a the name of study carrel, output a newline-delimited list of
 	study carrel item identifiers and the number of words (size) of the
@@ -1596,13 +1627,16 @@ def sizes( carrel, sort='words', output='list', save=False ) :
 	import matplotlib.pyplot as plt
 	import pandas as pd
 	import sqlite3
-
+	from pathlib import Path
+	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
+	
 	# sanity check
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
 
 	# initialize
-	locallibrary           = configuration( 'localLibrary' )
-	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection             = sqlite3.connect( str( localLibrary/carrel/ETC/DATABASE )  )
 	connection.row_factory = sqlite3.Row
 	items                  = []
 	
@@ -1639,13 +1673,13 @@ def sizes( carrel, sort='words', output='list', save=False ) :
 		if output == 'histogram' : 
 		
 			df.hist( ax=axis )
-			if save : plt.savefig( locallibrary/carrel/FIGURES/SIZESHISTOGRAM )
+			if save : plt.savefig( localLibrary/carrel/FIGURES/SIZESHISTOGRAM )
 			else    : plt.show()
 
 		else :
 		
 			df.boxplot( ax=axis )		
-			if save : plt.savefig( locallibrary/carrel/FIGURES/SIZESBOXPLOT )
+			if save : plt.savefig( localLibrary/carrel/FIGURES/SIZESBOXPLOT )
 			else    : plt.show()
 		
 	# clean up
@@ -1654,7 +1688,7 @@ def sizes( carrel, sort='words', output='list', save=False ) :
 
 
 # get readability scores
-def flesch( carrel, sort='score', output='list', save=False) :
+def flesch( carrel, localLibrary=None, sort='score', output='list', save=False) :
 
 	'''Given the name of study carrel, output a newline-delimited list of
 	study carrel item identifiers and the readability (Flesch) score of each
@@ -1682,13 +1716,16 @@ def flesch( carrel, sort='score', output='list', save=False) :
 	import matplotlib.pyplot as plt
 	import pandas as pd
 	import sqlite3
+	from pathlib import Path
+	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 
 	# sanity check
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
 
 	# initialize
-	locallibrary           = configuration( 'localLibrary' )
-	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection             = sqlite3.connect( str( localLibrary/carrel/ETC/DATABASE )  )
 	connection.row_factory = sqlite3.Row
 	items                  = []
 	
@@ -1723,13 +1760,13 @@ def flesch( carrel, sort='score', output='list', save=False) :
 		if output == 'histogram' : 
 		
 			df.hist( ax=axis )
-			if save : plt.savefig( locallibrary/carrel/FIGURES/READABILITYHISTOGRAM )
+			if save : plt.savefig( localLibrary/carrel/FIGURES/READABILITYHISTOGRAM )
 			else    : plt.show()
 
 		else :
 		
 			df.boxplot( ax=axis )		
-			if save : plt.savefig( locallibrary/carrel/FIGURES/READABILITYBOXPLOT )
+			if save : plt.savefig( localLibrary/carrel/FIGURES/READABILITYBOXPLOT )
 			else    : plt.show()
 
 	# clean up
@@ -1738,7 +1775,7 @@ def flesch( carrel, sort='score', output='list', save=False) :
 
 
 # compute ngrams
-def ngrams( carrel, size=1, query=None, count=False, location='local', wordcloud=False, save=False ) :
+def ngrams( carrel, localLibrary=None, size=1, query=None, count=False, location='local', wordcloud=False, save=False ) :
 
 	'''Given the name of a study carrel, output a newline-delimited list of
 	ngrams in the carrel. The value of size denotes the number of ngrams to
@@ -1764,15 +1801,18 @@ def ngrams( carrel, size=1, query=None, count=False, location='local', wordcloud
 	from re       import search
 	from requests import get
 	import nltk
+	from pathlib import Path
+	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 
 	# branch according to location; local
 	if location == 'local' :
 	
 		# sanity check
-		checkForCarrel( carrel )
+		checkForCarrel( carrel, localLibrary )
 		
 		# read local data
-		localLibrary = configuration( 'localLibrary' )
 		stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ), encoding='utf-8' ).read().split()
 		text         = open( str( localLibrary/carrel/ETC/CORPUS ), encoding='utf-8' ).read()
 	
@@ -1903,7 +1943,7 @@ def ngrams( carrel, size=1, query=None, count=False, location='local', wordcloud
 
 
 # process parts-of-speech
-def pos( carrel, select='parts', like='any', count=False, normalize=True, wordcloud=False, save=False ) :
+def pos( carrel, localLibrary=None, select='parts', like='any', count=False, normalize=True, wordcloud=False, save=False ) :
 
 	'''Given the name of a study carrel, return various
 	incarnations of parts-of-speech (pos) values.
@@ -1935,13 +1975,16 @@ def pos( carrel, select='parts', like='any', count=False, normalize=True, wordcl
 	
 	# require
 	import sqlite3
+	from pathlib import Path
+	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 
 	# sanity check
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
 
 	# initialize
-	locallibrary           = configuration( 'localLibrary' )
-	connection             = sqlite3.connect( str( locallibrary/carrel/ETC/DATABASE )  )
+	connection             = sqlite3.connect( str( localLibrary/carrel/ETC/DATABASE )  )
 	connection.row_factory = sqlite3.Row
 	items                  = []
 	
@@ -2033,7 +2076,7 @@ def pos( carrel, select='parts', like='any', count=False, normalize=True, wordcl
 				else :
 			
 					# configure
-					localLibrary = configuration( 'localLibrary' )
+					#localLibrary = configuration( 'localLibrary' )
 
 					# nouns
 					if like == 'NOUN%' :
@@ -2089,7 +2132,7 @@ def pos( carrel, select='parts', like='any', count=False, normalize=True, wordcl
 
 
 # process named entities
-def entities( carrel, select='type', like='any', count=False, wordcloud=False, save=False ) :
+def entities( carrel, localLibrary=None, select='type', like='any', count=False, wordcloud=False, save=False ) :
 
 	'''Given the name of a study carrel, return various
 	incarnations of named-entity values.
@@ -2118,12 +2161,15 @@ def entities( carrel, select='type', like='any', count=False, wordcloud=False, s
 
 	# require
 	import sqlite3
+	from pathlib import Path
+
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 
 	# sanity check
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
 
 	# initialize
-	localLibrary           = configuration( 'localLibrary' )
 	connection             = sqlite3.connect( str( localLibrary/carrel/ETC/DATABASE )  )
 	connection.row_factory = sqlite3.Row
 	items                  = []
@@ -2231,7 +2277,7 @@ def entities( carrel, select='type', like='any', count=False, wordcloud=False, s
 
 
 # do feature reduction and visualize
-def cluster( carrel, type='dendrogram', save=False ) :
+def cluster( carrel, localLibrary=None, type='dendrogram', save=False ) :
 
 	'''Given the name of a study carrel, use PCA to reduce the
 	carrel's content to two or three dimensions and then
@@ -2253,16 +2299,19 @@ def cluster( carrel, type='dendrogram', save=False ) :
 	from sklearn.manifold                import MDS
 	from sklearn.metrics.pairwise        import cosine_similarity
 	import matplotlib.pyplot             as     plt
+	from pathlib import Path
 	
 	# ignore warnings; probably not the greatest idea
 	import warnings
 	warnings.filterwarnings("ignore")
 
-	# sanity check
-	checkForCarrel( carrel )
-
 	# initialize
-	localLibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
+	
+	# sanity check
+	checkForCarrel( carrel, localLibrary )
+
 	stopwords    = open( str( localLibrary/carrel/ETC/STOPWORDS ), encoding='utf-8' ).read().split()
 	directory    = localLibrary/carrel/TXT
 	filenames    = [ path.join( directory, filename ) for filename in listdir( directory ) ]
@@ -3109,20 +3158,23 @@ def download( carrel ) :
 
 
 # open the html root of a study carrel
-def read( carrel, location='local' ) :
+def read( carrel, location='local', localLibrary=None, ) :
 
 	# require
 	from webbrowser import open
 	import sys
+	from pathlib import Path
 	
 	if location == 'local' :
 	
+		if localLibrary : localLibrary = Path( localLibrary )
+		else            : localLibrary = configuration( 'localLibrary' )
+		
 		# sanity check
-		checkForCarrel( carrel )
+		checkForCarrel( carrel, localLibrary )
 
-		localLibrary  = configuration( 'localLibrary' )
+		#localLibrary  = configuration( 'localLibrary' )
 		url = 'file://' + str( localLibrary/carrel/INDEX )
-		sys.stderr.write( url + '\n' )
 		open( url )
 		
 	elif location == 'remote' :
@@ -3192,7 +3244,7 @@ def _tikaIsRunning () :
 	
 	
 # create carrel skeleton
-def _initialize( carrel, directory ) :
+def _initialize( carrel, directory, localLibrary=None ) :
 	
 	# configure
 	ADR      = 'adr'
@@ -3214,7 +3266,8 @@ def _initialize( carrel, directory ) :
 	import shutil
 	
 	# create the library, the carrel, and the carrel's sub-directories
-	localLibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 	Path.mkdir( localLibrary,                exist_ok=True )
 	Path.mkdir( localLibrary/carrel,         exist_ok=True )
 	Path.mkdir( localLibrary/carrel/ADR,     exist_ok=True )
@@ -3262,7 +3315,7 @@ def _initialize( carrel, directory ) :
 
 
 # given a file, create some bibliographics and save plain text
-def _file2bib( carrel, file, metadata=None ) :
+def _file2bib( carrel, file, metadata=None, localLibrary=None ) :
 		
 	# configure
 	BIB          = 'bib'
@@ -3282,7 +3335,7 @@ def _file2bib( carrel, file, metadata=None ) :
 	import os
 	import spacy
 	import pytextrank
-
+	
 	# _initialize
 	authorFound  = False
 	dateFound    = False
@@ -3292,7 +3345,8 @@ def _file2bib( carrel, file, metadata=None ) :
 	key          = _name2key( file )
 	pages        = ''
 	summary      = ''
-	localLibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
@@ -3402,6 +3456,7 @@ def _file2bib( carrel, file, metadata=None ) :
 	
 	# open output
 	output = localLibrary/carrel/BIB/( key + BIBEXTENSION )
+	
 	with open( output, 'w', encoding='utf-8' ) as handle :
 	
 		try :
@@ -3513,7 +3568,7 @@ def _summarize( doc ) :
 	return summary
 
 # create bag of words
-def _txt2bow( carrel ) :
+def _txt2bow( carrel, localLibrary=None ) :
 
 	# configure
 	PATTERN = '*.txt'
@@ -3525,7 +3580,8 @@ def _txt2bow( carrel ) :
 	from pathlib import Path
 
 	# _initialize
-	localLibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 
 	# process each text file in the given directory
 	txt = localLibrary/carrel/TXT
@@ -3565,7 +3621,7 @@ def _normalize( text ) :
 
 
 # extract email addresses
-def _txt2adr( carrel, file ) :
+def _txt2adr( carrel, file, localLibrary ) :
 	
 	# configure
 	ADR       = 'adr'
@@ -3575,10 +3631,12 @@ def _txt2adr( carrel, file ) :
 
 	# require
 	import re
+	from pathlib import Path
 	
 	# _initialize
 	key          = _name2key( file )
-	localLibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
@@ -3612,7 +3670,7 @@ def _txt2adr( carrel, file ) :
 
 
 # extract named entities
-def _txt2ent( carrel, file ) :
+def _txt2ent( carrel, file, localLibrary=None ) :
 
 	# configure
 	EXTENSION = '.ent'
@@ -3621,10 +3679,12 @@ def _txt2ent( carrel, file ) :
 
 	# require
 	import spacy
-
+	from pathlib import Path
+	
 	# _initialize
 	key          = _name2key( file )
-	localLibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 	
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
@@ -3657,7 +3717,7 @@ def _txt2ent( carrel, file ) :
 
 
 # extract parts-of-speech
-def _txt2pos( carrel, file ) :
+def _txt2pos( carrel, file, localLibrary=None ) :
 
 	# configure
 	EXTENSION = '.pos'
@@ -3666,10 +3726,12 @@ def _txt2pos( carrel, file ) :
 
 	# require
 	import spacy
-
+	from pathlib import Path
+	
 	# _initialize
 	key          = _name2key( file )
-	localLibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 	
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
@@ -3706,7 +3768,7 @@ def _txt2pos( carrel, file ) :
 
 
 # given a file, extract domains and urls
-def _txt2url( carrel, file ) :
+def _txt2url( carrel, file, localLibrary ) :
 
 	# configure
 	EXTENSION = '.url'
@@ -3716,10 +3778,12 @@ def _txt2url( carrel, file ) :
 
 	# require
 	import re
+	from pathlib import Path
 	
 	# _initialize
 	key          = _name2key( file )
-	localLibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 	
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
@@ -3756,7 +3820,7 @@ def _txt2url( carrel, file ) :
 
 
 # given a file, output keywords
-def _txt2wrd( carrel, file ) :
+def _txt2wrd( carrel, file, localLibrary=None ) :
 
 	# configure
 	EXTENSION  = '.wrd'
@@ -3771,10 +3835,12 @@ def _txt2wrd( carrel, file ) :
 	from  textacy.extract.keyterms.yake import yake
 	import spacy
 	import os
+	from pathlib import Path
 	
 	# _initialize
 	key          = _name2key( file )
-	localLibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 	
 	# debug 
 	if VERBOSE : click.echo( ( '\t%s' % key ), err=True )
@@ -3880,7 +3946,7 @@ def _tsv2db( directory, extension, table, connection ) :
 	if found : features.to_sql( table, connection, if_exists='replace', index=False )
 
 
-def build( carrel, directory, erase=False, start=False ) :
+def build( carrel, directory, erase=False, start=False, localLibrary=None ) :
 
 	"""Create <carrel> from files in <directory>
 
@@ -3911,10 +3977,11 @@ def build( carrel, directory, erase=False, start=False ) :
 	URL       = 'urls'
 	BIB       = 'bib'
 	POOLSMALL = 24
-	POOLBIG   = 56
+	POOLBIG   = 24
 	
 	# require
 	from   multiprocessing import Pool
+	from   pathlib         import Path
 	import os
 	import shutil
 	import sqlite3
@@ -3922,9 +3989,10 @@ def build( carrel, directory, erase=False, start=False ) :
 	import spacy
 	
 	# _initialize
-	localLibrary = configuration( 'localLibrary' )
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
 	pool         = Pool( POOLSMALL )
-
+	
 	# make sure we have Tika Server
 	_checkForTika( str( configuration( 'tikaHome' ) ) )
 	
@@ -3979,7 +4047,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# build skeleton
 	click.echo( '(Step #1 of 9) Initializing %s with %s and stop words' % ( carrel, directory ), err=True )
-	_initialize( carrel, directory )
+	_initialize( carrel, directory, localLibrary )
 		
 	# create a list of filenames to process
 	filenames = []
@@ -4001,10 +4069,10 @@ def build( carrel, directory, erase=False, start=False ) :
 			click.echo( ( '\n  Error: The metadata file (metadata.csv) does not have a\n  column named "file". Remove metadata.csv from the original\n  input directory:\n\n    %s\n\n  Alternatively, edit the metadata file accordingly. Exiting.\n' % directory ), err=True )
 			exit()
 
-		pool.starmap( _file2bib, [ [ carrel, filename, metadata ] for filename in filenames ] )
+		pool.starmap( _file2bib, [ [ carrel, filename, metadata, localLibrary ] for filename in filenames ] )
 		
 	# no metadata file; just do the work
-	else : pool.starmap( _file2bib, [ [ carrel, filename ] for filename in filenames ] )
+	else : pool.starmap( _file2bib, [ [ carrel, filename, None, localLibrary ] for filename in filenames ] )
 		
 	# clean up
 	pool.close()
@@ -4012,7 +4080,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# bag of words
 	click.echo( '(Step #3 of 9) Creating bag-of-words', err=True )
-	_txt2bow( carrel )
+	_txt2bow( carrel, localLibrary )
 	
 	# output hint
 	click.echo( ( "\n  Hint: Now that the bag-of-words has been created, you can begin\n  to use many of the other Reader Toolbox commands while the\n  building process continues. This is especially true for larger\n  carrels. Open a new terminal window and try:\n\n    rdr cluster %s\n    rdr ngrams %s -c | more\n    rdr concordance %s\n    rdr collocations %s\n" % ( carrel, carrel, carrel, carrel ) ), err=True )
@@ -4024,7 +4092,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# extract email addresses
 	click.echo( '(Step #4 of 9) Extracting (email) addresses', err=True )
-	pool.starmap( _txt2adr, [ [ carrel, filename ] for filename in filenames ] )
+	pool.starmap( _txt2adr, [ [ carrel, filename, localLibrary ] for filename in filenames ] )
 	
 	# clean up
 	pool.close()
@@ -4032,7 +4100,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# extract named entities
 	click.echo( '(Step #5 of 9) Extracting (named) entities', err=True )
-	pool.starmap( _txt2ent, [ [ carrel, filename ] for filename in filenames ] )
+	pool.starmap( _txt2ent, [ [ carrel, filename, localLibrary ] for filename in filenames ] )
 	
 	# clean up
 	pool.close()
@@ -4040,7 +4108,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# extract parts-of-speech
 	click.echo( '(Step #6 of 9) Extracting parts-of-speech', err=True )
-	pool.starmap( _txt2pos, [ [ carrel, filename ] for filename in filenames ] )
+	pool.starmap( _txt2pos, [ [ carrel, filename, localLibrary ] for filename in filenames ] )
 
 	# clean up
 	pool.close()
@@ -4048,7 +4116,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# extract urls
 	click.echo( '(Step #7 of 9) Extracting URLs', err=True )
-	pool.starmap( _txt2url, [ [ carrel, filename ] for filename in filenames ] )
+	pool.starmap( _txt2url, [ [ carrel, filename, localLibrary ] for filename in filenames ] )
 
 	# clean up
 	pool.close()
@@ -4056,7 +4124,7 @@ def build( carrel, directory, erase=False, start=False ) :
 
 	# extract keywords
 	click.echo( '(Step #8 of 9) Extracting (key) words', err=True )
-	pool.starmap( _txt2wrd, [ [ carrel, filename ] for filename in filenames ] )
+	pool.starmap( _txt2wrd, [ [ carrel, filename, localLibrary ] for filename in filenames ] )
 
 	# clean up
 	pool.close()
@@ -4077,10 +4145,9 @@ def build( carrel, directory, erase=False, start=False ) :
 	_tsv2db( localLibrary/carrel/POS, '*.pos', 'pos', connection )
 
 	# output another hint
-	# out hint
 	click.echo( ( '\n  Another hint: The build process is done, and now you ought to\n  be able to use any Toolbox command. For example:\n\n    rdr info %s\n    rdr bib %s | more\n    rdr tm %s\n' % ( carrel, carrel, carrel ) ), err=True )
 
-def summarize( carrel, look=False ) :
+def summarize( carrel, look=False, localLibrary=None ) :
 
 	'''Summarize <carrel>
 
@@ -4090,68 +4157,73 @@ def summarize( carrel, look=False ) :
 	browser. You can subsequently use rdr read <carrel> to open the
 	index.htm file.'''
 
+	from pathlib import Path
+	
+	if localLibrary : localLibrary = Path( localLibrary )
+	else            : localLibrary = configuration( 'localLibrary' )
+	
 	# sanity check
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
 	
 	# save bibliography
 	click.echo( "Creating bibliography", err=True )
-	bibliography( carrel, 'text', save=True )
-	bibliography( carrel, 'html', save=True )
-	bibliography( carrel, 'json', save=True )
+	bibliography( carrel, localLibrary, 'text', save=True )
+	bibliography( carrel, localLibrary, 'html', save=True  )
+	bibliography( carrel, localLibrary, 'json', save=True  )
 			
 	# save sizes	
 	click.echo( "Graphing sizes", err=True )
-	sizes( carrel, output='boxplot',   save=True )
-	sizes( carrel, output='histogram', save=True )
+	sizes( carrel, localLibrary, output='boxplot',   save=True )
+	sizes( carrel, localLibrary, output='histogram', save=True )
 		
 	# save readability	
 	click.echo( "Graphing readability", err=True )
-	flesch( carrel, output='boxplot',   save=True )
-	flesch( carrel, output='histogram', save=True )
+	flesch( carrel, localLibrary, output='boxplot',   save=True )
+	flesch( carrel, localLibrary, output='histogram', save=True )
 	
 	# save cluster	
 	click.echo( "Graphing clusters", err=True )
-	cluster( carrel, type='cube',       save=True )
+	cluster( carrel, localLibrary, type='cube', save=True )
 	#ctx.invoke( cluster.cluster, carrel=carrel, type='dendrogram', save=True )
 	
 	# save ngrams	
 	click.echo( "Graphing ngrams", err=True )
-	ngrams( carrel, count=True, size=1, wordcloud=True, save=True )
-	ngrams( carrel, count=True, size=2, wordcloud=True, save=True )
+	ngrams( carrel, localLibrary, count=True, size=1, wordcloud=True, save=True )
+	ngrams( carrel, localLibrary, count=True, size=2, wordcloud=True, save=True )
 	
 	# save entities	
 	click.echo( "Graphing entities", err=True )
-	entities( carrel, count=True, select='entity', like='any',    wordcloud=True, save=True )
-	entities( carrel, count=True, select='entity', like='PERSON', wordcloud=True, save=True )
-	entities( carrel, count=True, select='entity', like='GPE',    wordcloud=True, save=True )
-	entities( carrel, count=True, select='entity', like='ORG',    wordcloud=True, save=True )
+	entities( carrel, localLibrary, count=True, select='entity', like='any',    wordcloud=True, save=True )
+	entities( carrel, localLibrary, count=True, select='entity', like='PERSON', wordcloud=True, save=True )
+	entities( carrel, localLibrary, count=True, select='entity', like='GPE',    wordcloud=True, save=True )
+	entities( carrel, localLibrary, count=True, select='entity', like='ORG',    wordcloud=True, save=True )
 	
 	# save pos	
 	click.echo( "Graphing parts-of-speach", err=True )
-	pos( carrel, count=True, select='lemmas', like='NOUN',  wordcloud=True, save=True )
-	pos( carrel, count=True, select='lemmas', like='VERB',  wordcloud=True, save=True )
-	pos( carrel, count=True, select='lemmas', like='ADJ',   wordcloud=True, save=True )
-	pos( carrel, count=True, select='lemmas', like='ADV',   wordcloud=True, save=True )
-	pos( carrel, count=True, select='lemmas', like='PRON',  wordcloud=True, save=True )
-	pos( carrel, count=True, select='lemmas', like='PROPN', wordcloud=True, save=True )
+	pos( carrel, localLibrary, count=True, select='lemmas', like='NOUN',  wordcloud=True, save=True )
+	pos( carrel, localLibrary, count=True, select='lemmas', like='VERB',  wordcloud=True, save=True )
+	pos( carrel, localLibrary, count=True, select='lemmas', like='ADJ',   wordcloud=True, save=True )
+	pos( carrel, localLibrary, count=True, select='lemmas', like='ADV',   wordcloud=True, save=True )
+	pos( carrel, localLibrary, count=True, select='lemmas', like='PRON',  wordcloud=True, save=True )
+	pos( carrel, localLibrary, count=True, select='lemmas', like='PROPN', wordcloud=True, save=True )
 	
 	# save keywords	
 	click.echo( "Graphing keywords", err=True )
-	keywords( carrel, count=True, wordcloud=True, save=True )
+	keywords( carrel, localLibrary, count=True, wordcloud=True, save=True )
 	
 	# create html
 	click.echo( "Building HTML page", err=True )
 	html = TEMPLATE.replace( '##CARREL##', carrel )
-	html = html.replace( '##ITEMS##', str( extents( carrel, 'items' ) ) )
-	html = html.replace( '##WORDS##', str( extents( carrel, 'words' ) ) )
-	html = html.replace( '##FLESCH##', str( extents( carrel, 'flesch' ) ) )
-	html = html.replace( '##DATECREATED##', str( provenance( carrel, 'dateCreated' ) ) )
-	html = html.replace( '##CREATOR##', str( provenance( carrel, 'creator' ) ) )
+	html = html.replace( '##ITEMS##', str( extents( carrel, 'items', localLibrary ) ) )
+	html = html.replace( '##WORDS##', str( extents( carrel, 'words', localLibrary ) ) )
+	html = html.replace( '##FLESCH##', str( extents( carrel, 'flesch', localLibrary ) ) )
+	html = html.replace( '##DATECREATED##', str( provenance( carrel, 'dateCreated', localLibrary ) ) )
+	html = html.replace( '##CREATOR##', str( provenance( carrel, 'creator', localLibrary ) ) )
 	
 	# save html
-	locallibrary = configuration( 'localLibrary' )
-	with open( locallibrary/carrel/INDEX, 'w', encoding='utf-8' ) as handle : handle.write( html )
+	#locallibrary = configuration( 'localLibrary' )
+	with open( localLibrary/carrel/INDEX, 'w', encoding='utf-8' ) as handle : handle.write( html )
 	
 	# read, 
-	if look : read( carrel )
+	if look : read( carrel, localLibrary )
 
