@@ -681,10 +681,10 @@ def reconcile( carrel, type, localLibrary=None, erase=False ) :
 	
 	# require
 	from   glob import glob
+	from   pathlib import Path
 	import pandas as pd
 	import rdr
 	import sys
-	from pathlib import Path
 	
 	if localLibrary : localLibrary = Path( localLibrary )
 	else            : localLibrary = configuration( 'localLibrary' )
@@ -704,6 +704,7 @@ def reconcile( carrel, type, localLibrary=None, erase=False ) :
 	# initialize
 	authors  = localLibrary/carrel/( rdr.ETC )/( rdr.AUTHORS )
 	keywords = localLibrary/carrel/( rdr.ETC )/( rdr.WRDS )
+	with open( localLibrary/carrel/( rdr.ETC )/( rdr.STOPWORDS ) ) as handle : stopwords = handle.read().splitlines()	
 
 	# check whether or not we've already been here, and get files to reconcile, conditionally
 	if type == 'authors' :
@@ -740,12 +741,20 @@ def reconcile( carrel, type, localLibrary=None, erase=False ) :
 	records         = pd.concat( ( pd.read_csv( file, sep='\t', dtype={ 'id': str } ) for file in files ) )
 	for index, record in records.iterrows() :
 	
-		# reconcile; here is where we add qnumbers from a dictionary
-		if type == 'authors'  : reconciliation = [ record[ 'id' ], record[ 'author' ], '' ]
-		if type == 'keywords' : reconciliation = [ record[ 'id' ], record[ 'keyword' ], '' ]
 		
-		# update
-		reconciliations.append( reconciliation )
+		# reconcile; here is where we add qnumbers from a dictionary
+		if type == 'authors'  :
+		
+			reconciliation = [ record[ 'id' ], record[ 'author' ], '' ]
+			reconciliations.append( reconciliation )
+
+		if type == 'keywords' : 
+		
+			# check for stopwords
+			if record[ 'keyword' ] not in stopwords :
+			
+				reconciliation = [ record[ 'id' ], record[ 'keyword' ], '' ]
+				reconciliations.append( reconciliation )
 		
 	# create a dataframe of reconciliations, output, and done
 	if type == 'authors' :
