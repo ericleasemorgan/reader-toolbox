@@ -1288,7 +1288,7 @@ def cmdNotebooks( command ) :
 @click.option('-w', '--words', default=8, help="number of words used to describe topic" )
 @click.option('-i', '--iterations', default=2400, help="number of times to cacluate" )
 @click.option('-o', '--output', default='summary', type=click.Choice( [ 'summary', 'chart', 'topdocs', 'csv' ] ), help="type of report" )
-@click.option('-f', '--field', type=click.Choice( [ 'author', 'title', 'date', 'track', 'category', 'type', 'year', 'journal', 'topic', 
+@click.option('-f', '--field', type=click.Choice( [ 'author', 'title', 'date', 'track', 'category', 'type', 'year', 'journal', 'topic', 'college', 'discipline', 'degree', 
 'pub_place' ] ), help="field for pivoting" )
 @click.option('-y', '--type', default='pie', type=click.Choice( [ 'pie', 'bar', 'barh', 'line', 'scatter' ] ), help="type of chart" )
 @click.argument( 'carrel', metavar='<carrel>' )
