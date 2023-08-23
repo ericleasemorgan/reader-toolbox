@@ -3985,7 +3985,7 @@ def build( carrel, directory, erase=False, start=False, localLibrary=None ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 24
+	POOLSMALL = 18
 	POOLBIG   = 56
 	
 	# require
