@@ -3835,7 +3835,7 @@ def _txt2wrd( carrel, file, localLibrary=None ) :
 	EXTENSION  = '.wrd'
 	WRD        = 'wrd'
 	NGRAMS     = 1
-	TOPN       = 0.005
+	TOPN       = 0.05
 	HEADER     = [ 'id', 'keyword' ]
 	NORMALIZE  = 'lower'
 	WINDOWSIZE = 5
@@ -3985,8 +3985,8 @@ def build( carrel, directory, erase=False, start=False, localLibrary=None ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 24
-	POOLBIG   = 56
+	POOLSMALL = 8
+	POOLBIG   = 8
 	
 	# require
 	from   multiprocessing import Pool
