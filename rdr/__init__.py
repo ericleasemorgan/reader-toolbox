@@ -1276,7 +1276,7 @@ def bibliography( carrel, localLibrary=None, format='text', save=False ) :
 				item = item + '<li>' + ( 'flesch: %s'    % flesch )   + '</li>'
 				item = item + '<li>' + ( 'summary: %s'   % escape( summary ) )  + '</li>'
 				item = item + '<li>' + ( 'keywords: %s'  % escape( keywords ) ) + '</li>'
-				item = item + '<li>' + ( 'versions: <a href="' + cache + '">original</a>; <a href="' + text + '">plain text</a>' ) + '</li>'
+				item = item + '<li>' + ( 'versions: <a href="' + escape( cache ) + '">original</a>; <a href="' + escape( text ) + '">plain text</a>' ) + '</li>'
 				item = item + '</ul>'
 				
 				items = items + "<li>" + id + item + "</li>"
@@ -1514,7 +1514,7 @@ def keywords( carrel, localLibrary=None, count=False, wordcloud=False, save=Fals
 	connection             = sqlite3.connect( str( localLibrary/carrel/ETC/DATABASE )  )
 	connection.row_factory = sqlite3.Row
 	items                  = []
-	stopwords              = open( str( localLibrary/carrel/ETC/STOPWORDS ), encoding='utf-8' ).read().split()
+	stopwords              = open( str( localLibrary/carrel/ETC/STOPWORDS ), encoding='utf-8' ).read().splitlines()
 
 	# dump a sorted list of all keywords
 	if not count :
@@ -2844,7 +2844,8 @@ def word2vec( carrel, type='similarity', query='love', topn=10 ) :
 			items    = []
 			
 			similarities = model.most_similar( positive=positive, negative=negative, topn=topn )
-			for similarity in similarities : print( similarity )
+			#for similarity in similarities : print( similarity )
+			return( similarities )
 			
 		# error
 		except KeyError as word : sys.stderr.write( ( 'A word in your query -- %s -- is not in the index. Please remove it.\n' % word ) )
@@ -2859,8 +2860,14 @@ def _checkForIndex( carrel ) :
 	CREATEFULLTEXT = 'CREATE TABLE fulltext ( id TEXT, fulltext TEXT );\n'
 	TEMPLATE       = "INSERT INTO fulltext ( id, fulltext ) VALUES ( '##ID##', '##FULLTEXT##' );\n"
 	DROPINDX       = 'DROP TABLE IF EXISTS indx;'
+
+	# these are what we want
 	CREATEINDX     = 'CREATE VIRTUAL TABLE indx USING FTS5( id, author, title, date, summary, keyword, words, sentence, flesch, cache, txt, fulltext );'
 	INDEX          = 'INSERT INTO indx SELECT b.id, b.author, b.title, b.date, b.summary, group_concat( LOWER( w.keyword ), "; " ), b.words, b.sentence, b.flesch, b.id || b.extension, b.id || ".txt", f.fulltext FROM bib AS b, fulltext AS f, wrd AS w WHERE b.id IS f.id AND b.id IS w.id GROUP BY w.id;';
+
+	# these work when "database is full"; no full text
+	#CREATEINDX     = 'CREATE VIRTUAL TABLE indx USING FTS5( id, author, title, date, summary, keyword, words, sentence, flesch, cache, txt );'
+	#INDEX          = 'INSERT INTO indx SELECT b.id, b.author, b.title, b.date, b.summary, group_concat( LOWER( w.keyword ), "; " ), b.words, b.sentence, b.flesch, b.id || b.extension, b.id || ".txt" FROM bib AS b, fulltext AS f, wrd AS w WHERE b.id IS f.id AND b.id IS w.id GROUP BY w.id;';
 
 	# require
 	import os
@@ -3834,17 +3841,18 @@ def _txt2wrd( carrel, file, localLibrary=None ) :
 	# configure
 	EXTENSION  = '.wrd'
 	WRD        = 'wrd'
-	NGRAMS     = 1
+	NGRAMS     = ( 1, 2 )
 	TOPN       = 0.05
 	HEADER     = [ 'id', 'keyword' ]
 	NORMALIZE  = 'lower'
 	WINDOWSIZE = 5
-	
+	POS        = ( 'NOUN', 'PROPN', 'ADJ' )
+
 	# require
-	from  textacy.extract.keyterms.yake import yake
-	import spacy
+	from   pathlib                  import Path
+	from   textacy.extract.keyterms import yake
 	import os
-	from pathlib import Path
+	import spacy
 	
 	# _initialize
 	key          = _name2key( file )
@@ -3863,7 +3871,7 @@ def _txt2wrd( carrel, file, localLibrary=None ) :
 	doc            = nlp( text )
 
 	# do the extraction
-	try    : records = ( yake( doc, ngrams=( 1, 2 ), window_size=WINDOWSIZE, topn=TOPN, normalize=NORMALIZE ) )
+	try    : records = ( yake( doc, ngrams=NGRAMS, window_size=WINDOWSIZE, topn=TOPN, normalize=NORMALIZE, include_pos=POS ) )
 	except : records = []
 	
 	# check for records
@@ -3985,7 +3993,7 @@ def build( carrel, directory, erase=False, start=False, localLibrary=None ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 18
+	POOLSMALL = 24
 	POOLBIG   = 56
 	
 	# require
