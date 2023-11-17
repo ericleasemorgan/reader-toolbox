@@ -20,6 +20,8 @@ This tool -- rdr -- enables the student, researcher, or scholar to
 quickly and easily digest the content of carrels to address questions
 from the mundane to the sublime. 
 
+
+
 Eric Lease Morgan <emorgan@nd.edu>
 (c) University of Notre Dame; distributed under a GNU Public License
 
