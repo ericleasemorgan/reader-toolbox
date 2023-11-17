@@ -296,7 +296,8 @@ def rdfSearchForObject ( graph, subject, predicate ) :
 # return the English label of a given object
 def rdfSearchForLabel ( graph, object ) :
 	sparql = 'SELECT ?label WHERE {<' + str( object ) + '> rdfs:label ?label . FILTER(LANG(?label) = "en")}'
-	label  = graph.query( sparql ).bindings[ 0 ][ 'label' ]
+	try : label  = graph.query( sparql ).bindings[ 0 ][ 'label' ]
+	except IndexError : label = 'nan'
 	return label
 
 	
