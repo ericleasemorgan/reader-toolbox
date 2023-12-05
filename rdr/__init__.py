@@ -738,8 +738,9 @@ def reconcile( carrel, type, localLibrary=None, erase=False ) :
 		files   = glob( str( localLibrary/carrel/( rdr.WRD )/PATTERN ) )
 
 	# create a dataframe of all records and process each; reconcile
+	# see: https://stackoverflow.com/questions/48023061/pandas-read-csv-eof-inside-string-starting-at-line
 	reconciliations = []
-	records         = pd.concat( ( pd.read_csv( file, sep='\t', dtype={ 'id': str } ) for file in files ) )
+	records         = pd.concat( ( pd.read_csv( file, quoting=3, sep='\t', dtype={ 'id': str } ) for file in files ) )
 	for index, record in records.iterrows() :
 	
 		
