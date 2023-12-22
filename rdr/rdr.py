@@ -178,8 +178,11 @@ def _pivot( localLibrary, carrel, field, keys ) :
 		label  = labels[ index ]
 		topics.rename( columns = { column:label }, inplace=True )
 
-	# _pivot and return
+	# _pivot, sort, and return; improves the output SOO much
+	# see: https://stackoverflow.com/questions/60758625/sort-pandas-dataframe-by-sum-of-columns
 	topics = topics.pivot_table( list( topics.columns ), index=field )
+	sums   = topics.sum()
+	topics = topics[ sums.sort_values( ascending=False ).index[ : ] ]
 	return( topics )
 
 
