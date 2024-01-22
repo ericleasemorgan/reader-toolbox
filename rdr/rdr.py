@@ -325,7 +325,7 @@ def cmdBib( carrel, format, save ) :
 	  rdr search --help"""
 
 	if save : bibliography( carrel, format, save )
-	else    : click.echo( bibliography( carrel, format ) )
+	else    : click.echo( bibliography( carrel, None, format ) )
 
 
 # download
