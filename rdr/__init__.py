@@ -630,7 +630,7 @@ def carrel2graph( carrel, localLibrary=None ) :
 					else : graph.add( ( item, CARREL.hasAuthor, Literal( author[ 'author' ] ) ) )
 
 		# add title
-		graph.add( ( item, DCTERMS.title, Literal( bibliographic[ 'title' ] ) ) )
+		graph.add( ( item, DCTERMS.title, Literal( bibliographic[ 'id' ] ) ) )
 
 		# add date
 		graph.add( ( item, DCTERMS.date, Literal( bibliographic[ 'date' ] ) ) )
@@ -3844,7 +3844,7 @@ def _txt2wrd( carrel, file, localLibrary=None ) :
 	EXTENSION  = '.wrd'
 	WRD        = 'wrd'
 	NGRAMS     = ( 1, 2 )
-	TOPN       = 0.05
+	TOPN       = 0.0125
 	HEADER     = [ 'id', 'keyword' ]
 	NORMALIZE  = 'lower'
 	WINDOWSIZE = 5
@@ -3995,8 +3995,8 @@ def build( carrel, directory, erase=False, start=False, localLibrary=None ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 8
-	POOLBIG   = 8
+	POOLSMALL = 32
+	POOLBIG   = 56
 	
 	# require
 	from   multiprocessing import Pool
