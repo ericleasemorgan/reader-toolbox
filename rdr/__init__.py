@@ -43,18 +43,18 @@ CARRELS       = 'stacks/carrels-legacy'
 DOCUMENTATION = 'https://reader-toolbox.readthedocs.io'
 
 # file system mappings
-AUTHORS              = 'reader.authors'
+AUTHORS              = 'carrel.authors'
 BIB                  = 'bib'
 BIBLIOGRAPHYHTML     = 'index.xhtml'
-BIBLIOGRAPHYJSON     = 'bibliography.json'
-BIBLIOGRAPHYTEXT     = 'bibliography.txt'
+BIBLIOGRAPHYJSON     = 'index.json'
+BIBLIOGRAPHYTEXT     = 'index.txt'
 BIGRAMSCLOUD         = 'bigrams-cloud.png'
 CACHE                = 'cache'
 CLUSTERCUBE          = 'cluster-cube.png'
 CLUSTERDENDROGRAM    = 'cluster-dendrogram.png'
-COLLOCATIONS         = 'reader.gml'
-CORPUS               = 'reader.txt'
-DATABASE             = 'reader.db'
+COLLOCATIONS         = 'carrel.gml'
+CORPUS               = 'carrel.txt'
+DATABASE             = 'carrel.db'
 ENTITIESANY          = 'entities-any.png'
 ENTITIESGPE          = 'entities-gpe.png'
 ENTITIESORG          = 'entities-org.png'
@@ -62,7 +62,7 @@ ENTITIESPERSON       = 'entities-person.png'
 ETC                  = 'etc'
 FIGURES              = 'figures'
 HTM                  = 'htm'
-GML                  = 'reader.gml'
+GML                  = 'index.gml'
 INDEX                = 'index.htm'
 INDEXRDF             = 'index.rdf'
 KEYWORDSCLOUD        = 'keywords-cloud.png'
@@ -78,15 +78,16 @@ POSVERB              = 'pos-verb.png'
 PROVENANCE           = 'index.tsv'
 READABILITYBOXPLOT   = 'readability-boxplot.png'
 READABILITYHISTOGRAM = 'readability-histogram.png'
-SENTENCES            = 'reader.sents'
+READMEFILE           = 'readme.txt'
+SENTENCES            = 'carrel.sents'
 SIZESBOXPLOT         = 'sizes-boxplot.png'
 SIZESHISTOGRAM       = 'sizes-histogram.png'
 STOPWORDS            = 'stopwords.txt'
 TXT                  = 'txt'
 UNIGRAMSCLOUD        = 'unigrams-cloud.png'
-VECTORS              = 'reader.vec'
+VECTORS              = 'carrel.vec'
 WRD                  = 'wrd'
-WRDS                 = 'reader.wrds'
+WRDS                 = 'carrel.wrds'
 ZIP                  = 'index.zip'
 
 # spacy langauge model
@@ -112,15 +113,132 @@ XHTML = '''<!DOCTYPE html>
 </html>
 '''
 
+# readme.txt
+READMEWORDS = '''
+
+About Distant Reader Study Carrels
+==================================
+
+tl;dnr - Distant Reader study carrels are data sets, and they are designed to be read by computers as well as people.
+
+
+Introduction
+------------
+
+The Distant Reader takes a collection of texts as input, and it outputs data sets called "study carrels". This readme file elaborates on these ideas and thorugh the process addresses the question, "Why should I care?"
+
+
+Basic Layout
+------------
+
+
+Enhancements To The Basic Layout
+--------------------------------
+
+
+Desktop Applications
+--------------------
+
+There are quite a number of different desktop computer applications that can be used against study carrels, and they fall into a number of categories.
+
+
+Text Editors
+
+Text editors are not word processors. While text editors and word processors both work with text, the former are more about the manipulation of the text, and the later are more about graphic design. The overwhelming majority of data found in study carrels is in the form of plain text, and you will find the use of a descent text editor indispensible. Using a text editor, you can open and read just about any file found in a study carrel.
+
+A good text editor supports powerful find & replace functionality, supports regular expressions, has the ability to open mulit-megabyte files with ease, can turn on and off line wrapping, and the reads text files created by different computers. The following two text editors are recommended. Don't rely on Microsoft Word nor Google Docs, they are word processors.
+
+     BBEdit - https://www.barebones.com/products/bbedit/
+  NotePad++ - https://notepad-plus-plus.org/
+
+
+Word Cloud Applications
+
+The use of words clouds is often viewed as sophmoric. This is true becuase they are to often used to illustrate the frequency of all words in a text. On the other hand, if word clouds illustrate the frequencies of specific things -- keywords, parts-of-speech, or named entities -- then word clouds become much more complelling. After all, "A picture is worth a thousand words."
+
+A program called Wordle is an excellent word cloud program. It takes raw text as input. It also accepts delimited data as input. The resulting images are colorful, configurable, and exportable. Unfortunately, it is no longer supported; while it will run on most Macintosh comuters, it will no longer run (easily) on Windows computers. (I would pay a fee to have Wordle come back to life and brought up-to-date.) If Wordle does not work for you, then there are an abundance of Web-based word cloud application for use.
+
+  Wordle - https://web.archive.org/web/20191115162244/http://www.wordle.net/
+  
+
+Concordances
+
+Developed in the 13th Century, concordances are all but the oldest of text analysis techiques. They function like the rudimentary find function you see in many applications. Think control-f on steroids.
+
+Concordances locate a given word in a text, display the text surrounding the word, and help you understand what other words are used in the same context. After all, to paraphrase a linguist named John Firth, "One shall know a word by the company it keeps." The following is a link to a concordance application that is worth way more than what you pay for it, which is nothing.
+
+  AntConc - https://www.laurenceanthony.net/software/antconc/
+  
+
+Spreadsheet-Like Applications
+
+The overwhelming majority of the content found in study carrels is in the form of plain text, and most of this plain text is structured in the form of tab-delimited text files -- matrixes or sometimes called "data frames". These files are readable by any spreadsheet or database aplication. Microsoft Excel, Google Sheets, or Macintosh Numbers can import Reader study carrel delimited data, but these programs are more about numerical data and less about textual data.
+
+Thus, if you want to do analysis against Reader study carrel data, and if you do not want to write your own software, then the use of an analysis program called OpenRefine is highly recommended. OpenRefine eats delimited data for lunch. Once data is imported, OpenRefine supports powerful find & replace functions, counting & tabulating functions, faceting, sorting, exporting, etc. While text editors and concordances supplement traditional reading functions, OpenRefine supplements the process of understanding study carrels as data.
+
+  OpenRefine - https://openrefine.org/
+
+
+Topic Modeling Applications
+
+Topic modeling is a type of machine learning process called "clustering". Given an integer (I), a topic modeler will divide a corpus into I clusters, and each cluster is akin to a theme. Thus, after practicing with a topic modeler, you can address questions like: what are the things this corpus is about, to what degee are themes manifested across the corpus, and which documents are best reprsented by themes. After supplementing the corpus with metadata (authors, titles, dates, keywords, geners, etc.) Topic modeling becomes even more useful because you can address addtional questdions, such as: how did these themes ebb & flow over time, who wrote about what, and how is this style of writting different from that style of writing. 
+
+A venerable MALLET application is the grand-daddy of topic modeling tools, but is a command-line driven things. On the other hand, a program called Topic Modeling Tool, which is rooted in MALLET, brings topic modeling to the desktop. Like all the applications listed here, it requires practice to use well, but it works, it works quickly, and the data it outputs can be used in a myriad of ways.
+
+  Topic Modeling Tool - https://github.com/senderle/topic-modeling-tool
+  
+
+Network Analysis Applications
+
+Texts can be modeled in the form of networks -- nodes and edges. For example, there are authors (nodes), there are written works (additional nodes), and specific authors write specific works (edges). Similarly, there are works (nodes), there are keywords (additional nodes), and specific works are described with keywords (edges). Given these sorts of networks you can address -- and visualize -- all sorts of questions: who wrote what, what author wrote the most, what keywords dominate the collection, or what keywords are highly significant (central) to many works and therefore authors? 
+
+Network analysis is rooted in graph theory, and it is not a trivial process. On the other hand, a program called Gephi makes the process easier. Import one of any number of different graph formats or specifically shaped matrixes, apply any number layout options to visualize the graph, filter the graph, visualize again, apply clustering or calcuate graph characteristics, and visualize a third time. The process requires practice, some knowledge of graph theory, and an aesthetic sensibility. In the end, you will garnder a greater understanding of your carrel.
+
+  Gephi - https://gephi.org
+
+
+Command-Line (Shell) Interface
+------------------------------
+
+
+Reader Toolbox And Command-Line Interface
+------------------------------------------
+
+
+Reader Toolbox and the Python Application Programmer Interface
+--------------------------------------------------------------
+
+
+Write your own software
+-----------------------
+
+
+Summary
+-------
+
+
+--
+Eric Lease Morgan <emorgan@nd.edu>
+Navari Family Center for Digital Scholarship
+Hesburgh Libraries
+University of Notre Dame
+
+##DATE##
+
+
+'''
+
 # html template for summarize command
 TEMPLATE = '''
 <html>
 <head>
-<title>Index of ##CARREL##</title>
+<title>Simple summary of the Distant Reader study carrel named ##CARREL##</title>
 </head>
 <body style='margin: 7%'>
 
-	<h1>Index of ##CARREL##</h1>
+	<h1>Simple summary of the Distant Reader study carrel named ##CARREL##</h1>
+	
+	<p>Given a corpus of narrative text, the Distant Reader creates data sets -- affectionately called "study carrels" -- for the purposes of use &amp; understanding. By definition, data sets are designed to be computable, and this Web page is the result of one such computing process applied against the study carrel named <strong>##CARREL##</strong>. Here you will find a simple analysis of the carrel's extracted features. Use the features to characterize the content of the carrel, and use the features as a sort of back-of-the-book index as input for more in-depth use &amp; understanding. For more information, please see the <a href="./readme.txt">read me</a> file describing study carrels in greater detail.</p>
 
 	<h2>Basic characteristics</h2>
 
@@ -130,8 +248,8 @@ TEMPLATE = '''
 		<tr><td>Number of items</td><td>##ITEMS##</td></tr>
 		<tr><td>Number of words</td><td>##WORDS##</td></tr>
 		<tr><td>Average readability score</td><td>##FLESCH##</td></tr>
-		<tr><td>Bibliographics</td><td><a href="./etc/bibliography.txt">plain text</a>; <a href="./etc/bibliography.htm">HTML</a>; <a href="./etc/bibliography.json">JSON</a></td></tr>
-		<tr><td>Other files</td><td><a href="./etc/stopwords.txt">stopwords</a>; <a href="./etc/reader.txt">entire corpus</a></td></tr>
+		<tr><td>Bibliographics</td><td><a href="./index.txt">plain text</a>; <a href="./index.xhtml">HTML</a>; <a href="./index.json">JSON</a></td></tr>
+		<tr><td>Other files</td><td><a href="./etc/stopwords.txt">stopwords</a>; <a href="./etc/carrel.txt">entire corpus</a></td></tr>
 		</table>
 		
 		<h3>Sizes</h3>
@@ -190,78 +308,10 @@ TEMPLATE = '''
 			<img src='./figures/keywords-cloud.png' width='66%' />
 			</p>
 
+	<h2>Next steps</h2>
+	
+		<p>For more information, please see the <a href="./readme.txt">read me</a> file describing study carrels in greater detail.</p>
 
-		<h3>Next steps</h3>
-
-		<p>
-		The next step is for you to ask yourself some sort of question, and apply it to this data set. There are quite a number of ways to do this.
-		</p>
-
-		<p>
-		The <a href="https://distantreader.org/">Distant Reader</a> and the <a href="https://reader-toolbox.readthedocs.io">Distant Reader Toolbox</a> take an almost arbitrary amount of text as input and output data sets -- affectionatly known as "study carrels". The contents of this page was created from a study carrel.
-		</p>
-
-		<p>
-		Each study carrel is constituted with the same set of folders and files. These folders and files contain "features" of the original documents such as parts-of-speech, named-entities, and statistically significant keywords. For example, all of the <a href="./cache/">original documents</a> have been saved in the cache folder, and all of the <a href="./txt/">plain-text versions of the original documents</a> have been saved in the txt directory. Since almost all of the files in a study carrel are either plain-text files or tab-delimited files, Distant Reader study carrels can be accessed and used by almost any text editor, word processor, spreadsheet, database, or analysis application. The following folders contain information of particular interest:
-		</p>
-
-		<ul>
-			<li><a href="./adr/">email addresses</a> (adr)</li>
-			<li><a href="./bib/">bibliographics</a> (bib)</li>
-			<li><a href="./cache/">original documents</a> (cache)</li>
-			<li><a href="./ent/">named-entities</a> (ent)</li>
-			<li><a href="./figures/">visualizations</a> (figures)</li>
-			<li><a href="./pos/">parts-of-speech</a> (pos)</li>
-			<li><a href="./txt/">plain-text versions of the cached documents</a> (txt)</li>
-			<li><a href="./urls/">universal resource locators</a> (urls)</li>
-			<li><a href="./wrd/">statistically significant keywords</a> (wrd)</li>
-		</ul>
-
-		<p>
-		There are a few files of note:
-		</p>
-
-		<ul>
-			<li><a href="./index.htm">this file</a> (index.htm)</li>
-			<li><a href="./etc/stopwords.txt">stopwords</a>, words of little interest (./etc/stopwords.txt)</li>
-			<li>a distillation of all the features in the form of an SQLite database (./etc/reader.db)</li>
-			<li><a href="./etc/reader.txt">the whole corpus as a single file</a> (./etc/reader.txt)</li>
-		</ul>
-
-		<p>
-		There are quite a number of graphical-user interface (GUI) applications you can apply to a carrel's content:
-		</p>
-
-		<ul>
-			<li>any text editor, and I recommend <a href="https://www.barebones.com/products/bbedit/">BBEdit</a> or <a href="https://notepad-plus-plus.org/">NotePad++</a></li>
-			<li><a href="https://web.archive.org/web/20191115162244/http://www.wordle.net/">Wordle</a> to create word clouds</li>
-			<li><a href="https://www.laurenceanthony.net/software/antconc/">AntConc</a> to do concordancing</li>
-			<li><a href="https://github.com/senderle/topic-modeling-tool">Topic Modeling Tool</a> for... topic modeling</li>
-			<li><a href="https://openrefine.org/">OpenRefine</a> to sort, filter, and normalize the tab-delimited files</li>
-			<li><a href="https://gephi.org">Gephi</a> to analyze and visualize network graphs</li>
-			<li>any SQLite client to query anything and everything</li>
-		</ul>
-
-		<p>
-		Finally, if you have Python installed, then you can install the Reader Toolbox (<code>pip install reader-toolbox</code>), and use the <code>rdr</code> command from the command line to do many of the things the GUI applications do and more. There is also a set of <a href="https://github.com/ericleasemorgan/reader-toolbox/tree/main/notebooks">Jupyter Notebooks</a> demonstrating how the Toolbox can be extended and used in conjunction with other Python modules (like Pandas, SQLite, WordNet, etc.).
-		</p>
-
-		<p>
-		For more information, please see the <a href="https://reader-toolbox.readthedocs.io">complete manual</a>.
-		</p>
-
-		<p>
-		<em>Happy reading!</em>
-		</p>
-
-		<hr />
-		
-		<p style='text-align:right'>
-		Eric Lease Morgan &lt;<a href="mailto:emorgan@nd.edu">emorgan@nd.edu</a>&gt;<br />
-		Navari Family Center for Digital Scholarship<br />
-		University of Notre Dame
-		</p>
-		
 </body>
 </html>
 '''
@@ -308,7 +358,7 @@ def graph2gml( carrel, output='gml', save=False, erase=False, localLibrary=None 
 	
 	# configure
 	FORMAT  = 'xml'
-	CARREL  = 'https://distantreader.org/carrel#'
+	CARREL  = 'http://carrels.distantreader.org/carrel#'
 	WDP     = 'http://www.wikidata.org/prop/direct/'
 	DCTITLE = 'http://purl.org/dc/terms/title'
 	OUTPUTS = [ 'gml', 'chart' ]
@@ -409,7 +459,7 @@ def graph2gml( carrel, output='gml', save=False, erase=False, localLibrary=None 
 		# save
 		if save == True :
 		
-			gml = localLibrary/carrel/ETC/GML
+			gml = localLibrary/carrel/GML
 			networkx.write_gml( graph, gml )
 
 		# send to STDOUT
@@ -498,10 +548,10 @@ def carrel2graph( carrel, localLibrary=None ) :
 	'''Given the name of a carrel, create an RDF file (index.rdr) describing it.'''
 	
 	# configure
-	NAMESPACE = 'https://distantreader.org/carrel#'
+	NAMESPACE = 'http://carrels.distantreader.org/carrel#'
 	PREFIX    = 'carrel'
 	FORMAT    = 'xml'
-	GRAPHROOT = 'http://distantreader.org/stacks/carrels/'
+	GRAPHROOT = 'http://carrels.distantreader.org/'
 	CREATOR   = { 'name':"Eric Lease Morgan", 'qnumber':'https://www.wikidata.org/wiki/Q102275801' }
 	TEMPLATE  = '''PREFIX wd: <http://www.wikidata.org/entity/> CONSTRUCT { wd:##QNUMBER## ?p ?o } WHERE { SERVICE <https://query.wikidata.org/bigdata/namespace/wdq/sparql> { wd:##QNUMBER## ?p ?o }}'''
 	WIKIDATA  = 'http://www.wikidata.org/entity/'
@@ -667,6 +717,7 @@ def carrel2graph( carrel, localLibrary=None ) :
 	# output and done
 	rdf = localLibrary/studyCarrel/INDEXRDF
 	with open( rdf, 'w' ) as handle : handle.write( graph.serialize( format=FORMAT ) )
+
 
 
 # given a carrel and a type, (re-)create reconciliation file(s)
@@ -1248,8 +1299,11 @@ def bibliography( carrel, localLibrary=None, format='text', save=False ) :
 	
 			if format == 'text' :
 			
-				cache = str( localLibrary/carrel/CACHE/id ) + extension
-				text  = str( localLibrary/carrel/TXT/id )   + '.txt'
+				#cache = str( localLibrary/carrel/CACHE/id ) + extension
+				#text  = str( localLibrary/carrel/TXT/id )   + '.txt'
+				
+				cache = id + extension
+				text  = id + '.txt'
 				
 				# build the bibliography
 				bibliography = bibliography + ( '        item: #%s of %s\n' % ( str( item + 1 ), total ) )
@@ -1271,14 +1325,14 @@ def bibliography( carrel, localLibrary=None, format='text', save=False ) :
 				text  = './' + TXT + '/' + id + '.txt'
 				
 				item = '<ul>'
-				item = item + '<li>' + ( 'author: %s'    % escape( author ) )   + '</li>'
-				item = item + '<li>' + ( 'title: %s'     % escape( title ) )    + '</li>'
-				item = item + '<li>' + ( 'date: %s'      % date )     + '</li>'
-				item = item + '<li>' + ( 'words: %s'     % escape( words ) )    + '</li>'
-				item = item + '<li>' + ( 'flesch: %s'    % flesch )   + '</li>'
-				item = item + '<li>' + ( 'summary: %s'   % escape( summary ) )  + '</li>'
-				item = item + '<li>' + ( 'keywords: %s'  % escape( keywords ) ) + '</li>'
-				item = item + '<li>' + ( 'versions: <a href="' + escape( cache ) + '">original</a>; <a href="' + escape( text ) + '">plain text</a>' ) + '</li>'
+				item = item + '<li>' + ( '<strong>author</strong>: %s'    % escape( author ) )   + '</li>'
+				item = item + '<li>' + ( '<strong>title</strong>: %s'     % escape( title ) )    + '</li>'
+				item = item + '<li>' + ( '<strong>date</strong>: %s'      % date )     + '</li>'
+				item = item + '<li>' + ( '<strong>words</strong>: %s'     % escape( words ) )    + '</li>'
+				item = item + '<li>' + ( '<strong>flesch</strong>: %s'    % flesch )   + '</li>'
+				item = item + '<li>' + ( '<strong>summary</strong>: %s'   % escape( summary ) )  + '</li>'
+				item = item + '<li>' + ( '<strong>keywords</strong>: %s'  % escape( keywords ) ) + '</li>'
+				item = item + '<li>' + ( '<strong>versions</strong>: <a href="' + escape( cache ) + '">original</a>; <a href="' + escape( text ) + '">plain text</a>' ) + '</li>'
 				item = item + '</ul>'
 				
 				items = items + "<li>" + id + item + "</li>"
@@ -1287,9 +1341,9 @@ def bibliography( carrel, localLibrary=None, format='text', save=False ) :
 	
 	if save :
 
-		if format == 'text' : file = localLibrary/carrel/ETC/BIBLIOGRAPHYTEXT
+		if format == 'text' : file = localLibrary/carrel/BIBLIOGRAPHYTEXT
 		if format == 'html' : file = localLibrary/carrel/BIBLIOGRAPHYHTML
-		if format == 'json' : file = localLibrary/carrel/ETC/BIBLIOGRAPHYJSON
+		if format == 'json' : file = localLibrary/carrel/BIBLIOGRAPHYJSON
 		
 		with open( file, 'w', encoding='utf-8' ) as handle : handle.write( bibliography )
 		
@@ -2689,10 +2743,10 @@ def extractTokenizedSentences( file, stopwords ) :
 # make sure the carrel has been indexed
 def checkForSemanticIndex( carrel ) :
 
-	# configure
-	VECTORS = 'reader.vec'
+	# configure; not quite right
+	VECTORS = 'carrel.vec'
 	PATTERN = '*.txt'
-	TOKENS  = 'reader.tok'
+	TOKENS  = 'carrel.tok'
 	
 	# require
 	from multiprocessing import Pool
@@ -2745,7 +2799,7 @@ def word2vec( carrel, type='similarity', query='love', topn=10 ) :
 	'''types = similarity|distance|analogy|scatter'''
 
 	# configure
-	VECTORS  = 'reader.vec'
+	VECTORS  = 'carrel.vec'
 	
 	# require
 	import sys
@@ -3264,6 +3318,9 @@ def _tikaIsRunning () :
 # create carrel skeleton
 def _initialize( carrel, directory, localLibrary=None ) :
 	
+	# require
+	from datetime import datetime
+	
 	# configure
 	ADR      = 'adr'
 	BIB      = 'bib'
@@ -3330,6 +3387,11 @@ def _initialize( carrel, directory, localLibrary=None ) :
 	# add stop words; there is probably a better way
 	output = localLibrary/carrel/ETC/STOPWORDS
 	with open( output, 'w', encoding='utf-8' ) as handle : handle.write( WORDS )
+
+	# add readme
+	output      = localLibrary/carrel/READMEFILE
+	readmewords = READMEWORDS.replace( '##DATE##', datetime.today().strftime("%B %-d, %Y") )
+	with open( output, 'w', encoding='utf-8' ) as handle : handle.write( readmewords )
 
 
 # given a file, create some bibliographics and save plain text
@@ -3588,9 +3650,9 @@ def _summarize( doc ) :
 # create bag of words
 def _txt2bow( carrel, localLibrary=None ) :
 
-	# configure
+	# configure; not quite right
 	PATTERN = '*.txt'
-	BOW     = 'reader.txt'
+	BOW     = 'carrel.txt'
 	TXT     = 'txt'
 	ETC     = 'etc'
 	
@@ -3995,7 +4057,7 @@ def build( carrel, directory, erase=False, start=False, localLibrary=None ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 32
+	POOLSMALL = 24
 	POOLBIG   = 56
 	
 	# require
