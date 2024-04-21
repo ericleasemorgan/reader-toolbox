@@ -36,8 +36,8 @@ TIKAHOME             = 'tika-server.jar'
 NOTEBOOKSHOME        = 'reader-notebooks'
 
 # remote library
-REMOTELIBRARY = 'https://distantreader.org'
-CARRELS       = 'stacks/carrels-legacy'
+REMOTELIBRARY = 'http://carrels.distantreader.org'
+CARRELS       = '/'
 
 # documentation
 DOCUMENTATION = 'https://reader-toolbox.readthedocs.io'
@@ -3123,13 +3123,15 @@ def catalog( location='local', human=True ) :
 	'''location = local|remote'''
 
 	# configure
-	TSV    = 'stacks/carrels-legacy/catalog.tsv'
-	RECORD = "      item: ##ITEM##\n      name: ##NAME##\n      date: ##DATE##\n  keywords: ##KEYWORDS##\n     items: ##ITEMS##\n     words: ##WORDS##\n     score: ##SCORE##\n     bytes: ##BYTES##\n\n"
-	HEADER = "\nThe catalog includes ##COUNT## items, and each is listed below:\n\n"
+	INDEX    = 'index.csv'
+	RECORD   = "         item: ##ITEM##\n   identifier: ##IDENTIFIER##\n        title: ##TITLE##\n         type: ##TYPE##\n       source: ##SOURCE##\n        items: ##ITEMS##\n        words: ##WORDS##\n  readability: ##SCORE##\n     keywords: ##KEYWORDS##\n         read: ##READ##\n       browse: ##BROWSE##\n     download: ##DOWNLOAD##\n\n"
+	HEADER   = "\nThe catalog includes ##COUNT## items, and each is listed below:\n\n"
 
 	# require
 	from requests import get
-		
+	from pandas   import read_csv
+	from io       import StringIO
+	
 	# branch accordingly; local
 	if location == 'local' :
 		
@@ -3154,35 +3156,27 @@ def catalog( location='local', human=True ) :
 			catalog = ''
 			count   = 0
 						
-			records = get( REMOTELIBRARY + '/' + TSV ).text 
-			for item, record in enumerate( records.split( '\n' ) ) :
-			
-				# delimit and sanity check
-				fields = record.split( '\t' )
-				if len( fields ) != 7 : break
-			
-				# parse
-				name     = fields[ 0 ]
-				date     = fields[ 1 ]
-				keywords = fields[ 2 ]
-				items    = fields[ 3 ]
-				words    = fields[ 4 ]
-				score    = fields[ 5 ]
-				bytes    = fields[ 6 ]
-			
+			# get all the remote records and process each; convoluted
+			carrels = read_csv( StringIO( get( REMOTELIBRARY + '/' + INDEX ).text ) )
+			for item, carrel in carrels.iterrows() :
+										
 				# increment
 				count += 1
 				item  += 1
 				
 				# update
-				record   = RECORD.replace( '##ITEM##', str( item ) )
-				record   = record.replace( '##NAME##', name )
-				record   = record.replace( '##DATE##', date )
-				record   = record.replace( '##KEYWORDS##', keywords )
-				record   = record.replace( '##ITEMS##', items )
-				record   = record.replace( '##WORDS##', words )
-				record   = record.replace( '##SCORE##', score )
-				record   = record.replace( '##BYTES##', bytes )
+				record   = RECORD.replace( '##ITEM##',       str( item ) )
+				record   = record.replace( '##IDENTIFIER##', carrel[ 'id' ] )
+				record   = record.replace( '##TITLE##',      carrel[ 'title' ] )
+				record   = record.replace( '##KEYWORDS##',      carrel[ 'keywords' ] )
+				record   = record.replace( '##ITEMS##',      str( carrel[ 'items' ] ) )
+				record   = record.replace( '##WORDS##',      str( carrel[ 'words' ] ) )
+				record   = record.replace( '##SCORE##',      str( carrel[ 'flesch' ] ) )
+				record   = record.replace( '##TYPE##',      str( carrel[ 'type' ] ) )
+				record   = record.replace( '##SOURCE##',      str( carrel[ 'source' ] ) )
+				record   = record.replace( '##READ##',      str( carrel[ 'read' ] ) )
+				record   = record.replace( '##BROWSE##',      str( carrel[ 'browse' ] ) )
+				record   = record.replace( '##DOWNLOAD##',      str( carrel[ 'download' ] ) )
 				catalog += record
 				
 			# add the header and output
@@ -3191,15 +3185,15 @@ def catalog( location='local', human=True ) :
 			return( catalog )
 				
 		# get the raw data and hope the results get piped to utilities like sort, grep, cut, less, etc.
-		else : return( get( REMOTELIBRARY + '/' + TSV ).text  )
+		else : return( get( REMOTELIBRARY + '/' + INDEX ).text  )
 
 	
 # locally cache a carrel from the public library
 def download( carrel ) :
 			
 	# configure
-	ZIPFILE = 'study-carrel.zip'
-	CARRELS = 'stacks/carrels-legacy'
+	ZIPFILE = 'index.zip'
+	CARRELS = ''
 
 	# require
 	from requests import get
@@ -3212,7 +3206,7 @@ def download( carrel ) :
 
 	# get the remote zip file; needs error checking
 	sys.stderr.write( "\n  INFO: Downloading remote study carrel...\n" )
-	response = get( REMOTELIBRARY + '/' + CARRELS + '/' + carrel + '/' + ZIPFILE )
+	response = get( REMOTELIBRARY + '/' + carrel + '/' + ZIPFILE )
 	
 	# initialize a temporary file and write to it
 	sys.stderr.write( "  INFO: Saving study carrel...\n" )
