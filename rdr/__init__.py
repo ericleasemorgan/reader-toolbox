@@ -231,42 +231,104 @@ University of Notre Dame
 TEMPLATE = '''
 <html>
 <head>
-<title>Simple summary of the Distant Reader study carrel named ##CARREL##</title>
+<title>##CARREL##</title>
+<style>
+.first { text-align: right; }
+.second { text-align: left; }
+.third { text-align: left; }
+tr:nth-child(even) { background-color: #f2f2f2;}
+</style>
+
 </head>
 <body style='margin: 7%'>
 
-	<h1>Simple summary of the Distant Reader study carrel named ##CARREL##</h1>
+	<h1>##CARREL##</h1>
 	
-	<p>Given a corpus of narrative text, the Distant Reader creates data sets -- affectionately called "study carrels" -- for the purposes of use &amp; understanding. By definition, data sets are designed to be computable, and this Web page is the result of one such computing process applied against the study carrel named <strong>##CARREL##</strong>. Here you will find a simple analysis of the carrel's extracted features. Use the features to characterize the content of the carrel, and use the features as a sort of back-of-the-book index as input for more in-depth use &amp; understanding. For more information, please see the <a href="./readme.txt">read me</a> file describing study carrels in greater detail.</p>
-
+	<p>This page provides an overview of the Distant Reader study carrel called <strong>##CARREL##</strong>.</p>
+	
+	<p>Given a corpus of narrative text, the <a href="https://distantreader.org/">Distant Reader</a> and the <a href="https://reader-toolbox.readthedocs.io">Distant Reader Toolbox</a> create data sets, and these data sets are affectionately called "study carrels". As data sets, study carrels are intended to be read by people as well as computers, and <em>their purpose is to supplement the reading process, to increase use &amp; understanding</em>. Study carrels are designed to be computable, and this Web page is the result of one such computing process; here you will find a simple analysis of the carrel's extracted features. Use the features to characterize the content of the carrel, and then use them like items in a back-of-the-book index for more in-depth analysis. Depending on how the carrel was modeled, the following point to additional views (models) of the carrel:</p>
+		
+	<ul>
+		<li><strong>bibliographics</strong> (<a href="./index.json">index.json</a>) - authors, titles, dates, extents, summaries, and keywords in the form of a JSON stream</li>
+		<li><strong>bibliographics</strong> (<a href="./index.txt">index.txt</a>) - same as the above but in a more human-readable form</li>
+		<li><strong>compressed</strong> (<a href="./index.zip">index.zip</a>) - the whole study carrel compressed into a single file for the purposes of collaboration, sharing, and downloading</li>
+		<li><strong>manifest</strong> (<a href="./index.xml">index.xml</a>) - a browsable interface to the study carrel</li>
+		<li><strong>metadata</strong> (<a href="./index.csv">index.csv</a>) - if the study carrel creation process was augmented with metadata values (authors, titles, dates, etc.) file, then that file is available here</li>
+		<li><strong>network graph</strong> (<a href="./index.gml">index.gml</a>) - a Graph Modeling Language file of the carrel's author(s), titles, and computed keywords, and it is useful for visualizing their relationships</li>
+		<li><strong>provenance</strong> (<a href="./index.tsv">index.tsv</a>) - a very very rudimentary list of characateristics denoting whence the carrel came and when</li>
+		<li><strong>semantic triples</strong> (<a href="./index.rdf">index.rdf</a>) - bibliographic characteristics encoded in the form of the Resource Description Framework, and intended for the purposes of supporting the Semantic Web</li> 
+		<li><strong>summary</strong> (<a href="./index.htm">index.htm</a>) - this file</li>
+	</ul>
+	
+	<p>For more detail about study carrels and their structure, see the <a href="./readme.txt">read me</a> file.</p>
+	
 	<h2>Basic characteristics</h2>
 
+		<p>Outlined below are some introductory features of the carrel:</p>
+		
+		 
 		<table>
-		<tr><td>Creator</td><td>##CREATOR##</td></tr>
-		<tr><td>Date created</td><td>##DATECREATED##</td></tr>
-		<tr><td>Number of items</td><td>##ITEMS##</td></tr>
-		<tr><td>Number of words</td><td>##WORDS##</td></tr>
-		<tr><td>Average readability score</td><td>##FLESCH##</td></tr>
-		<tr><td>Bibliographics</td><td><a href="./index.txt">plain text</a>; <a href="./index.json">JSON</a></td></tr>
-		<tr><td>Other files</td><td><a href="./etc/stopwords.txt">stopwords</a>; <a href="./etc/carrel.txt">entire corpus</a></td></tr>
+ 			 <tr>
+				<th class='first'>Feature</th>
+				<th class='second'>Value</th>
+				<th class='third'>Description</th>
+			</tr>
+			<tr>
+				<td class='first'>creator</td>
+				<td>##CREATOR##</td>
+				<td class='third'>Under what username was this carrel created?</td>
+			</tr>
+			<tr>
+				<td class='first'>date created</td>
+				<td>##DATECREATED##</td>
+				<td class='third'>When was this carrel created?</td>
+			</tr>
+			<tr>
+				<td class='first'>size in items</td>
+				<td>##ITEMS##</td>
+				<td class='third'>How many items are in the carrel?</td>
+			</tr>
+			<tr>
+				<td class='first'>size in words</td>
+				<td>##WORDS##</td>
+				<td class='third'>Measured in words, how big is this carrel? By comparison, the <cite>Bible</cite> is about 800,000 words long.</td></tr>
+			<tr>
+				<td class='first'>readability score</td>
+				<td>##FLESCH##</td>
+				<td class='third'>Where 0 denotes impossible and 100 denotes easy, how difficult is this carrel to read?</td>
+			</tr>
+			<tr>
+				<td class='first'>other files</td>
+				<td><a href="./etc/stopwords.txt">stopwords</a></td>
+				<td class='third'>What words have been denoted as function words such as "the", "a", and "an"?</td>
+			<tr>
+				<td class='first'>other files</td>
+				<td><a href="./etc/carrel.txt">entire corpus</a></td>
+				<td class='third'>What does a bag-of-words form of the carrel look like?</td>
+			</tr>
 		</table>
 		
-		<h3>Sizes</h3>
+		<h2>Sizes</h2>
+		
+			<p>Measured in words, how big are the items in this carrel? To what degree are they of similar size? Are any of the items particularly large or small? In general, the typical scholarly journal article is between 5,000 and 8,000 words long.</p>
+			
 			<p style='text-align: center'>
 			<img src='./figures/sizes-boxplot.png' width='49%' /> <img src='./figures/sizes-histogram.png' width='49%' />
 			</p>
 
-		<h3>Readability</h3>
+
+		<h2>Readability</h2>
+		
+			<p>Using a metric called Flesch -- where 0 means nobody can read the item, and 100 means everybody can read it -- how difficult are the items in this carrel to read? Shakespeare's <cite>Sonnets</cite> are relatively easy to read (with a score of about 90) because their vocabulary is small and the sentences are short. The typical novel by Jane Austen or Herman Melville have scores in the 70's. Scholarly articles are more difficult (scores between 50-70) because their langauge is more specialized. Texts of poor optical character recognition quality typically have very low scores.</p>
+			
 			<p style='text-align: center'>
 			<img src='./figures/readability-boxplot.png' width='49%' /> <img src='./figures/readability-histogram.png' width='49%' />
 			</p>
 
-		<h3>Clusters</h3>
-			<p style='text-align: center'>
-			<img src='./figures/cluster-dendrogram.png' width='49%' /> <img src='./figures/cluster-cube.png' width='49%' />
-			</p>
-
-		<h3>Ngrams</h3>
+		<h2>Ngrams</h2>
+		
+			<p>Excluding <a href="./etc/stopwords.txt">stop words</a>, what are the most frequent individual words and two-word combinations in the corpus, thus addressing the question, "What are the items in this study carrel about?"</p>
+			
 			<table>
 				<tr align='center'>
 					<td><img src='./figures/unigrams-cloud.png' width='100%' /><br /><br />unigrams</td>
@@ -274,7 +336,11 @@ TEMPLATE = '''
 				</tr>
 			</table>
 
-		<h3>Parts-of-speech</h3>
+
+		<h2>Parts-of-speech</h2>
+		
+			<p>The most frequent extracted parts-of-speech features address questions of "What is discussed in this corpus, what do they do, and how are they described?"</p>
+			
 			<table>
 				<tr align='center'>
 					<td><img src='./figures/pos-noun.png'  width='100%' /><br /><br />nouns<br /><br /><br /></td>
@@ -290,7 +356,11 @@ TEMPLATE = '''
 				</tr>
 			</table>
 
-		<h3>Entities</h3>
+
+		<h2>Entities</h2>
+		
+			<p>Similar to nouns, named-entities are real-world things but they are more specific. They help address questions of who, where, and how many.</p>
+			
 			<table>
 				<tr align='center'>
 					<td><img src='./figures/entities-any.png' width='100%' /><br /><br />any entity<br /><br /><br /></td>
@@ -302,15 +372,28 @@ TEMPLATE = '''
 				</tr>
 			</table>
 
-		<h3>Keywords</h3>
+
+		<h2>Clusters</h2>
+
+			<p>Through the use of a variation of the principle component analysis alogorithm, it is possible to plot the location of study carrel items in two- and three-dimentional spaces, thus addressing the questions, "To what degree is this study carrel holistic; to what degree are the items in this carrel easily subdivided into smaller group?"</p>
+			
+			<p>
+			<p style='text-align: center'>
+			<img src='./figures/cluster-dendrogram.png' width='49%' /> <img src='./figures/cluster-cube.png' width='49%' />
+			</p>
+
+		<h2>Keywords</h2>
+		
+			<p>Excluding <a href="./etc/stopwords.txt">stop words</a>, and through the use of a variation of the term frequency–inverse document frequency algorithm, the set of computed keywords are akin to subject terms, and they help address the questions of, "What are the items in this carrel about and to what degree?"</p>
+			
 			<p style='text-align: center'>
 			<img src='./figures/keywords-cloud.png' width='66%' />
 			</p>
 
-	<h2>Next steps</h2>
+	<hr />
 	
-		<p>For more information, please see the <a href="./readme.txt">read me</a> file describing study carrels in greater detail.</p>
-
+	<p style='text-align: right'>Date created: ##DATE##</p>
+	
 </body>
 </html>
 '''
@@ -4211,6 +4294,7 @@ def summarize( carrel, look=False, localLibrary=None ) :
 	index.htm file.'''
 
 	from pathlib import Path
+	from datetime import datetime
 	
 	if localLibrary : localLibrary = Path( localLibrary )
 	else            : localLibrary = configuration( 'localLibrary' )
@@ -4266,11 +4350,12 @@ def summarize( carrel, look=False, localLibrary=None ) :
 	# create html
 	click.echo( "Building HTML page", err=True )
 	html = TEMPLATE.replace( '##CARREL##', carrel )
-	html = html.replace( '##ITEMS##', str( extents( carrel, 'items', localLibrary ) ) )
-	html = html.replace( '##WORDS##', str( extents( carrel, 'words', localLibrary ) ) )
+	html = html.replace( '##ITEMS##', str( f"{ extents( carrel, 'items', localLibrary ) :,}" ) )
+	html = html.replace( '##WORDS##', str( f"{ extents( carrel, 'words', localLibrary ) :,}" ) )
 	html = html.replace( '##FLESCH##', str( extents( carrel, 'flesch', localLibrary ) ) )
 	html = html.replace( '##DATECREATED##', str( provenance( carrel, 'dateCreated', localLibrary ) ) )
 	html = html.replace( '##CREATOR##', str( provenance( carrel, 'creator', localLibrary ) ) )
+	html = html.replace( '##DATE##', datetime.today().strftime('%Y-%m-%d') )
 	
 	# save html
 	#locallibrary = configuration( 'localLibrary' )
