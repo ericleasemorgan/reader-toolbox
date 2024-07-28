@@ -3900,11 +3900,11 @@ def _txt2wrd( carrel, file, localLibrary=None ) :
 	EXTENSION  = '.wrd'
 	WRD        = 'wrd'
 	NGRAMS     = ( 1, 2 )
-	TOPN       = 0.05
+	TOPN       = 0.0125
 	HEADER     = [ 'id', 'keyword' ]
 	NORMALIZE  = 'lower'
 	WINDOWSIZE = 5
-	POS        = ( 'NOUN', 'PROPN', 'ADJ' )
+	POS        = ( 'NOUN', 'PROPN' )
 
 	# require
 	from   pathlib                  import Path
@@ -4051,8 +4051,8 @@ def build( carrel, directory, erase=False, start=False, localLibrary=None ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 8
-	POOLBIG   = 8
+	POOLSMALL = 32
+	POOLBIG   = 32
 	
 	# require
 	from   multiprocessing import Pool
