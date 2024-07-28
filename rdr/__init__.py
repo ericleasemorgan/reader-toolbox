@@ -45,7 +45,6 @@ DOCUMENTATION = 'https://reader-toolbox.readthedocs.io'
 # file system mappings
 AUTHORS              = 'carrel.authors'
 BIB                  = 'bib'
-BIBLIOGRAPHYHTML     = 'index.xhtml'
 BIBLIOGRAPHYJSON     = 'index.json'
 BIBLIOGRAPHYTEXT     = 'index.txt'
 BIGRAMSCLOUD         = 'bigrams-cloud.png'
@@ -248,7 +247,7 @@ TEMPLATE = '''
 		<tr><td>Number of items</td><td>##ITEMS##</td></tr>
 		<tr><td>Number of words</td><td>##WORDS##</td></tr>
 		<tr><td>Average readability score</td><td>##FLESCH##</td></tr>
-		<tr><td>Bibliographics</td><td><a href="./index.txt">plain text</a>; <a href="./index.xhtml">HTML</a>; <a href="./index.json">JSON</a></td></tr>
+		<tr><td>Bibliographics</td><td><a href="./index.txt">plain text</a>; <a href="./index.json">JSON</a></td></tr>
 		<tr><td>Other files</td><td><a href="./etc/stopwords.txt">stopwords</a>; <a href="./etc/carrel.txt">entire corpus</a></td></tr>
 		</table>
 		
@@ -1231,7 +1230,7 @@ def escape( s ) :
 # output a rudimentary bibliography
 def bibliography( carrel, localLibrary=None, format='text', save=False ) :
 
-	'''Given the name of a study carrel, and a format (text, html, or
+	'''Given the name of a study carrel, and a format (text or
 	json), create a rudimentary bibliography. If the value for save is
 	True, then the bibliography will be saved in the carrel's etc
 	directory/folder, otherwise the bibliography is returned.'''
@@ -1265,13 +1264,11 @@ def bibliography( carrel, localLibrary=None, format='text', save=False ) :
 	# branch according to format
 	if format   == 'json' : bibliography = json.dumps( [ dict( row ) for row in rows ] )
 		
-	elif format == 'text' or format == 'html' :
+	elif format == 'text' :
 	
 		# initialize
 		total        = len( rows )
 		bibliography = ''
-		items        = ''
-		template     = XHTML
 		
 		# process each row
 		for item, row in enumerate( rows ) :
@@ -1318,26 +1315,7 @@ def bibliography( carrel, localLibrary=None, format='text', save=False ) :
 				bibliography = bibliography + ( '       cache: %s\n' % cache )
 				bibliography = bibliography + ( '  plain text: %s\n' % text )
 				bibliography = bibliography + '\n'
-	
-			else :
-			
-				cache = './' + CACHE + '/' + id + extension
-				text  = './' + TXT + '/' + id + '.txt'
-				
-				item = '<ul>'
-				item = item + '<li>' + ( '<strong>author</strong>: %s'    % escape( author ) )   + '</li>'
-				item = item + '<li>' + ( '<strong>title</strong>: %s'     % escape( title ) )    + '</li>'
-				item = item + '<li>' + ( '<strong>date</strong>: %s'      % date )     + '</li>'
-				item = item + '<li>' + ( '<strong>words</strong>: %s'     % escape( words ) )    + '</li>'
-				item = item + '<li>' + ( '<strong>flesch</strong>: %s'    % flesch )   + '</li>'
-				item = item + '<li>' + ( '<strong>summary</strong>: %s'   % escape( summary ) )  + '</li>'
-				item = item + '<li>' + ( '<strong>keywords</strong>: %s'  % escape( keywords ) ) + '</li>'
-				item = item + '<li>' + ( '<strong>versions</strong>: <a href="' + escape( cache ) + '">original</a>; <a href="' + escape( text ) + '">plain text</a>' ) + '</li>'
-				item = item + '</ul>'
-				
-				items = items + "<li>" + id + item + "</li>"
-				
-	if format == 'html' : bibliography = template.replace( '##ITEMS##', items )
+	else : exit( "Unknown value for format (" + str( format ) + ") in call to bibliography. Call Eric." )
 	
 	if save :
 
@@ -4241,9 +4219,8 @@ def summarize( carrel, look=False, localLibrary=None ) :
 	checkForCarrel( carrel, localLibrary )
 	
 	# save bibliography
-	click.echo( "Creating bibliography", err=True )
+	click.echo( "Creating bibliographies", err=True )
 	bibliography( carrel, localLibrary, 'text', save=True )
-	bibliography( carrel, localLibrary, 'html', save=True  )
 	bibliography( carrel, localLibrary, 'json', save=True  )
 			
 	# save sizes	
