@@ -246,7 +246,9 @@ tr:nth-child(even) { background-color: #f2f2f2;}
 	
 	<p>This page provides an overview of the Distant Reader study carrel called <strong>##CARREL##</strong>.</p>
 	
-	<p>Given a corpus of narrative text, the <a href="https://distantreader.org/">Distant Reader</a> and the <a href="https://reader-toolbox.readthedocs.io">Distant Reader Toolbox</a> create data sets, and these data sets are affectionately called "study carrels". As data sets, study carrels are intended to be read by people as well as computers, and <em>their purpose is to supplement the reading process, to increase use &amp; understanding</em>. Study carrels are designed to be computable, and this Web page is the result of one such computing process; here you will find a simple analysis of the carrel's extracted features. Use the features to characterize the content of the carrel, and then use them like items in a back-of-the-book index for more in-depth analysis. Depending on how the carrel was modeled, the following point to additional views (models) of the carrel:</p>
+	<p>Given a corpus of narrative text, the <a href="https://distantreader.org/">Distant Reader</a> and the <a href="https://reader-toolbox.readthedocs.io">Distant Reader Toolbox</a> create data sets, and these data sets are affectionately called "study carrels". As data sets, study carrels are intended to be read by people as well as computers, and <em>their purpose is to supplement the reading process, to increase use &amp; understanding</em>.</p>
+	
+	<p>Study carrels are designed to be computable, and this Web page is the result of one such computing process; here you will find a simple analysis of the carrel's extracted features. Use the features to characterize the content of the carrel, and then use them like items in a back-of-the-book index for more in-depth analysis. Depending on how the carrel was modeled, the following point to additional views (models) of the carrel:</p>
 		
 	<ul>
 		<li><strong>bibliographics</strong> (<a href="./index.json">index.json</a>) - authors, titles, dates, extents, summaries, and keywords in the form of a JSON stream</li>
@@ -260,7 +262,7 @@ tr:nth-child(even) { background-color: #f2f2f2;}
 		<li><strong>summary</strong> (<a href="./index.htm">index.htm</a>) - this file</li>
 	</ul>
 	
-	<p>For more detail about study carrels and their structure, see the <a href="./readme.txt">read me</a> file.</p>
+	<p>For more detail about study carrels, their structure, and how they can be used, start with the <a href="./readme.txt">read me</a> file.</p>
 	
 	<h2>Basic characteristics</h2>
 
@@ -270,40 +272,40 @@ tr:nth-child(even) { background-color: #f2f2f2;}
 		<table>
  			 <tr>
 				<th class='first'>Feature</th>
-				<th class='second'>Value</th>
+				<th class='first'>Value</th>
 				<th class='third'>Description</th>
 			</tr>
 			<tr>
 				<td class='first'>creator</td>
-				<td>##CREATOR##</td>
+				<td class='first'>##CREATOR##</td>
 				<td class='third'>Under what username was this carrel created?</td>
 			</tr>
 			<tr>
 				<td class='first'>date created</td>
-				<td>##DATECREATED##</td>
+				<td class='first'>##DATECREATED##</td>
 				<td class='third'>When was this carrel created?</td>
 			</tr>
 			<tr>
 				<td class='first'>size in items</td>
-				<td>##ITEMS##</td>
+				<td class='first'>##ITEMS##</td>
 				<td class='third'>How many items are in the carrel?</td>
 			</tr>
 			<tr>
 				<td class='first'>size in words</td>
-				<td>##WORDS##</td>
+				<td class='first'>##WORDS##</td>
 				<td class='third'>Measured in words, how big is this carrel? By comparison, the <cite>Bible</cite> is about 800,000 words long.</td></tr>
 			<tr>
 				<td class='first'>readability score</td>
-				<td>##FLESCH##</td>
+				<td class='first'>##FLESCH##</td>
 				<td class='third'>Where 0 denotes impossible and 100 denotes easy, how difficult is this carrel to read?</td>
 			</tr>
 			<tr>
 				<td class='first'>other files</td>
-				<td><a href="./etc/stopwords.txt">stopwords</a></td>
+				<td class='first'><a href="./etc/stopwords.txt">stopwords</a></td>
 				<td class='third'>What words have been denoted as function words such as "the", "a", and "an"?</td>
 			<tr>
 				<td class='first'>other files</td>
-				<td><a href="./etc/carrel.txt">entire corpus</a></td>
+				<td class='first'><a href="./etc/carrel.txt">entire corpus</a></td>
 				<td class='third'>What does a bag-of-words form of the carrel look like?</td>
 			</tr>
 		</table>
@@ -389,6 +391,37 @@ tr:nth-child(even) { background-color: #f2f2f2;}
 			<p style='text-align: center'>
 			<img src='./figures/keywords-cloud.png' width='66%' />
 			</p>
+
+		<h2>Subdirectories</h2>
+	
+		<p>Each and every study carrel contains a number of subdirectories (folders). The first two are about the carrel's content:</p>
+		
+		<ul>
+			<li><a href="./cache/">cache</a> - here you will find the original content used to create the carrel</li>
+			<li><a href="./txt/">txt</a> - this subdirectory contains plain text versions of original content; all analysis is done against the content in this directory</li>
+		</ul>
+		
+		<p>The next few subdirectories contain extracted features in the form of tab-delimited text files:</p>
+
+		<ul>
+			<li><a href="./adr/">adr</a> - email addresses, if they exist</li>
+			<li><a href="./bib/">bib</a> - bibliographics (authors, titles, dates, extents, and summaries)</li>
+			<li><a href="./ent/">ent</a> - named-entities (real world things such as people, places, organizations, dates, times, etc.)</li>
+			<li><a href="./pos/">pos</a> - parts-of-speech (each and every word from each and every item described as a noun, verb, adjective, etc.)	</li>
+			<li><a href="./urls/">urls</a> - Universal Resource Locators, if they exist</li>
+			<li><a href="./wrd/">wrd</a> - statistically significant computed keywords</li>
+		</ul>
+		
+		<p><em>Very important.</em> All of the content in the subdirectories above are readable by any spreadsheet application, database program, or programming language. Therefore, you do not need special software to do analysis.</p>
+		
+		<p>There are two additional subdirectories in every study carrel:</p>
+		
+		<ul>
+			<li><a href="./figures/">figures</a> - where images are saved</li>
+			<li><a href="./etc/">etc</a> - the subdirectory for everything else, and of greatest importance is the carrel's stop word list, bag-of-word representation of the carrel, and the carrel's SQLite database file</li>
+		</ul>
+
+	<p>All of this is just the beginning. For more detail about study carrels, their structure, and how they can be used, begin with the <a href="./readme.txt">read me</a> file.</p>
 
 	<hr />
 	
