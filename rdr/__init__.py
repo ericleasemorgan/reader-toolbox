@@ -244,31 +244,16 @@ tr:nth-child(even) { background-color: #f2f2f2;}
 
 	<h1>##CARREL##</h1>
 	
-	<p>This page provides an overview of the Distant Reader study carrel called <strong>##CARREL##</strong>.</p>
+	<p>This is an automatically generated overview of the Distant Reader study carrel called <strong>##CARREL##</strong>.</p>
 	
-	<p>Given a corpus of narrative text, the <a href="https://distantreader.org/">Distant Reader</a> and the <a href="https://reader-toolbox.readthedocs.io">Distant Reader Toolbox</a> create data sets, and these data sets are affectionately called "study carrels". As data sets, study carrels are intended to be read by people as well as computers, and <em>their purpose is to supplement the reading process, to increase use &amp; understanding</em>.</p>
+	<p>Given a corpus of narrative text, the <a href="https://distantreader.org/">Distant Reader</a> and the <a href="https://reader-toolbox.readthedocs.io/en/latest/">Distant Reader Toolbox</a> create data sets, and these data sets are affectionately called "study carrels". As data sets, study carrels are intended to be read by people as well as computers, and <em>their purpose is to supplement the reading process, to increase use &amp; understanding</em>.</p>
 	
-	<p>Study carrels are designed to be computable, and this Web page is the result of one such computing process; here you will find a simple analysis of the carrel's extracted features. Use the features to characterize the content of the carrel, and then use them like items in a back-of-the-book index for more in-depth analysis. Depending on how the carrel was modeled, the following point to additional views (models) of the carrel:</p>
-		
-	<ul>
-		<li><strong>bibliographics</strong> (<a href="./index.json">index.json</a>) - authors, titles, dates, extents, summaries, and keywords in the form of a JSON stream</li>
-		<li><strong>bibliographics</strong> (<a href="./index.txt">index.txt</a>) - same as the above but in a more human-readable form</li>
-		<li><strong>compressed</strong> (<a href="./index.zip">index.zip</a>) - the whole study carrel compressed into a single file for the purposes of collaboration, sharing, and downloading</li>
-		<li><strong>manifest</strong> (<a href="./index.xml">index.xml</a>) - a browsable interface to the study carrel</li>
-		<li><strong>metadata</strong> (<a href="./index.csv">index.csv</a>) - if the study carrel creation process was augmented with metadata values (authors, titles, dates, etc.) file, then that file is available here</li>
-		<li><strong>network graph</strong> (<a href="./index.gml">index.gml</a>) - a Graph Modeling Language file of the carrel's author(s), titles, and computed keywords, and it is useful for visualizing their relationships</li>
-		<li><strong>provenance</strong> (<a href="./index.tsv">index.tsv</a>) - a very very rudimentary list of characateristics denoting whence the carrel came and when</li>
-		<li><strong>semantic triples</strong> (<a href="./index.rdf">index.rdf</a>) - bibliographic characteristics encoded in the form of the Resource Description Framework, and intended for the purposes of supporting the Semantic Web</li> 
-		<li><strong>summary</strong> (<a href="./index.htm">index.htm</a>) - this file</li>
-	</ul>
-	
-	<p>For more detail about study carrels, their structure, and how they can be used, start with the <a href="./readme.txt">read me</a> file.</p>
+	<p>Study carrels are designed to be computable, and this Web page is the result of one such computing process; here you will find a simple analysis of the carrel's extracted features. Use the features to characterize the content of the carrel, and then use them like items in a back-of-the-book index for more in-depth analysis.</p>
 	
 	<h2>Basic characteristics</h2>
 
 		<p>Outlined below are some introductory features of the carrel:</p>
 		
-		 
 		<table>
  			 <tr>
 				<th class='first'>Feature</th>
@@ -391,6 +376,24 @@ tr:nth-child(even) { background-color: #f2f2f2;}
 			<p style='text-align: center'>
 			<img src='./figures/keywords-cloud.png' width='66%' />
 			</p>
+
+		<h2>Additional models</h2>
+		
+			<p>Depending on how the carrel was computed against, the following point to additional models of the carrel:</p>
+				
+			<ul>
+				<li><strong>bibliographics</strong> (<a href="./index.txt">index.txt</a>) - authors, titles, dates, extents, summaries, and keywords in a simple human-readable form</li>
+				<li><strong>bibliographics</strong> (<a href="./index.json">index.json</a>) - same as the above but formatted as a JSON stream</li>
+				<li><strong>compressed</strong> (<a href="./index.zip">index.zip</a>) - the whole study carrel compressed into a single file for the purposes of collaboration, sharing, and downloading</li>
+				<li><strong>manifest</strong> (<a href="./index.xml">index.xml</a>) - a browsable interface to the study carrel</li>
+				<li><strong>metadata</strong> (<a href="./index.csv">index.csv</a>) - if the study carrel creation process was augmented with metadata values (authors, titles, dates, etc.) file, then that file is available here</li>
+				<li><strong>network graph</strong> (<a href="./index.gml">index.gml</a>) - a Graph Modeling Language file of the carrel's author(s), titles, and computed keywords, and it is useful for visualizing their relationships</li>
+				<li><strong>provenance</strong> (<a href="./index.tsv">index.tsv</a>) - a very very rudimentary list of characateristics denoting whence the carrel came and when</li>
+				<li><strong>semantic triples</strong> (<a href="./index.rdf">index.rdf</a>) - bibliographic characteristics encoded in the form of the Resource Description Framework, and intended for the purposes of supporting the Semantic Web</li> 
+				<li><strong>summary</strong> (<a href="./index.htm">index.htm</a>) - this file</li>
+			</ul>
+			
+			<p>For more detail about study carrels, their structure, and how they can be used, start with the <a href="./readme.txt">read me</a> file.</p>
 
 		<h2>Subdirectories</h2>
 	
