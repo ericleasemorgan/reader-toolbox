@@ -308,7 +308,7 @@ def cmdAdr( carrel, count, like ) :
 # bibliographics
 @click.command( options_metavar='<options>' )
 @click.argument( 'carrel', metavar='<carrel>' )
-@click.option('-f', '--format', default='text', type=click.Choice( [ 'text', 'html', 'json' ] ), help='type of output')
+@click.option('-f', '--format', default='text', type=click.Choice( [ 'text', 'json' ] ), help='type of output')
 @click.option('-v', '--save', is_flag=False, help='save result in default location')
 def cmdBib( carrel, format, save ) :
 
