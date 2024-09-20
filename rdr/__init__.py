@@ -228,34 +228,32 @@ University of Notre Dame
 '''
 
 # html template for summarize command
-TEMPLATE = '''
-<html>
+TEMPLATE = '''<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<title>##CARREL##</title>
-<style>
-.first { text-align: right; }
-.second { text-align: left; }
-.third { text-align: left; }
-tr:nth-child(even) { background-color: #f2f2f2;}
-</style>
-
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>##CARREL##</title>
+	<style type="text/css">
+		.first { text-align: right; }
+		.second { text-align: left; }
+		.third { text-align: left; }
+		tr:nth-child(even) { background-color: #f2f2f2;}
+	</style>
 </head>
 <body style='margin: 7%'>
 
 	<h1>##CARREL##</h1>
 	
 	<p>This is an automatically generated overview of the Distant Reader study carrel called <strong>##CARREL##</strong>.</p>
-	
 	<p>Given a corpus of narrative text, the <a href="https://distantreader.org/">Distant Reader</a> and the <a href="https://reader-toolbox.readthedocs.io/en/latest/">Distant Reader Toolbox</a> create data sets, and these data sets are affectionately called "study carrels". As data sets, study carrels are intended to be read by people as well as computers, and <em>their purpose is to supplement the reading process, to increase use &amp; understanding</em>.</p>
-	
 	<p>Study carrels are designed to be computable, and this Web page is the result of one such computing process; here you will find a simple analysis of the carrel's extracted features. Use the features to characterize the content of the carrel, and then use them like items in a back-of-the-book index for more in-depth analysis.</p>
 	
 	<h2>Basic characteristics</h2>
-
+	
 		<p>Outlined below are some introductory features of the carrel:</p>
-		
 		<table>
- 			 <tr>
+			 <tr>
 				<th class='first'>Feature</th>
 				<th class='first'>Value</th>
 				<th class='third'>Description</th>
@@ -288,6 +286,7 @@ tr:nth-child(even) { background-color: #f2f2f2;}
 				<td class='first'>other files</td>
 				<td class='first'><a href="./etc/stopwords.txt">stopwords</a></td>
 				<td class='third'>What words have been denoted as function words such as "the", "a", and "an"?</td>
+			</tr>
 			<tr>
 				<td class='first'>other files</td>
 				<td class='first'><a href="./etc/carrel.txt">entire corpus</a></td>
@@ -295,117 +294,92 @@ tr:nth-child(even) { background-color: #f2f2f2;}
 			</tr>
 		</table>
 		
-		<h2>Sizes</h2>
-		
-			<p>Measured in words, how big are the items in this carrel? To what degree are they of similar size? Are any of the items particularly large or small? In general, the typical scholarly journal article is between 5,000 and 8,000 words long.</p>
-			
-			<p style='text-align: center'>
-			<img src='./figures/sizes-boxplot.png' width='49%' /> <img src='./figures/sizes-histogram.png' width='49%' />
-			</p>
-
-
-		<h2>Readability</h2>
-		
-			<p>Using a metric called Flesch -- where 0 means nobody can read the item, and 100 means everybody can read it -- how difficult are the items in this carrel to read? Shakespeare's <cite>Sonnets</cite> are relatively easy to read (with a score of about 90) because their vocabulary is small and the sentences are short. The typical novel by Jane Austen or Herman Melville have scores in the 70's. Scholarly articles are more difficult (scores between 50-70) because their langauge is more specialized. Texts of poor optical character recognition quality typically have very low scores.</p>
-			
-			<p style='text-align: center'>
-			<img src='./figures/readability-boxplot.png' width='49%' /> <img src='./figures/readability-histogram.png' width='49%' />
-			</p>
-
-		<h2>Ngrams</h2>
-		
-			<p>Excluding <a href="./etc/stopwords.txt">stop words</a>, what are the most frequent individual words and two-word combinations in the corpus, thus addressing the question, "What are the items in this study carrel about?"</p>
-			
-			<table>
-				<tr align='center'>
-					<td><img src='./figures/unigrams-cloud.png' width='100%' /><br /><br />unigrams</td>
-					<td><img src='./figures/bigrams-cloud.png'  width='100%' /><br /><br />bigrams</td>
-				</tr>
-			</table>
-
-
-		<h2>Parts-of-speech</h2>
-		
-			<p>The most frequent extracted parts-of-speech features address questions of "What is discussed in this corpus, what do they do, and how are they described?"</p>
-			
-			<table>
-				<tr align='center'>
-					<td><img src='./figures/pos-noun.png'  width='100%' /><br /><br />nouns<br /><br /><br /></td>
-					<td><img src='./figures/pos-propernoun.png'  width='100%'  /><br /><br />proper nouns<br /><br /><br /></td>
-				</tr>
-				<tr align='center'>
-					<td><img src='./figures/pos-pronoun.png'  width='100%'  /><br /><br />pronouns<br /><br /><br /></td>
-					<td><img src='./figures/pos-verb.png'  width='100%'  /><br /><br />verbs<br /><br /><br /></td>
-				</tr>
-				<tr align='center'>
-					<td><img src='./figures/pos-adjective.png'  width='100%'  /><br /><br />adjectives<br /><br /></td>
-					<td><img src='./figures/pos-adverb.png'  width='100%'  /><br /><br />adverbs<br /><br /></td>
-				</tr>
-			</table>
-
-
-		<h2>Entities</h2>
-		
-			<p>Similar to nouns, named-entities are real-world things but they are more specific. They help address questions of who, where, and how many.</p>
-			
-			<table>
-				<tr align='center'>
-					<td><img src='./figures/entities-any.png' width='100%' /><br /><br />any entity<br /><br /><br /></td>
-					<td><img src='./figures/entities-person.png' width='100%' /><br /><br />persons<br /><br /><br /></td>
-				</tr>
-				<tr align='center'>
-					<td><img src='./figures/entities-gpe.png' width='100%' /><br /><br />geo-political entities</td>
-					<td><img src='./figures/entities-org.png' width='100%' /><br /><br />organizations</td>
-				</tr>
-			</table>
-
-
-		<h2>Clusters</h2>
-
-			<p>Through the use of a variation of the principle component analysis alogorithm, it is possible to plot the location of study carrel items in two- and three-dimentional spaces, thus addressing the questions, "To what degree is this study carrel holistic; to what degree are the items in this carrel easily subdivided into smaller group?"</p>
-			
-			<p>
-			<p style='text-align: center'>
-			<img src='./figures/cluster-dendrogram.png' width='49%' /> <img src='./figures/cluster-cube.png' width='49%' />
-			</p>
-
-		<h2>Keywords</h2>
-		
-			<p>Excluding <a href="./etc/stopwords.txt">stop words</a>, and through the use of a variation of the term frequency–inverse document frequency algorithm, the set of computed keywords are akin to subject terms, and they help address the questions of, "What are the items in this carrel about and to what degree?"</p>
-			
-			<p style='text-align: center'>
-			<img src='./figures/keywords-cloud.png' width='66%' />
-			</p>
-
-		<h2>Additional models</h2>
-		
-			<p>Depending on how the carrel was computed against, the following point to additional models of the carrel:</p>
-				
-			<ul>
-				<li><strong>bibliographics</strong> (<a href="./index.txt">index.txt</a>) - authors, titles, dates, extents, summaries, and keywords in a simple human-readable form</li>
-				<li><strong>bibliographics</strong> (<a href="./index.json">index.json</a>) - same as the above but formatted as a JSON stream</li>
-				<li><strong>compressed</strong> (<a href="./index.zip">index.zip</a>) - the whole study carrel compressed into a single file for the purposes of collaboration, sharing, and downloading</li>
-				<li><strong>manifest</strong> (<a href="./index.xml">index.xml</a>) - a browsable interface to the study carrel</li>
-				<li><strong>metadata</strong> (<a href="./index.csv">index.csv</a>) - if the study carrel creation process was augmented with metadata values (authors, titles, dates, etc.) file, then that file is available here</li>
-				<li><strong>network graph</strong> (<a href="./index.gml">index.gml</a>) - a Graph Modeling Language file of the carrel's author(s), titles, and computed keywords, and it is useful for visualizing their relationships</li>
-				<li><strong>provenance</strong> (<a href="./index.tsv">index.tsv</a>) - a very very rudimentary list of characateristics denoting whence the carrel came and when</li>
-				<li><strong>semantic triples</strong> (<a href="./index.rdf">index.rdf</a>) - bibliographic characteristics encoded in the form of the Resource Description Framework, and intended for the purposes of supporting the Semantic Web</li> 
-				<li><strong>summary</strong> (<a href="./index.htm">index.htm</a>) - this file</li>
-			</ul>
-			
-			<p>For more detail about study carrels, their structure, and how they can be used, start with the <a href="./readme.txt">read me</a> file.</p>
-
-		<h2>Subdirectories</h2>
+	<h2>Sizes</h2>
 	
+		<p>Measured in words, how big are the items in this carrel? To what degree are they of similar size? Are any of the items particularly large or small? In general, the typical scholarly journal article is between 5,000 and 8,000 words long.</p>
+		<p style='text-align: center'><img alt='sizes-boxplot' src='./figures/sizes-boxplot.png' width='49%' /> <img alt='sizes-histogram' src='./figures/sizes-histogram.png' width='49%' /></p>
+
+	<h2>Readability</h2>
+	
+		<p>Using a metric called Flesch -- where 0 means nobody can read the item, and 100 means everybody can read it -- how difficult are the items in this carrel to read? Shakespeare's <cite>Sonnets</cite> are relatively easy to read (with a score of about 90) because their vocabulary is small and the sentences are short. The typical novel by Jane Austen or Herman Melville have scores in the 70's. Scholarly articles are more difficult (scores between 50-70) because their langauge is more specialized. Texts of poor optical character recognition quality typically have very low scores.</p>
+		<p style='text-align: center'><img alt='readability-boxplot' src='./figures/readability-boxplot.png' width='49%' /> <img alt='readability-histogram' src='./figures/readability-histogram.png' width='49%' /></p>
+
+	<h2>Ngrams</h2>
+	
+		<p>Excluding <a href="./etc/stopwords.txt">stop words</a>, what are the most frequent individual words and two-word combinations in the corpus, thus addressing the question, "What are the items in this study carrel about?"</p>
+		<table>
+			<tr align='center'>
+				<td><img alt='unigrams-cloud' src='./figures/unigrams-cloud.png' width='100%' /><br /><br />unigrams</td>
+				<td><img alt='bigrams-cloud' src='./figures/bigrams-cloud.png' width='100%' /><br /><br />bigrams</td>
+			</tr>
+		</table>
+
+	<h2>Parts-of-speech</h2>
+	
+		<p>The most frequent extracted parts-of-speech features address questions of "What is discussed in this corpus, what do they do, and how are they described?"</p>
+		<table>
+			<tr align='center'>
+				<td><img alt='pos-noun' src='./figures/pos-noun.png' width='100%' /><br /><br />nouns<br /><br /><br /></td>
+				<td><img alt='pos-propernoun' src='./figures/pos-propernoun.png' width='100%'  /><br /><br />proper nouns<br /><br /><br /></td>
+			</tr>
+			<tr align='center'>
+				<td><img alt='pos-pronoun' src='./figures/pos-pronoun.png' width='100%'  /><br /><br />pronouns<br /><br /><br /></td>
+				<td><img alt='pos-verb' src='./figures/pos-verb.png' width='100%'  /><br /><br />verbs<br /><br /><br /></td>
+			</tr>
+			<tr align='center'>
+				<td><img alt='pos-adjective' src='./figures/pos-adjective.png' width='100%'  /><br /><br />adjectives<br /><br /></td>
+				<td><img alt='pos-adverb' src='./figures/pos-adverb.png' width='100%'  /><br /><br />adverbs<br /><br /></td>
+			</tr>
+		</table>
+	
+	<h2>Entities</h2>
+	
+		<p>Similar to nouns, named-entities are real-world things but they are more specific. They help address questions of who, where, and how many.</p>
+		<table>
+			<tr align='center'>
+				<td><img alt='entities-any' src='./figures/entities-any.png' width='100%' /><br /><br />any entity<br /><br /><br /></td>
+				<td><img alt='entities-person' src='./figures/entities-person.png' width='100%' /><br /><br />persons<br /><br /><br /></td>
+			</tr>
+			<tr align='center'>
+				<td><img alt='entities-gpe' src='./figures/entities-gpe.png' width='100%' /><br /><br />geo-political entities</td>
+				<td><img alt='entities-org' src='./figures/entities-org.png' width='100%' /><br /><br />organizations</td>
+			</tr>
+		</table>
+
+	<h2>Clusters</h2>
+
+		<p>Through the use of a variation of the principle component analysis alogorithm, it is possible to plot the location of study carrel items in two- and three-dimentional spaces, thus addressing the questions, "To what degree is this study carrel holistic; to what degree are the items in this carrel easily subdivided into smaller group?"</p>
+		<p style='text-align: center'><img alt='cluster-dendrogram' src='./figures/cluster-dendrogram.png' width='49%' /> <img alt='cluster-cube' src='./figures/cluster-cube.png' width='49%' /></p>
+
+	<h2>Keywords</h2>
+	
+		<p>Excluding <a href="./etc/stopwords.txt">stop words</a>, and through the use of a variation of the term frequency-inverse document frequency algorithm, the set of computed keywords are akin to subject terms, and they help address the questions of, "What are the items in this carrel about and to what degree?"</p>
+		<p style='text-align: center'><img alt='keywords-cloud' src='./figures/keywords-cloud.png' width='66%' /></p>
+
+	<h2>Additional models</h2>
+	
+		<p>Depending on how the carrel was computed against, the following point to additional models of the carrel:</p>
+		<ul>
+			<li><strong>bibliographics</strong> (<a href="./index.txt">index.txt</a>) - authors, titles, dates, extents, summaries, and keywords in a simple human-readable form</li>
+			<li><strong>bibliographics</strong> (<a href="./index.json">index.json</a>) - same as the above but formatted as a JSON stream</li>
+			<li><strong>compressed</strong> (<a href="./index.zip">index.zip</a>) - the whole study carrel compressed into a single file for the purposes of collaboration, sharing, and downloading</li>
+			<li><strong>manifest</strong> (<a href="./index.xml">index.xml</a>) - a browsable interface to the study carrel</li>
+			<li><strong>metadata</strong> (<a href="./index.csv">index.csv</a>) - if the study carrel creation process was augmented with metadata values (authors, titles, dates, etc.) file, then that file is available here</li>
+			<li><strong>network graph</strong> (<a href="./index.gml">index.gml</a>) - a Graph Modeling Language file of the carrel's author(s), titles, and computed keywords, and it is useful for visualizing their relationships</li>
+			<li><strong>provenance</strong> (<a href="./index.tsv">index.tsv</a>) - a very very rudimentary list of characateristics denoting whence the carrel came and when</li>
+			<li><strong>semantic triples</strong> (<a href="./index.rdf">index.rdf</a>) - bibliographic characteristics encoded in the form of the Resource Description Framework, and intended for the purposes of supporting the Semantic Web</li> 
+			<li><strong>summary</strong> (<a href="./index.htm">index.htm</a>) - this file</li>
+		</ul>
+		<p>For more detail about study carrels, their structure, and how they can be used, start with the <a href="./readme.txt">read me</a> file.</p>
+
+	<h2>Subdirectories</h2>
+
 		<p>Each and every study carrel contains a number of subdirectories (folders). The first two are about the carrel's content:</p>
-		
 		<ul>
 			<li><a href="./cache/">cache</a> - here you will find the original content used to create the carrel</li>
 			<li><a href="./txt/">txt</a> - this subdirectory contains plain text versions of original content; all analysis is done against the content in this directory</li>
 		</ul>
-		
 		<p>The next few subdirectories contain extracted features in the form of tab-delimited text files:</p>
-
 		<ul>
 			<li><a href="./adr/">adr</a> - email addresses, if they exist</li>
 			<li><a href="./bib/">bib</a> - bibliographics (authors, titles, dates, extents, and summaries)</li>
@@ -414,22 +388,18 @@ tr:nth-child(even) { background-color: #f2f2f2;}
 			<li><a href="./urls/">urls</a> - Universal Resource Locators, if they exist</li>
 			<li><a href="./wrd/">wrd</a> - statistically significant computed keywords</li>
 		</ul>
-		
 		<p><em>Very important.</em> All of the content in the subdirectories above are readable by any spreadsheet application, database program, or programming language. Therefore, you do not need special software to do analysis.</p>
-		
 		<p>There are two additional subdirectories in every study carrel:</p>
-		
 		<ul>
 			<li><a href="./figures/">figures</a> - where images are saved</li>
 			<li><a href="./etc/">etc</a> - the subdirectory for everything else, and of greatest importance is the carrel's stop word list, bag-of-word representation of the carrel, and the carrel's SQLite database file</li>
 		</ul>
-
-	<p>All of this is just the beginning. For more detail about study carrels, their structure, and how they can be used, begin with the <a href="./readme.txt">read me</a> file.</p>
-
+		<p>All of this is just the beginning. For more detail about study carrels, their structure, and how they can be used, begin with the <a href="./readme.txt">read me</a> file.</p>
+	
 	<hr />
 	
 	<p style='text-align: right'>Date created: ##DATE##</p>
-	
+
 </body>
 </html>
 '''
@@ -4148,8 +4118,8 @@ def build( carrel, directory, erase=False, start=False, localLibrary=None ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 8
-	POOLBIG   = 8
+	POOLSMALL = 48
+	POOLBIG   = 54
 	
 	# require
 	from   multiprocessing import Pool
