@@ -119,7 +119,7 @@ READMEWORDS = '''
 About Distant Reader Study Carrels
 ==================================
 
-tl;dnr - Distant Reader study carrels are data sets, and they are designed to be read by computers as well as people for the purposes of reading at scale. See the Distant Reader home page( https://distantreader.org) for more detail.
+tl;dnr - Distant Reader study carrels are data sets, and they are designed to be read by computers as well as people. The purposes of study carrels are to: 1) address the problem of information overload, and 2) faciliate reading at scale. See the Distant Reader home page (https://distantreader.org) for more detail.
 
 
 Introduction
@@ -142,6 +142,8 @@ The Distant Reader and the Distant Reader Toolbox take collections of files as i
   * What is St. Augustine's definition of love, and how does it
     compare to Rousseau's?
 
+  * How do the sum of writings by Plato and Aristotle compare?
+  
 The balance of this document outlines the structure of every study carrel and introduces you on how to use them.
 
 
@@ -160,11 +162,11 @@ There are additional subdirectories filled with tab-delimited files of extracted
   1. adr - email addresses
   2. bib - bibliographics (authors, titles, dates, etc.)
   2. ent - named-entities (people, organizations, places, etc.)
-  3. pos - parts-of-speech values (nouns, verbs, adjectives, etc.)
+  3. pos - parts-of-speech (nouns, verbs, adjectives, etc.)
   4. urls - URLs and their domains
   5. wrd - statistically signficant keywords
   
-Even though none of the files in the subdirectories have extensions of .tsv or .tab, they are all tab-delimited files, and therefore they can be imported into any spreadsheet or database application.
+Even though none of the files in the subdirectories have extensions of .tsv or .tab, they are all tab-delimited files, and therefore they can be imported into any spreadsheet, database, or programming language.
 
 Each study carrel includes two more subdirectories:
 
@@ -174,11 +176,11 @@ Each study carrel includes two more subdirectories:
      carrel's stop word list, bag-of-word representation of the
      carrel, and the carrel's SQLite database file
   
-Depending on how the carrel was computed against (modeled), there may be a number of files at the root of each study carrel:
+Depending on how the carrel was computed against (modeled), there may be a number of files at the root of each study carrel, and these files are readable by a wide variety of desktop applications and programming languages:
 
   * index.csv - if the study carrel creation process was augmented
-    with metadata values file (authors, titles, dates, etc.), then
-    that file is available here
+    with a metadata values file (authors, titles, dates, etc.), then
+    that file is echoed here
 
   * index.gml - a Graph Modeling Language file of the carrel's
     author(s), titles, and computed keywords, and useful for
@@ -209,17 +211,17 @@ Depending on how the carrel was computed against (modeled), there may be a numbe
 Desktop Applications
 --------------------
 
-Study carrels are designed to be platform- and network-independent. What does this mean? It means two things: 1) no special software is needed to read study carrel data, and 2) if the study carrel is saved on your local computer, then no Internet connection is needed to do analysis against it. That said, you will want to employ the use of a variety of desktop applications in order to get the most out of a study carrel.
+Study carrels are designed to be platform- and network-independent. What does this mean? It means two things: 1) no special software is needed to read study carrel data, and 2) if the study carrel is saved on your local computer, then no Internet connection is needed to analyze it. That said, you will want to employ the use of a variety of desktop applications (or programming languages) in order to get the most out of a study carrel.
 
 
 Text Editors
 
-Text editors are not word processors. While text editors and word processors both work with text, the former are more about the manipulation of the text, and the later are more about graphic design. The overwhelming majority of data found in study carrels is in the form of plain text, and you will find the use of a descent text editor indispensible. Using a text editor, you can open and read just about any file found in a study carrel. That's very important.
+Text editors are not word processors. While text editors and word processors both work with text, the former are more about the manipulation of the text, and the later are more about graphic design. The overwhelming majority of data found in study carrels is in the form of plain text, and you will find the use of a descent text editor indispensible. Using a text editor, you can open and read just about any file found in a study carrel. That's very important!
 
 A good text editor supports powerful find and replace functionality, supports regular expressions, has the ability to open multi-megabyte files with ease, can turn on and off line wrapping, and reads text files created on different computer platforms. The following two text editors are recommended. Don't rely on Microsoft Word nor Google Docs, they are word processors.
 
-     BBEdit - https://www.barebones.com/products/bbedit/
-  NotePad++ - https://notepad-plus-plus.org/
+  * BBEdit (https://www.barebones.com/products/bbedit/)
+  * NotePad++ (https://notepad-plus-plus.org/)
 
 
 Word Cloud Applications
@@ -228,35 +230,35 @@ The use of words clouds is often viewed as sophmoric. This is true because they 
 
 A program called Wordle is an excellent word cloud program. It takes raw text as input. It also accepts delimited data as input. The resulting images are colorful, configurable, and exportable. Unfortunately, it is no longer supported; while it will run on most Macintosh comuters, it will no longer run (easily) on Windows computers. (I would pay a fee to have Wordle come back to life and brought up-to-date.) If Wordle does not work for you, then there are an abundance of Web-based word cloud applications.
 
-  Wordle - https://web.archive.org/web/20191115162244/http://www.wordle.net/
+  * Wordle (https://web.archive.org/web/20191115162244/http://www.wordle.net/)
   
 
 Concordances
 
-Developed in the 13th Century, concordances are all but the oldest of text analysis techiques. They function like the rudimentary find function you see in many applications. Think control-f on steroids.
+Developed in the 13th Century, concordances are all but the oldest of text mining tools. They function like the rudimentary find function you see in many applications. Think control-f on steroids.
 
 Concordances locate a given word in a text, display the text surrounding the word, and help you understand what other words are used in the same context. After all, to paraphrase a linguist named John Firth, "One shall know a word by the company it keeps." The following is a link to a concordance application that is worth way more than what you pay for it, which is nothing.
 
-  AntConc - https://www.laurenceanthony.net/software/antconc/
+  * AntConc (https://www.laurenceanthony.net/software/antconc/)
   
 
 Spreadsheet-Like Applications
 
-The overwhelming majority of the content found in study carrels is in the form of plain text, and most of this plain text is structured in the form of tab-delimited text files -- matrixes or sometimes called "data frames". These files are readable by any spreadsheet or database application. Microsoft Excel, Google Sheets, or Macintosh Numbers can import Reader study carrel delimited data, but these programs are more about numerical analysis and less about analyzing text.
+The overwhelming majority of the content found in study carrels is in the form of plain text, and most of this plain text is structured in the form of tab-delimited text files -- matrixes or sometimes called "data frames". These files are readable by any spreadsheet, database, or programming language. Microsoft Excel, Google Sheets, or Macintosh Numbers can import Reader study carrel delimited data, but these programs are more about numerical analysis and less about analyzing text.
 
-Thus, if you want to do analysis against Reader study carrel data, and if you do not want to write your own software, then the use of an analysis program called OpenRefine is highly recommended. OpenRefine eats delimited data for lunch. Once data is imported, OpenRefine supports powerful find & replace functions, counting and tabulating functions, faceting, sorting, exporting, etc. While text editors and concordances supplement traditional reading functions, OpenRefine supplements the process of understanding study carrels as data.
+Thus, if you want to do analysis against Reader study carrel data, and if you do not want to write your own software, then the use of an analysis program called OpenRefine is highly recommended. OpenRefine eats delimited data for lunch. Once data is imported, OpenRefine supports powerful find and replace functions, counting and tabulating functions, faceting, sorting, exporting, etc. While text editors and concordances supplement traditional reading functions, OpenRefine supplements the process of understanding study carrels as data.
 
-  OpenRefine - https://openrefine.org/
+  * OpenRefine (https://openrefine.org/)
 
 
 Topic Modeling Applications
 
-Topic modeling is a type of machine learning process called "clustering". Given an integer (I), a topic modeler will divide a corpus into I clusters, and each cluster is akin to a theme. Thus, after practicing with a topic modeler, you can address questions like: what are the things this corpus is about, to what degee are themes manifested across the corpus, and which documents are best represented by the themes. After supplementing the corpus with metadata (authors, titles, dates, keywords, geners, etc.) Topic modeling becomes even more useful because you can address addtional questions, such as: how did these themes ebb and flow over time, who wrote about what, and how is this style of writting different from that style. 
+Topic modeling is a type of machine learning process called "clustering". Given an integer (I), a topic modeler will divide a corpus into I clusters, and each cluster is akin to a theme. Thus, after practicing with a topic modeler, you can address questions like: what are the things this corpus is about, to what degee are themes manifested across the corpus, and which documents are best represented by the themes. After supplementing the corpus with metadata (authors, titles, dates, keywords, geners, etc.) Topic modeling becomes even more useful because you can address additional questions, such as: how did these themes ebb and flow over time, who wrote about what, and how is this style of writting different from that style. 
 
-A venerable MALLET application is the grand-daddy of topic modeling tools, but is a command-line driven thing. On the other hand, a program called Topic Modeling Tool, which is rooted in MALLET, brings topic modeling to the desktop. Like all the applications listed here, it's use requires practice, but it works well, it works quickly, and the data it outputs can be used in a myriad of ways.
+A venerable MALLET application is the grand-daddy of topic modeling tools, but is a command-line driven thing. On the other hand, a program called Topic Modeling Tool, which is rooted in MALLET, brings topic modeling to the desktop. Like all the applications listed here, it's use requires practice, but it works well, it works quickly, and the data it outputs can be used in a variety of ways.
 
-               MALLET - https://mimno.github.io/Mallet/
-  Topic Modeling Tool - https://github.com/senderle/topic-modeling-tool
+  * MALLET (https://mimno.github.io/Mallet/)
+  * Topic Modeling Tool (https://github.com/senderle/topic-modeling-tool)
   
 
 Network Analysis Applications
@@ -265,7 +267,7 @@ Texts can be modeled in the form of networks -- nodes and edges. For example, th
 
 Network analysis is rooted in graph theory, and it is not a trivial process. On the other hand, a program called Gephi makes the process easier. Import one of any number of different graph formats or specifically shaped matrixes, apply any number layout options to visualize the graph, filter the graph, visualize again, apply clustering or calcuate graph characteristics, and visualize a third time. The process requires practice, some knowledge of graph theory, and an aesthetic sensibility. In the end, you will garnder a greater understanding of the content in your carrel.
 
-  Gephi - https://gephi.org
+  * Gephi (https://gephi.org)
 
 
 Command-Line (Shell) Interface
@@ -327,7 +329,7 @@ Once installed, you can run variations of the rdr ("reader") command. For exampl
 
 Use the rdr command to build study carrels and do analysis against them. For example: 1) create a directory on your desktop and call it "practice", 2) copy a few PDF files into the directory, 3) open your terminal, 4) change directories to the desktop, and 5) run the following command to create your a carrel named "my-first-carrel":
 
-  rdr build my-first-carrel ./practice -s
+  rdr build my-first-carrel practice -s
 
 Once you get this far, you can run many other rdr commands:
 
@@ -392,7 +394,7 @@ Distant Reader and the Distant Reader Toolbox take sets of narrative text as inp
 
 Use desktop software and/or the Reader Toolbox to build, download, search, browse, peruse, investigate, and report on the content of study carrels. Use the extracted features as if they were items found in a back-of-the-book index, and use them as input to concordances for the purpose of closer reading. Topic model study carrels to enumerate latent themes and address the question, "How do themes ebb and flow over time?" Import the index.gml files into Gephi (or any other network graph application) to visualize how authors, titles, and dates are related. All of this is just the tip of the iceberg; study carrels can do much more.
 
-Study carrels are intended to address the problem of information overload. They make it easier to use and understand large volumes of text -- dozens of books or hundreds of journal articles. Through the process you can address all sorts of research questions, and in the end you will have supplemented the traditional reading process and you will have been both more thorough and comprehensive in your research.
+Study carrels are intended to address the problem of information overload. They make it easier to use and understand large volumes of text -- dozens of books or hundreds of journal articles. Through the process you can address all sorts of research questions, and in the end you will have supplemented your traditional reading process and you will have been both more thorough and more comprehensive in your research.
 
 --
 Eric Lease Morgan <emorgan@nd.edu>
@@ -401,7 +403,6 @@ Hesburgh Libraries
 University of Notre Dame
 
 ##DATE##
-
 
 '''
 
