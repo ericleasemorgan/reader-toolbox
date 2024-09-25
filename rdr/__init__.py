@@ -537,8 +537,9 @@ TEMPLATE = '''<?xml version="1.0" encoding="utf-8"?>
 
 	<h2>Additional models</h2>
 	
-		<p>Depending on how the carrel was computed against, the following point to additional models of the carrel:</p>
+		<p>Depending on how the carrel was computed against, the following point to additional models:</p>
 		<ul>
+			<li><strong>analysis</strong> (<a href="./index.html">index.html</a>) - if a person used the modeling tools to analyze this carrel and wrote up their observations, then those observations ought to be here</li>
 			<li><strong>bibliographics</strong> (<a href="./index.txt">index.txt</a>) - authors, titles, dates, extents, summaries, and keywords in a simple human-readable form</li>
 			<li><strong>bibliographics</strong> (<a href="./index.json">index.json</a>) - same as the above but formatted as a JSON stream</li>
 			<li><strong>compressed</strong> (<a href="./index.zip">index.zip</a>) - the whole study carrel compressed into a single file for the purposes of collaboration, sharing, and downloading</li>
@@ -548,8 +549,8 @@ TEMPLATE = '''<?xml version="1.0" encoding="utf-8"?>
 			<li><strong>provenance</strong> (<a href="./index.tsv">index.tsv</a>) - a very very rudimentary list of characateristics denoting whence the carrel came and when</li>
 			<li><strong>semantic triples</strong> (<a href="./index.rdf">index.rdf</a>) - bibliographic characteristics encoded in the form of the Resource Description Framework, and intended for the purposes of supporting the Semantic Web</li> 
 			<li><strong>summary</strong> (<a href="./index.htm">index.htm</a>) - this file</li>
-			<li style='margin-top: 1em'><strong>analysis</strong> (<a href="./index.html">index.htm</a>) - if a person used the modeling tools to analyze this carrel and then wrote up their observations, then those observations ought to be here</li>
 		</ul>
+		
 		<p>For more detail about study carrels, their structure, and how they can be used, start with the <a href="./readme.txt">read me</a> file.</p>
 
 	<h2>Subdirectories</h2>
