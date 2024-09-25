@@ -548,6 +548,7 @@ TEMPLATE = '''<?xml version="1.0" encoding="utf-8"?>
 			<li><strong>provenance</strong> (<a href="./index.tsv">index.tsv</a>) - a very very rudimentary list of characateristics denoting whence the carrel came and when</li>
 			<li><strong>semantic triples</strong> (<a href="./index.rdf">index.rdf</a>) - bibliographic characteristics encoded in the form of the Resource Description Framework, and intended for the purposes of supporting the Semantic Web</li> 
 			<li><strong>summary</strong> (<a href="./index.htm">index.htm</a>) - this file</li>
+			<li style='margin-top: 1em'><strong>analysis</strong> (<a href="./index.html">index.htm</a>) - if a person used the modeling tools to analyze this carrel and then wrote up their observations, then those observations ought to be here</li>
 		</ul>
 		<p>For more detail about study carrels, their structure, and how they can be used, start with the <a href="./readme.txt">read me</a> file.</p>
 
@@ -4297,8 +4298,8 @@ def build( carrel, directory, erase=False, start=False, localLibrary=None ) :
 	ADR       = 'adr'
 	URL       = 'urls'
 	BIB       = 'bib'
-	POOLSMALL = 48
-	POOLBIG   = 54
+	POOLSMALL = 8
+	POOLBIG   = 8
 	
 	# require
 	from   multiprocessing import Pool
