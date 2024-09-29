@@ -539,16 +539,16 @@ TEMPLATE = '''<?xml version="1.0" encoding="utf-8"?>
 	
 		<p>Depending on how the carrel was computed against, the following point to additional models:</p>
 		<ul>
-			<li><strong>analysis</strong> (<a href="./index.html">index.html</a>) - if a person used the modeling tools to analyze this carrel and wrote up their observations, then those observations ought to be here</li>
-			<li><strong>bibliographics</strong> (<a href="./index.txt">index.txt</a>) - authors, titles, dates, extents, summaries, and keywords in a simple human-readable form</li>
-			<li><strong>bibliographics</strong> (<a href="./index.json">index.json</a>) - same as the above but formatted as a JSON stream</li>
-			<li><strong>compressed</strong> (<a href="./index.zip">index.zip</a>) - the whole study carrel compressed into a single file for the purposes of collaboration, sharing, and downloading</li>
-			<li><strong>manifest</strong> (<a href="./index.xml">index.xml</a>) - a browsable interface to the study carrel</li>
-			<li><strong>metadata</strong> (<a href="./index.csv">index.csv</a>) - if the study carrel creation process was augmented with metadata values (authors, titles, dates, etc.) file, then that file is available here</li>
-			<li><strong>network graph</strong> (<a href="./index.gml">index.gml</a>) - a Graph Modeling Language file of the carrel's author(s), titles, and computed keywords, and it is useful for visualizing their relationships</li>
-			<li><strong>provenance</strong> (<a href="./index.tsv">index.tsv</a>) - a very very rudimentary list of characateristics denoting whence the carrel came and when</li>
-			<li><strong>semantic triples</strong> (<a href="./index.rdf">index.rdf</a>) - bibliographic characteristics encoded in the form of the Resource Description Framework, and intended for the purposes of supporting the Semantic Web</li> 
-			<li><strong>summary</strong> (<a href="./index.htm">index.htm</a>) - this file</li>
+			<li><a href="./index.html">analysis</a> - if a person used the modeling tools to analyze this carrel and wrote up their observations, then those observations ought to be here</li>
+			<li><a href="./index.txt">bibliographics (txt)</a> - authors, titles, dates, extents, summaries, and keywords in a simple human-readable form</li>
+			<li><a href="./index.json">bibliographics (JSON)</a> - same as the above but formatted as a JSON stream</li>
+			<li><a href="./index.zip">compressed</a>- the whole study carrel compressed into a single file for the purposes of collaboration, sharing, and downloading</li>
+			<li><a href="./index.xml">manifest</a> - a browsable interface to the study carrel</li>
+			<li><a href="./index.csv">metadata</a> - if the study carrel creation process was augmented with metadata values (authors, titles, dates, etc.) file, then that file is available here</li>
+			<li><a href="./index.gml">network graph</a> - a Graph Modeling Language file of the carrel's author(s), titles, and computed keywords, and it is useful for visualizing their relationships</li>
+			<li><a href="./index.tsv">provenance</a> - a very very rudimentary list of characateristics denoting whence the carrel came and when</li>
+			<li><a href="./index.rdf">semantic triples</a> - bibliographic characteristics encoded in the form of the Resource Description Framework, and intended for the purposes of supporting the Semantic Web</li> 
+			<li><a href="./index.htm">summary</a> - this file</li>
 		</ul>
 		
 		<p>For more detail about study carrels, their structure, and how they can be used, start with the <a href="./readme.txt">read me</a> file.</p>
