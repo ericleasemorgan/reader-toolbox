@@ -1499,18 +1499,20 @@ def cmdTm( carrel, process, topics, words, iterations, output, field, type ) :
 		
 			# sanity check
 			if not field :
-				click.echo( "Error: When specifying CSV output you must specify a field (-f). See 'rdr tm --help' for more detail.", err=True )
-				exit()
+				summary = _makeSummary( keys, KEYSHEADER )
+				click.echo( summary.to_csv( index=False ), err=False )			
 			
-			# summarize and output
-			summary = _makeSummary( keys, KEYSHEADER )
-			click.echo( summary, err=True )
-
-			# _pivot the model on the given field
-			topics = _pivot( localLibrary, carrel, field, keys )
+			else: 
 			
-			# configure plot and show
-			click.echo( topics.to_csv() )
+				# summarize and output
+				summary = _makeSummary( keys, KEYSHEADER )
+				click.echo( summary, err=True )
+	
+				# _pivot the model on the given field
+				topics = _pivot( localLibrary, carrel, field, keys )
+				
+				# configure plot and show
+				click.echo( topics.to_csv() )
 
 # config
 @click.command( options_metavar='[<options>]' )
