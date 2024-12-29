@@ -446,7 +446,7 @@ def cmdSearch( query, output, carrel ) :
 	  rdr search -q '"keep his anger"' homer'''
 
 	# do the work and done
-	click.echo( search( carrel, query, output ) )
+	click.echo( search( carrel, query=query, output=output ) )
 
 
 # word2vec
@@ -471,7 +471,7 @@ def cmdSemantics( carrel, type, query, size ) :
 	  rdr semantics -t analogy -q "king queen prince" homer'''
 
 	# do the work and done
-	click.echo( word2vec( carrel, type, query, size ) )
+	click.echo( word2vec( carrel, type=type, query=query, topn=size ) )
 
 	
 # collocations
@@ -703,7 +703,7 @@ def cmdConcordance( carrel, query, width ) :
 	See also: rdr ngrams --help"""
 	
 	# do the work
-	for line in concordance( carrel, query, width ) : click.echo( line )
+	for line in concordance( carrel, query=query, width=width ) : click.echo( line )
 
 
 # keywords

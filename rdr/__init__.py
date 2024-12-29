@@ -1871,7 +1871,7 @@ def keywords( carrel, localLibrary=None, count=False, wordcloud=False, save=Fals
 
 
 # poor man's search engine
-def concordance( carrel, query='love', width=40 ) :
+def concordance( carrel, localLibrary=None, query='love', width=40 ) :
 
 	'''Given the name of a study carrel, a query, and a window, return a
 	list of lines matching the query fro the given carrel'''
@@ -1879,13 +1879,17 @@ def concordance( carrel, query='love', width=40 ) :
 	# require
 	import re
 	import rdr
+	from pathlib import Path
 	
 	# slurp up the corpus
-	localLibrary = rdr.configuration( 'localLibrary' )
-	with open( localLibrary/carrel/rdr.ETC/rdr.CORPUS, encoding='utf-8'  ) as handle : corpus = handle.read()
-
+	if localLibrary : library = Path( localLibrary )
+	else            : library = rdr.configuration( 'localLibrary' )
+		
 	# sanity check
-	checkForCarrel( carrel )
+	checkForCarrel( carrel, localLibrary )
+	
+	with open( library/carrel/rdr.ETC/rdr.CORPUS, encoding='utf-8'  ) as handle : corpus = handle.read()
+
 
 	# initialize
 	snippets = []
@@ -2989,7 +2993,7 @@ def extractTokenizedSentences( file, stopwords ) :
 
 
 # make sure the carrel has been indexed
-def checkForSemanticIndex( carrel ) :
+def checkForSemanticIndex( carrel, localLibrary ) :
 
 	# configure; not quite right
 	VECTORS = 'carrel.vec'
@@ -3003,7 +3007,7 @@ def checkForSemanticIndex( carrel ) :
 	import sys
 
 	# configure
-	localLibrary = configuration( 'localLibrary' )
+	#localLibrary = configuration( 'localLibrary' )
 	vectors      = localLibrary/carrel/ETC/VECTORS
 	tokens       = localLibrary/carrel/ETC/TOKENS
 	
@@ -3042,7 +3046,7 @@ def checkForSemanticIndex( carrel ) :
 
 
 # implement semantic (word2vec) indexing
-def word2vec( carrel, type='similarity', query='love', topn=10 ) :
+def word2vec( carrel, localLibrary=None, type='similarity', query='love', topn=10 ) :
 
 	'''types = similarity|distance|analogy|scatter'''
 
@@ -3052,14 +3056,16 @@ def word2vec( carrel, type='similarity', query='love', topn=10 ) :
 	# require
 	import sys
 	import gensim
-
+	from pathlib import Path
+	
 	# initialize
-	localLibrary = configuration( 'localLibrary' )
-	vectors      = str( localLibrary/carrel/ETC/VECTORS )
+	if localLibrary : library = Path( localLibrary )
+	else            : library = configuration( 'localLibrary' )
+	vectors      = str( library/carrel/ETC/VECTORS )
 	
 	# sanity checks
-	checkForCarrel( carrel )
-	checkForSemanticIndex( carrel )
+	checkForCarrel( carrel, library )
+	checkForSemanticIndex( carrel, library )
 		
 	# load model
 	model = gensim.models.KeyedVectors.load( vectors )
@@ -3156,7 +3162,7 @@ def word2vec( carrel, type='similarity', query='love', topn=10 ) :
 
 
 # make sure the carrel has been indexed; sqlite++
-def _checkForIndex( carrel ) :
+def _checkForIndex( carrel, localLibrary ) :
 
 	# configure
 	SANITYCHECK    = "SELECT * FROM sqlite_master WHERE type='table' AND name='fulltext';"
@@ -3181,7 +3187,6 @@ def _checkForIndex( carrel ) :
 	import sys
 	
 	# initialize
-	localLibrary = configuration( 'localLibrary' )
 	db           = str( localLibrary/carrel/ETC/DATABASE )
 	txt          = localLibrary/carrel/TXT
 	transaction  = tempfile.NamedTemporaryFile( delete=False ).name
@@ -3259,7 +3264,7 @@ def _checkForIndex( carrel ) :
 		return
 		
 # do full text indexing and search
-def search( carrel, query='love', output='human' ) :
+def search( carrel, localLibrary=None, query='love', output='human' ) :
 	'''output = csv|tsv|json|human|count'''
 
 	# configure
@@ -3274,16 +3279,19 @@ def search( carrel, query='love', output='human' ) :
 	import sqlite3
 	import pandas as pd
 	import sys
-	
-	# sanity checks
-	checkForCarrel( carrel )
-	_checkForIndex( carrel )
+	from pathlib import Path
 	
 	# initialize
-	localLibrary = configuration( 'localLibrary' )
-	txt          = str( localLibrary/carrel/TXT ) + '/'
-	cache        = str( localLibrary/carrel/CACHE ) + '/'
-	db           = str( localLibrary/carrel/ETC/DATABASE )
+	if localLibrary : library = Path( localLibrary )
+	else            : library = configuration( 'localLibrary' )
+
+	# sanity checks
+	checkForCarrel( carrel, library )
+	_checkForIndex( carrel, library )
+
+	txt          = str( library/carrel/TXT ) + '/'
+	cache        = str( library/carrel/CACHE ) + '/'
+	db           = str( library/carrel/ETC/DATABASE )	
 	connection   = sqlite3.connect( db )
 
 	# build sql
