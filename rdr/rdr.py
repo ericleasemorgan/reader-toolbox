@@ -6,6 +6,7 @@
 # July 30, 2021 - in Three Oaks with Pat; first real working version
 # June 14, 2022 - trying to consolidate everything into a single file
 # May  29, 2023 - whoefully lacking in updates here; added... everthing
+# June 18, 2025 - when pivoting, sliced the columns to exclude the first and last
 
 
 
@@ -18,7 +19,7 @@ KEYS            = 'keys.tsv'
 KEYSHEADER      = [ 'ids', 'weights', 'features' ]
 DOCUMENTS       = 'documents.txt'
 DOCUMENTSHEADER = [ 'ids', 'dids', 'files', 'proportions' ]
-TOPDOCS         = 256
+TOPDOCS         = 100
 SCALE           = 100
 PERCENTAGE      = '%1.0f%%'
 SQL             = 'SELECT "file:%s/%s/txt/" || cast( id AS text ) || ".txt" AS file, %s FROM bib order by %s;'
@@ -180,7 +181,8 @@ def _pivot( localLibrary, carrel, field, keys ) :
 
 	# _pivot, sort, and return; improves the output SOO much
 	# see: https://stackoverflow.com/questions/60758625/sort-pandas-dataframe-by-sum-of-columns
-	topics = topics.pivot_table( list( topics.columns ), index=field )
+	# sliced the list of columns to exclude the first and the last
+	topics = topics.pivot_table( list( topics.columns[1:-1] ), index=field )
 	sums   = topics.sum()
 	topics = topics[ sums.sort_values( ascending=False ).index[ : ] ]
 	return( topics )
