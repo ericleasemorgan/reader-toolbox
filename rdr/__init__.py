@@ -546,9 +546,11 @@ TEMPLATE = '''<?xml version="1.0" encoding="utf-8"?>
 			<li><a href="./index.xml">manifest</a> - a browsable interface to the study carrel</li>
 			<li><a href="./index.csv">metadata</a> - if the study carrel creation process was augmented with metadata values (authors, titles, dates, etc.) file, then that file is available here</li>
 			<li><a href="./index.gml">network graph</a> - a Graph Modeling Language file of the carrel's author(s), titles, and computed keywords, and it is useful for visualizing their relationships</li>
+			<li><a href="./etc/pathfinder.htm">pathfinder</a> - a stylized version of bibliographics (JSON) grouping the items into sections</li>
 			<li><a href="./index.tsv">provenance</a> - a very very rudimentary list of characateristics denoting whence the carrel came and when</li>
 			<li><a href="./index.rdf">semantic triples</a> - bibliographic characteristics encoded in the form of the Resource Description Framework, and intended for the purposes of supporting the Semantic Web</li> 
 			<li><a href="./index.htm">summary</a> - this file</li>
+			<li><a href="./etc/topic-model/keys.tsv">topic model</a> - a rudimentary TSV file listing the topics and weights if topic modeling has been done</li>
 		</ul>
 		
 		<p>For more detail about study carrels, their structure, and how they can be used, start with the <a href="./readme.txt">read me</a> file.</p>
