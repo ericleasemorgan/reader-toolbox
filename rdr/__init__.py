@@ -720,7 +720,7 @@ def graph2gml( carrel, output='gml', save=False, erase=False, localLibrary=None 
 		edges.append( ( subject, object, { 'types' : 'creator' } ) )
 
 	# build the graph; very smart
-	graph = networkx.Graph()
+	graph = networkx.DiGraph()
 	graph.add_nodes_from( nodes )
 	graph.add_edges_from( edges )
 
