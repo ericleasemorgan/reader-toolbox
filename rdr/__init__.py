@@ -824,7 +824,7 @@ def carrel2graph( carrel, localLibrary=None ) :
 	FORMAT    = 'xml'
 	GRAPHROOT = 'http://carrels.distantreader.org/'
 	CREATOR   = { 'name':"Eric Lease Morgan", 'qnumber':'https://www.wikidata.org/wiki/Q102275801' }
-	TEMPLATE  = '''PREFIX wd: <http://www.wikidata.org/entity/> CONSTRUCT { wd:##QNUMBER## ?p ?o } WHERE { SERVICE <https://query.wikidata.org/bigdata/namespace/wdq/sparql> { wd:##QNUMBER## ?p ?o }}'''
+	TEMPLATE  = '''PREFIX wd: <http://www.wikidata.org/entity/> CONSTRUCT { wd:##QNUMBER## ?p ?o } WHERE { SERVICE <https://query.wikidata.org/bigdata/namespace/wdq/sparql> { wd:##QNUMBER## ?p ?o FILTER ( lang(?o) = "en" )}}'''
 	WIKIDATA  = 'http://www.wikidata.org/entity/'
 
 	# require
@@ -3940,13 +3940,13 @@ def _normalize( text ) :
 	
 	# _normalize the text in the bag-of-words
 	text = text.lower()
-	text = re.sub( '\r', '\n', text )
-	text = re.sub( '\n+', ' ', text )
-	text = re.sub( '^\W+', '', text )
-	text = re.sub( '\t', ' ',  text )
-	text = re.sub( '- ', '',   text )
-	text = re.sub( ' +', ' ',  text )
-	text = re.sub( '\t', ' ',  text )
+	text = re.sub( r'\r', '\n', text )
+	text = re.sub( r'\n+', ' ', text )
+	text = re.sub( r'^\W+', '', text )
+	text = re.sub( r'\t', ' ',  text )
+	text = re.sub( r'- ', '',   text )
+	text = re.sub( r' +', ' ',  text )
+	text = re.sub( r'\t', ' ',  text )
 
 	# done
 	return text
