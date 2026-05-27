@@ -2787,6 +2787,7 @@ def cluster( carrel, localLibrary=None, type='dendrogram', save=False ) :
 #	# done
 #	return
 
+#
 # given a carrel, return a spacy doc
 def _carrel2doc( carrel ) :
 
@@ -3889,12 +3890,12 @@ def _summarize( doc ) :
 	# _normalize
 	summary = ' '.join( summary )
 	summary = summary.replace( '"', '' )
-	summary = re.sub( '\r', ' ', summary )
-	summary = re.sub( '\t+', ' ', summary )
-	summary = re.sub( '\n+', ' ', summary )
-	summary = re.sub( ' +', ' ',  summary )
-	summary = re.sub( '^\s', '',  summary )
-	summary = re.sub( '\s$', '',  summary )
+	summary = re.sub( r'\r', ' ', summary )
+	summary = re.sub( r'\t+', ' ', summary )
+	summary = re.sub( r'\n+', ' ', summary )
+	summary = re.sub( r' +', ' ',  summary )
+	summary = re.sub( r'^\s', '',  summary )
+	summary = re.sub( r'\s$', '',  summary )
 
 	# done
 	return summary
@@ -3959,7 +3960,7 @@ def _txt2adr( carrel, file, localLibrary ) :
 	ADR       = 'adr'
 	EXTENSION = '.adr'
 	HEADER    = [ 'id', 'address' ]
-	PATTERN   = '''(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])'''
+	PATTERN   = r'''(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])'''
 
 	# require
 	import re
@@ -3993,9 +3994,9 @@ def _txt2adr( carrel, file, localLibrary ) :
 			for address in addresses : 
 			
 				# clean up some more
-				address = re.sub( '\/', '', address )
-				address = re.sub( '{',  '', address )
-				address = re.sub( '}',  '', address )
+				address = re.sub( r'\/', '', address )
+				address = re.sub( r'{',  '', address )
+				address = re.sub( r'}',  '', address )
 				
 				# output
 				handle.write( '\t'.join( [ key, address ] ) + '\n' )
@@ -4106,7 +4107,7 @@ def _txt2url( carrel, file, localLibrary ) :
 	EXTENSION = '.url'
 	URLS      = 'urls'
 	HEADER    = [ 'id', 'domain', 'url']
-	PATTERN   = '(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})'
+	PATTERN   = r'(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})'
 
 	# require
 	import re
@@ -4140,12 +4141,12 @@ def _txt2url( carrel, file, localLibrary ) :
 			for url in urls :
 
 				# remove white space from end of url
-				url = re.sub( '\W$', '', url )
+				url = re.sub( r'\W$', '', url )
 	
 				# parse out the domain, to the best of my ability
-				domain = re.sub( '.*:\/\/', '', url )
-				domain = re.sub( '\/.*',    '', domain )
-				domain = re.sub( '\W$',     '', domain )
+				domain = re.sub( r'.*:\/\/', '', url )
+				domain = re.sub( r'\/.*',    '', domain )
+				domain = re.sub( r'\W$',     '', domain )
 	
 				# output
 				handle.write( '\t'.join( [ key, domain, url ] ) + '\n' )
