@@ -266,21 +266,21 @@ def rdr() :
 
 
 # about
-@click.command( options_metavar='<options>' )
-def cmdAbout() :
-
-	"""Output a brief description and version number of the Reader Toolbox (rdr) application."""
-
-	# configure
-	ABOUT = '''
-  The Reader Toolbox (rdr) is a Python library and command-line
-  application used to create and model data sets called Distant
-  Reader study carrels. It was written and is maintaned by Eric
-  Lease Morgan <emorgan@nd.edu>. This is version 0.2.3.
-'''
-
-	# do the work and done
-	click.echo( ABOUT )
+#@click.command( options_metavar='<options>' )
+#def cmdAbout() :
+#
+#	"""Output a brief description and version number of the Reader Toolbox (rdr) application."""
+#
+#	# configure
+#	ABOUT = '''
+#  The Reader Toolbox (rdr) is a Python library and command-line
+#  application used to create and model data sets called Distant
+#  Reader study carrels. It was written and is maintaned by Eric
+#  Lease Morgan <emorgan@nd.edu>. This is version 0.2.3.
+#'''
+#
+#	# do the work and done
+#	click.echo( ABOUT )
 
 
 # addresses
@@ -476,32 +476,32 @@ def cmdSemantics( carrel, type, query, size ) :
 	click.echo( word2vec( carrel, type=type, query=query, topn=size ) )
 
 	
-# collocations
-@click.command( options_metavar='<options>' )
-@click.argument( 'carrel', metavar='<carrel>' )
-@click.option('-f', '--filter',  default=4, help="least number of occurances of bigram")
-@click.option('-m', '--measure', default='chisqr', type=click.Choice( [ 'fisher', 'chisqr', 'jaccard', 'likelihood', 'raw' ], case_sensitive=True ), help="type of measure")
-@click.option('-l', '--limit',   default=4000, help="number of features")
-@click.option('-w', '--window',  default=4, help="size of window")
-@click.option('-o', '--output',  default='image', type=click.Choice( [ 'image', 'gml' ], case_sensitive=True ), help="type of output")
-@click.option('-v', '--save',    is_flag=True, help='save graph to default location')
-def cmdCollocations( carrel, window, filter, measure, limit, output, save ) :
-
-	'''Output network graph based on bigram collocations in <carrel>
-
-	This is an additional way of answering the questions: 1) what words are spoken in the same breath as other words, and 2) what words taken together connote themes. Given a study carrel of about 200,000 words, the default values ought to generate a network graph with enough depth to be interesting. Specify the -o option to output a Graph Modeling Language (GML) file, and load the result into a visualizer like Gephi. If the image output by the Toolbox is not very dense, then iteratively increase or decrease the values of -l and -f until the density is appealing. The various measures are used to denote the significance of collocations.
-
-	Examples:
-
-	\b
-	  rdr networks homer
-	  rdr networks homer -o gml > homer.gml
-	  rdr networks homer -l 2000 -f 18 -w 5
-	  rdr networks homer -l 2000 -f 18 -w 5 -o gml > homer.gml
-	  rdr networks pride -l 1600 -f 8'''
-
-	# do the work
-	collocate( carrel, window, filter, measure, limit, output, save )
+## collocations
+#@click.command( options_metavar='<options>' )
+#@click.argument( 'carrel', metavar='<carrel>' )
+#@click.option('-f', '--filter',  default=4, help="least number of occurances of bigram")
+#@click.option('-m', '--measure', default='chisqr', type=click.Choice( [ 'fisher', 'chisqr', 'jaccard', 'likelihood', 'raw' ], case_sensitive=True ), help="type of measure")
+#@click.option('-l', '--limit',   default=4000, help="number of features")
+#@click.option('-w', '--window',  default=4, help="size of window")
+#@click.option('-o', '--output',  default='image', type=click.Choice( [ 'image', 'gml' ], case_sensitive=True ), help="type of output")
+#@click.option('-v', '--save',    is_flag=True, help='save graph to default location')
+#def cmdCollocations( carrel, window, filter, measure, limit, output, save ) :
+#
+#	'''Output network graph based on bigram collocations in <carrel>
+#
+#	This is an additional way of answering the questions: 1) what words are spoken in the same breath as other words, and 2) what words taken together connote themes. Given a study carrel of about 200,000 words, the default values ought to generate a network graph with enough depth to be interesting. Specify the -o option to output a Graph Modeling Language (GML) file, and load the result into a visualizer like Gephi. If the image output by the Toolbox is not very dense, then iteratively increase or decrease the values of -l and -f until the density is appealing. The various measures are used to denote the significance of collocations.
+#
+#	Examples:
+#
+#	\b
+#	  rdr networks homer
+#	  rdr networks homer -o gml > homer.gml
+#	  rdr networks homer -l 2000 -f 18 -w 5
+#	  rdr networks homer -l 2000 -f 18 -w 5 -o gml > homer.gml
+#	  rdr networks pride -l 1600 -f 8'''
+#
+#	# do the work
+#	collocate( carrel, window, filter, measure, limit, output, save )
 
 	
 # grammars
@@ -785,93 +785,93 @@ def cmdRead( carrel, location ) :
 	read( carrel, location )
 
 
-@click.command( options_metavar='[<options>]' )
-@click.argument( 'carrel', metavar='<carrel>' )
-def cmdSql( carrel ) :
-
-	"""Use SQL queries against the database of <carrel>
-	
-	Study carrels are made up of many files. One of those files is an SQLite database file (etc/reader.db). Use this subcommand to query the database. Because the database is relational in design, the use of SQL can draw information from many different tables and address almost any question about <carrel>. An excellent query that an be applied to any carrel includes:
-	
-	\b
-	  SELECT b.id, GROUP_CONCAT( w.keyword, '; ' ) AS keywords, b.summary
-	  FROM bib AS b, wrd AS w
-	  WHERE b.id = w.id
-	  GROUP BY b.id
-	  ORDER BY b.id;
-	
-	Example: rdr sql homer"""
-
-	# configure
-	DATASETTE = 'datasette'
-		
-	# require
-	from os import system
-	
-	# sanity check
-	checkForCarrel( carrel )
-
-	# initialize
-	localLibrary = configuration( 'localLibrary' )
-
-	# build the shell command and go
-	database = localLibrary/carrel/ETC/DATABASE
-	system( DATASETTE + ' ' + str( database ) + ' -o' )
-
-
-@click.command( options_metavar='<options>' )
-def cmdDocumentation() :
-
-	"""Use your Web browser to read the Toolbox (rdr) online documentation."""
-
-	# require
-	from webbrowser import open
-
-	click.echo( "Your Web browser is being used to open the Toolbox online documentation.", err=True )
-	url = DOCUMENTATION
-	open( url )
+#@click.command( options_metavar='[<options>]' )
+#@click.argument( 'carrel', metavar='<carrel>' )
+#def cmdSql( carrel ) :
+#
+#	"""Use SQL queries against the database of <carrel>
+#	
+#	Study carrels are made up of many files. One of those files is an SQLite database file (etc/reader.db). Use this subcommand to query the database. Because the database is relational in design, the use of SQL can draw information from many different tables and address almost any question about <carrel>. An excellent query that an be applied to any carrel includes:
+#	
+#	\b
+#	  SELECT b.id, GROUP_CONCAT( w.keyword, '; ' ) AS keywords, b.summary
+#	  FROM bib AS b, wrd AS w
+#	  WHERE b.id = w.id
+#	  GROUP BY b.id
+#	  ORDER BY b.id;
+#	
+#	Example: rdr sql homer"""
+#
+#	# configure
+#	DATASETTE = 'datasette'
+#		
+#	# require
+#	from os import system
+#	
+#	# sanity check
+#	checkForCarrel( carrel )
+#
+#	# initialize
+#	localLibrary = configuration( 'localLibrary' )
+#
+#	# build the shell command and go
+#	database = localLibrary/carrel/ETC/DATABASE
+#	system( DATASETTE + ' ' + str( database ) + ' -o' )
 
 
-@click.command( options_metavar='[<options>]' )
-@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='the location of the carrel')
-@click.argument( 'carrel', metavar='<carrel>' )
-def cmdBrowse( carrel, location ) :
+#@click.command( options_metavar='<options>' )
+#def cmdDocumentation() :
+#
+#	"""Use your Web browser to read the Toolbox (rdr) online documentation."""
+#
+#	# require
+#	from webbrowser import open
+#
+#	click.echo( "Your Web browser is being used to open the Toolbox online documentation.", err=True )
+#	url = DOCUMENTATION
+#	open( url )
 
-	"""Peruse <carrel> as a file system
-	
-	Study carrels are sets of HTML files, other plain text files, a whole lot of tab-delimited files, and an SQLite database file all organized in a file system -- a data set. This command uses a two different techniques for browsing the file systems. If the study carrel is saved locally, then it will try to use a terminal-based Web browser call Lynx. If the carrel is remote, then you will be directed to a dynamically generated HTML page. Because all study carrels have the same layout, this subcommand is useful for learning how many files and of what type are contained in <carrel>.
-	
-	Examples:
-	
-	\b
-	  rdr browse homer
-	  rdr browse -l remote homer
-	
-	See also: rdr read --help"""
 
-	# configure
-	LYNX = 'lynx'
-	
-	# require
-	from os import system
-	import webbrowser
-	
-	# local carrel
-	if location == 'local' :
-	
-		# sanity check
-		checkForCarrel( carrel )
-
-		# initialize, create a URL, and do the work
-		localLibrary = str( configuration( 'localLibrary' ) )
-		url          = 'file://' + localLibrary + '/' + carrel
-		system( LYNX + ' ' + url )
-
-	# remote carrel
-	elif location == 'remote' :
-	
-		url = '/'.join ( [ REMOTELIBRARY, CARRELS, carrel, MANIFEST ] )
-		webbrowser.open( url )
+#@click.command( options_metavar='[<options>]' )
+#@click.option('-l', '--location', default='local', type=click.Choice( [ 'local', 'remote' ] ), help='the location of the carrel')
+#@click.argument( 'carrel', metavar='<carrel>' )
+#def cmdBrowse( carrel, location ) :
+#
+#	"""Peruse <carrel> as a file system
+#	
+#	Study carrels are sets of HTML files, other plain text files, a whole lot of tab-delimited files, and an SQLite database file all organized in a file system -- a data set. This command uses a two different techniques for browsing the file systems. If the study carrel is saved locally, then it will try to use a terminal-based Web browser call Lynx. If the carrel is remote, then you will be directed to a dynamically generated HTML page. Because all study carrels have the same layout, this subcommand is useful for learning how many files and of what type are contained in <carrel>.
+#	
+#	Examples:
+#	
+#	\b
+#	  rdr browse homer
+#	  rdr browse -l remote homer
+#	
+#	See also: rdr read --help"""
+#
+#	# configure
+#	LYNX = 'lynx'
+#	
+#	# require
+#	from os import system
+#	import webbrowser
+#	
+#	# local carrel
+#	if location == 'local' :
+#	
+#		# sanity check
+#		checkForCarrel( carrel )
+#
+#		# initialize, create a URL, and do the work
+#		localLibrary = str( configuration( 'localLibrary' ) )
+#		url          = 'file://' + localLibrary + '/' + carrel
+#		system( LYNX + ' ' + url )
+#
+#	# remote carrel
+#	elif location == 'remote' :
+#	
+#		url = '/'.join ( [ REMOTELIBRARY, CARRELS, carrel, MANIFEST ] )
+#		webbrowser.open( url )
 
 
 # config
@@ -1109,181 +1109,181 @@ def cmdSummarize( carrel, look ) :
 	if look : read( carrel )
 
 
-def hangman() :
+#def hangman() :
+#
+#	# https://inventwithpython.com/invent4thed/chapter8.html
+#
+#	import random
+#	HANGMAN_PICS = ['''
+#  +---+
+#      |
+#      |
+#      |
+#     ===''', '''
+#  +---+
+#  O   |
+#      |
+#      |
+#     ===''', '''
+#  +---+
+#  O   |
+#  |   |
+#      |
+#     ===''', '''
+#  +---+
+#  O   |
+# /|   |
+#      |
+#     ===''', '''
+#  +---+
+#  O   |
+# /|\  |
+#      |
+#     ===''', '''
+#  +---+
+#  O   |
+# /|\  |
+# /    |
+#     ===''', '''
+#  +---+
+#  O   |
+# /|\  |
+# / \  |
+#     ===''']
+#
+#	words = 'ant baboon badger bat bear beaver camel cat clam cobra cougar coyote crow deer dog donkey duck eagle ferret fox frog goat goose hawk lion lizard llama mole monkey moose mouse mule newt otter owl panda parrot pigeon python rabbit ram rat raven rhino salmon seal shark sheep skunk sloth snake spider stork swan tiger toad trout turkey turtle weasel whale wolf wombat zebra'.split()
+#
+#	def getRandomWord(wordList):
+#	 # This function returns a random string from the passed list of strings.
+#	 wordIndex = random.randint(0, len(wordList) - 1)
+#	 return wordList[wordIndex]
+#
+#	def displayBoard(missedLetters, correctLetters, secretWord):
+#	 print(chr(27) + "[2J")
+#	 print(HANGMAN_PICS[len(missedLetters)])
+#	 print()
+#
+#	 print('Missed letters:', end=' ')
+#	 for letter in missedLetters:
+#		 print(letter, end=' ')
+#	 print()
+#
+#	 blanks = '_' * len(secretWord)
+#
+#	 for i in range(len(secretWord)): # Replace blanks with correctly guessed letters.
+#		 if secretWord[i] in correctLetters:
+#			 blanks = blanks[:i] + secretWord[i] + blanks[i+1:]
+#
+#	 for letter in blanks: # Show the secret word with spaces in between each letter.
+#		 print(letter, end=' ')
+#	 print()
+#
+#	def getGuess(alreadyGuessed):
+#	 # Returns the letter the player entered. This function makes sure the player entered a single letter and not something else.
+#	 while True:
+#		 print('Guess a letter.')
+#		 guess = input()
+#		 guess = guess.lower()
+#		 if len(guess) != 1:
+#			 print('Please enter a single letter.')
+#		 elif guess in alreadyGuessed:
+#			 print('You have already guessed that letter. Choose again.')
+#		 elif guess not in 'abcdefghijklmnopqrstuvwxyz':
+#			 print('Please enter a LETTER.')
+#		 else:
+#			 return guess
+#
+#	def playAgain():
+#	 # This function returns True if the player wants to play again; otherwise, it returns False.
+#	 print('Do you want to play again? (yes or no)')
+#	 return input().lower().startswith('y')
+#
+#
+#	print('H A N G M A N')
+#	missedLetters = ''
+#	correctLetters = ''
+#	secretWord = getRandomWord(words)
+#	gameIsDone = False
+#
+#	while True:
+#	 displayBoard(missedLetters, correctLetters, secretWord)
+#
+#	 # Let the player enter a letter.
+#	 guess = getGuess(missedLetters + correctLetters)
+#
+#	 if guess in secretWord:
+#		 correctLetters = correctLetters + guess
+#
+#		 # Check if the player has won.
+#		 foundAllLetters = True
+#		 for i in range(len(secretWord)):
+#			 if secretWord[i] not in correctLetters:
+#				 foundAllLetters = False
+#				 break
+#		 if foundAllLetters:
+#			 print('Yes! The secret word is "' + secretWord +
+#				   '"! You have won!')
+#			 gameIsDone = True
+#	 else:
+#		 missedLetters = missedLetters + guess
+#
+#		 # Check if player has guessed too many times and lost.
+#		 if len(missedLetters) == len(HANGMAN_PICS) - 1:
+#			 displayBoard(missedLetters, correctLetters, secretWord)
+#			 print('You have run out of guesses!\nAfter ' +
+#				   str(len(missedLetters)) + ' missed guesses and ' + str(len(correctLetters)) + ' correct guesses, the word was "' + secretWord + '"')
+#			 gameIsDone = True
+#
+#	 # Ask the player if they want to play again (but only if the game is done).
+#	 if gameIsDone:
+#		 if playAgain():
+#			 missedLetters = ''
+#			 correctLetters = ''
+#			 gameIsDone = False
+#			 secretWord = getRandomWord(words)
+#		 else:
+#			 break
+#
+#
+## config
+#@click.command()
+#@click.option('-g', '--game', default='hangman', type=click.Choice( [ 'hangman' ] ) )
+#def cmdPlay( game ) :
+#
+#	"""Play the word game called hangman"""
+#
+#	if   game == 'hangman' : hangman()
+#	else : 
+#		click.echo( f"Error: Unknown value for GAME: { game }" )
+#		os.system( 'rdr play --help' )		
 
-	# https://inventwithpython.com/invent4thed/chapter8.html
 
-	import random
-	HANGMAN_PICS = ['''
-  +---+
-      |
-      |
-      |
-     ===''', '''
-  +---+
-  O   |
-      |
-      |
-     ===''', '''
-  +---+
-  O   |
-  |   |
-      |
-     ===''', '''
-  +---+
-  O   |
- /|   |
-      |
-     ===''', '''
-  +---+
-  O   |
- /|\  |
-      |
-     ===''', '''
-  +---+
-  O   |
- /|\  |
- /    |
-     ===''', '''
-  +---+
-  O   |
- /|\  |
- / \  |
-     ===''']
-
-	words = 'ant baboon badger bat bear beaver camel cat clam cobra cougar coyote crow deer dog donkey duck eagle ferret fox frog goat goose hawk lion lizard llama mole monkey moose mouse mule newt otter owl panda parrot pigeon python rabbit ram rat raven rhino salmon seal shark sheep skunk sloth snake spider stork swan tiger toad trout turkey turtle weasel whale wolf wombat zebra'.split()
-
-	def getRandomWord(wordList):
-	 # This function returns a random string from the passed list of strings.
-	 wordIndex = random.randint(0, len(wordList) - 1)
-	 return wordList[wordIndex]
-
-	def displayBoard(missedLetters, correctLetters, secretWord):
-	 print(chr(27) + "[2J")
-	 print(HANGMAN_PICS[len(missedLetters)])
-	 print()
-
-	 print('Missed letters:', end=' ')
-	 for letter in missedLetters:
-		 print(letter, end=' ')
-	 print()
-
-	 blanks = '_' * len(secretWord)
-
-	 for i in range(len(secretWord)): # Replace blanks with correctly guessed letters.
-		 if secretWord[i] in correctLetters:
-			 blanks = blanks[:i] + secretWord[i] + blanks[i+1:]
-
-	 for letter in blanks: # Show the secret word with spaces in between each letter.
-		 print(letter, end=' ')
-	 print()
-
-	def getGuess(alreadyGuessed):
-	 # Returns the letter the player entered. This function makes sure the player entered a single letter and not something else.
-	 while True:
-		 print('Guess a letter.')
-		 guess = input()
-		 guess = guess.lower()
-		 if len(guess) != 1:
-			 print('Please enter a single letter.')
-		 elif guess in alreadyGuessed:
-			 print('You have already guessed that letter. Choose again.')
-		 elif guess not in 'abcdefghijklmnopqrstuvwxyz':
-			 print('Please enter a LETTER.')
-		 else:
-			 return guess
-
-	def playAgain():
-	 # This function returns True if the player wants to play again; otherwise, it returns False.
-	 print('Do you want to play again? (yes or no)')
-	 return input().lower().startswith('y')
-
-
-	print('H A N G M A N')
-	missedLetters = ''
-	correctLetters = ''
-	secretWord = getRandomWord(words)
-	gameIsDone = False
-
-	while True:
-	 displayBoard(missedLetters, correctLetters, secretWord)
-
-	 # Let the player enter a letter.
-	 guess = getGuess(missedLetters + correctLetters)
-
-	 if guess in secretWord:
-		 correctLetters = correctLetters + guess
-
-		 # Check if the player has won.
-		 foundAllLetters = True
-		 for i in range(len(secretWord)):
-			 if secretWord[i] not in correctLetters:
-				 foundAllLetters = False
-				 break
-		 if foundAllLetters:
-			 print('Yes! The secret word is "' + secretWord +
-				   '"! You have won!')
-			 gameIsDone = True
-	 else:
-		 missedLetters = missedLetters + guess
-
-		 # Check if player has guessed too many times and lost.
-		 if len(missedLetters) == len(HANGMAN_PICS) - 1:
-			 displayBoard(missedLetters, correctLetters, secretWord)
-			 print('You have run out of guesses!\nAfter ' +
-				   str(len(missedLetters)) + ' missed guesses and ' + str(len(correctLetters)) + ' correct guesses, the word was "' + secretWord + '"')
-			 gameIsDone = True
-
-	 # Ask the player if they want to play again (but only if the game is done).
-	 if gameIsDone:
-		 if playAgain():
-			 missedLetters = ''
-			 correctLetters = ''
-			 gameIsDone = False
-			 secretWord = getRandomWord(words)
-		 else:
-			 break
-
-
-# config
-@click.command()
-@click.option('-g', '--game', default='hangman', type=click.Choice( [ 'hangman' ] ) )
-def cmdPlay( game ) :
-
-	"""Play the word game called hangman"""
-
-	if   game == 'hangman' : hangman()
-	else : 
-		click.echo( f"Error: Unknown value for GAME: { game }" )
-		os.system( 'rdr play --help' )		
-
-
-# notebooks
-@click.command( options_metavar='<options>' )
-@click.option('-c', '--command', default='catalog', type=click.Choice( [ 'download', 'catalog', 'launch' ] ), help='command option')
-def cmdNotebooks( command ) :
-
-	"""Download, list, and run Toolbox-specific Jupyter Notebooks"""
-		
-	# configure
-	JUPYTER      = 'jupyter notebook'
-	PATTERN      = '*.ipynb'
-	PROTOCOL     = 'github'
-	ORGANIZATION = 'ericleasemorgan'
-	REPOSITORY   = 'reader-toolbox'
-	REMOTE       = "notebooks"
-
-	# initialize
-	notebooksHome = configuration( 'notebooksHome' )
-	
-	# branch accordingly
-	if   command == 'launch'   : _launch( notebooksHome, JUPYTER )
-	elif command == 'catalog'  : _catalog( notebooksHome, PATTERN )
-	elif command == 'download' : 
-	
-		click.echo( "  Downloading Toolbox notebooks from GitHub.", err=True )
-		_download( notebooksHome, PROTOCOL, ORGANIZATION, REPOSITORY, REMOTE )
-		click.echo( "  Done. Now, you want to list them ( -c catalog) or run them (-c launch).", err=True )
+## notebooks
+#@click.command( options_metavar='<options>' )
+#@click.option('-c', '--command', default='catalog', type=click.Choice( [ 'download', 'catalog', 'launch' ] ), help='command option')
+#def cmdNotebooks( command ) :
+#
+#	"""Download, list, and run Toolbox-specific Jupyter Notebooks"""
+#		
+#	# configure
+#	JUPYTER      = 'jupyter notebook'
+#	PATTERN      = '*.ipynb'
+#	PROTOCOL     = 'github'
+#	ORGANIZATION = 'ericleasemorgan'
+#	REPOSITORY   = 'reader-toolbox'
+#	REMOTE       = "notebooks"
+#
+#	# initialize
+#	notebooksHome = configuration( 'notebooksHome' )
+#	
+#	# branch accordingly
+#	if   command == 'launch'   : _launch( notebooksHome, JUPYTER )
+#	elif command == 'catalog'  : _catalog( notebooksHome, PATTERN )
+#	elif command == 'download' : 
+#	
+#		click.echo( "  Downloading Toolbox notebooks from GitHub.", err=True )
+#		_download( notebooksHome, PROTOCOL, ORGANIZATION, REPOSITORY, REMOTE )
+#		click.echo( "  Done. Now, you want to list them ( -c catalog) or run them (-c launch).", err=True )
 
 
 
@@ -1547,16 +1547,16 @@ def cmdServer() :
 	server.run( port=PORT, debug=True )
 	
 # create a list of commands
-rdr.add_command( cmdAbout,         name='about' )
+#rdr.add_command( cmdAbout,         name='about' )
 rdr.add_command( cmdAdr,           name='adr' )
 rdr.add_command( cmdBib,           name='bib' )
-rdr.add_command( cmdBrowse,        name='browse' )
+#rdr.add_command( cmdBrowse,        name='browse' )
 rdr.add_command( cmdBuild,         name='build' )
 rdr.add_command( cmdCatalog,       name='catalog' )
 rdr.add_command( cmdCluster,       name='cluster' )
-rdr.add_command( cmdCollocations,  name='collocations' )
+#rdr.add_command( cmdCollocations,  name='collocations' )
 rdr.add_command( cmdConcordance,   name='concordance' )
-rdr.add_command( cmdDocumentation, name='documentation' )
+#rdr.add_command( cmdDocumentation, name='documentation' )
 rdr.add_command( cmdDownload,      name='download' )
 rdr.add_command( cmdEdit,          name='edit' )
 rdr.add_command( cmdEnt,           name='ent' )
@@ -1564,8 +1564,8 @@ rdr.add_command( cmdGet,           name='get' )
 rdr.add_command( cmdGrammars,      name='grammars' )
 rdr.add_command( cmdInfo,          name='info' )
 rdr.add_command( cmdNgrams,        name='ngrams' )
-rdr.add_command( cmdNotebooks,     name='notebooks' )
-rdr.add_command( cmdPlay,          name='play' )
+#rdr.add_command( cmdNotebooks,     name='notebooks' )
+#rdr.add_command( cmdPlay,          name='play' )
 rdr.add_command( cmdPos,           name='pos' )
 rdr.add_command( cmdRDFGraph,      name='rdfgraph' )
 rdr.add_command( cmdRead,          name='read' )
@@ -1575,7 +1575,7 @@ rdr.add_command( cmdSemantics,     name='semantics' )
 rdr.add_command( cmdServer,        name='web' )
 rdr.add_command( cmdSet,           name='set' )
 rdr.add_command( cmdSizes,         name='sizes' )
-rdr.add_command( cmdSql,           name='sql' )
+#rdr.add_command( cmdSql,           name='sql' )
 rdr.add_command( cmdSummarize,     name='summarize' )
 rdr.add_command( cmdTm,            name='tm' )
 rdr.add_command( cmdUrl,           name='url' )
