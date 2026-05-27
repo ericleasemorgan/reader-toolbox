@@ -2666,126 +2666,126 @@ def cluster( carrel, localLibrary=None, type='dendrogram', save=False ) :
 	return
 	
 # process collocations
-def collocate( carrel, window=4, filter=4, measure='chisqr', limit=4000, output='image', save=False ) :
-
-	'''Given the name of study carrel, collocate carrel's content
-	and output either an image or a Graph Modeling Language (GML)
-	file. This function is an implementation of the
-	nltk.collocations.BigramAssocMeasures method.
-
-	The value of window denotes the number of words on either
-	side of a given word.
-
-	The value of filter is used to denote the number of times a
-	collocation must appear in order to be retained.
-
-	The value of measure can be any one of 'chisqr', 'jaccard',
-	'likelihood', 'raw', or 'fisher'. They are used to measure
-	the significance of each collocation. See the NLTK
-	documentation for details.
-
-	The value of limit is used to approxmiate the total number of
-	collocations desired.
-
-	If the value of output is "image", then the collocations are
-	internally manifested as a GML file, and a visualization is
-	returned. If the value is "gml", then the GML file is
-	returned.
-
-	If the value of output is "gml", and the value of save is
-	True, then the resulting GML file is saved in the carrel's
-	etc directory with the value of the constant named
-	COLLOCATIONS. The resulting GML file is intended to be
-	visualized with something like Gephi.'''
-	
-	# require
-	from   nltk.collocations import BigramAssocMeasures
-	import matplotlib.pyplot as plt
-	import networkx as nx
-	import nltk
-	import sys
-	
-	# initialize
-	localLibrary = configuration( 'localLibrary' )
-	corpus       = str( localLibrary/carrel/ETC/CORPUS )
-	stopwords    = str( localLibrary/carrel/ETC/STOPWORDS )
-
-	# sanity checks
-	checkForCarrel( carrel )
-		
-	# read the stop words and the carrel
-	with open( stopwords, encoding='utf-8' ) as handle : stopwords = handle.read().split( '\n' )
-	with open( corpus, encoding='utf-8' )    as handle : corpus    = handle.read()
-
-	# featurize the carrel
-	features = nltk.word_tokenize( corpus )
-	features = [ feature for feature in features if feature.isalpha() ]
-	features = [ feature.lower() for feature in features ]
-	features = [ feature for feature in features if feature not in stopwords ]
-
-	# collocate
-	finder = nltk.BigramCollocationFinder.from_words( features, window_size=window )
-	
-	# filter
-	if filter > 0 : finder.apply_freq_filter( filter )
-	
-	# measure
-	if   measure == 'chisqr'     : records = finder.score_ngrams( BigramAssocMeasures.chi_sq )
-	elif measure == 'jaccard'    : records = finder.score_ngrams( BigramAssocMeasures.jaccard )
-	elif measure == 'likelihood' : records = finder.score_ngrams( BigramAssocMeasures.likelihood_ratio )
-	elif measure == 'raw'        : records = finder.score_ngrams( BigramAssocMeasures.raw_freq )
-	elif measure == 'fisher'     : records = finder.score_ngrams( BigramAssocMeasures.fisher )
-	
-	# create a network from the scores
-	G = nx.Graph()
-	for index, record in enumerate( records ) :
-	
-		# parse
-		source = record[ 0 ][ 0 ]
-		target = record[ 0 ][ 1 ]
-		weight = record[ 1 ]
-	
-		# update
-		G.add_edge( source, target, weight=weight )
-	
-		# continue, conditionally
-		if index > limit : break
-	
-	# debug
-	sys.stderr.write( 'Parameters:' + '\n' )
-	sys.stderr.write( '  * carrel: '  + carrel + '\n' )
-	sys.stderr.write( '  * limit: '   + str( limit ) + '\n' )
-	sys.stderr.write( '  * measure: ' + measure + '\n' )
-	sys.stderr.write( '  * filter: '  + str( filter ) + '\n' )
-	sys.stderr.write( '  * window: '  + str( window) + '\n' )
-	sys.stderr.write( '\n' )
-	sys.stderr.write( 'Result:' + '\n' )
-	sys.stderr.write( '  * number of nodes: ' + str( G.number_of_nodes() ) + '\n' )
-	sys.stderr.write( '  * number of edges: ' + str( G.number_of_edges() ) + '\n' )
-	
-	# output image
-	if output == 'image' :
-	
-		# visualize
-		plt.figure()
-		nx.draw( G, with_labels=True, node_size=10, font_size=9, edge_color='silver' )
-		plt.show()
-		
-	# standard out
-	else: 
-	
-		# save
-		if save :
-
-			# configure and save
-			file = localLibrary/carrel/ETC/COLLOCATIONS
-			nx.write_gml( G, file )
-
-		# standard output
-		else : nx.write_gml( G, sys.stdout.buffer )
-		
-	# done
-	return
+#def collocate( carrel, window=4, filter=4, measure='chisqr', limit=4000, output='image', save=False ) :
+#
+#	'''Given the name of study carrel, collocate carrel's content
+#	and output either an image or a Graph Modeling Language (GML)
+#	file. This function is an implementation of the
+#	nltk.collocations.BigramAssocMeasures method.
+#
+#	The value of window denotes the number of words on either
+#	side of a given word.
+#
+#	The value of filter is used to denote the number of times a
+#	collocation must appear in order to be retained.
+#
+#	The value of measure can be any one of 'chisqr', 'jaccard',
+#	'likelihood', 'raw', or 'fisher'. They are used to measure
+#	the significance of each collocation. See the NLTK
+#	documentation for details.
+#
+#	The value of limit is used to approxmiate the total number of
+#	collocations desired.
+#
+#	If the value of output is "image", then the collocations are
+#	internally manifested as a GML file, and a visualization is
+#	returned. If the value is "gml", then the GML file is
+#	returned.
+#
+#	If the value of output is "gml", and the value of save is
+#	True, then the resulting GML file is saved in the carrel's
+#	etc directory with the value of the constant named
+#	COLLOCATIONS. The resulting GML file is intended to be
+#	visualized with something like Gephi.'''
+#	
+#	# require
+#	from   nltk.collocations import BigramAssocMeasures
+#	import matplotlib.pyplot as plt
+#	import networkx as nx
+#	import nltk
+#	import sys
+#	
+#	# initialize
+#	localLibrary = configuration( 'localLibrary' )
+#	corpus       = str( localLibrary/carrel/ETC/CORPUS )
+#	stopwords    = str( localLibrary/carrel/ETC/STOPWORDS )
+#
+#	# sanity checks
+#	checkForCarrel( carrel )
+#		
+#	# read the stop words and the carrel
+#	with open( stopwords, encoding='utf-8' ) as handle : stopwords = handle.read().split( '\n' )
+#	with open( corpus, encoding='utf-8' )    as handle : corpus    = handle.read()
+#
+#	# featurize the carrel
+#	features = nltk.word_tokenize( corpus )
+#	features = [ feature for feature in features if feature.isalpha() ]
+#	features = [ feature.lower() for feature in features ]
+#	features = [ feature for feature in features if feature not in stopwords ]
+#
+#	# collocate
+#	finder = nltk.BigramCollocationFinder.from_words( features, window_size=window )
+#	
+#	# filter
+#	if filter > 0 : finder.apply_freq_filter( filter )
+#	
+#	# measure
+#	if   measure == 'chisqr'     : records = finder.score_ngrams( BigramAssocMeasures.chi_sq )
+#	elif measure == 'jaccard'    : records = finder.score_ngrams( BigramAssocMeasures.jaccard )
+#	elif measure == 'likelihood' : records = finder.score_ngrams( BigramAssocMeasures.likelihood_ratio )
+#	elif measure == 'raw'        : records = finder.score_ngrams( BigramAssocMeasures.raw_freq )
+#	elif measure == 'fisher'     : records = finder.score_ngrams( BigramAssocMeasures.fisher )
+#	
+#	# create a network from the scores
+#	G = nx.Graph()
+#	for index, record in enumerate( records ) :
+#	
+#		# parse
+#		source = record[ 0 ][ 0 ]
+#		target = record[ 0 ][ 1 ]
+#		weight = record[ 1 ]
+#	
+#		# update
+#		G.add_edge( source, target, weight=weight )
+#	
+#		# continue, conditionally
+#		if index > limit : break
+#	
+#	# debug
+#	sys.stderr.write( 'Parameters:' + '\n' )
+#	sys.stderr.write( '  * carrel: '  + carrel + '\n' )
+#	sys.stderr.write( '  * limit: '   + str( limit ) + '\n' )
+#	sys.stderr.write( '  * measure: ' + measure + '\n' )
+#	sys.stderr.write( '  * filter: '  + str( filter ) + '\n' )
+#	sys.stderr.write( '  * window: '  + str( window) + '\n' )
+#	sys.stderr.write( '\n' )
+#	sys.stderr.write( 'Result:' + '\n' )
+#	sys.stderr.write( '  * number of nodes: ' + str( G.number_of_nodes() ) + '\n' )
+#	sys.stderr.write( '  * number of edges: ' + str( G.number_of_edges() ) + '\n' )
+#	
+#	# output image
+#	if output == 'image' :
+#	
+#		# visualize
+#		plt.figure()
+#		nx.draw( G, with_labels=True, node_size=10, font_size=9, edge_color='silver' )
+#		plt.show()
+#		
+#	# standard out
+#	else: 
+#	
+#		# save
+#		if save :
+#
+#			# configure and save
+#			file = localLibrary/carrel/ETC/COLLOCATIONS
+#			nx.write_gml( G, file )
+#
+#		# standard output
+#		else : nx.write_gml( G, sys.stdout.buffer )
+#		
+#	# done
+#	return
 
 # given a carrel, return a spacy doc
 def _carrel2doc( carrel ) :

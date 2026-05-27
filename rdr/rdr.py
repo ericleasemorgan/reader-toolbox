@@ -1,13 +1,13 @@
 # rdr.py - a command-line interface for building and modeling Distant Reader study carrels
 
-# Eric Lease Morgan <emorgan@nd.edu>
-# (c) University of Notre Dame; distributed under a GNU Public License
+# Eric Lease Morgan <eric_morgan@infomotions.com>
+# (c) Infomotions, LLC; distributed under a GNU Public License
 
 # July 30, 2021 - in Three Oaks with Pat; first real working version
 # June 14, 2022 - trying to consolidate everything into a single file
 # May  29, 2023 - whoefully lacking in updates here; added... everthing
 # June 18, 2025 - when pivoting, sliced the columns to exclude the first and last
-
+# May  27, 2026 - commenting out a lot of stuff; purging
 
 
 # constants for topic modeling
@@ -26,7 +26,6 @@ SQL             = 'SELECT "file:%s/%s/txt/" || cast( id AS text ) || ".txt" AS f
 METADATA        = 'metadata.csv'
 TOPICS          = 'topics.tsv'
 LABELS          = [ 'docId', 'file' ]
-
 
 # require
 from rdr import *
@@ -1530,21 +1529,21 @@ Use this command to build a data set ("study carrel") based on the files saved i
 
 	build( carrel, directory, erase, start, None )
 
-@click.command()
-def cmdServer() :
-
-	'''Experimental Web interface to your Distant Reader study carrels'''
-	
-	# configure; code for rdr
-	PORT = 18418
-	
-	# require
-	from .server import server
-	import os
-
-	# configure and go
-	os.environ[ 'FLASK_ENV' ] = 'development'
-	server.run( port=PORT, debug=True )
+#@click.command()
+#def cmdServer() :
+#
+#	'''Experimental Web interface to your Distant Reader study carrels'''
+#	
+#	# configure; code for rdr
+#	PORT = 18418
+#	
+#	# require
+#	from .server import server
+#	import os
+#
+#	# configure and go
+#	os.environ[ 'FLASK_ENV' ] = 'development'
+#	server.run( port=PORT, debug=True )
 	
 # create a list of commands
 #rdr.add_command( cmdAbout,         name='about' )
@@ -1572,7 +1571,7 @@ rdr.add_command( cmdRead,          name='read' )
 rdr.add_command( cmdReadability,   name='readability' )
 rdr.add_command( cmdSearch,        name='search' )
 rdr.add_command( cmdSemantics,     name='semantics' )
-rdr.add_command( cmdServer,        name='web' )
+#rdr.add_command( cmdServer,        name='web' )
 rdr.add_command( cmdSet,           name='set' )
 rdr.add_command( cmdSizes,         name='sizes' )
 #rdr.add_command( cmdSql,           name='sql' )
